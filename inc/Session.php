@@ -324,10 +324,22 @@ class Session
       }
       else {
         echo <<<EOTEXT
-<H4>For access to the $c->system_name you should log on with
-the username and password that have been issued to you.</H4>
+<h1>Log On Please</h1>
+<p>For access to the $c->system_name you should log on with
+the username and password that have been issued to you.</p>
 
-<h4>If you would like to request access, please e-mail $c->admin_email.</h4>
+<p>If you would like to request access, please e-mail $c->admin_email.</p>
+<form action="$action_target" method="post">
+<h2>User Name</h2>
+<p><input type="text" name="username" size="12"></p>
+<h2>Password</h2>
+<p><input type="password" name="password" size="12"></p>
+<p>
+ &nbsp;forget&nbsp;me&nbsp;not: <input type="checkbox" name="remember" value="1">
+<input type="submit" value="GO!" alt="go" name="submit" class="submit">
+</p>
+</form>
+
 EOTEXT;
       }
     }

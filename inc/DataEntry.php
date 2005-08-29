@@ -80,6 +80,18 @@ class EntryField
 
       case "lookup":
         $r .= "select name=\"$this->fname\"%%attributes%%>";
+        reset( $this->attributes );
+        while( list($k,$v) = each( $this->attributes ) ) {
+          if ( substr($k, 0, 1) != '_' ) continue;
+          $k = substr($k,1);
+          if ( $k == 'help' || $k == "sql" || $k == "type" ) continue;
+          if ( $k == "null" ) $k = "";
+          if ( $k == "zero" ) $k = "0";
+          $r .= "<option value=\"".htmlentities($k)."\"";
+          if ( "$this->current" == "$k" ) $r .= " selected";
+          $r .= ">$v</option>" ;
+        }
+/*
         if ( isset($this->attributes["_all"]) ) {
           $r .= sprintf("<option value=\"all\"".("all"==$this->current?" selected":"").">%s</option>", $this->attributes["_all"] );
         }
@@ -89,6 +101,7 @@ class EntryField
         if ( isset($this->attributes["_zero"]) ) {
           $r .= sprintf("<option value=\"0\"".(0==$this->current?" selected":"").">%s</option>", $this->attributes["_zero"] );
         }
+*/
         if ( isset($this->attributes["_sql"]) ) {
           $qry = new PgQuery( $this->attributes["_sql"] );
         }
@@ -291,15 +304,28 @@ class EntryForm
   //////////////////////////////////////////////////////
   // A utility function for a data entry line within a table
   //////////////////////////////////////////////////////
-  function DataEntryField( $format, $ftype='', $fname='', $type_extra='' )
+  function DataEntryField( $format, $ftype='', $real_fname='', $type_extra='' )
   {
     global $session;
 
-    if ( ($fname == '' || $ftype == '') ) {
+    if ( ($real_fname == '' || $ftype == '') ) {
       // Displaying never-editable values
       return $format;
     }
-    elseif ( !$this->editmode ) {
+
+    if ( substr($real_fname,0,4) == 'xxxx' ) {
+      // Sometimes we will prepend 'xxxx' to the field name so that the field
+      // name differs from the column name in the database.  We also remove it
+      // when it's submitted.
+      $fname = substr($real_fname,4);
+      // Also assign any posted value
+      if ( !isset($_POST[$fname]) && isset($_POST[$real_fname]) )
+        $_POST[$fname] = $_POST[$real_fname];
+    }
+    else {
+      $fname = $real_fname;
+    }
+    if ( !$this->editmode ) {
       // Displaying editable values when we are not editing
       $session->Log( "DBG: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, $this->record->{$fname} );
       return sprintf($format, $this->record->{$fname} );
@@ -334,7 +360,7 @@ class EntryForm
     if ( $ftype == "date" ) $currval = nice_date($currval);
 
     // Now build the entry field and render it
-    $field = new EntryField( $ftype, $fname, $this->_ParseTypeExtra($ftype,$type_extra), $currval );
+    $field = new EntryField( $ftype, $real_fname, $this->_ParseTypeExtra($ftype,$type_extra), $currval );
     return $field->Render();
   }
 
@@ -351,11 +377,11 @@ class EntryForm
   //////////////////////////////////////////////////////
   // A utility function for a data entry line within a table
   //////////////////////////////////////////////////////
-  function DataEntryLine( $prompt, $format, $ftype='', $fname='', $type_extra='' )
+  function DataEntryLine( $prompt, $currval, $ftype='', $fname='', $type_extra='' )
   {
     $type_extra = $this->_ParseTypeExtra( $ftype, $type_extra );
     return sprintf( $this->table_line_format, $prompt,
-                $this->DataEntryField( $format, $ftype, $fname, $type_extra ),
+                $this->DataEntryField( $currval, $ftype, $fname, $type_extra ),
                 $type_extra['_help'] );
   }
 

@@ -15,7 +15,13 @@ if ( isset($_GET['logout']) ) {
 
 $session = new Session();
 
-if ( isset($_POST['username']) && isset($_POST['password']) ) {
+if ( isset($_POST['lostpass']) ) {
+  if ( $debuggroups['Login'] )
+    $session->Log( "DBG: User '$_POST[username]' has lost the password." );
+
+  $session->SendTemporaryPassword();
+}
+else if ( isset($_POST['username']) && isset($_POST['password']) ) {
   // Try and log in if we have a username and password
   $session->Login( $_POST['username'], $_POST['password'] );
   if ( $debuggroups['Login'] )
@@ -73,6 +79,26 @@ function session_validate_password( $they_sent, $we_have ) {
   return ( $they_sent == $pwcompare || strtolower($they_sent) == strtolower($we_have) );
 }
 
+function check_temporary_passwords( $they_sent, $user_no ) {
+  global $debuggroups, $session;
+
+  $sql = 'SELECT 1 AS ok FROM tmp_password WHERE user_no = ? AND password = ? AND valid_until > current_timestamp';
+  $qry = new PgQuery( $sql, $user_no, $they_sent );
+  if ( $qry->Exec('Session::check_temporary_passwords') ) {
+    $session->Log("DBG: Rows = $qry->rows");
+    if ( $row = $qry->Fetch() ) {
+      $session->Log("DBG: OK = $row->ok");
+      // Remove all the temporary passwords for that user...
+      $sql = 'DELETE FROM tmp_password WHERE user_no = ? ';
+      $qry = new PgQuery( $sql, $user_no );
+      $qry->Exec('Session::check_temporary_passwords');
+      return true;
+    }
+  }
+  return false;
+}
+
+
 class Session
 {
   var $user_no = 0;
@@ -85,15 +111,18 @@ class Session
   var $cause = '';
   var $just_logged_in = false;
 
-  function Session()
+  function Session( $sid="" )
   {
     $this->roles = array();
     $this->logged_in = false;
     $this->just_logged_in = false;
 
-    if ( ! isset($_COOKIE['sid']) ) return;
+    if ( $sid == "" ) {
+      if ( ! isset($_COOKIE['sid']) ) return;
+      $sid = $_COOKIE['sid'];
+    }
 
-    list( $session_id, $session_key ) = explode( ';', $_COOKIE['sid'], 2 );
+    list( $session_id, $session_key ) = explode( ';', $sid, 2 );
 
     $sql = "SELECT session.*, usr.*, organisation.*
         FROM session, usr, organisation
@@ -145,18 +174,10 @@ class Session
 
   function GetRoles () {
     $this->roles = array();
-    $qry = new PgQuery( 'SELECT group_name AS role_name FROM group_member m join ugroup g ON g.group_no = m.group_no WHERE user_no = ? ', $this->user_no );
+    $qry = new PgQuery( 'SELECT role_name FROM role_member m join roles r ON r.role_no = m.role_no WHERE user_no = ? ', $this->user_no );
     if ( $qry->Exec('Session::GetRoles') && $qry->rows > 0 ) {
       while( $role = $qry->Fetch() ) {
         $this->roles[$role->role_name] = true;
-      }
-    }
-
-    $this->system_roles = array();
-    $qry = new PgQuery( 'SELECT system_code, role FROM system_usr WHERE user_no = ? ', $this->user_no );
-    if ( $qry->Exec('Session::GetRoles') && $qry->rows > 0 ) {
-      while( $role = $qry->Fetch() ) {
-        $this->system_roles[$role->system_code] = $role->role;
       }
     }
   }
@@ -186,7 +207,7 @@ class Session
     $qry = new PgQuery( $sql, strtolower($username), md5($password), $password );
     if ( $qry->Exec('Session::UPWLogin') && $qry->rows == 1 ) {
       $usr = $qry->Fetch();
-      if ( session_validate_password( $password, $usr->password ) ) {
+      if ( session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {
         // Now get the next session ID to create one from...
         $qry = new PgQuery( "SELECT nextval('session_session_id_seq')" );
         if ( $qry->Exec('Login') && $qry->rows == 1 ) {
@@ -206,7 +227,7 @@ class Session
             //  Create a cookie for the sesssion
             setcookie('sid',$sid, 0,'/');
             // Recognise that we have started a session now too...
-            $this->Session();
+            $this->Session($sid);
             $this->Log( "DBG: Login: INFO: New session $session_id started for $username ($usr->user_no)" );
             if ( isset($_POST['remember']) && intval($_POST['remember']) > 0 ) {
               $cookie .= md5( $this->user_no ) . ";";
@@ -249,7 +270,7 @@ class Session
 
 
   function LSIDLogin( $lsid ) {
-    global $sysname, $debuggroups, $client_messages, $sid;
+    global $sysname, $debuggroups, $client_messages;
     if ( $debuggroups['Login'] )
       $this->Log( "DBG: Login: Attempting login for $lsid" );
 
@@ -279,7 +300,7 @@ class Session
             //  Create a cookie for the sesssion
             setcookie('sid',$sid, 0,'/');
             // Recognise that we have started a session now too...
-            $this->Session();
+            $this->Session($sid);
             $this->Log( "DBG: Login: INFO: New session $session_id started for $this->username ($usr->user_no)" );
             return true;
           }
@@ -318,27 +339,44 @@ class Session
     if ( $this->logged_in && $groups == "" ) return;
     if ( ! $this->logged_in ) {
       $c->messages[] = "You must log in to use this system.";
-      include("page-header.php");
+      include_once("page-header.php");
       if ( function_exists("local_index_not_logged_in") ) {
         local_index_not_logged_in();
       }
       else {
         echo <<<EOTEXT
+<div id="logon">
 <h1>Log On Please</h1>
 <p>For access to the $c->system_name you should log on with
 the username and password that have been issued to you.</p>
 
 <p>If you would like to request access, please e-mail $c->admin_email.</p>
 <form action="$action_target" method="post">
-<h2>User Name</h2>
-<p><input type="text" name="username" size="12"></p>
-<h2>Password</h2>
-<p><input type="password" name="password" size="12"></p>
-<p>
- &nbsp;forget&nbsp;me&nbsp;not: <input type="checkbox" name="remember" value="1">
+<table>
+<tr>
+<th class="prompt">User Name:</th>
+<td class="entry">
+<input class="text" type="text" name="username" size="12"></td>
+</tr>
+<tr>
+<th class="prompt">Password:</th>
+<td class="entry">
+<input class="password" type="password" name="password" size="12">
+ &nbsp;<label>forget&nbsp;me&nbsp;not: <input class="checkbox" type="checkbox" name="remember" value="1"></label>
+</td>
+</tr>
+<tr>
+<th class="prompt">&nbsp;</th>
+<td class="entry">
 <input type="submit" value="GO!" alt="go" name="submit" class="submit">
+</td>
+</tr>
+</table>
+<p>
+If you have forgotten your password then: <input type="submit" value="Help! I've forgotten my password!" alt="Enter a username, if you know it, and click here." name="lostpass" class="submit">
 </p>
 </form>
+</div>
 
 EOTEXT;
       }
@@ -348,12 +386,132 @@ EOTEXT;
       foreach( $valid_groups AS $k => $v ) {
         if ( $this->AllowedTo($v) ) return;
       }
-      include("page-header.php");
       $c->messages[] = "You are not authorised to use this function.";
+      include_once("page-header.php");
     }
 
     include("page-footer.php");
     exit;
+  }
+
+
+
+  function SendTemporaryPassword( ) {
+    global $c;
+
+    include("EMail.php");
+    $page_content = "";
+    $password_sent = false;
+    $where = "";
+    if ( isset($_POST['username']) && $_POST['username'] != "" ) {
+      $where = "WHERE active AND usr.username = ". qpg($_POST['username'] );
+    }
+    if ( ! $password_sent && isset($_POST['email_address']) && $_POST['email_address'] != "" ) {
+      $where = "WHERE active AND usr.email = ". qpg($_POST['email_address'] );
+    }
+
+    if ( $where != "" ) {
+      $tmp_passwd = "";
+      for ( $i=0; $i < 8; $i++ ) {
+        $tmp_passwd .= substr( "#.-=*%@0123456789abcdefghijklmnopqrstuvwxyz", rand(0,42), 1);
+      }
+      $sql = "SELECT * FROM usr $where";
+      $qry = new PgQuery( $sql );
+      $qry->Exec("Session::SendTemporaryPassword");
+      if ( $qry->rows > 0 ) {
+        $sql = "BEGIN;";
+
+        include_once("EMail.php");
+        $mail = new EMail( "Temporary Password for $c->system_name" );
+        $mail->SetFrom($c->admin_email );
+        $usernames = "";
+        while ( $row = $qry->Fetch() ) {
+          $sql .= "INSERT INTO tmp_password ( user_no, password) VALUES( $row->user_no, '$tmp_passwd');";
+          $mail->AddTo( "$row->fullname <$row->email>" );
+          $usernames .= "        $row->username\n";
+        }
+        if ( $mail->To != "" ) {
+          $sql .= "COMMIT;";
+          $qry = new PgQuery( $sql );
+          $qry->Exec("Session::SendTemporaryPassword");
+          $body = <<<EOTEXT
+A temporary password has been requested for $c->system_name.
+
+Temporary Password: $tmp_passwd
+
+This has been applied to the following usernames:
+$usernames
+and will be valid for 24 hours.
+
+If you have any problems, please contact the system administrator.
+
+EOTEXT;
+          $mail->SetBody($body);
+          $mail->Send();
+          $password_sent = true;
+        }
+      }
+    }
+
+    if ( ! $password_sent && ((isset($_POST['username']) && $_POST['username'] != "" )
+                              || (isset($_POST['email_address']) && $_POST['email_address'] != "" )) ) {
+      // Username or EMail were non-null, but we didn't find that user.
+
+      $page_content = <<<EOTEXT
+<div id="logon">
+<h1>Unable to Reset Password</h1>
+<p>We were unable to reset your password at this time.  Please contact
+<a href="mailto:$c->admin_email">$c->admin_email</a>
+to arrange for an administrator to reset your password.</p>
+<p>Thank you.</p>
+</div>
+EOTEXT;
+    }
+
+    if ( $password_sent ) {
+      $page_content = <<<EOTEXT
+<div id="logon">
+<h1>Temporary Password Sent</h1>
+<p>A temporary password has been e-mailed to you.  This password
+will be valid for 24 hours and you will be required to change
+your password after logging in.</p>
+<p><a href="/">Click here to return to the login page.</a></p>
+</div>
+EOTEXT;
+    }
+    else {
+      $page_content = <<<EOTEXT
+<div id="logon">
+<h1>Forgotten Password</h1>
+<form action="$action_target" method="post">
+<table>
+<tr>
+<th class="prompt">Enter your User Name:</th>
+<td class="entry"><input class="text" type="text" name="username" size="12"></td>
+</tr>
+<tr>
+<th class="prompt">Or your EMail Address:</th>
+<td class="entry"><input class="text" type="text" name="email_address" size="50"></td>
+</tr>
+<tr>
+<th class="prompt">and click on -></th>
+<td class="entry">
+<input class="submit" type="submit" value="Send me a temporary password" alt="Enter a username, or e-mail address, and click here." name="lostpass">
+</td>
+</tr>
+</table>
+<p>Note: If you have multiple accounts with the same e-mail address, they will <em>all</em>
+be assigned a new temporary password, but only the one(s) that you use that temporary password
+on will have the existing password invalidated.</p>
+<p>Any temporary password will only be valid for 24 hours.</p>
+</form>
+</div>
+EOTEXT;
+    }
+    include_once("page-header.php");
+    echo $page_content;
+    include_once("page-footer.php");
+    exit(0);
   }
 }
 

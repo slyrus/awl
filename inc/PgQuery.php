@@ -50,16 +50,15 @@ function duration( $t1, $t2 )                   // Enter two times from microtim
 ///////////////////
    function log_error( $locn, $tag, $string, $line = 0, $file = 0)
    {
-      GLOBAL $sysname, $sysabbr;
+      GLOBAL $c;
       $string = preg_replace('/\s+/', ' ', $string);
-      if ( !isset($sysname) ) $sysname = $sysabbr;
 
       if ( $line != 0 && $file != 0 ) {
-        error_log( "$sysname $locn $tag: PgQuery error in '$file' on line $line ");
+        error_log( "$c->sysabbr $locn $tag: PgQuery error in '$file' on line $line ");
       }
 
       while( strlen( $string ) > 0 )  {
-        error_log( "$sysname $locn $tag: " . substr( $string, 0, 240), 0 );
+        error_log( "$c->sysabbr $locn $tag: " . substr( $string, 0, 240), 0 );
         $string = substr( "$string", 240 );
       }
 

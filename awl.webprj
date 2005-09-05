@@ -1,0 +1,30 @@
+<!DOCTYPE webproject>
+<webproject>
+  <project usePreviewPrefix="0" previewPrefix="" type="Local" name="awl" encoding="utf8" >
+    <upload/>
+    <author>Andrew McMillan</author>
+    <email>andrew@catalyst.net.nz</email>
+    <defaultDTD>-//W3C//DTD XHTML 1.1//EN</defaultDTD>
+    <item url="dba/" uploadstatus="1" />
+    <item modified_time="1125863755" url="dba/awl-tables.sql" uploadstatus="1" />
+    <item modified_time="1125862895" url="dba/schema-management.sql" uploadstatus="1" />
+    <item url="inc/" uploadstatus="1" />
+    <item url="inc/DataEntry.php" uploadstatus="1" />
+    <item url="inc/DataUpdate.php" uploadstatus="1" />
+    <item modified_time="1125645666" url="inc/EMail.php" uploadstatus="1" />
+    <item modified_time="1125808274" url="inc/PgQuery.php" uploadstatus="1" />
+    <item modified_time="1125914008" url="inc/Session.php" uploadstatus="1" />
+    <item url="" uploadstatus="1" />
+    <templates>templates/</templates>
+    <toolbars>toolbars/</toolbars>
+    <item modified_time="1125906401" url="inc/MenuSet.php" uploadstatus="1" />
+    <projectview name="default" >
+      <viewitem url="inc/MenuSet.php" />
+      <viewitem url="inc/Session.php" />
+    </projectview>
+    <treestatus>
+      <openfolder url="dba" />
+      <openfolder url="inc" />
+    </treestatus>
+  </project>
+</webproject>

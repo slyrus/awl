@@ -20,50 +20,87 @@ function duration( $t1, $t2 )                   // Enter two times from microtim
   return $s1;                                  // Return duration of time
 }
 
-  /**
-  * Quote the given string so it can be safely used within string delimiters
-  * in a query.
-  * @param $string mixed Data to be quoted
-  * @return mixed "NULL" string, quoted string or original data
-  */
-  function qpg($str = null)
-  {
-    switch (strtolower(gettype($str))) {
-      case 'null':
-        return 'NULL';
-      case 'integer':
-      case 'double' :
-        return $str;
-      case 'boolean':
-        return $str ? 'TRUE' : 'FALSE';
-      case 'string':
-      default:
-        $str = str_replace("'", "''", $str);
-        //PostgreSQL treats a backslash as an escape character.
-        $str = str_replace('\\', '\\\\', $str);
-        return "'$str'";
-    }
+/**
+* Quote the given string so it can be safely used within string delimiters
+* in a query.
+* @param $string mixed Data to be quoted
+* @return mixed "NULL" string, quoted string or original data
+*/
+function qpg($str = null)
+{
+  switch (strtolower(gettype($str))) {
+    case 'null':
+      return 'NULL';
+    case 'integer':
+    case 'double' :
+      return $str;
+    case 'boolean':
+      return $str ? 'TRUE' : 'FALSE';
+    case 'string':
+    default:
+      $str = str_replace("'", "''", $str);
+      //PostgreSQL treats a backslash as an escape character.
+      $str = str_replace('\\', '\\\\', $str);
+      return "'$str'";
   }
+}
 
 ///////////////////
 //   Log Error   //
 ///////////////////
-   function log_error( $locn, $tag, $string, $line = 0, $file = 0)
-   {
-      GLOBAL $c;
-      $string = preg_replace('/\s+/', ' ', $string);
+function log_error( $locn, $tag, $string, $line = 0, $file = 0)
+{
+  GLOBAL $c;
+  $string = preg_replace('/\s+/', ' ', $string);
 
-      if ( $line != 0 && $file != 0 ) {
-        error_log( "$c->sysabbr $locn $tag: PgQuery error in '$file' on line $line ");
-      }
+  if ( $line != 0 && $file != 0 ) {
+    error_log( "$c->sysabbr $locn $tag: PgQuery error in '$file' on line $line ");
+  }
 
-      while( strlen( $string ) > 0 )  {
-        error_log( "$c->sysabbr $locn $tag: " . substr( $string, 0, 240), 0 );
-        $string = substr( "$string", 240 );
-      }
+  while( strlen( $string ) > 0 )  {
+    error_log( "$c->sysabbr $locn $tag: " . substr( $string, 0, 240), 0 );
+    $string = substr( "$string", 240 );
+  }
 
-   return '';
-   }
+  return '';
+}
+
+//////////////////////////////////////////////
+//   Parameter Replacement for PostgreSQL   //
+//////////////////////////////////////////////
+function awl_replace_sql_args() {
+  $argc = func_num_args();
+  $qry = func_get_arg(0);
+  $args = func_get_args();
+
+  if ( is_array($qry) ) {
+    $qry = $args[0][0];
+    $args = $args[0];
+    $argc = count($args);
+  }
+
+  $parts = explode( '?', $qry );
+  $querystring = $parts[0];
+  $z = min( count($parts), $argc );
+  for( $i = 1; $i < $z; $i++ ) {
+    $arg = $args[$i];
+    if ( !isset($arg) ) {
+      $querystring .= 'NULL';
+    }
+    elseif ( is_array($arg) && $arg['plain'] != '' ) {
+      // We abuse this, but people should access it through the PgQuery::Plain($v) function
+      $querystring .= $arg['plain'];
+    }
+    else {
+      $querystring .= qpg($arg);
+    }
+    $querystring .= $parts[$i];
+  }
+  if ( isset($parts[$z]) ) $querystring .= $parts[$z];
+
+  return $querystring;
+}
+
 
 /////////////////////////////////////////////////////////////
 //   C L A S S   F O R   D A T A B A S E   Q U E R I E S   //
@@ -93,9 +130,11 @@ class PgQuery
     $this->rownum = -1;
 
     $argc = func_num_args();
-    $qry = func_get_arg(0);
+//    $qry = func_get_arg(0);
 
     if ( 1 < $argc ) {
+      $this->querystring = awl_replace_sql_args( func_get_args() );
+/*
       $parts = explode( '?', $qry );
       $this->querystring = $parts[0];
       $z = min( count($parts), $argc );
@@ -114,11 +153,12 @@ class PgQuery
         $this->querystring .= $parts[$i];
       }
       if ( isset($parts[$z]) ) $this->querystring .= $parts[$z];
+*/
     }
     else {
       // If we are only called with a single argument, we do
       // nothing special with any question marks.
-      $this->querystring = $qry;
+      $this->querystring = func_get_arg(0);
     }
 
     return $this;
@@ -207,6 +247,16 @@ class PgQuery
     }
 
     return $this->object;
+  }
+
+  //////////////////////////////////////////////////
+  //   UnFetch - set row counter back by one      //
+  //////////////////////////////////////////////////
+  function UnFetch()
+  {
+    global $debuggroups;
+    $this->rownum--;
+    if ( $this->rownum < -1 ) $this->rownum = -1;
   }
 
   //////////////////////////////////////////////////

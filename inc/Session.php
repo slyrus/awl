@@ -235,6 +235,8 @@ class Session
               setcookie( "lsid", $cookie, time() + (86400 * 3600), "/" );   // will expire in ten or so years
             }
             $this->just_logged_in = true;
+            unset($_POST['username']);
+            unset($_POST['password']);
             unset($_POST['submit']);
             unset($_GET['submit']);
             unset($GLOBALS['submit']);

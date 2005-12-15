@@ -124,12 +124,13 @@ class Session
 
     list( $session_id, $session_key ) = explode( ';', $sid, 2 );
 
-    $sql = "SELECT session.*, usr.*, organisation.*
-        FROM session, usr, organisation
+    // We need some tidy way to configure this appropriately for the actual database
+    // schema to avoid a second SELECT to read related records.
+    $sql = "SELECT session.*, usr.*
+        FROM session, usr
         WHERE usr.user_no = session.user_no
         AND session_id = ?
         AND (md5(session_start::text) = ? OR session_key = ?)
-        AND organisation.org_code = usr.org_code
         ORDER BY session_start DESC LIMIT 1";
 
     $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
@@ -188,8 +189,6 @@ class Session
     $this->username = $u->username;
     $this->fullname = $u->fullname;
     $this->email = $u->email;
-    $this->org_code = $u->org_code;
-    $this->org_name = $u->org_name;
     $this->config_data = $u->config_data;
     $this->session_id = $u->session_id;
 

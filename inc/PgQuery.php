@@ -18,7 +18,7 @@
 *  - Simple syntax for iterating through a result set.
 *
 * @package   awl
-* @subpackage   pgquery
+* @subpackage   PgQuery
 * @author    Andrew McMillan <andrew@catalyst.net.nz>
 * @copyright Andrew McMillan
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
@@ -209,7 +209,7 @@ function awl_replace_sql_args() {
 * </code>
 *
 * @package   awl
-* @subpackage   pgquery
+* @subpackage   PgQuery
 * @author    Andrew McMillan <andrew@catalyst.net.nz>
 * @copyright Andrew McMillan
 */

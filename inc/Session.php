@@ -1,6 +1,27 @@
 <?php
-// Session handling
-// - set up the session object
+/**
+* Session handling class and associated functions
+*
+* This subpackage provides some functions that are useful around web
+* application session management.
+*
+* The class is intended to be as lightweight as possible while holding
+* all session data in the database:
+*  - Session hash is not predictable.
+*  - No clear text information is held in cookies.
+*  - Passwords are generally salted MD5 hashes, but individual users may
+*    have plain text passwords set by an administrator.
+*  - Temporary passwords are supported.
+*  - Logout is supported
+*  - "Remember me" cookies are supported, and will result in a new
+*    Session for each browser session.
+*
+* @package   awl
+* @subpackage   Session
+* @author    Andrew McMillan <andrew@catalyst.net.nz>
+* @copyright Andrew McMillan
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+*/
 
 require_once('PgQuery.php');
 
@@ -34,6 +55,15 @@ else if ( !isset($_COOKIE['sid']) && isset($_COOKIE['lsid']) && $_COOKIE['lsid']
     $session->Log( "DBG: User $session->username - $session->fullname ($session->user_no) login status is $session->logged_in" );
 }
 
+/**
+* Make a salted MD5 string, given a string and (possibly) a salt.
+*
+* If no salt is supplied we will generate a random one.
+*
+* @param string $instr The string to be salted and MD5'd
+* @param string $salt Some salt to sprinkle into the string to be MD5'd so we don't get the same PW always hashing to the same value.
+* @return string The salt, a * and the MD5 of the salted string, as in SALT*SALTEDHASH
+*/
 function session_salted_md5( $instr, $salt = "" ) {
   global $debuggroups, $session;
   if ( $salt == "" ) $salt = substr( md5(rand(100000,999999)), 2, 8);
@@ -42,6 +72,12 @@ function session_salted_md5( $instr, $salt = "" ) {
   return ( sprintf("*%s*%s", $salt, md5($salt . $instr) ) );
 }
 
+/**
+* Checks what a user entered against the actual password on their account.
+* @param string $they_sent What the user entered.
+* @param string $we_have What we have in the database as their password.  Which may (or may not) be a salted MD5.
+* @return boolean Whether or not the users attempt matches what is already on file.
+*/
 function session_validate_password( $they_sent, $we_have ) {
   global $debuggroups, $session;
 
@@ -79,6 +115,12 @@ function session_validate_password( $they_sent, $we_have ) {
   return ( $they_sent == $pwcompare || strtolower($they_sent) == strtolower($we_have) );
 }
 
+/**
+* Checks what a user entered against any currently valid temporary passwords on their account.
+* @param string $they_sent What the user entered.
+* @param int $user_no Which user is attempting to log on.
+* @return boolean Whether or not the user correctly guessed a temporary password within the necessary window of opportunity.
+*/
 function check_temporary_passwords( $they_sent, $user_no ) {
   global $debuggroups, $session;
 
@@ -98,7 +140,13 @@ function check_temporary_passwords( $they_sent, $user_no ) {
   return false;
 }
 
-
+/**
+* @package   awl
+* @subpackage   Session
+* @author    Andrew McMillan <andrew@catalyst.net.nz>
+* @copyright Andrew McMillan
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+*/
 class Session
 {
   var $user_no = 0;
@@ -111,6 +159,22 @@ class Session
   var $cause = '';
   var $just_logged_in = false;
 
+  /**
+  * Create a new Session object.
+  *
+  * If a session identifier is supplied, or we can find one in a cookie, we validate it
+  * and consider the person logged in.  We read some useful session and user data in
+  * passing as we do this.
+  *
+  * The session identifier contains a random value, hashed, to provide validation. This
+  * could be hijacked if the traffic was sniffable so sites who are paranoid about security
+  * should only do this across SSL.
+  *
+  * A worthwhile enhancement would be to add some degree of external configurability to
+  * that read.
+  *
+  * @param string $sid A session identifier.
+  */
   function Session( $sid="" )
   {
     $this->roles = array();
@@ -149,6 +213,16 @@ class Session
     }
   }
 
+
+  /**
+  * Utility function to log stuff with printf expansion.
+  *
+  * This function could be expanded to log something identifying the session, but
+  * somewhat strangely this has not yet been done.
+  *
+  * @param string $whatever A log string
+  * @param mixed $whatever... Further parameters to be replaced into the log string a la printf
+  */
   function Log( $whatever )
   {
     global $c;
@@ -165,14 +239,24 @@ class Session
       }
       error_log( "$c->sysabbr: " . vsprintf($format,$args) );
     }
-    return true;
   }
 
+  /**
+  * Checks whether a user is allowed to do something.
+  *
+  * The check is performed to see if the user has that role.
+  *
+  * @param string $whatever The role we want to know if the user has.
+  * @return boolean Whether or not the user has the specified role.
+  */
   function AllowedTo ( $whatever ) {
     return ( $this->logged_in && isset($this->roles[$whatever]) && $this->roles[$whatever] );
   }
 
 
+/**
+* Internal function used to get the user's roles from the database.
+*/
   function GetRoles () {
     $this->roles = array();
     $qry = new PgQuery( 'SELECT role_name FROM role_member m join roles r ON r.role_no = m.role_no WHERE user_no = ? ', $this->user_no );
@@ -184,6 +268,10 @@ class Session
   }
 
 
+/**
+* Internal function used to assign the session details to a user's new session.
+* @param object $u The user+session object we (probably) read from the database.
+*/
   function AssignSessionDetails( $u ) {
     $this->user_no = $u->user_no;
     $this->username = $u->username;
@@ -197,8 +285,22 @@ class Session
   }
 
 
+/**
+* Attempt to perform a login action.
+*
+* This will validate the user's username and password.  If they are OK then a new
+* session id will be created and the user will be cookied with it for subsequent
+* pages.  A logged in session will be created, and the $_POST array will be cleared
+* of the username, password and submit values.  submit will also be cleared from
+* $_GET and $GLOBALS, just in case.
+*
+* @param string $username The user's login name, or at least what they entered it as.
+* @param string $password The user's password, or at least what they entered it as.
+* @return boolean Whether or not the user correctly guessed a temporary password within the necessary window of opportunity.
+*/
   function Login( $username, $password ) {
     global $c, $debuggroups;
+    $rc = false;
     if ( $debuggroups['Login'] )
       $this->Log( "DBG: Login: Attempting login for $username" );
 
@@ -239,7 +341,8 @@ class Session
             unset($_POST['submit']);
             unset($_GET['submit']);
             unset($GLOBALS['submit']);
-            return true;
+            $rc = true;
+            return $rc;
           }
    // else ...
           $this->cause = 'ERR: Could not create new session.';
@@ -265,11 +368,20 @@ class Session
     }
 
     $this->Log( "DBG: Login $this->cause" );
-    return false;
+    $rc = false;
+    return $rc;
   }
 
 
 
+/**
+* Attempts to logs in using a long-term session ID
+*
+* This is all horribly insecure, but its hard not to be.
+*
+* @param string $lsid The user's value of the lsid cookie.
+* @return boolean Whether or not the user's lsid cookie got them in the door.
+*/
   function LSIDLogin( $lsid ) {
     global $sysname, $debuggroups, $client_messages;
     if ( $debuggroups['Login'] )
@@ -334,6 +446,15 @@ class Session
   }
 
 
+/**
+* Checks that this user is logged in, and presents a login screen if they aren't.
+*
+* The function can optionally confirm whether they are a member of one of a list
+* of groups, and deny access if they are not a member of any of them.
+*
+* @param string $groups The list of groups that the user must be a member of one of to be allowed to proceed.
+* @return boolean Whether or not the user is logged in and is a member of one of the required groups.
+*/
   function LoginRequired( $groups = "" ) {
     global $c, $session;
 
@@ -397,6 +518,14 @@ EOTEXT;
 
 
 
+/**
+* Sends a temporary password in response to a request from a user.
+*
+* This is probably only going to be called from somewhere internal, but perhaps
+* an application might want to decide when to call it.
+*
+* This function includes EMail.php to actually send the password.
+*/
   function SendTemporaryPassword( ) {
     global $c;
 

@@ -1,25 +1,52 @@
 <?php
 /**
-* PostGreSQL query class and associated functions
+* PostgreSQL query class and associated functions
 *
-* (long description)
+* This subpackage provides some functions that are useful around database
+* activity and a PgQuery class to simplify handling of database queries.
 *
-* @package   pgquery
+* The class is intended to be a very lightweight wrapper with no pretentions
+* towards database independence, but it does include some features that have
+* proved useful in developing and debugging web-based applications:
+*  - All queries are timed, and an expected time can be provided.
+*  - Parameters replaced into the SQL will be escaped correctly in order to
+*    minimise the chances of SQL injection errors.
+*  - Queries which fail, or which exceed their expected execution time, will
+*    be logged for potential further analysis.
+*  - Debug logging of queries may be enabled globally, or restricted to
+*    particular sets of queries.
+*  - Simple syntax for iterating through a result set.
+*
+* @package   awl
+* @subpackage   pgquery
 * @author    Andrew McMillan <andrew@catalyst.net.nz>
 * @copyright Andrew McMillan
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 
-///////////////////////
-//   Connect to DB   //
-///////////////////////
+
+/**
+* @global resource $_GLOBALS['dbconn']
+* @name $dbconn
+* The database should be connected in a variable $dbconn before
+* PgQuery.php is included.  PgQuery does not attempt to connect
+* to the database - the pg_connect() function seems perfectly
+* adequate to the task.
+*
+* We will die if the database is not currently connected.
+*/
 if ( !isset($dbconn) ) {
   die( 'Database is not connected!' );
 }
 
 
 /**
-* Duration of times entered - to see how long a query has taken
+* A duration (in decimal seconds) between two times.
+*
+* This simple function is used by the PgQuery class because the
+* microtime function doesn't return a decimal time, so a simple
+* subtraction is not sufficient.
+*
 * @param microtime $t1 start time
 * @param microtime $t2 end time
 * @return double difference
@@ -34,35 +61,53 @@ function duration( $t1, $t2 )                   // Enter two times from microtim
 }
 
 /**
-* Quote the given string so it can be safely used within string delimiters
-* in a query.
-* Andrew <- "Why are these outside the class?"
-* @param mixed $str Data to be quoted
-* @return mixed "NULL" string, quoted string or original data
+* Quote the given string (depending on its type) so that it can be used
+* safely in a PostgreSQL query without fear of SQL injection errors.
+*
+* Although this function effectively achieves a similar goal to the pg_escape_string()
+* function, it is needed for older versions of PHP (< 4.2.0) and older versions
+* of PostgreSQL (< 7.2.0), however.  PgQuery does not attempt to use the newer
+* pg_escape_string() function at this stage.
+*
+* This function is outside the PgQuery class because it is sometimes
+* desirable to quote values for SQL command strings in circumstances
+* where there is no benefit to using the class.
+*
+* @param mixed $str Data to be converted to a string suitable for including as a value in SQL.
+* @return string NULL, TRUE, FALSE, a plain number, or the original string quoted and with ' and \ characters escaped
 */
 function qpg($str = null)
 {
+
   switch (strtolower(gettype($str))) {
     case 'null':
-      return 'NULL';
+      $rv = 'NULL';
     case 'integer':
     case 'double' :
       return $str;
     case 'boolean':
-      return $str ? 'TRUE' : 'FALSE';
+      $rv = $str ? 'TRUE' : 'FALSE';
     case 'string':
     default:
       $str = str_replace("'", "''", $str);
       //PostgreSQL treats a backslash as an escape character.
       $str = str_replace('\\', '\\\\', $str);
-      return "'$str'";
+      $rv = "'$str'";
   }
+  return $rv;
 }
 
 /**
-* Log error with file and line location
-* @param mixed $str Data to be quoted
-* @return empty string
+* Log error, optionally with file and line location of the caller.
+*
+* This function should not really be used outside of PgQuery.  For a more
+* useful generic logging interface consider calling $session->Log(...);
+*
+* @param string $locn    A string identifying the calling location.
+* @param string $tag     A tag string, e.g. identifying the type of event.
+* @param string $string  The information to be logged.
+* @param int    $line    The line number where the logged event occurred.
+* @param string $file    The file name where the logged event occurred.
 */
 function log_error( $locn, $tag, $string, $line = 0, $file = 0)
 {
@@ -79,14 +124,30 @@ function log_error( $locn, $tag, $string, $line = 0, $file = 0)
     $string = substr( "$string", 240 );
   }
 
-  return '';
 }
 
+
 /**
-* Replaces PostGreSQL query with
-* escaped parameters in preparation for execution.
-* Andrew <- "Why are these outside the class?"
-* @return built query string
+* Replaces PostgreSQL query with escaped parameters in preparation
+* for execution.
+*
+* The function takes a variable number of arguments, the first is the
+* SQL string, with replaceable '?' characters (a la DBI).  The subsequent
+* parameters being the values to replace into the SQL string.
+*
+* The values passed to the routine are analyzed for type, and quoted if
+* they appear to need quoting.  This can go wrong for (e.g.) NULL or
+* other special SQL values which are not straightforwardly identifiable
+* as needing quoting (or not).  In such cases the parameter can be forced
+* to be inserted unquoted by passing it as "array( 'plain' => $param )".
+*
+* This function is outside the PgQuery class because it is sometimes
+* desirable to build SQL command strings in circumstances where there
+* is no benefit to using the class.
+*
+* @param  string The query string with replacable '?' characters.
+* @param mixed The values to replace into the SQL string.
+* @return The built query string
 */
 function awl_replace_sql_args() {
   $argc = func_num_args(); //number of arguments passed to the function
@@ -115,7 +176,7 @@ function awl_replace_sql_args() {
       $querystring .= $arg['plain'];
     }
     else {
-	$querystring .= qpg($arg);  //parameter
+  $querystring .= qpg($arg);  //parameter
     }
     $querystring .= $parts[$i]; //extras eg. ","
   }
@@ -129,23 +190,29 @@ function awl_replace_sql_args() {
 //   C L A S S   F O R   D A T A B A S E   Q U E R I E S   //
 /////////////////////////////////////////////////////////////
 /**
- * The PgQuery Class.
- *
- * This class builds and executes PostGreSQL Queries
- *
- * <b>usage</b>
- * <code>
- * $qry = new PgQuery($sql,$param1,$param2,...);
- * $qry->Exec();
- * while($row = $qry->Fetch()) {
- * // do stuff with $row
- * }
- * </code>
- *
- * @package   pgquery
- * @author    Andrew McMillan <andrew@catalyst.net.nz>
- * @copyright Andrew McMillan
- */
+* The PgQuery Class.
+*
+* This class builds and executes PostgreSQL Queries and traverses the
+* set of results returned from the query.
+*
+* <b>Example usage</b>
+* <code>
+* $sql = "SELECT * FROM mytable WHERE mytype = ?";
+* $qry = new PgQuery( $sql, $myunsanitisedtype );
+* if ( $qry->Exec("typeselect", __line__, __file__ )
+*      && $qry->rows > 0 )
+* {
+*   while( $row = $qry->Fetch() ) {
+*     do_something_with($row);
+*   }
+* }
+* </code>
+*
+* @package   awl
+* @subpackage   pgquery
+* @author    Andrew McMillan <andrew@catalyst.net.nz>
+* @copyright Andrew McMillan
+*/
 class PgQuery
 {
   /**#@+
@@ -153,54 +220,63 @@ class PgQuery
   */
   /**
   * stores a query string
+  * should be read-only
   * @var string
   */
   var $querystring;
 
   /**
   * stores a resource result
+  * should be internal
   * @var resource
   */
   var $result;
 
   /**
   * number of rows from pg_numrows - for fetching result
+  * should be read-only
   * @var int
   */
   var $rows;
 
   /**
   * number of current row
+  * should be internal, or at least read-only
   * @var int
   */
   var $rownum = -1;
 
   /**
   * stores the query execution time - used to deal with long queries
+  * should be read-only
   * @var string
   */
   var $execution_time;
 
   /**
   * how long the query should take before a warning is issued
+  * should be read-only and there should be a function to set it.
   * @var double
   */
   var $query_time_warning = 0.3;
 
   /**
   * Where we called this query from so we can find it in our code!
+  * Debugging may also be selectively enabled for a $location.
   * @var string
   */
   var $location;
 
   /**
-  * the object of rows
-  * @var object
+  * The row most recently fetched by a call to Fetch() or FetchBackwards
+  * which will either be an array or an object (depending on the Fetch call).
+  * @var mixed
   */
   var $object;
 
   /**
-  * The error message, if it fails
+  * The PostgreSQL error message, if the query fails
+  * should be read-only, although any successful Exec should clear it
   * @var string
   */
   var $errorstring;
@@ -208,7 +284,10 @@ class PgQuery
 
 
  /**
-  * constructor
+  * Constructor
+  * @param  string The query string with replacable '?' characters.
+  * @param mixed The values to replace into the SQL string.
+  * @return The PgQuery object
   */
   function PgQuery()
   {
@@ -218,7 +297,6 @@ class PgQuery
     $this->rownum = -1;
 
     $argc = func_num_args();
-//    $qry = func_get_arg(0);
 
     if ( 1 < $argc ) {
       $this->querystring = awl_replace_sql_args( func_get_args() );
@@ -235,8 +313,11 @@ class PgQuery
   /**
   * Quote the given string so it can be safely used within string delimiters
   * in a query.
-  * @param mixed $str Data to be quoted
-  * @return mixed "NULL" string, quoted string or original data
+  *
+  * @see qpg() which is where this is really done.
+  *
+  * @param mixed $str Data to be converted to a string suitable for including as a value in SQL.
+  * @return string NULL, TRUE, FALSE, a plain number, or the original string quoted and with ' and \ characters escaped
   */
   function quote($str = null)
   {
@@ -244,20 +325,35 @@ class PgQuery
   }
 
   /**
-  * Ask Andrew for further information
+  * Convert a string which has already been quoted and escaped for PostgreSQL
+  * into a magic array so that it will be inserted unmodified into the SQL
+  * string.  Use with care!
+  *
+  * @param string $field The value which has alread been quoted and escaped.
+  * @return array An array with the value associated with a key of 'plain'
   */
   function Plain( $field )
   {
     // Abuse the array type to extend our ability to avoid \\ and ' replacement
-    return array( 'plain' => $field );
+    $rv = array( 'plain' => $field );
+    return $rv;
   }
 
   /**
-  * Execute the query, log any debugging
-  * @param string $location
-  * @param int $line line number where exec was called
-  * @param string $file file where exec was called
-  * @return object result of query
+  * Execute the query, logging any debugging.
+  *
+  * <b>Example</b>
+  * So that you can nicely enable/disable the queries for a particular class, you
+  * could use some of PHPs magic constants in your call.
+  * <code>
+  * $qry->Exec(__CLASS__, __LINE__, __FILE__);
+  * </code>
+  *
+  * @param string $location The name of the location for enabling debugging or just
+  *                         to help our children find the source of a problem.
+  * @param int $line The line number where Exec was called
+  * @param string $file The file where Exec was called
+  * @return resource The actual result of the query (FWIW)
   */
   function Exec( $location = '', $line = 0, $file = '' )
    {
@@ -296,7 +392,7 @@ class PgQuery
   }
 
   /**
-  * Fetch an object from the result resource
+  * Fetch the next row from the query results
   * @param boolean $as_array True if thing to be returned is array
   * @return mixed query row
   */
@@ -329,7 +425,20 @@ class PgQuery
   /**
   * Set row counter back one
   *
-  * In the case that you may like to fetch the same row twice
+  * In the case that you may like to fetch the same row twice, for example
+  * if your SQL returns some columns that are the same for each row, and you
+  * want to display them cleanly before displaying the other data repeatedly
+  * for each row.
+  *
+  * <b>Example</b>
+  * <code>
+  * $master_row = $qry->Fetch();
+  * $qry->UnFetch();
+  * do_something_first($master_row);
+  * while( $row = $qry->Fetch() ) {
+  *   do_something_repeatedly($row);
+  * }
+  * </code>
   */
   function UnFetch()
   {
@@ -340,7 +449,7 @@ class PgQuery
 
   /**
   * Fetch backwards from the result resource
-  * @param boolean $as_array True if thing to be returned is array
+  * @param boolean $as_array True if thing to be returned is array (default: <b>False</b>
   * @return mixed query row
   */
   function FetchBackwards($as_array = false)

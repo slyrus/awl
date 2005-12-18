@@ -53,7 +53,7 @@ class EntryField
   * Initialise an EntryField, used for data entry
   *
   * @param text $intype The type of field:
-  *    select | lookup | date | checkbox | textarea
+  *    select | lookup | date | checkbox | textarea | file | button | password
   *    (anything else is dealt with as "text")
   *
   * @param text $inname The name of the field.
@@ -125,17 +125,6 @@ class EntryField
           if ( "$this->current" == "$k" ) $r .= " selected";
           $r .= ">$v</option>" ;
         }
-/*
-        if ( isset($this->attributes["_all"]) ) {
-          $r .= sprintf("<option value=\"all\"".("all"==$this->current?" selected":"").">%s</option>", $this->attributes["_all"] );
-        }
-        if ( isset($this->attributes["_null"]) ) {
-          $r .= sprintf("<option value=\"\"".(""==$this->current?" selected":"").">%s</option>", $this->attributes["_null"] );
-        }
-        if ( isset($this->attributes["_zero"]) ) {
-          $r .= sprintf("<option value=\"0\"".(0==$this->current?" selected":"").">%s</option>", $this->attributes["_zero"] );
-        }
-*/
         if ( isset($this->attributes["_sql"]) ) {
           $qry = new PgQuery( $this->attributes["_sql"] );
         }
@@ -213,6 +202,9 @@ class EntryField
     return $r;
   }
 
+  /**
+  * Unfinished and ill-conceived method which I sincerely hope is not used somewhere!
+  */
   function new_lookup( $inextra ) {
     $this->attributes = $inextra;
   }

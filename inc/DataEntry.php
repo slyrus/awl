@@ -15,13 +15,41 @@
 */
 class EntryField
 {
-  var $fname;               // The original field name
-  var $ftype;               // The type of entry field
-  var $current;             // The current value
-  var $attributes;          // An array of key value pairs
-  var $rendered;            // Once it actually is...
+  /**#@+
+  * @access private
+  */
+  /**
+  * The name of the field
+  * @var string
+  */
+  var $fname;
 
-/**
+  /**
+  * The type of entry field
+  * @var string
+  */
+  var $ftype;
+
+  /**
+  * The current value
+  * @var string
+  */
+  var $current;
+
+  /**
+  * An array of key value pairs
+  * @var string
+  */
+  var $attributes;
+
+  /**
+  * Once it actually is...
+  * @var string
+  */
+  var $rendered;
+  /**#@-*/
+
+  /**
   * Initialise an EntryField, used for data entry
   *
   * @param text $intype The type of field:
@@ -37,8 +65,6 @@ class EntryField
   *                     field.   Optional.
   *
   * @return object
-  *
-  * @author Andrew McMillan <andrew@catalyst.net.nz>
   */
   function EntryField( $intype, $inname, $inextra="", $current_value="" )
   {
@@ -61,12 +87,10 @@ class EntryField
     return $this;
   }
 
-/**
+  /**
   * Render an EntryField into HTML
   *
   * @return text  An HTML fragment for the data-entry field.
-  *
-  * @author Andrew McMillan <andrew@catalyst.net.nz>
   */
   function Render() {
     global $session;
@@ -200,15 +224,64 @@ class EntryField
 */
 class EntryForm
 {
-  var $action;          // The submit action for the form
-  var $record;          // The record that the form is dealing with
-  var $editmode;        // Whethere we are editing, or not
-  var $name;            // The name of the form
-  var $class;           // The CSS class of the form
-  var $break_line_format;
-  var $table_line_format;
-  var $saved_line_format;
+  /**#@+
+  * @access private
+  */
+  /**
+  * The submit action for the form
+  * @var string
+  */
+  var $action;
 
+  /**
+  * The record that the form is dealing with
+  * @var string
+  */
+  var $record;
+
+  /**
+  * Whether we are editing, or not
+  * @var string
+  */
+  var $editmode;
+
+  /**
+  * The name of the form
+  * @var string
+  */
+  var $name;
+
+  /**
+  * The CSS class of the form
+  * @var string
+  */
+  var $class;
+
+  /**
+  * Format string for lines that are breaks in the data entry field groupings
+  * @var string
+  */
+  var $break_line_format;
+
+  /**
+  * Format string for normal data entry field lines.
+  * @var string
+  */
+  var $table_line_format;
+
+  /**
+  * Format string that has been temporarily saved so we can restore it later
+  * @var string
+  */
+  var $saved_line_format;
+  /**#@-*/
+
+  /**
+  * Initialise a new data-entry form.
+  * @param string $action The action when the form is submitted.
+  * @param objectref $record A reference to the database object we are displaying / editing.
+  * @param boolean $editmode Whether we are editing.
+  */
   function EntryForm( $action, &$record, $editmode=false )
   {
     $this->action   = $action;
@@ -216,41 +289,63 @@ class EntryForm
     $this->editmode = $editmode;
     $this->break_line_format = '<tr><th class="ph" colspan="2">%s</th></tr>'."\n";
     $this->table_line_format = '<tr><th class="prompt">%s</th><td class="entry">%s<span class="help">%s</span></td></tr>'."\n";
-
-    return $this;
   }
 
+  /**
+  * Set the line format to have no help display
+  */
   function NoHelp( ) {
     $this->break_line_format = '<tr><th class="ph" colspan="2">%s</th></tr>'."\n";
     $this->table_line_format = '<tr><th class="prompt">%s</th><td class="entry">%s</td></tr>'."\n";
   }
 
+  /**
+  * Set the line format to have help displayed in the same cell as the entry field.
+  */
   function HelpInLine( ) {
     $this->break_line_format = '<tr><th class="ph" colspan="2">%s</th></tr>'."\n";
     $this->table_line_format = '<tr><th class="prompt">%s</th><td class="entry">%s<span class="help">%s</span></td></tr>'."\n";
   }
 
+  /**
+  * Set the line format to have help displayed in it's own separate cell
+  */
   function HelpInCell( ) {
     $this->break_line_format = '<tr><th class="ph" colspan="3">%s</th></tr>'."\n";
     $this->table_line_format = '<tr><th class="prompt">%s</th><td class="entry">%s</td><td class="help">%s</td></tr>'."\n";
   }
 
+  /**
+  * Set the line format to an extremely simple CSS based prompt / field layout.
+  */
   function SimpleForm( $new_format = '<span class="prompt">%s:</span>&nbsp;<span class="entry">%s</span>' ) {
     $this->break_line_format = '%s'."\n";
     $this->table_line_format = $new_format."\n";
   }
 
+  /**
+  * Set the line format to a temporary one that we can revert from.
+  * @param string $new_format The (optional) new format we will temporarily use.
+  */
   function TempLineFormat( $new_format = '<span class="prompt">%s:</span>&nbsp;<span class="entry">%s</span>' ) {
     $this->saved_line_format = $this->table_line_format;
     $this->table_line_format = $new_format ."\n";
   }
 
-  function RevertLineFormat( $new_format = '<span class="prompt">%s</span>&nbsp;<span class="entry">%s</span>' ) {
+  /**
+  * Revert the line format to what was in place before the last TempLineFormat call.
+  */
+  function RevertLineFormat( ) {
     if ( isset($this->saved_line_format) ) {
       $this->table_line_format = $this->saved_line_format;
     }
   }
 
+  /**
+  * Start the actual HTML form.  Return the fragment to do this.
+  * @param array $extra_attributes Extra key/value pairs for the FORM tag.
+  * @return string The HTML fragment for the start of the form.
+  */
   function StartForm( $extra_attributes='' ) {
     if ( !is_array($extra_attributes) && $extra_attributes != '' ) {
       list( $k, $v ) = explode( '=', $extra_attributes );
@@ -272,28 +367,35 @@ class EntryForm
     return "<form$attribute_values>\n";
   }
 
+  /**
+  * Return the HTML fragment to end the form.
+  * @return string The HTML fragment to end the form.
+  */
   function EndForm( ) {
     return "</form>\n";
   }
 
-  //////////////////////////////////////////////////////
-  // A utility function for a heading line within a data entry table
-  //////////////////////////////////////////////////////
+  /**
+  * A utility function for a heading line within a data entry table
+  * @return string The HTML fragment to end the form.
+  */
   function BreakLine( $text = '' )
   {
     return sprintf( $this->break_line_format, $text);
   }
 
-  //////////////////////////////////////////////////////
-  // A utility function for a hidden field within a data entry table
-  //////////////////////////////////////////////////////
+  /**
+  * A utility function for a hidden field within a data entry table
+  * @return string The HTML fragment for the hidden field.
+  */
   function HiddenField($fname,$fvalue) {
     return sprintf( '<input type="hidden" name="%s" value="%s" />%s', $fname, htmlentities($fvalue), "\n" );
   }
 
-  /////////////////////////////////////////////////////
-  // Internal function for parsing the type extra on a field.
-  /////////////////////////////////////////////////////
+  /**
+  * Internal function for parsing the type extra on a field.
+  * @return string The parsed type extra.
+  */
   function _ParseTypeExtra( $ftype = '', $type_extra = '' )  {
     if ( !is_array($type_extra) ) {
       list( $k, $v ) = explode( '=', $type_extra );
@@ -315,9 +417,10 @@ class EntryForm
     return $type_extra;
   }
 
-  //////////////////////////////////////////////////////
-  // A utility function for a data entry line within a table
-  //////////////////////////////////////////////////////
+  /**
+  * A utility function for a data entry line within a table
+  * @return string The HTML fragment to display the data entry field
+  */
   function DataEntryField( $format, $ftype='', $real_fname='', $type_extra='' )
   {
     global $session;
@@ -379,18 +482,20 @@ class EntryForm
   }
 
 
-  //////////////////////////////////////////////////////
-  // A utility function for a submit button within a data entry table
-  //////////////////////////////////////////////////////
+  /**
+  * A utility function for a submit button within a data entry table
+  * @return string The HTML fragment to display a submit button for the form.
+  */
   function SubmitButton( $fname, $fvalue, $type_extra = '' )
   {
     $field = new EntryField( 'submit', $fname, $this->_ParseTypeExtra('submit', $type_extra), $fvalue );
     return $field->Render();
   }
 
-  //////////////////////////////////////////////////////
-  // A utility function for a data entry line within a table
-  //////////////////////////////////////////////////////
+  /**
+  * A utility function for a data entry line within a table
+  * @return string The HTML fragment to display the prompt and field.
+  */
   function DataEntryLine( $prompt, $currval, $ftype='', $fname='', $type_extra='' )
   {
     $type_extra = $this->_ParseTypeExtra( $ftype, $type_extra );
@@ -400,10 +505,10 @@ class EntryForm
   }
 
 
-  //////////////////////////////////////////////////////
-  // A utility function for a data entry line, where the
-  // prompt is a drop-down.
-  //////////////////////////////////////////////////////
+  /**
+  * A utility function for a data entry line, where the prompt is a drop-down.
+  * @return string The HTML fragment for the drop-down prompt and associated entry field.
+  */
   function MultiEntryLine( $prompt_options, $prompt_name, $default_prompt, $format, $ftype='', $fname='', $type_extra='' )
   {
     global $session;

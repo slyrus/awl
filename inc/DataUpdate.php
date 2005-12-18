@@ -1,4 +1,22 @@
 <?php
+/**
+* Some functions and a base class to help with updating records.
+*
+* This subpackage provides some functions that are useful around single
+* record database activities such as insert and update.
+*
+* @package   awl
+* @subpackage   DataUpdate
+* @author    Andrew McMillan <andrew@catalyst.net.nz>
+* @copyright Andrew McMillan
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+*/
+
+/**
+* Get the names of the fields for a particular table
+* @param string $tablename The name of the table.
+* @return array of string The public fields in the table.
+*/
 function get_fields( $tablename ) {
   global $sysname;
   $sql = "SELECT f.attname, t.typname FROM pg_attribute f ";
@@ -16,6 +34,15 @@ function get_fields( $tablename ) {
 }
 
 
+/**
+* Build SQL INSERT/UPDATE statement from an associative array of fieldnames => values.
+* @param array $assoc The associative array of fieldnames => values.
+* @param string $type The word "update" or something else (which implies "insert").
+* @param string $tablename The name of the table being updated.
+* @param string $where What the "WHERE ..." clause needs to be for an UPDATE statement.
+* @param string $fprefix An optional string which all fieldnames in $assoc are prefixed with.
+* @return string An SQL Update or Insert statement with all fields/values from the array.
+*/
 function sql_from_associative( $assoc, $type, $tablename, $where, $fprefix = "" ) {
   global $sysname;
   $fields = get_fields($tablename);
@@ -76,6 +103,14 @@ function sql_from_associative( $assoc, $type, $tablename, $where, $fprefix = "" 
 }
 
 
+/**
+* Build SQL INSERT/UPDATE statement from the $_POST associative array
+* @param string $type The word "update" or something else (which implies "insert").
+* @param string $tablename The name of the table being updated.
+* @param string $where What the "WHERE ..." clause needs to be for an UPDATE statement.
+* @param string $fprefix An optional string which all fieldnames in $assoc are prefixed with.
+* @return string An SQL Update or Insert statement with all fields/values from the array.
+*/
 function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
   global $sysname;
   $fields = get_fields($tablename);
@@ -136,31 +171,143 @@ function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////
-//   C L A S S   F O R   R E C O R D S   T O   B E   W R I T T E N   T O   D A T A B A S E  //
-//////////////////////////////////////////////////////////////////////////////////////////////
+/**
+* Since we are going to actually read/write from the database.
+*/
+require_once("PgQuery.php");
+
+/**
+* A Base class to use for records which will be read/written from the database.
+* @package   awl
+*/
 class DBRecord
 {
+  /**#@+
+  * @access private
+  */
+  /**
+  * The database table that this record goes in
+  * @var string
+  */
+  var $Table;
+
+  /**
+  * The field names for the record
+  * @var array
+  */
   var $Fields;
 
-  // Not sure what we need when we "new DBRecord" but bound to be something...
-  function DBRecord() {
+  /**
+  * The keys for the record as an array of key => value pairs
+  * @var array
+  */
+  var $Keys;
+
+  /**
+  * The field values for the record
+  * @var object
+  */
+  var $Values;
+
+  /**
+  * The type of database write we will want: either "update" or "insert"
+  * @var object
+  */
+  var $WriteType;
+
+  /**#@-*/
+
+  /**
+  * This will read the record from the database if it's available, and
+  * the $keys parameter is a non-empty array.
+  * @param string $table The name of the database table
+  * @param array $keys An associative array containing fieldname => value pairs for the record key.
+  */
+  function Initialise( $table, $keys = array() ) {
+    $this->Table = $table;
+    $this->Fields = get_fields($this->Table);
+    $this->Keys = $keys;
+    $this->Read();
   }
 
-  // Sets a single field in the record
-  function Set($fname) {
+  /**
+  * This will assign $_POST values to the internal Values object for each
+  * field that exists in the Fields array.
+  */
+  function PostToValues( $prefix = "" ) {
+    foreach ( $this->Fields AS $fname ) {
+      if ( isset($_POST["$prefix$fname"]) ) {
+        $this->Values->{$fname} = $_POST["$prefix$fname"];
+      }
+    }
   }
 
-  // Returns a single field from the record
+  /**
+  * Sets a single field in the record
+  * @param boolean $overwrite_values Controls whether the data values for the key fields will be forced to match the key values
+  * @return string A simple SQL where clause, including the initial "WHERE", for each key / value.
+  */
+  function _BuildWhereClause($overwrite_values=false) {
+    $where = "";
+    foreach( $this->Keys AS $k => $v ) {
+      // At least assign the key fields...
+      if ( $overwrite_values ) $this->Values->{$k} = $v;
+      // And build the WHERE clause
+      $where .= ( $where == "" ? "WHERE " : " AND " );
+      $where .= "$k = " . qpg($v);
+    }
+    return $where;
+  }
+
+  /**
+  * Sets a single field in the record
+  * @param string $fname The name of the field to set the value for
+  * @param string $fval The value to set the field to
+  * @return mixed The new value of the field (i.e. $fval).
+  */
+  function Set($fname, $fval) {
+    $this->Values->{$fname} = $fval;
+    return $fval;
+  }
+
+  /**
+  * Returns a single field from the record
+  * @param string $fname The name of the field to set the value for
+  * @return mixed The current value of the field.
+  */
   function Get($fname) {
+    return $this->Values->{$fname};
   }
 
-  // To write the record to the database
+  /**
+  * To write the record to the database
+  * @return boolean Success.
+  */
   function Write() {
+    $sql = sql_from_associative( $this->Values, $this->WriteType, $this->Table, $this->_BuildWhereClause(), "" );
+    $qry = new PgQuery($sql);
+    return $qry->Exec( __CLASS__, __LINE__, __FILE__ );
   }
 
-  // To read the record from the database
+  /**
+  * To read the record from the database.
+  * If we don't have any keys then the record will be blank.
+  * @return boolean Whether we actually read a record.
+  */
   function Read() {
+    $i_read_the_record = false;
+    $this->Values = array();
+    $this->Values = settype( $this->Values, "object" );
+    if ( count($this->Keys) ) {
+      $sql = "SELECT * FROM $this->Table " . $this->_BuildWhereClause(true);
+      $qry = new PgQuery($sql);
+      if ( $qry->Exec( __CLASS__, __LINE__, __FILE__ ) && $qry->rows > 0 ) {
+        $i_read_the_record = true;
+        $this->Values = $qry->Fetch();
+      }
+    }
+    $this->WriteType = ( $i_read_the_record ? "update" : "insert" );
+    return $i_read_the_record;
   }
 }
 

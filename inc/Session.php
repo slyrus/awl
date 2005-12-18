@@ -23,6 +23,9 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 
+/**
+* All session data is held in the database.
+*/
 require_once('PgQuery.php');
 
 if ( isset($_GET['logout']) ) {
@@ -33,6 +36,12 @@ if ( isset($_GET['logout']) ) {
 
   if ( isset($_GET['forget']) ) setcookie( 'lsid', '', 0,'/');
 }
+
+/**
+* @global resource $session
+* @name $session
+* The session object is global.
+*/
 
 $session = new Session();
 
@@ -141,11 +150,9 @@ function check_temporary_passwords( $they_sent, $user_no ) {
 }
 
 /**
+* A class for creating and holding session information.
+*
 * @package   awl
-* @subpackage   Session
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Andrew McMillan
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 class Session
 {

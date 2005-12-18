@@ -1,19 +1,82 @@
 <?php
-/////////////////////////////////////////////////////////////
-//   C L A S S   F O R   S E N D I N G   E - M A I L       //
-/////////////////////////////////////////////////////////////
+/**
+* Lightweight class for sending an e-mail.
+* @package awl
+* @subpackage   EMail
+* @author    Andrew McMillan <andrew@catalyst.net.nz>
+* @copyright Andrew McMillan
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+*/
+/**
+* Lightweight class for sending an e-mail.
+* @package awl
+*/
 class EMail
 {
-  var $To;         // To:
-  var $From;       // etc...
-  var $Cc;
-  var $Bcc;
-  var $ErrorsTo;
-  var $ReplyTo;
-  var $Sender;
-  var $Subject;
-  var $Body;
+  /**#@+
+  * @access private
+  */
 
+  /**
+  * A comma-separated list of addresses to send To
+  * @var string
+  */
+  var $To;         // To:
+
+  /**
+  * The visible sender of the e-mail.
+  * @var string
+  */
+  var $From;       // etc...
+
+  /**
+  * A comma-separated list of addresses to carbon-copy to
+  * @var string
+  */
+  var $Cc;
+
+  /**
+  * A comma-separated list of addresses to blind carbon-copy to
+  * @var string
+  */
+  var $Bcc;
+
+  /**
+  * A comma-separated list of addresses to set as the Errors-to: header
+  * @var string
+  */
+  var $ErrorsTo;
+
+  /**
+  * A comma-separated list of addresses to set as the Reply-to: header
+  * @var string
+  */
+  var $ReplyTo;
+
+  /**
+  * The address to set as the sender of the e-mail.
+  * @var string
+  */
+  var $Sender;
+
+  /**
+  * The subject line of the email.
+  * @var string
+  */
+  var $Subject;
+
+  /**
+  * The body of the email.
+  * @var string
+  */
+  var $Body;
+  /**#@-*/
+
+  /**
+  * Create the e-mail, optionally assigning the subject and primary recipient.
+  * @param string $subject The subject line of the email.
+  * @param string $to A comma-separated list of addresses for the primary recipient(s).
+  */
   function EMail( $subject = "", $to = "" ) {
     // Initialise with some defaults
     $this->From    = "";
@@ -25,52 +88,115 @@ class EMail
     $this->ReplyTo = "";
     $this->Sender  = "";
     $this->Body    = "";
-    return true;
   }
 
-  function AppendDelimited( &$onto, $extra ) {
+  /**
+  * Append something with a comma delimter onto the existing referenced string
+  * @param stringref &$onto The string we will be appending to.
+  * @param string $extra What we will be appending
+  * @return string The new string.
+  */
+  function _AppendDelimited( &$onto, $extra ) {
     if ( !isset($extra) || $extra == "" ) return false;
     if ( $onto != "" ) $onto .= ", ";
     $onto .= $extra;
     return $onto;
   }
 
+  /**
+  * Add another recipient to the email
+  * @param string $recipient The email address to append.
+  * @return string The new recipient list.
+  */
   function AddTo( $recipient ) {
-    return $this->AppendDelimited($this->To, $recipient);
-  }
-  function AddCc( $recipient ) {
-    return $this->AppendDelimited($this->Cc, $recipient);
-  }
-  function AddBcc( $recipient ) {
-    return $this->AppendDelimited($this->Bcc, $recipient);
-  }
-  function AddReplyTo( $recipient ) {
-    return $this->AppendDelimited($this->ReplyTo, $recipient);
-  }
-  function AddErrorsTo( $recipient ) {
-    return $this->AppendDelimited($this->ErrorsTo, $recipient);
+    return $this->_AppendDelimited($this->To, $recipient);
   }
 
+  /**
+  * Add another Cc recipient to the email
+  * @param string $recipient The email address to append.
+  * @return string The new Cc recipient list.
+  */
+  function AddCc( $recipient ) {
+    return $this->_AppendDelimited($this->Cc, $recipient);
+  }
+
+  /**
+  * Add another Bcc recipient to the email
+  * @param string $recipient The email address to append.
+  * @return string The new Bcc recipient list.
+  */
+  function AddBcc( $recipient ) {
+    return $this->_AppendDelimited($this->Bcc, $recipient);
+  }
+
+  /**
+  * Add another Reply-to address to the email
+  * @param string $recipient The email address to append.
+  * @return string The new Reply-to list.
+  */
+  function AddReplyTo( $recipient ) {
+    return $this->_AppendDelimited($this->ReplyTo, $recipient);
+  }
+
+  /**
+  * Add another Error recipient to the email
+  * @param string $recipient The email address to append.
+  * @return string The new Error recipient list.
+  */
+  function AddErrorsTo( $recipient ) {
+    return $this->_AppendDelimited($this->ErrorsTo, $recipient);
+  }
+
+
+  /**
+  * Set the visible From address for the e-mail.
+  * @param string $recipient The visible From address
+  * @return string The new From address
+  */
   function SetFrom( $sender ) {
     $this->From = $sender;
     return $sender;
   }
 
+
+  /**
+  * Set the envelope sender address for the e-mail.
+  * @param string $recipient The e-mail address for the sender
+  * @return string The new envelope sender address.
+  */
   function SetSender( $sender ) {
     $this->Sender = $sender;
     return $sender;
   }
 
+
+  /**
+  * Set the subject line for the email
+  * @param string $recipient The new subject line.
+  * @return string The new subject line.
+  */
   function SetSubject( $subject ) {
     $this->Subject = $subject;
     return $subject;
   }
 
+
+  /**
+  * Set the body of the e-mail.
+  * @param string $recipient The email address to append.
+  * @return string The new body of the e-mail.
+  */
   function SetBody( $body ) {
     $this->Body = $body;
     return $body;
   }
 
+
+  /**
+  * Actually send the email
+  * @param string $recipient The email address to append.
+  */
   function Send() {
     $additional_headers = "";
     if ( "$this->From" != "" )     $additional_headers .= "From: $this->From\r\n";

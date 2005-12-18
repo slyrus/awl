@@ -17,6 +17,13 @@
 *    particular sets of queries.
 *  - Simple syntax for iterating through a result set.
 *
+* The database should be connected in a variable $dbconn before
+* PgQuery.php is included.  PgQuery does not attempt to connect
+* to the database - the pg_connect() function seems perfectly
+* adequate to the task.
+*
+* We will die if the database is not currently connected.
+*
 * @package   awl
 * @subpackage   PgQuery
 * @author    Andrew McMillan <andrew@catalyst.net.nz>
@@ -24,16 +31,10 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 
-
 /**
-* @global resource $_GLOBALS['dbconn']
+* @global resource $dbconn
 * @name $dbconn
-* The database should be connected in a variable $dbconn before
-* PgQuery.php is included.  PgQuery does not attempt to connect
-* to the database - the pg_connect() function seems perfectly
-* adequate to the task.
-*
-* We will die if the database is not currently connected.
+* The database connection.
 */
 if ( !isset($dbconn) ) {
   die( 'Database is not connected!' );
@@ -186,9 +187,6 @@ function awl_replace_sql_args() {
 }
 
 
-/////////////////////////////////////////////////////////////
-//   C L A S S   F O R   D A T A B A S E   Q U E R I E S   //
-/////////////////////////////////////////////////////////////
 /**
 * The PgQuery Class.
 *
@@ -209,9 +207,6 @@ function awl_replace_sql_args() {
 * </code>
 *
 * @package   awl
-* @subpackage   PgQuery
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Andrew McMillan
 */
 class PgQuery
 {
@@ -233,32 +228,11 @@ class PgQuery
   var $result;
 
   /**
-  * number of rows from pg_numrows - for fetching result
-  * should be read-only
-  * @var int
-  */
-  var $rows;
-
-  /**
   * number of current row
   * should be internal, or at least read-only
   * @var int
   */
   var $rownum = -1;
-
-  /**
-  * stores the query execution time - used to deal with long queries
-  * should be read-only
-  * @var string
-  */
-  var $execution_time;
-
-  /**
-  * how long the query should take before a warning is issued
-  * should be read-only and there should be a function to set it.
-  * @var double
-  */
-  var $query_time_warning = 0.3;
 
   /**
   * Where we called this query from so we can find it in our code!
@@ -274,12 +248,40 @@ class PgQuery
   */
   var $object;
 
+  /**#@-*/
+
+  /**#@+
+  * @access public
+  */
   /**
-  * The PostgreSQL error message, if the query fails
-  * should be read-only, although any successful Exec should clear it
+  * number of rows from pg_numrows - for fetching result
+  * should be read-only
+  * @var int
+  */
+  var $rows;
+
+  /**
+  * The PostgreSQL error message, if the query fails.
+  * Should be read-only, although any successful Exec should clear it
   * @var string
   */
   var $errorstring;
+
+  /**
+  * Stores the query execution time - used to deal with long queries.
+  * should be read-only
+  * @var string
+  */
+  var $execution_time;
+
+  /**
+  * How long the query should take before a warning is issued.
+  *
+  * This is writable, but a method to set it might be a better interface.
+  * The default is 0.3 seconds.
+  * @var double
+  */
+  var $query_time_warning = 0.3;
   /**#@-*/
 
 
@@ -314,7 +316,8 @@ class PgQuery
   * Quote the given string so it can be safely used within string delimiters
   * in a query.
   *
-  * @see qpg() which is where this is really done.
+  * @see qpg()
+  * which is where this is really done.
   *
   * @param mixed $str Data to be converted to a string suitable for including as a value in SQL.
   * @return string NULL, TRUE, FALSE, a plain number, or the original string quoted and with ' and \ characters escaped
@@ -348,6 +351,7 @@ class PgQuery
   * <code>
   * $qry->Exec(__CLASS__, __LINE__, __FILE__);
   * </code>
+  *
   *
   * @param string $location The name of the location for enabling debugging or just
   *                         to help our children find the source of a problem.

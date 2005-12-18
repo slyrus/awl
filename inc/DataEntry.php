@@ -1,8 +1,18 @@
 <?php
+/**
+* Classes to handle entry and viewing of field-based data.
+*
+* @package   awl
+* @subpackage   DataEntry
+* @author    Andrew McMillan <andrew@catalyst.net.nz>
+* @copyright Andrew McMillan
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+*/
 
-/////////////////////////////////////////////////////////////
-//   C L A S S   F O R   D A T A   E N T R Y   T H I N G S //
-/////////////////////////////////////////////////////////////
+/**
+* Individual fields used for data entry / viewing.
+* @package awl
+*/
 class EntryField
 {
   var $fname;               // The original field name
@@ -184,6 +194,10 @@ class EntryField
   }
 }
 
+/**
+* Entry fields collected into a form for data entry / viewing.
+* @package awl
+*/
 class EntryForm
 {
   var $action;          // The submit action for the form

@@ -22,10 +22,11 @@
       <viewitem url="inc/MenuSet.php" />
       <viewitem url="inc/Session.php" />
     </projectview>
-    <item url="admin/user.php" />
-    <item url="admin/" />
-    <item url="inc/User.php" />
+    <item url="admin/user.php" uploadstatus="1" />
+    <item url="admin/" uploadstatus="1" />
+    <item url="inc/User.php" uploadstatus="1" />
     <treestatus>
+      <openfolder url="admin" />
       <openfolder url="dba" />
       <openfolder url="inc" />
     </treestatus>

@@ -18,7 +18,7 @@
 * @return array of string The public fields in the table.
 */
 function get_fields( $tablename ) {
-  global $sysname;
+  global $session;
   $sql = "SELECT f.attname, t.typname FROM pg_attribute f ";
   $sql .= "JOIN pg_class c ON ( f.attrelid = c.oid ) ";
   $sql .= "JOIN pg_type t ON ( f.atttypid = t.oid ) ";
@@ -28,7 +28,7 @@ function get_fields( $tablename ) {
   $fields = array();
   while( $row = $qry->Fetch() ) {
     $fields["$row->attname"] = $row->typname;
-    error_log( "$sysname DBG: " . $fields["$row->attname"] . " => " . $row->typname, 0);
+    $session->Log( "DBG: DataUpdate::get_fields: %s => %s", $row->attname, $row->typname );
   }
   return $fields;
 }
@@ -44,7 +44,7 @@ function get_fields( $tablename ) {
 * @return string An SQL Update or Insert statement with all fields/values from the array.
 */
 function sql_from_associative( $assoc, $type, $tablename, $where, $fprefix = "" ) {
-  global $sysname;
+  global $session;
   $fields = get_fields($tablename);
   $update = strtolower($type) == "update";
   if ( $update )
@@ -56,7 +56,7 @@ function sql_from_associative( $assoc, $type, $tablename, $where, $fprefix = "" 
   $vlst = "";
   foreach( $fields as $fn => $typ ) {
     $fn = $fprefix . $fn;
-    error_log( "$sysname: SFA: DBG: $fn => $typ (".$assoc[$fn].")", 0);
+    $session->Log( "SFA: DBG: $fn => $typ (".$assoc[$fn].")");
     if ( !isset($assoc[$fn]) && isset($assoc["xxxx$fn"]) ) {
       // Sometimes we will have prepended 'xxxx' to the field name so that the field
       // name differs from the column name in the database.
@@ -112,7 +112,7 @@ function sql_from_associative( $assoc, $type, $tablename, $where, $fprefix = "" 
 * @return string An SQL Update or Insert statement with all fields/values from the array.
 */
 function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
-  global $sysname;
+  global $session;
   $fields = get_fields($tablename);
   $update = strtolower($type) == "update";
   if ( $update )
@@ -124,7 +124,7 @@ function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
   $vlst = "";
   foreach( $fields as $fn => $typ ) {
     $fn = $fprefix . $fn;
-    error_log( "$sysname: _POST: DBG: $fn => $typ (".$_POST[$fn].")", 0);
+    $session->Log( "_POST: DBG: $fn => $typ (".$_POST[$fn].")");
     if ( !isset($_POST[$fn]) && isset($_POST["xxxx$fn"]) ) {
       // Sometimes we will have prepended 'xxxx' to the field name so that the field
       // name differs from the column name in the database.
@@ -218,17 +218,29 @@ class DBRecord
   /**#@-*/
 
   /**
+  * Really numbingly simple construction.
+  */
+  function DBRecord( ) {
+    global $session;
+    $session->Log("DBG: DBRecord::Constructor: called" );
+    $this->WriteType = "insert";
+  }
+
+  /**
   * This will read the record from the database if it's available, and
   * the $keys parameter is a non-empty array.
   * @param string $table The name of the database table
   * @param array $keys An associative array containing fieldname => value pairs for the record key.
   */
   function Initialise( $table, $keys = array() ) {
+    global $session;
+    $session->Log("DBG: DBRecord::Initialise: called" );
     $this->Table = $table;
     $this->Fields = get_fields($this->Table);
     $this->Keys = $keys;
+    $this->WriteType = "insert";
     $this->Read();
-  }
+}
 
   /**
   * This will assign $_POST values to the internal Values object for each

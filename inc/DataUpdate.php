@@ -36,14 +36,14 @@ function get_fields( $tablename ) {
 
 /**
 * Build SQL INSERT/UPDATE statement from an associative array of fieldnames => values.
-* @param array $assoc The associative array of fieldnames => values.
+* @param array $obj The object  of fieldnames => values.
 * @param string $type The word "update" or something else (which implies "insert").
 * @param string $tablename The name of the table being updated.
 * @param string $where What the "WHERE ..." clause needs to be for an UPDATE statement.
 * @param string $fprefix An optional string which all fieldnames in $assoc are prefixed with.
 * @return string An SQL Update or Insert statement with all fields/values from the array.
 */
-function sql_from_associative( $assoc, $type, $tablename, $where, $fprefix = "" ) {
+function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
   global $session;
   $fields = get_fields($tablename);
   $update = strtolower($type) == "update";
@@ -56,14 +56,14 @@ function sql_from_associative( $assoc, $type, $tablename, $where, $fprefix = "" 
   $vlst = "";
   foreach( $fields as $fn => $typ ) {
     $fn = $fprefix . $fn;
-    $session->Log( "SFA: DBG: $fn => $typ (".$assoc[$fn].")");
-    if ( !isset($assoc[$fn]) && isset($assoc["xxxx$fn"]) ) {
+    $session->Log( "DBG: sql_from_object: $fn => $typ (".$obj->{$fn}.")");
+    if ( !isset($obj->{$fn}) && isset($obj->{"xxxx$fn"}) ) {
       // Sometimes we will have prepended 'xxxx' to the field name so that the field
       // name differs from the column name in the database.
-      $assoc[$fn] = $assoc["xxxx$fn"];
+      $obj->{$fn} = $obj->{"xxxx$fn"};
     }
-    if ( !isset($assoc[$fn]) ) continue;
-    $value = str_replace( "'", "''", str_replace("\\", "\\\\", $assoc[$fn]));
+    if ( !isset($obj->{$fn}) ) continue;
+    $value = str_replace( "'", "''", str_replace("\\", "\\\\", $obj->{$fn}));
     if ( $fn == "password" ) {
       if ( $value == "******" || $value == "" ) continue;
       if ( !preg_match('/\*[0-9a-z]+\*[0-9a-z]+/', $value ) ) $value = md5($value);
@@ -72,7 +72,7 @@ function sql_from_associative( $assoc, $type, $tablename, $where, $fprefix = "" 
       $value = "NULL";
     }
     else if ( eregi("bool", $typ) )  {
-      $value = ( $value == "f" ? "FALSE" : "TRUE" );
+      $value = ( $value == "" ? "NULL" : ($value == "f" ? "FALSE" : "TRUE" ));
     }
     else if ( eregi("int", $typ) )  {
       $value = intval( $value );
@@ -217,6 +217,17 @@ class DBRecord
 
   /**#@-*/
 
+  /**#@+
+  * @access public
+  */
+  /**
+  * The mode we are in for any form
+  * @var object
+  */
+  var $EditMode;
+
+  /**#@-*/
+
   /**
   * Really numbingly simple construction.
   */
@@ -224,6 +235,9 @@ class DBRecord
     global $session;
     $session->Log("DBG: DBRecord::Constructor: called" );
     $this->WriteType = "insert";
+    $this->EditMode = false;
+    $values = (object) array();
+    $this->Values = &$values;
   }
 
   /**
@@ -247,9 +261,11 @@ class DBRecord
   * field that exists in the Fields array.
   */
   function PostToValues( $prefix = "" ) {
-    foreach ( $this->Fields AS $fname ) {
+    global $session;
+    foreach ( $this->Fields AS $fname => $ftype ) {
       if ( isset($_POST["$prefix$fname"]) ) {
-        $this->Values->{$fname} = $_POST["$prefix$fname"];
+        $this->Set($fname, $_POST["$prefix$fname"]);
+        $session->Log("DBG: DBRecord::PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
       }
     }
   }
@@ -278,6 +294,8 @@ class DBRecord
   * @return mixed The new value of the field (i.e. $fval).
   */
   function Set($fname, $fval) {
+    global $session;
+    $session->Log("DBG: DBRecord::Set: %s => %s", $fname, $fval );
     $this->Values->{$fname} = $fval;
     return $fval;
   }
@@ -288,6 +306,8 @@ class DBRecord
   * @return mixed The current value of the field.
   */
   function Get($fname) {
+    global $session;
+    $session->Log("DBG: DBRecord::Get: %s => %s", $fname, $this->Values->{$fname} );
     return $this->Values->{$fname};
   }
 
@@ -296,7 +316,9 @@ class DBRecord
   * @return boolean Success.
   */
   function Write() {
-    $sql = sql_from_associative( $this->Values, $this->WriteType, $this->Table, $this->_BuildWhereClause(), "" );
+    global $session;
+    $session->Log( "DBG: Writing %s record as %s.", $this->Table, $this->WriteType );
+    $sql = sql_from_object( $this->Values, $this->WriteType, $this->Table, $this->_BuildWhereClause(), "" );
     $qry = new PgQuery($sql);
     return $qry->Exec( __CLASS__, __LINE__, __FILE__ );
   }
@@ -307,18 +329,24 @@ class DBRecord
   * @return boolean Whether we actually read a record.
   */
   function Read() {
+    global $session;
     $i_read_the_record = false;
-    $this->Values = array();
-    $this->Values = settype( $this->Values, "object" );
-    if ( count($this->Keys) ) {
-      $sql = "SELECT * FROM $this->Table " . $this->_BuildWhereClause(true);
+    $values = (object) array();
+    $this->EditMode = true;
+    $where = $this->_BuildWhereClause(true);
+    if ( "" != $where ) {
+      $sql = "SELECT * FROM $this->Table $where";
       $qry = new PgQuery($sql);
       if ( $qry->Exec( __CLASS__, __LINE__, __FILE__ ) && $qry->rows > 0 ) {
         $i_read_the_record = true;
-        $this->Values = $qry->Fetch();
+        $values = $qry->Fetch();
+        $this->EditMode = false;  // Default to not editing if we read the record.
+        $session->Log( "DBG: DBRecord::Read: Read %s record from table.", $this->Table, $this->WriteType );
       }
     }
+    $this->Values = &$values;
     $this->WriteType = ( $i_read_the_record ? "update" : "insert" );
+    $session->Log( "DBG: DBRecord::Read: Record %s write type is %s.", $this->Table, $this->WriteType );
     return $i_read_the_record;
   }
 }

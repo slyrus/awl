@@ -130,11 +130,12 @@ class User extends DBRecord {
     global $session;
 
     $edit_mode = ( ($_GET['edit'] && $this->AllowedTo($this->WriteType))
-                || (0 == $this->user_no && $this->AllowedTo("insert") ) );
+                || (0 == $this->user_no && $this->AllowedTo("insert") )
+                || $this->EditMode );
     $html = "";
     $session->Log("DBG: User::Render: type=$this->WriteType, edit_mode=$edit_mode" );
 
-    $ef = new EntryForm( $REQUEST_URI, $this, $edit_mode );
+    $ef = new EntryForm( $REQUEST_URI, $this->Values, $edit_mode );
     $ef->NoHelp();  // Prefer this style, for the moment
 
     if ( $ef->editmode ) {
@@ -146,14 +147,14 @@ class User extends DBRecord {
 
     $html .= $ef->BreakLine("User Details");
 
-    $html .= $ef->DataEntryLine( "User Name", "%s", "text", "xxxxusername",
+    $html .= $ef->DataEntryLine( "User Name", "%s", "text", "username",
               array( "size" => 20, "title" => "The name this user can log into the system with.") );
     if ( $ef->editmode && $this->AllowedTo('ChangePassword') ) {
-      $this->new_password = '******';
+      $this->Set('new_password','******');
       unset($_POST['new_password']);
       $html .= $ef->DataEntryLine( "New Password", "%s", "password", "new_password",
                 array( "size" => 20, "title" => "The user's password for logging in.") );
-      $this->confirm_password = '******';
+      $this->Set('confirm_password', '******');
       unset($_POST['confirm_password']);
       $html .= $ef->DataEntryLine( "Confirm", "%s", "password", "confirm_password",
                 array( "size" => 20, "title" => "Confirm the new password.") );
@@ -182,30 +183,42 @@ class User extends DBRecord {
   * @return boolean Whether the form data validated OK.
   */
   function Validate( ) {
-    global $session, $client_messages;
+    global $session, $c;
     $session->Log("DBG: User::Validate: Validating user");
 
     $valid = true;
 
     if ( $this->Get('fullname') == "" ) {
-      $client_messages[] = "ERROR: The full name may not be blank.";
+      $c->messages[] = "ERROR: The full name may not be blank.";
       $valid = false;
     }
 
-    if ( ! $this->AllowedTo("admin") ) {
-      if ( $this->user_no == 0 )
-        $this->Set('org_code', $session->org_code);
-      else
-        unset($this->Values->org_code);
-    }
-    else {
-      if ( intval($this->Get('org_code')) == 0 ) {
-        $client_messages[] = "ERROR: The organisation must be selected.";
+    // Password changing is a little special...
+    if ( $_POST['new_password'] != "******" && $_POST['new_password'] != ""  ) {
+      if ( $_POST['new_password'] == $_POST['confirm_password'] ) {
+        $this->Set('password',$_POST['new_password']);
+      }
+      else {
+        $c->messages[] = "ERROR: The new password must match the confirmed password.";
         $valid = false;
       }
     }
 
+    $session->Log("DBG: User::Validate: User %s validation", ($valid ? "passed" : "failed"));
     return $valid;
+  }
+
+  /**
+  *
+  */
+  function Write() {
+    global $session;
+    if ( parent::Write() && $this->WriteType == 'insert' ) {
+      $qry = new PgQuery( "SELECT currval('usr_user_no_seq');" );
+      $qry->Exec("User::Write");
+      $sequence_value = $qry->Fetch(true);  // Fetch as an array
+      $this->user_no = $sequence_value[0];
+    }
   }
 
 }

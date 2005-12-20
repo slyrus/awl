@@ -195,14 +195,22 @@ class Session
 
     list( $session_id, $session_key ) = explode( ';', $sid, 2 );
 
-    // We need some tidy way to configure this appropriately for the actual database
-    // schema to avoid a second SELECT to read related records.
-    $sql = "SELECT session.*, usr.*
-        FROM session, usr
-        WHERE usr.user_no = session.user_no
-        AND session_id = ?
-        AND (md5(session_start::text) = ? OR session_key = ?)
-        ORDER BY session_start DESC LIMIT 1";
+    /**
+    * We regularly want to override the SQL for joining against the session record.
+    * so the calling application can define a function local_session_sql() which
+    * will return the SQL to join (up to and excluding the WHERE clause.  The standard
+    * SQL used if this function is not defined is:
+    * <code>
+    * SELECT session.*, usr.* FROM session JOIN usr ON ( user_no )
+    * </code>
+    */
+    if ( function_exists('local_session_sql') ) {
+      $sql = local_session_sql();
+    }
+    else {
+      $sql = "SELECT session.*, usr.* FROM session JOIN usr USING ( user_no )";
+    }
+    $sql .= " WHERE session_id = ? AND (md5(session_start::text) = ? OR session_key = ?) ORDER BY session_start DESC LIMIT 1";
 
     $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
     if ( $qry->Exec('Session') && $qry->rows == 1 )
@@ -312,7 +320,7 @@ class Session
       $this->Log( "DBG: Login: Attempting login for $username" );
 
     $sql = "SELECT * FROM usr WHERE lower(username) = ? ";
-    $qry = new PgQuery( $sql, strtolower($username), md5($password), $password );
+    $qry = new PgQuery( $sql, strtolower($username) );
     if ( $qry->Exec('Session::UPWLogin') && $qry->rows == 1 ) {
       $usr = $qry->Fetch();
       if ( session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {

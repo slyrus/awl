@@ -66,7 +66,8 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
     $value = str_replace( "'", "''", str_replace("\\", "\\\\", $obj->{$fn}));
     if ( $fn == "password" ) {
       if ( $value == "******" || $value == "" ) continue;
-      if ( !preg_match('/\*[0-9a-z]+\*[0-9a-z]+/', $value ) ) $value = md5($value);
+      if ( !preg_match('/\*[0-9a-z]+\*[0-9a-z]+/', $value ) )
+        $value = (function_exists('session_salted_md5') ? session_salted_md5($value) : md5($value) );
     }
     if ( eregi("(time|date)", $typ ) && $value == "" ) {
       $value = "NULL";

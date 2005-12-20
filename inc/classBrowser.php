@@ -1,11 +1,25 @@
 <?php
-/////////////////////////////////////////////////////////////
-//   C L A S S   F O R   A P M S   B R O W S E   A R E A S //
-/////////////////////////////////////////////////////////////
+/**
+* Table browser / lister class
+*
+* Browsers are constructed from BrowserColumns and can support sorting
+* and other interactive behaviour.  Cells may contain data which is
+* formatted as a link, or the entire row may be linked through an onclick
+* action.
+*
+* @package   awl
+* @subpackage   Browser
+* @author    Andrew McMillan <andrew@catalyst.net.nz>
+* @copyright Andrew McMillan
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+*/
 
-/////////////////////////////////////////////////////////////
-// First we need a class for the columns in the browser
-/////////////////////////////////////////////////////////////
+/**
+* BrowserColumns are the basic building blocks.  You can specify just the
+* field name, and the column header or you can get fancy and specify an
+* alignment, format string, SQL formula and cell CSS class.
+* @package   awl
+*/
 class BrowserColumn
 {
   var $Field;
@@ -70,9 +84,13 @@ class BrowserColumn
 }
 
 
-/////////////////////////////////////////////////////////////
-// Now the actual Browser class...
-/////////////////////////////////////////////////////////////
+/**
+* Start a new Browser, add columns, set a join and Render it to create a basic
+* list of records in a table.
+* You can, of course, get a lot fancier with setting ordering, where clauses
+* totalled columns and so forth.
+* @package   awl
+*/
 class Browser
 {
   var $Title;

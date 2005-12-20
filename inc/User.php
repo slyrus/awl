@@ -64,6 +64,9 @@ class User extends DBRecord {
     // Initialise the record, possibly from the file.
     $this->Initialise('usr',$keys);
 
+    $this->EditMode = ( ($_GET['edit'] && $this->AllowedTo($this->WriteType))
+                    || (0 == $this->user_no && $this->AllowedTo("insert") ) );
+
     if ( $this->user_no == 0 ) {
       $session->Log("DBG: Initialising new user values");
 
@@ -129,13 +132,10 @@ class User extends DBRecord {
   function Render( ) {
     global $session;
 
-    $edit_mode = ( ($_GET['edit'] && $this->AllowedTo($this->WriteType))
-                || (0 == $this->user_no && $this->AllowedTo("insert") )
-                || $this->EditMode );
     $html = "";
-    $session->Log("DBG: User::Render: type=$this->WriteType, edit_mode=$edit_mode" );
+    $session->Log("DBG: User::Render: type=$this->WriteType, edit_mode=$this->EditMode" );
 
-    $ef = new EntryForm( $REQUEST_URI, $this->Values, $edit_mode );
+    $ef = new EntryForm( $REQUEST_URI, $this->Values, $this->EditMode );
     $ef->NoHelp();  // Prefer this style, for the moment
 
     if ( $ef->editmode ) {

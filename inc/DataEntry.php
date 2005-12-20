@@ -61,7 +61,7 @@ class EntryField
   * @param text $inextra An associative array of extra attributes to
   *                      be applied to the field.  Optional.
   *
-  * @param text $inname The current value to use to initialise the
+  * @param text $current_value The current value to use to initialise the
   *                     field.   Optional.
   *
   * @return object

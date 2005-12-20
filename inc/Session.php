@@ -288,12 +288,10 @@ class Session
 * @param object $u The user+session object we (probably) read from the database.
 */
   function AssignSessionDetails( $u ) {
-    $this->user_no = $u->user_no;
-    $this->username = $u->username;
-    $this->fullname = $u->fullname;
-    $this->email = $u->email;
-    $this->config_data = $u->config_data;
-    $this->session_id = $u->session_id;
+    // Assign each field in the selected record to the object
+    foreach( $u AS $k => $v ) {
+      $this->{$k} = $v;
+    }
 
     $this->GetRoles();
     $this->logged_in = true;

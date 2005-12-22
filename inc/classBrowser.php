@@ -142,6 +142,15 @@ class Browser
     $this->Where = $where_clause;
   }
 
+  /**
+  * Add an [operator] ( ... ) to the SQL Where clause
+  *
+  * You will generally want to call OrWhere or AndWhere rather than
+  * this function, but hey: who am I to tell you how to code!
+  *
+  * @param string $operator The operator to combine with previous where clause parts.
+  * @param string $more_where The extra part of the where clause
+  */
   function MoreWhere( $operator, $more_where ) {
     if ( $this->Where == "" ) {
       $this->Where = $more_where;
@@ -150,14 +159,37 @@ class Browser
     $this->Where = "$this->Where $operator $more_where";
   }
 
+  /**
+  * Add an OR ( ... ) to the SQL Where clause
+  *
+  * @param string $more_where The extra part of the where clause
+  */
   function AndWhere( $more_where ) {
     $this->MoreWhere("AND",$more_where);
   }
 
+  /**
+  * Add an OR ( ... ) to the SQL Where clause
+  *
+  * @param string $more_where The extra part of the where clause
+  */
   function OrWhere( $more_where ) {
     $this->MoreWhere("OR",$more_where);
   }
 
+  /**
+  * Add an ordering to the browser widget.
+  *
+  * The ordering can be overridden by GET parameters which will be
+  * rendered into the column headers so that a user can click on
+  * the column headers to control the actual order.
+  *
+  * @param string $field The name of the field to be ordered by.
+  * @param string $direction A for Ascending, otherwise it will be descending order.
+  * @param string $browser_array_key Use this to distinguish between multiple
+  *               browser widgets on the same page.  Leave it empty if you only
+  *               have a single browser instance.
+  */
   function AddOrder( $field, $direction, $browser_array_key=0 ) {
     if ( isset( $_GET['o'][$browser_array_key]) && isset($_GET['d'][$browser_array_key]) ) {
       $field = $_GET['o'][$browser_array_key];
@@ -182,6 +214,17 @@ class Browser
     }
   }
 
+  /**
+  * Mark a column as something to be totalled.  You can also specify the name of
+  * a function which may modify the value before the actual totalling.
+  *
+  * The callback function will be called with each row, with the first argument
+  * being the entire record object and the second argument being only the column
+  * being totalled.  The callback should return a number, to be added to the total.
+  *
+  * @param string $column_name The name of the column to be totalled.
+  * @param string $total_function The name of the callback function.
+  */
   function AddTotal( $column_name, $total_function = false ) {
     $this->Totals[$column_name] = 0;
     if ( $total_function != false ) {
@@ -222,6 +265,16 @@ class Browser
   }
 
 
+  /**
+  * This method is used to render the browser as HTML.  If the query has
+  * not yet been executed then this will call DoQuery to do so.
+  *
+  * The browser (including the title) will be displayed in a div with id="browser" so
+  * that you can style '#browser tr.header', '#browser tr.totals' and so forth.
+  *
+  * @param string $title_tag The tag to use around the browser title (default 'h1')
+  * @return string The rendered HTML fragment to display to the user.
+  */
   function Render( $title_tag = 'h1' ) {
     global $c, $session;
 

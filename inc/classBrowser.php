@@ -110,6 +110,11 @@ class Browser
   var $Totals;
   var $TotalFuncs;
 
+  /**
+  * The Browser class constructor
+  *
+  * @param string $title A title for the browser (optional).
+  */
   function Browser( $title = "" ) {
     global $c, $session;
     $this->Title = $title;
@@ -122,28 +127,80 @@ class Browser
     $session->Log("DBG: New browser called $title");
   }
 
+  /**
+  * Add a column to the Browser.
+  *
+  * This constructs a new BrowserColumn, appending it to the array of columns
+  * in this Browser.
+  *
+  * Note that if the $format parameter starts with '<td>' the format will replace
+  * the column format, otherwise it will be used within '<td>...</td>' tags.
+  * @see BrowserColumn
+  *
+  * @param string $field The name of the field.
+  * @param string $header A column header for the field.
+  * @param string $align An alignment for column values.
+  * @param string $format A sprintf format for displaying column values.
+  * @param string $sql An SQL fragment for calculating the value.
+  * @param string $class A CSS class to apply to the cells of this column.
+  */
   function AddColumn( $field, $header="", $align="", $format="", $sql="", $class="" ) {
     $this->Columns[] = new BrowserColumn( $field, $header, $align, $format, $sql, $class );
   }
 
+  /**
+  * Add a hidden column - one that is present in the SQL result, but for
+  * which there is no column displayed.
+  *
+  * This can be useful for including a value in (e.g.) clickable links or title
+  * attributes which is not actually displayed as a visible column.
+  *
+  * @param string $field The name of the field.
+  * @param string $sql An SQL fragment to calculate the field, if it is calculated.
+  */
   function AddHidden( $field, $sql="" ) {
     $this->HiddenColumns[] = new BrowserColumn( $field, "", "", "", $sql );
   }
 
+  /**
+  * Set the Title for the browse.
+  *
+  * This can also be set in the constructor but if you create a template Browser
+  * and then clone it in a loop you may want to assign a different Title for each
+  * instance.
+  *
+  * @param string $more_where The extra part of the where clause
+  */
   function SetTitle( $new_title ) {
     $this->Title = $new_title;
   }
 
+  /**
+  * Set the tables and joins for the SQL.
+  *
+  * For a single table this should just contain the name of that table, but for
+  * multiple tables it should be the full content of the SQL 'FROM ...' clause
+  * (excluding the actual 'FROM' keyword).
+  *
+  * @param string $join_list
+  */
   function SetJoins( $join_list ) {
     $this->Joins = $join_list;
   }
 
+  /**
+  * Set the SQL Where clause to a specific value.
+  *
+  * The WHERE keyword should not be included.
+  *
+  * @param string $where_clause A valide SQL WHERE ... clause.
+  */
   function SetWhere( $where_clause ) {
     $this->Where = $where_clause;
   }
 
   /**
-  * Add an [operator] ( ... ) to the SQL Where clause
+  * Add an [operator] ... to the SQL Where clause
   *
   * You will generally want to call OrWhere or AndWhere rather than
   * this function, but hey: who am I to tell you how to code!
@@ -160,7 +217,7 @@ class Browser
   }
 
   /**
-  * Add an OR ( ... ) to the SQL Where clause
+  * Add an OR ...  to the SQL Where clause
   *
   * @param string $more_where The extra part of the where clause
   */
@@ -169,7 +226,7 @@ class Browser
   }
 
   /**
-  * Add an OR ( ... ) to the SQL Where clause
+  * Add an OR ... to the SQL Where clause
   *
   * @param string $more_where The extra part of the where clause
   */
@@ -233,7 +290,29 @@ class Browser
   }
 
 
-  function RowFormat( $whatever )
+  /**
+  * Set the format for an output row.
+  *
+  * The row format is set as an sprintf format string for the start of the row,
+  * and a plain text string for the close of the row.  Subsequent arguments
+  * are interpreted as names of fields, the values of which will be sprintf'd
+  * into the beginrow string for each row.
+  *
+  * Some special field names exist beginning with the '#' character which have
+  * 'magic' functionality, including '#even' which will insert '0' for even
+  * rows and '1' for odd rows, allowing a nice colour alternation if the
+  * beginrow format refers to it like: 'class="r%d"' so that even rows will
+  * become 'class="r0"' and odd rows will be 'class="r1"'.
+  *
+  * At present only '#even' exists, although other magic values may be defined
+  * in future.
+  *
+  * @param string $beginrow The new printf format for the start of the row.
+  * @param string $closerow The new string for the close of the row.
+  * @param string $rowargs ... The row arguments which will be sprintf'd into
+  * the $beginrow format for each row
+  */
+  function RowFormat( $beginrow, $closerow, $rowargs )
   {
     $argc = func_num_args();
     $this->BeginRow = func_get_arg(0);
@@ -246,6 +325,14 @@ class Browser
   }
 
 
+  /**
+  * This method is used to build and execute the database query.
+  *
+  * You need not call this method, since Browser::Render() will call it for
+  * you if you have not done so at that point.
+  *
+  * @return boolean The success / fail status of the PgQuery::Exec()
+  */
   function DoQuery() {
     $target_fields = "";
     foreach( $this->Columns AS $k => $column ) {

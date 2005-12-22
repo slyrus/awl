@@ -7,7 +7,7 @@
 * formatted as a link, or the entire row may be linked through an onclick
 * action.
 *
-* @package   awl
+* @package   AWL
 * @subpackage   Browser
 * @author    Andrew McMillan <andrew@catalyst.net.nz>
 * @copyright Andrew McMillan
@@ -18,7 +18,7 @@
 * BrowserColumns are the basic building blocks.  You can specify just the
 * field name, and the column header or you can get fancy and specify an
 * alignment, format string, SQL formula and cell CSS class.
-* @package   awl
+* @package   AWL
 */
 class BrowserColumn
 {
@@ -89,7 +89,7 @@ class BrowserColumn
 * list of records in a table.
 * You can, of course, get a lot fancier with setting ordering, where clauses
 * totalled columns and so forth.
-* @package   awl
+* @package   AWL
 */
 class Browser
 {

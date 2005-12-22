@@ -2,7 +2,7 @@
 /**
 * Classes to handle entry and viewing of field-based data.
 *
-* @package   awl
+* @package   AWL
 * @subpackage   DataEntry
 * @author    Andrew McMillan <andrew@catalyst.net.nz>
 * @copyright Andrew McMillan
@@ -11,7 +11,28 @@
 
 /**
 * Individual fields used for data entry / viewing.
-* @package awl
+*
+* This object is not really intended to be used directly.  The more normal
+* interface is to instantiate an {@link EntryForm} and then issue calls
+* to {@link DataEntryLine()} and other {@link EntryForm} methods.
+*
+* Understanding the operation of this class (and possibly auditing the source
+* code, particularly {@link EntryField::Render}) will however convey valuable
+* understanding of some of the more
+* esoteric features.
+*
+* @todo This class doesn't really provide a huge amount of utility between construct
+* and render, but there must be good things possible there.  Perhaps one EntryField
+* is created and used repeatedly as a template (e.g.).  That might be useful to
+* support...  Why is this a Class anyway?  Maybe we should have just done half a
+* dozen functions (one per major field type) and just used those...  Maybe we should
+* build a base class for this and extend it to make EntryField in a better way.
+*
+* EntryField is only useful at present if you desperately want to use it's simple
+* field interface, but want to intimately control the layout (or parts of the layout),
+* otherwise you should be using {@link EntryForm} as the main class.
+*
+* @package AWL
 */
 class EntryField
 {
@@ -29,7 +50,11 @@ class EntryField
   * @var string
   */
   var $ftype;
+  /**#@-*/
 
+  /**#@+
+  * @access public
+  */
   /**
   * The current value
   * @var string
@@ -50,7 +75,50 @@ class EntryField
   /**#@-*/
 
   /**
-  * Initialise an EntryField, used for data entry
+  * Initialise an EntryField, used for data entry.
+  *
+  * The following types of fields are possible:
+  * <ul>
+  * <li>select - Will display a select list of the keys/values in $attributes where the
+  * key starts with an underscore.  The key will have the '_' removed before being used
+  * as the key in the list.  All the $attributes with keys not beginning with '_' will
+  * be used in the normal manner as HTML attributes within the &lt;select ...&gt; tag.</li>
+  * <li>lookup - Will display a select list of values from the database.
+  * If $attributes defines a '_sql' attibute then that will be used to make
+  * the list, otherwise the database values will be from the 'codes' table
+  * as in "SELECT code_id, code_value FROM codes WHERE code_type = '_type' ORDER BY code_seq, code_id"
+  * using the value of $attributes['_type'] as the code_type.</li>
+  * <li>date - Will be a text field, expecting a date value which might be
+  * javascript validated at some point in the future.</li>
+  * <li>checkbox - Will display a checkbox for an on-off value.</li>
+  * <li>textarea - Will display an HTML textarea.</li>
+  * <li>file - Will display a file browse / enter field.</li>
+  * <li>button - Will display a button field.</li>
+  * <li>password - Password entry.  This will display entered data as asterisks.</li>
+  * </ul>
+  *
+  * The $attributes array is useful to set specific HTML attributes within the HTML tag
+  * used for the entry field however $attribute keys named starting with an underscore ('_')
+  * affect the field operation rather than the HTML.  For the 'select' field type, these are
+  * simply used as the keys / values for the selection (with the '_' removed), but other
+  * cases are more complex:
+  * <ul>
+  * <li>_help - While this will be ignored by the EntryField::Render() method the _help
+  * should be assigned (or will be assigned the same value as the 'title' attribute) and
+  * will (depending on the data-entry line format in force) be displayed as help for the
+  * field by the EntryForm::DataEntryLine() method.</li>
+  * <li>_sql - When used in a 'lookup' field this controls the SQL to return keys/values
+  * for the list.  The actual SQL should return two columns, the first will be used for
+  * the key and the second for the displayed value.</li>
+  * <li>_type - When used in a 'lookup' field this defines the codes type used.</li>
+  * <li>_null - When used in a 'lookup' field this will control the description for an
+  * option using a '' key value which will precede the list of values from the database.</li>
+  * <li>_zero - When used in a 'lookup' field this will control the description for an
+  * option using a '0' key value which will precede the list of values from the database.</li>
+  * <li>_label - When used in a 'radio' or 'checkbox' field this will wrap the field
+  * with an HTML label tag as <label ...><input field...>$attributes['_label']</label></li>
+  * <li> - </li>
+  * </ul>
   *
   * @param text $intype The type of field:
   *    select | lookup | date | checkbox | textarea | file | button | password
@@ -58,15 +126,14 @@ class EntryField
   *
   * @param text $inname The name of the field.
   *
-  * @param text $inextra An associative array of extra attributes to
-  *                      be applied to the field.  Optional.
+  * @param text $attributes An associative array of extra attributes to be applied
+  * to the field.  Optional, but generally important.  Some $attribute keys have
+  * special meaning, while others are simply added as HTML attributes to the field.
   *
   * @param text $current_value The current value to use to initialise the
   *                     field.   Optional.
-  *
-  * @return object
   */
-  function EntryField( $intype, $inname, $inextra="", $current_value="" )
+  function EntryField( $intype, $inname, $attributes="", $current_value="" )
   {
     $this->ftype = $intype;
     $this->fname = $inname;
@@ -74,21 +141,20 @@ class EntryField
 
     if ( isset($this->{"new_$intype"}) && function_exists($this->{"new_$intype"}) ) {
       // Optionally call a function within this object called "new_<intype>" for setup
-      $this->{"new_$intype"}( $inextra );
+      $this->{"new_$intype"}( $attributes );
     }
-    else if ( is_array($inextra) ) {
-      $this->attributes = $inextra;
+    else if ( is_array($attributes) ) {
+      $this->attributes = $attributes;
     }
     else {
     }
 
     $this->rendered = "";
-
-    return $this;
   }
 
   /**
   * Render an EntryField into HTML
+  * @see EntryField::EntryField(), EntryForm::DataEntryLine()
   *
   * @return text  An HTML fragment for the data-entry field.
   */
@@ -129,8 +195,7 @@ class EntryField
           $qry = new PgQuery( $this->attributes["_sql"] );
         }
         else {
-          list( $tbl, $fld ) = explode("|", $this->attributes['_type'], 2);
-          $qry = new PgQuery( "SELECT lookup_code, lookup_desc FROM lookup_code WHERE source_table = ? AND source_field = ? ORDER BY lookup_seq, lookup_code", $tbl, $fld );
+          $qry = new PgQuery( "SELECT code_id, code_value FROM codes WHERE code_type = ? ORDER BY code_seq, code_id", $this->attributes['_type'] );
         }
         $r .= $qry->BuildOptionList( $this->current, "rndr:$this->fname" );
         $r .= "</select>";
@@ -203,16 +268,21 @@ class EntryField
   }
 
   /**
-  * Unfinished and ill-conceived method which I sincerely hope is not used somewhere!
+  * Function called indirectly when a new EntryField of type 'lookup' is created.
+  * @param array $attributes The attributes array that was passed in to the new EntryField()
+  * constructor.
   */
-  function new_lookup( $inextra ) {
-    $this->attributes = $inextra;
+  function new_lookup( $attributes ) {
+    $this->attributes = $attributes;
   }
 }
 
 /**
-* Entry fields collected into a form for data entry / viewing.
-* @package awl
+* A class to handle displaying a form on the page (for editing) or a structured
+* layout of non-editable content (for viewing), with a simple switch to flip from
+* view mode to edit mode.
+*
+* @package AWL
 */
 class EntryForm
 {
@@ -378,6 +448,9 @@ class EntryForm
 
   /**
   * A utility function for a hidden field within a data entry table
+  *
+  * @param string $fname The name of the field.
+  * @param string $fvalue The value of the field.
   * @return string The HTML fragment for the hidden field.
   */
   function HiddenField($fname,$fvalue) {
@@ -386,34 +459,41 @@ class EntryForm
 
   /**
   * Internal function for parsing the type extra on a field.
+  *
+  * If the '_help' attribute is not set it will be assigned the value of
+  * the 'title' attribute, if there is one.
+  *
+  * If the 'class' attribute is not set it will be assigned to 'flookup',
+  * 'fselect', etc, according to the field type.
+  * @static
   * @return string The parsed type extra.
   */
-  function _ParseTypeExtra( $ftype = '', $type_extra = '' )  {
-    if ( !is_array($type_extra) ) {
-      list( $k, $v ) = explode( '=', $type_extra );
-      $type_extra = array( $k => $v );
+  function _ParseAttributes( $ftype = '', $attributes = '' )  {
+    if ( !is_array($attributes) ) {
+      list( $k, $v ) = explode( '=', $attributes );
+      $attributes = array( $k => $v );
     }
 
     // Default the help to the title, or to blank
-    if ( !isset($type_extra['_help']) ) {
-      $type_extra['_help'] = "";
-      if ( isset($type_extra['title']) )
-        $type_extra['_help'] = $type_extra['title'];
+    if ( !isset($attributes['_help']) ) {
+      $attributes['_help'] = "";
+      if ( isset($attributes['title']) )
+        $attributes['_help'] = $attributes['title'];
     }
 
     // Default the style to fdate, ftext, fcheckbox etc.
-    if ( !isset($type_extra['class']) ) {
-      $type_extra['class'] = "f$ftype";
+    if ( !isset($attributes['class']) ) {
+      $attributes['class'] = "f$ftype";
     }
 
-    return $type_extra;
+    return $attributes;
   }
 
   /**
   * A utility function for a data entry line within a table
   * @return string The HTML fragment to display the data entry field
   */
-  function DataEntryField( $format, $ftype='', $real_fname='', $type_extra='' )
+  function DataEntryField( $format, $ftype='', $real_fname='', $attributes='' )
   {
     global $session;
 
@@ -469,7 +549,7 @@ class EntryForm
     if ( $ftype == "date" ) $currval = nice_date($currval);
 
     // Now build the entry field and render it
-    $field = new EntryField( $ftype, $real_fname, $this->_ParseTypeExtra($ftype,$type_extra), $currval );
+    $field = new EntryField( $ftype, $real_fname, $this->_ParseAttributes($ftype,$attributes), $currval );
     return $field->Render();
   }
 
@@ -478,9 +558,9 @@ class EntryForm
   * A utility function for a submit button within a data entry table
   * @return string The HTML fragment to display a submit button for the form.
   */
-  function SubmitButton( $fname, $fvalue, $type_extra = '' )
+  function SubmitButton( $fname, $fvalue, $attributes = '' )
   {
-    $field = new EntryField( 'submit', $fname, $this->_ParseTypeExtra('submit', $type_extra), $fvalue );
+    $field = new EntryField( 'submit', $fname, $this->_ParseAttributes('submit', $attributes), $fvalue );
     return $field->Render();
   }
 
@@ -488,12 +568,12 @@ class EntryForm
   * A utility function for a data entry line within a table
   * @return string The HTML fragment to display the prompt and field.
   */
-  function DataEntryLine( $prompt, $currval, $ftype='', $fname='', $type_extra='' )
+  function DataEntryLine( $prompt, $currval, $ftype='', $fname='', $attributes='' )
   {
-    $type_extra = $this->_ParseTypeExtra( $ftype, $type_extra );
+    $attributes = $this->_ParseAttributes( $ftype, $attributes );
     return sprintf( $this->table_line_format, $prompt,
-                $this->DataEntryField( $currval, $ftype, $fname, $type_extra ),
-                $type_extra['_help'] );
+                $this->DataEntryField( $currval, $ftype, $fname, $attributes ),
+                $attributes['_help'] );
   }
 
 
@@ -501,7 +581,7 @@ class EntryForm
   * A utility function for a data entry line, where the prompt is a drop-down.
   * @return string The HTML fragment for the drop-down prompt and associated entry field.
   */
-  function MultiEntryLine( $prompt_options, $prompt_name, $default_prompt, $format, $ftype='', $fname='', $type_extra='' )
+  function MultiEntryLine( $prompt_options, $prompt_name, $default_prompt, $format, $ftype='', $fname='', $attributes='' )
   {
     global $session;
 
@@ -516,7 +596,7 @@ class EntryForm
     }
     $prompt .= "</select>";
 
-    return $this->DataEntryLine( $prompt, $format, $ftype, $fname, $type_extra );
+    return $this->DataEntryLine( $prompt, $format, $ftype, $fname, $attributes );
   }
 }
 

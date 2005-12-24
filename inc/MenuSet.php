@@ -172,7 +172,6 @@ class MenuOption {
 *  ...
 *if ( isset($main_menu) && is_object($main_menu) ) {
 *  $main_menu->AddOption("Home","/","Go back to the home page");
-*  $main_menu->LinkActiveSubMenus();
 *  echo $main_menu->Render();
 *}
 *</code>
@@ -218,6 +217,13 @@ class MenuSet {
   * @var reference
   */
   var $parent;
+
+  /**
+  * Will be set to true or false when we link active sub-menus, but will be
+  * unset until we do that.
+  * @var reference
+  */
+  var $has_active_options;
   /**#@-*/
 
   /**
@@ -289,13 +295,16 @@ class MenuSet {
   * @return boolean Whether the menu has options that are active.
   */
   function _HasActive( ) {
-    $rc = false;
+    if ( isset($this->has_active_options) ) {
+      return $this->has_active_options;
+    }
     foreach( $this->options AS $k => $v ) {
       if ( $v->IsActive() ) {
         $rc = true;
         return $rc;
       }
     }
+    $rc = false;
     return $rc;
   }
 
@@ -330,30 +339,40 @@ class MenuSet {
   * and then this could be a private routine.
   */
   function LinkActiveSubMenus( ) {
-    reset($this->options);
+    $this->has_active_options = false;
     foreach( $this->options AS $k => $v ) {
       if ( isset($v->submenu_set) && $v->submenu_set->_HasActive() ) {
         // Note that we need to do it this way, since $v is a copy, not a reference
         $this->options[$k]->Active( $this->active_class );
+        $this->has_active_options = true;
       }
     }
   }
 
   /**
   * Render the menu tree to an HTML fragment.
+  *
+  * @param boolean $submenus_inline Indicate whether to render the sub-menus within
+  *   the menus, or render them entirely separately after we finish rendering the
+  *   top level ones.
   * @return string The HTML fragment.
   */
-  function Render( ) {
+  function Render( $submenus_inline = false ) {
+    if ( !isset($this->has_active_options) ) {
+      $this->LinkActiveSubMenus();
+    }
     $render_sub_menus = false;
     $r = "<div id=\"$this->div_id\">";
     foreach( $this->options AS $k => $v ) {
       $r .= $v->Render();
       if ( $v->IsActive() && isset($v->submenu_set) ) {
         $render_sub_menus = $v->submenu_set;
+        if ( $submenus_inline )
+          $render_sub_menus->Render();
       }
     }
     $r .="</div>\n";
-    if ( $render_sub_menus != false ) {
+    if ( !$submenus_inline && $render_sub_menus != false ) {
       $r .= $render_sub_menus->Render();
     }
     return $r;

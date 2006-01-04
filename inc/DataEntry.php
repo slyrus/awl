@@ -206,8 +206,11 @@ class EntryField
         $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".htmlentities($this->current)."\"%%attributes%%>";
         break;
 
-      case "radio":
       case "checkbox":
+        // We send a hidden field with a false value, which will be overridden by the real
+        // field with a true value (if true) or not overridden (if false).
+        $r .= "input type=\"hidden\" name=\"$this->fname\" value=\"off\"><";
+      case "radio":
         $checked = "";
         if ( $this->current == 't' || intval($this->current) == 1 || $this->current == 'on'
               || (isset($this->attributes['value']) && $this->current == $this->attributes['value'] ) )
@@ -274,6 +277,37 @@ class EntryField
   */
   function new_lookup( $attributes ) {
     $this->attributes = $attributes;
+  }
+
+  /**
+  * Function to reformat an ISO date to something nicer.
+  * @param string $indate The ISO date to be formatted.
+  * @param string $show_time Whether to show the time as well as the date.
+  * @param string $ftype "E" for european, "U" for US.
+  * @return string The nicely formatted date.
+  */
+  function nice_date( $indate, $show_time = false, $ftype = 'E') {
+    $out = "";
+    if ( preg_match( '#^\d{1,2}[/-]\d{1,2}[/-]\d{2,4}#', $indate ) ) {
+      // Looks like it's nice already - don't screw with it!
+      return $indate;
+    }
+    $yr = substr($indate,0,4);
+    $mo = substr($indate,5,2);
+    $dy = substr($indate,8,2);
+    switch ( $ftype ) {
+      case 'U':
+        $out = sprintf( "%d/%d/%d", $mo, $dy, $yr );
+        break;
+      case 'E':
+      default:
+        $out = sprintf( "%d/%d/%d", $dy, $mo, $yr );
+        break;
+    }
+    if ( $show_time ) {
+      $out .= substr($indate,10,6);
+    }
+    return $out;
   }
 }
 
@@ -546,7 +580,7 @@ class EntryForm
         $currval = $this->record->{"$fname"};
       }
     }
-    if ( $ftype == "date" ) $currval = nice_date($currval);
+    if ( $ftype == "date" ) $currval = EntryField::nice_date($currval);
 
     // Now build the entry field and render it
     $field = new EntryField( $ftype, $real_fname, $this->_ParseAttributes($ftype,$attributes), $currval );

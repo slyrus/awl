@@ -73,7 +73,7 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
       $value = "NULL";
     }
     else if ( eregi("bool", $typ) )  {
-      $value = ( $value == "" ? "NULL" : ($value == "f" ? "FALSE" : "TRUE" ));
+      $value = ( $value == "" ? "NULL" : ($value == "f" || $value == "off" || $value == "no" ? "FALSE" : "TRUE" ));
     }
     else if ( eregi("int", $typ) )  {
       $value = intval( $value );

@@ -527,20 +527,22 @@ class EntryForm
   * A utility function for a data entry line within a table
   * @return string The HTML fragment to display the data entry field
   */
-  function DataEntryField( $format, $ftype='', $real_fname='', $attributes='' )
+  function DataEntryField( $format, $ftype='', $base_fname='', $attributes='', $prefix='' )
   {
     global $session;
 
-    if ( ($real_fname == '' || $ftype == '') ) {
+    if ( ($base_fname == '' || $ftype == '') ) {
       // Displaying never-editable values
       return $format;
     }
+    $fname = $prefix . $base_fname;
 
-    if ( substr($real_fname,0,4) == 'xxxx' ) {
-      // Sometimes we will prepend 'xxxx' to the field name so that the field
+/*
+    if ( substr($real_fname,0,4) == $prefix ) {
+      // Sometimes we will prepend a prefix to the field name so that the field
       // name differs from the column name in the database.  We also remove it
       // when it's submitted.
-      $fname = substr($real_fname,4);
+      $fname = substr($real_fname,strlen($prefix));
       // Also assign any posted value
       if ( !isset($_POST[$fname]) && isset($_POST[$real_fname]) )
         $_POST[$fname] = $_POST[$real_fname];
@@ -548,9 +550,10 @@ class EntryForm
     else {
       $fname = $real_fname;
     }
+*/
+      $session->Log( "DBG: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, $this->record->{$fname} );
     if ( !$this->editmode ) {
       // Displaying editable values when we are not editing
-      $session->Log( "DBG: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, $this->record->{$fname} );
       return sprintf($format, $this->record->{$fname} );
     }
 
@@ -560,7 +563,7 @@ class EntryForm
       $p1 = $parts[1];
       $p2 = $parts[2];
 //      error_log( "DBG: fname=$fname, p1=$p1, p2=$p2, POSTVAL=" . $_POST[$p1][$p2] . ", record=".$this->record->{"$p1"}["$p2"] );
-      // fixme - This could be changed to handle more dimensions on submitted variable names
+      // FIXME - This could be changed to handle more dimensions on submitted variable names
       if ( isset($_POST[$p1]) ) {
         if ( isset($_POST[$p1][$p2]) ) {
           $currval = $_POST[$p1][$p2];
@@ -576,6 +579,9 @@ class EntryForm
       if ( isset($_POST[$fname]) ) {
         $currval = $_POST[$fname];
       }
+      else if ( isset($this->record) && is_object($this->record) && isset($this->record->{"$base_fname"}) ) {
+        $currval = $this->record->{"$base_fname"};
+      }
       else if ( isset($this->record) && is_object($this->record) && isset($this->record->{"$fname"}) ) {
         $currval = $this->record->{"$fname"};
       }
@@ -583,7 +589,7 @@ class EntryForm
     if ( $ftype == "date" ) $currval = EntryField::nice_date($currval);
 
     // Now build the entry field and render it
-    $field = new EntryField( $ftype, $real_fname, $this->_ParseAttributes($ftype,$attributes), $currval );
+    $field = new EntryField( $ftype, $fname, $this->_ParseAttributes($ftype,$attributes), $currval );
     return $field->Render();
   }
 
@@ -602,11 +608,11 @@ class EntryForm
   * A utility function for a data entry line within a table
   * @return string The HTML fragment to display the prompt and field.
   */
-  function DataEntryLine( $prompt, $currval, $ftype='', $fname='', $attributes='' )
+  function DataEntryLine( $prompt, $currval, $ftype='', $fname='', $attributes='', $prefix = '' )
   {
     $attributes = $this->_ParseAttributes( $ftype, $attributes );
     return sprintf( $this->table_line_format, $prompt,
-                $this->DataEntryField( $currval, $ftype, $fname, $attributes ),
+                $this->DataEntryField( $currval, $ftype, $fname, $attributes, $prefix ),
                 $attributes['_help'] );
   }
 
@@ -615,7 +621,7 @@ class EntryForm
   * A utility function for a data entry line, where the prompt is a drop-down.
   * @return string The HTML fragment for the drop-down prompt and associated entry field.
   */
-  function MultiEntryLine( $prompt_options, $prompt_name, $default_prompt, $format, $ftype='', $fname='', $attributes='' )
+  function MultiEntryLine( $prompt_options, $prompt_name, $default_prompt, $format, $ftype='', $fname='', $attributes='', $prefix )
   {
     global $session;
 
@@ -630,7 +636,7 @@ class EntryForm
     }
     $prompt .= "</select>";
 
-    return $this->DataEntryLine( $prompt, $format, $ftype, $fname, $attributes );
+    return $this->DataEntryLine( $prompt, $format, $ftype, $fname, $attributes, $prefix );
   }
 }
 

@@ -63,6 +63,7 @@ class User extends DBRecord {
 
     // Initialise the record, possibly from the file.
     $this->Initialise('usr',$keys);
+    $this->Read();
 
     $this->EditMode = ( ($_GET['edit'] && $this->AllowedTo($this->WriteType))
                     || (0 == $this->user_no && $this->AllowedTo("insert") ) );

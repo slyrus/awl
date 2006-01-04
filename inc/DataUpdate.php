@@ -193,7 +193,8 @@ class DBRecord
   var $Table;
 
   /**
-  * The field names for the record
+  * The field names for the record.  The array index is the field name
+  * and the array value is the field type.
   * @var array
   */
   var $Fields;
@@ -215,6 +216,44 @@ class DBRecord
   * @var object
   */
   var $WriteType;
+
+  /**
+  * A list of associated other tables.
+  * @var array of string
+  */
+  var $OtherTable;
+
+  /**
+  * The field names for each of the other tables associated.  The first array index
+  * is the table name, the second array index is the field name, and the array value
+  * is the type of the field.
+  * @var array of arrays
+  */
+  var $OtherFields;
+
+  /**
+  * The keys for the record as an array of key => value pairs.  The first array index
+  * is the table name, the second array index is the key field name, and the array value
+  * is the value of the key field.
+  * @var array of arrays
+  */
+  var $OtherKeys;
+
+  /**
+  * An array of JOIN ... clauses.  The first array index is the table name and the array value
+  * is the JOIN clause like "USING (myforeignkey)".  All joins for the purposes of this
+  * will be defined as 'table1 LEFT OUTER JOIN table2 "prefix2" [... join clause ...]'
+  * @var array of string
+  */
+  var $OtherJoin;
+
+  /**
+  * An array of field prefixes.  When read from the database, all records will be read
+  * into the same namespace (i.e. $this->Values->{$prefix.$fieldname} ) and this will
+  * enable identification of values from different tables where the field name is the same.
+  * @var array of string
+  */
+  var $OtherPrefix;
 
   /**#@-*/
 
@@ -254,8 +293,25 @@ class DBRecord
     $this->Fields = get_fields($this->Table);
     $this->Keys = $keys;
     $this->WriteType = "insert";
-    $this->Read();
-}
+  }
+
+  /**
+  * This will join an additional table to the maintained set
+  * @param string $table The name of the database table
+  * @param array $keys An associative array containing fieldname => value pairs for the record key.
+  * @param string $join A PostgreSQL join clause.
+  * @param string $prefix A field prefix to use for these fields to distinguish them from fields
+  *                       in other joined tables with the same name.
+  */
+  function AddTable( $table, $keys = array(), $join, $prefix ) {
+    global $session;
+    $session->Log("DBG: DBRecord::Initialise: called" );
+    $this->OtherTable[] = $table;
+    $this->OtherFields[$table] = get_fields($this->Table);
+    $this->OtherKeys[$table] = $keys;
+    $this->OtherJoin[$table] = $join;
+    $this->OtherPrefix[$table] = $prefix;
+  }
 
   /**
   * This will assign $_POST values to the internal Values object for each

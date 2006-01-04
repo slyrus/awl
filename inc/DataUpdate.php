@@ -55,7 +55,7 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
   $flst = "";
   $vlst = "";
   foreach( $fields as $fn => $typ ) {
-    $fn = $fprefix . $fn;
+    // $prefixed_fn = $fprefix . $fn;
     $session->Log( "DBG: sql_from_object: $fn => $typ (".$obj->{$fn}.")");
     if ( !isset($obj->{$fn}) && isset($obj->{"xxxx$fn"}) ) {
       // Sometimes we will have prepended 'xxxx' to the field name so that the field
@@ -320,6 +320,7 @@ class DBRecord
   function PostToValues( $prefix = "" ) {
     global $session;
     foreach ( $this->Fields AS $fname => $ftype ) {
+      $session->Log("DBG: DBRecord::PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
       if ( isset($_POST["$prefix$fname"]) ) {
         $this->Set($fname, $_POST["$prefix$fname"]);
         $session->Log("DBG: DBRecord::PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );

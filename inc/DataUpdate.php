@@ -328,7 +328,25 @@ class DBRecord
   }
 
   /**
-  * Sets a single field in the record
+  * Builds a field target list
+  * @return string A simple SQL target field list for each field, possibly including prefixes.
+  */
+  function _BuildFieldList() {
+    if ( $this->prefix == "" ) {
+      $list = "*";
+      return $list;
+    }
+
+    $list = "";
+    foreach( $this->Fields AS $fname => $ftype ) {
+      $list .= ( $list == "" ? "" : ", " );
+      $list .= "$fname AS \"$this->prefix$fname\"";
+    }
+    return $list;
+  }
+
+  /**
+  * Builds a where clause to match the supplied keys
   * @param boolean $overwrite_values Controls whether the data values for the key fields will be forced to match the key values
   * @return string A simple SQL where clause, including the initial "WHERE", for each key / value.
   */
@@ -375,7 +393,7 @@ class DBRecord
   function Write() {
     global $session;
     $session->Log( "DBG: Writing %s record as %s.", $this->Table, $this->WriteType );
-    $sql = sql_from_object( $this->Values, $this->WriteType, $this->Table, $this->_BuildWhereClause(), "" );
+    $sql = sql_from_object( $this->Values, $this->WriteType, $this->Table, $this->_BuildWhereClause(), $this->prefix );
     $qry = new PgQuery($sql);
     return $qry->Exec( __CLASS__, __LINE__, __FILE__ );
   }
@@ -392,7 +410,9 @@ class DBRecord
     $this->EditMode = true;
     $where = $this->_BuildWhereClause(true);
     if ( "" != $where ) {
-      $sql = "SELECT * FROM $this->Table $where";
+      // $fieldlist = $this->_BuildFieldList();
+      $fieldlist = "*";
+      $sql = "SELECT $fieldlist FROM $this->Table $where";
       $qry = new PgQuery($sql);
       if ( $qry->Exec( __CLASS__, __LINE__, __FILE__ ) && $qry->rows > 0 ) {
         $i_read_the_record = true;

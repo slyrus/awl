@@ -83,11 +83,13 @@ function qpg($str = null)
   switch (strtolower(gettype($str))) {
     case 'null':
       $rv = 'NULL';
+      break;
     case 'integer':
     case 'double' :
       return $str;
     case 'boolean':
       $rv = $str ? 'TRUE' : 'FALSE';
+      break;
     case 'string':
     default:
       $str = str_replace("'", "''", $str);

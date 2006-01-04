@@ -388,6 +388,18 @@ class EntryForm
   }
 
   /**
+  * Initialise some more of the forms fields, possibly with a prefix
+  * @param objectref $record A reference to the database object we are displaying / editing.
+  * @param string $prefix A prefix to prepend to the field name.
+  */
+  function PopulateForm( &$record, $prefix="" )
+  {
+    foreach( $record AS $k => $v ) {
+      $this->record->{"$prefix$k"} = $v;
+    }
+  }
+
+  /**
   * Set the line format to have no help display
   */
   function NoHelp( ) {
@@ -608,11 +620,11 @@ class EntryForm
   * A utility function for a data entry line within a table
   * @return string The HTML fragment to display the prompt and field.
   */
-  function DataEntryLine( $prompt, $currval, $ftype='', $fname='', $attributes='', $prefix = '' )
+  function DataEntryLine( $prompt, $field_format, $ftype='', $fname='', $attributes='', $prefix = '' )
   {
     $attributes = $this->_ParseAttributes( $ftype, $attributes );
     return sprintf( $this->table_line_format, $prompt,
-                $this->DataEntryField( $currval, $ftype, $fname, $attributes, $prefix ),
+                $this->DataEntryField( $field_format, $ftype, $fname, $attributes, $prefix ),
                 $attributes['_help'] );
   }
 

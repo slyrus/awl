@@ -145,7 +145,27 @@ class User extends DBRecord {
 
     $html .= "<table width=\"100%\" class=\"data\" cellspacing=\"0\" cellpadding=\"0\">\n";
 
-    $html .= $ef->BreakLine("User Details");
+    $html .= $this->RenderFields($ef);
+
+    $html .= "</table>\n";
+    if ( $ef->editmode ) {
+      $html .= '<div id="footer">';
+      $html .= $ef->SubmitButton( "submit", (("insert" == $this->WriteType) ? "Create" : "Update") );
+      $html .= '</div>';
+      $html .= $ef->EndForm();
+    }
+
+    return $html;
+  }
+
+  /**
+  * Render the core details to show to the user
+  * @return string An HTML fragment to display in the page.
+  */
+  function RenderFields($ef ) {
+    global $session;
+
+    $html = $ef->BreakLine("User Details");
 
     $html .= $ef->DataEntryLine( "User Name", "%s", "text", "username",
               array( "size" => 20, "title" => "The name this user can log into the system with.") );
@@ -166,17 +186,19 @@ class User extends DBRecord {
     $html .= $ef->DataEntryLine( "Email", "%s", "text", "email",
               array( "size" => 50, "title" => "The user's e-mail address.") );
 
-    $html .= "</table>\n";
-    if ( $ef->editmode ) {
-      $html .= '<div id="footer">';
-      $html .= $ef->SubmitButton( "submit", (("insert" == $this->WriteType) ? "Create" : "Update") );
-      $html .= '</div>';
-      $html .= $ef->EndForm();
-    }
+    $html .= $ef->DataEntryLine( "Active", "%s", "checkbox", "active",
+              array( "_label" => "User is active",
+                     "title" => "Is this user active?.") );
+
+    $html .= $ef->DataEntryLine( "EMail OK", "%s", "date", "email_ok",
+              array( "title" => "When the user's e-mail account was validated.") );
+
+    $html .= $ef->DataEntryLine( "Joined", substr($this->Get('joined'),0,16) );
+    $html .= $ef->DataEntryLine( "Updated", substr($this->Get('updated'),0,16) );
+    $html .= $ef->DataEntryLine( "Last used", substr($this->Get('last_used'),0,16) );
 
     return $html;
   }
-
 
   /**
   * Validate the information the user submitted

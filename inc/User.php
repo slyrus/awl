@@ -89,22 +89,16 @@ class User extends DBRecord {
     $rc = false;
     switch( strtolower($whatever) ) {
 
-      // Admin, Banker of this user's bank, this user
-// FIXME need to add Banker of this user's bank, need access to client table
       case 'view':
         $rc = ( $session->AllowedTo("Admin")
                 || ($this->user_no > 0 && $session->user_no == $this->user_no) );
         break;
 
-      // Admin, Banker of this user's bank, this user
-// FIXME need to add Banker of this user's bank, need access to client table
       case 'update':
         $rc = ( $session->AllowedTo("Admin")
                 || ($this->user_no > 0 && $session->user_no == $this->user_no) );
         break;
 
-      // Admin, Banker of this user's bank, this user
-// FIXME need to add Banker of this user's bank, need access to client table
       case 'changepassword':
         $rc = ( $session->AllowedTo("Admin")
                 || ($this->user_no > 0 && $session->user_no == $this->user_no)
@@ -115,8 +109,6 @@ class User extends DBRecord {
 
       case 'create':
 
-      // Admin, Banker of this user's bank
-// FIXME need to add Banker of this user's bank, need access to client table
       case 'insert':
         $rc =  ( $session->AllowedTo("Admin") );
         break;

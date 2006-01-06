@@ -28,41 +28,6 @@
 */
 require_once('PgQuery.php');
 
-if ( isset($_GET['logout']) ) {
-  error_log("$sysname: Session: DBG: Logging out");
-  setcookie( 'sid', '', 0,'/');
-  unset($_COOKIE['sid']);
-  unset($_COOKIE['lsid']); // Allow a cookied person to be un-logged-in for one page view.
-
-  if ( isset($_GET['forget']) ) setcookie( 'lsid', '', 0,'/');
-}
-
-/**
-* @global resource $session
-* @name $session
-* The session object is global.
-*/
-
-$session = new Session();
-
-if ( isset($_POST['lostpass']) ) {
-  if ( $debuggroups['Login'] )
-    $session->Log( "DBG: User '$_POST[username]' has lost the password." );
-
-  $session->SendTemporaryPassword();
-}
-else if ( isset($_POST['username']) && isset($_POST['password']) ) {
-  // Try and log in if we have a username and password
-  $session->Login( $_POST['username'], $_POST['password'] );
-  if ( $debuggroups['Login'] )
-    $session->Log( "DBG: User $_POST[username] - $session->fullname ($session->user_no) login status is $session->logged_in" );
-}
-else if ( !isset($_COOKIE['sid']) && isset($_COOKIE['lsid']) && $_COOKIE['lsid'] != "" ) {
-  // Validate long-term session details
-  $session->LSIDLogin( $_COOKIE['lsid'] );
-  if ( $debuggroups['Login'] )
-    $session->Log( "DBG: User $session->username - $session->fullname ($session->user_no) login status is $session->logged_in" );
-}
 
 /**
 * Make a salted MD5 string, given a string and (possibly) a salt.
@@ -656,6 +621,52 @@ EOTEXT;
     include_once("page-footer.php");
     exit(0);
   }
+
+  function _CheckLogout() {
+    if ( isset($_GET['logout']) ) {
+      error_log("$sysname: Session: DBG: Logging out");
+      setcookie( 'sid', '', 0,'/');
+      unset($_COOKIE['sid']);
+      unset($_COOKIE['lsid']); // Allow a cookied person to be un-logged-in for one page view.
+
+      if ( isset($_GET['forget']) ) setcookie( 'lsid', '', 0,'/');
+    }
+  }
+
+  function _CheckLogin() {
+    global $debuggroups;
+    if ( isset($_POST['lostpass']) ) {
+      if ( $debuggroups['Login'] )
+        $this->Log( "DBG: User '$_POST[username]' has lost the password." );
+
+      $this->SendTemporaryPassword();
+    }
+    else if ( isset($_POST['username']) && isset($_POST['password']) ) {
+      // Try and log in if we have a username and password
+      $this->Login( $_POST['username'], $_POST['password'] );
+      if ( $debuggroups['Login'] )
+        $this->Log( "DBG: User $_POST[username] - $this->fullname ($this->user_no) login status is $this->logged_in" );
+    }
+    else if ( !isset($_COOKIE['sid']) && isset($_COOKIE['lsid']) && $_COOKIE['lsid'] != "" ) {
+      // Validate long-term session details
+      $this->LSIDLogin( $_COOKIE['lsid'] );
+      if ( $debuggroups['Login'] )
+        $this->Log( "DBG: User $this->username - $this->fullname ($this->user_no) login status is $this->logged_in" );
+    }
+  }
+}
+
+
+/**
+* @global resource $session
+* @name $session
+* The session object is global.
+*/
+
+if ( !isset($session) ) {
+  Session::_CheckLogout();
+  $session = new Session();
+  $session->_CheckLogin();
 }
 
 ?>

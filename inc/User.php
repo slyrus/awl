@@ -39,17 +39,27 @@ class User extends DBRecord {
   * @var string
   */
   var $user_no;
+
+  /**
+  * Something to prefix all field names with before rendering them.
+  * @var string
+  */
+  var $prefix;
+
   /**#@-*/
 
   /**
   * The constructor initialises a new record, potentially reading it from the database.
   * @param int $id The user_no, or 0 if we are creating a new one
+  * @param string $prefix The prefix for entry fields
   */
-  function User( $id ) {
+  function User( $id , $prefix = "") {
     global $session;
 
     // Call the parent constructor
     $this->DBRecord();
+
+    $this->prefix = $prefix;
 
     $this->user_no = 0;
     $keys = array();
@@ -88,6 +98,12 @@ class User extends DBRecord {
 
     $rc = false;
     switch( strtolower($whatever) ) {
+
+      case 'view':
+        $rc = ( $session->AllowedTo("Admin")
+                || ($this->user_no > 0 && $session->user_no == $this->user_no) );
+        break;
+
       case 'update':
         $rc = ( $session->AllowedTo("Admin")
                 || ($this->user_no > 0 && $session->user_no == $this->user_no) );
@@ -100,7 +116,9 @@ class User extends DBRecord {
         break;
 
       case 'admin':
+
       case 'create':
+
       case 'insert':
         $rc =  ( $session->AllowedTo("Admin") );
         break;
@@ -161,38 +179,40 @@ class User extends DBRecord {
 
   /**
   * Render the core details to show to the user
+  * @param object $ef The entry form.
+  * @param string $title The title to display above the entry fields.
   * @return string An HTML fragment to display in the page.
   */
-  function RenderFields($ef ) {
+  function RenderFields($ef , $title = "User Details" ) {
     global $session;
 
-    $html = $ef->BreakLine("User Details");
+    $html = ( $title == "" ? "" : $ef->BreakLine($title) );
 
     $html .= $ef->DataEntryLine( "User Name", "%s", "text", "username",
-              array( "size" => 20, "title" => "The name this user can log into the system with.") );
+              array( "size" => 20, "title" => "The name this user can log into the system with."), $this->prefix );
     if ( $ef->editmode && $this->AllowedTo('ChangePassword') ) {
       $this->Set('new_password','******');
       unset($_POST['new_password']);
       $html .= $ef->DataEntryLine( "New Password", "%s", "password", "new_password",
-                array( "size" => 20, "title" => "The user's password for logging in.") );
+                array( "size" => 20, "title" => "The user's password for logging in."), $this->prefix );
       $this->Set('confirm_password', '******');
       unset($_POST['confirm_password']);
       $html .= $ef->DataEntryLine( "Confirm", "%s", "password", "confirm_password",
-                array( "size" => 20, "title" => "Confirm the new password.") );
+                array( "size" => 20, "title" => "Confirm the new password."), $this->prefix );
     }
 
     $html .= $ef->DataEntryLine( "Full Name", "%s", "text", "fullname",
-              array( "size" => 50, "title" => "The description of the system.") );
+              array( "size" => 50, "title" => "The description of the system."), $this->prefix );
 
     $html .= $ef->DataEntryLine( "Email", "%s", "text", "email",
-              array( "size" => 50, "title" => "The user's e-mail address.") );
+              array( "size" => 50, "title" => "The user's e-mail address."), $this->prefix );
 
     $html .= $ef->DataEntryLine( "Active", "%s", "checkbox", "active",
               array( "_label" => "User is active",
-                     "title" => "Is this user active?.") );
+                     "title" => "Is this user active?."), $this->prefix );
 
     $html .= $ef->DataEntryLine( "EMail OK", "%s", "date", "email_ok",
-              array( "title" => "When the user's e-mail account was validated.") );
+              array( "title" => "When the user's e-mail account was validated."), $this->prefix );
 
     $html .= $ef->DataEntryLine( "Joined", substr($this->Get('joined'),0,16) );
     $html .= $ef->DataEntryLine( "Updated", substr($this->Get('updated'),0,16) );

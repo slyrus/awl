@@ -94,13 +94,13 @@ class BrowserColumn
       $html = sprintf($this->Format,$value);
     }
     else {
-      $html = '<td class="'.$this->Align.'" ';
-      // These don't work.  The CSS standard for multiple classes is 'class="a b c"' but is lightly
+      // These quite probably don't work.  The CSS standard for multiple classes is 'class="a b c"' but is lightly
       // implemented according to some web references.  Perhaps modern browsers are better?
-//      $html .= ($this->Class == "" ? "" : "class=\"$this->Class\"");
-//      $html .= ($extraclass == "" ? "" : "class=\"$extraclass\"");
-      $html .= '>';
-      $html .= ($this->Format == "" ? $value : sprintf($this->Format,$value,$value,$value,$value));
+      $html = '<td class="'.$this->Align;
+      $html .= ($this->Class == "" ? "" : " $this->Class");
+      $html .= ($extraclass == "" ? "" : " $extraclass");
+      $html .= '">';
+      $html .= ($this->Format == "" ? $value : sprintf($this->Format,$value,$value));
       $html .= "</td>\n";
     }
     $html = preg_replace_callback("/##([^#]+)##/", "BrowserColumnValueReplacement", $html );

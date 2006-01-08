@@ -15,6 +15,27 @@
 */
 
 /**
+* @global object $BrowserCurrentRow  The row most recently read from the database.
+*/
+$BrowserCurrentRow = (object) array();
+
+function BrowserColumnValueReplacement($matches)
+{
+  global $BrowserCurrentRow;
+  // as usual: $matches[0] is the complete match
+  // $matches[1] the match for the first subpattern
+  // enclosed in '##...##' and so on
+  // Use like: $s = preg_replace_callback("/##([^#]+)##/", "BrowserColumnValueReplacement", $s);
+  // $this->current_row needs to be assigned something relevant first...
+
+  $field_name = $matches[1];
+  error_log("Replacing $field_name with " . $BrowserCurrentRow->{$field_name});
+  $replacement = $BrowserCurrentRow->{$field_name};
+  return $replacement;
+}
+
+
+/**
 * BrowserColumns are the basic building blocks.  You can specify just the
 * field name, and the column header or you can get fancy and specify an
 * alignment, format string, SQL formula and cell CSS class.
@@ -28,6 +49,7 @@ class BrowserColumn
   var $Sql;
   var $Align;
   var $Class;
+  var $current_row;
 
   function BrowserColumn( $field, $header="", $align="", $format="", $sql="", $class="" ) {
     $this->Field  = $field;
@@ -58,7 +80,7 @@ class BrowserColumn
       else {
         $image = 'up';
       }
-      $image = "<img class=\"order\" src=\"$c->images/$image.gif\">";
+      $image = "<img class=\"order\" src=\"$c->images/$image.gif\" alt=\"$image\" />";
     }
     $html .= '<a href="'.replace_uri_params( $_SERVER['REQUEST_URI'], array( "o[$browser_array_key]" => $this->Field, "d[$browser_array_key]" => $direction ) ).'" class="order">';
     $html .= ($this->Header == "" ? $this->Field : $this->Header);
@@ -66,19 +88,22 @@ class BrowserColumn
     return $html;
   }
 
-  function RenderValue( $value, $extraclass="" ) {
+  function RenderValue( $value, $extraclass = "" ) {
     $value = str_replace( "\n", "<br />", $value );
     if ( substr(strtolower($this->Format),0,3) == "<td" ) {
       $html = sprintf($this->Format,$value);
     }
     else {
       $html = '<td class="'.$this->Align.'" ';
-      $html .= ($this->Class == "" ? "" : "class=\"$this->Class\"");
-      $html .= ($extraclass == "" ? "" : "class=\"$extraclass\"");
+      // These don't work.  The CSS standard for multiple classes is 'class="a b c"' but is lightly
+      // implemented according to some web references.  Perhaps modern browsers are better?
+//      $html .= ($this->Class == "" ? "" : "class=\"$this->Class\"");
+//      $html .= ($extraclass == "" ? "" : "class=\"$extraclass\"");
       $html .= '>';
-      $html .= ($this->Format == "" ? $value : sprintf($this->Format,$value));
+      $html .= ($this->Format == "" ? $value : sprintf($this->Format,$value,$value,$value,$value));
       $html .= "</td>\n";
     }
+    $html = preg_replace_callback("/##([^#]+)##/", "BrowserColumnValueReplacement", $html );
     return $html;
   }
 }
@@ -363,54 +388,62 @@ class Browser
   * @return string The rendered HTML fragment to display to the user.
   */
   function Render( $title_tag = 'h1' ) {
-    global $c, $session;
+    global $c, $session, $BrowserCurrentRow;
 
     if ( !isset($this->Query) ) $this->DoQuery();  // Ensure the query gets run before we render!
 
     $session->Log("DBG: Rendering browser $this->Title");
     $html = '<div id="browser">';
     if ( $this->Title != "" ) {
-      $html = "<$title_tag>$this->Title</$title_tag>\n";
+      $html .= "<$title_tag>$this->Title</$title_tag>\n";
     }
-    $html .= "<table>\n";
-    $html .= "<tr class=\"header\">\n";
+
+    $html .= "<table id=\"browse_table\">\n";
+    $html .= "<thead><tr class=\"header\">\n";
     foreach( $this->Columns AS $k => $column ) {
       $html .= $column->RenderHeader( $this->OrderField, $this->OrderDirection, $this->OrderBrowserKey );
     }
-    $html .= "</tr>\n";
+    $html .= "</tr></thead>\n<tbody>";
 
-    while( $row = $this->Query->Fetch() ) {
+    while( $BrowserCurrentRow = $this->Query->Fetch() ) {
+
+      // Work out the answers to any stuff that may be being substituted into the row start
       foreach( $this->BeginRowArgs AS $k => $fld ) {
-        $rowanswers[$k] = $row->{$fld};
+        $rowanswers[$k] = $BrowserCurrentRow->{$fld};
         if ( !isset( $rowanswers[$k] ) ) {
           switch( $fld ) {
             case '#even':
               $rowanswers[$k] = ($this->Query->rownum % 2);
               break;
             default:
-              $rowanswers[$k] = "";
+              $rowanswers[$k] = $fld;
           }
         }
       }
+      // Start the row
       $html .= vsprintf( $this->BeginRow, $rowanswers);
+
+      // Each column
       foreach( $this->Columns AS $k => $column ) {
-        $html .= $column->RenderValue($row->{$column->Field});
+        $html .= $column->RenderValue($BrowserCurrentRow->{$column->Field});
         if ( isset($this->Totals[$column->Field]) ) {
-//          $session->Log("DBG: Rendering total %s through function %s", $column->Field, $this->TotalFuncs[$column->Field] );
           if ( isset($this->TotalFuncs[$column->Field]) && function_exists($this->TotalFuncs[$column->Field]) ) {
             // Run the amount through the callback function  $floatval = my_function( $row, $fieldval );
-            $this->Totals[$column->Field] += $this->TotalFuncs[$column->Field]( $row, $row->{$column->Field} );
+            $this->Totals[$column->Field] += $this->TotalFuncs[$column->Field]( $BrowserCurrentRow, $BrowserCurrentRow->{$column->Field} );
           }
           else {
             // Just add the amount
-            $this->Totals[$column->Field] += $row->{$column->Field};
+            $this->Totals[$column->Field] += $BrowserCurrentRow->{$column->Field};
           }
         }
       }
+
+      // Finish the row
       $html .= $this->CloseRow;
     }
 
     if ( count($this->Totals) > 0 ) {
+      $BrowserCurrentRow = new object;
       $html .= "<tr class=\"totals\">\n";
       foreach( $this->Columns AS $k => $column ) {
         if ( isset($this->Totals[$column->Field]) ) {
@@ -423,8 +456,9 @@ class Browser
       $html .= "</tr>\n";
     }
 
-    $html .= "</table>\n";
+    $html .= "</tbody>\n</table>\n";
     $html .= '</div>';
+
     return $html;
   }
 

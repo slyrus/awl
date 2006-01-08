@@ -444,6 +444,8 @@ class Session
         local_index_not_logged_in();
       }
       else {
+        $action_target = htmlspecialchars($_SERVER['REQUEST_URI']);
+        $this->Log("DBG: action_target='%s'", $action_target );
         echo <<<EOTEXT
 <div id="logon">
 <h1>Log On Please</h1>
@@ -456,24 +458,24 @@ the username and password that have been issued to you.</p>
 <tr>
 <th class="prompt">User Name:</th>
 <td class="entry">
-<input class="text" type="text" name="username" size="12"></td>
+<input class="text" type="text" name="username" size="12" /></td>
 </tr>
 <tr>
 <th class="prompt">Password:</th>
 <td class="entry">
-<input class="password" type="password" name="password" size="12">
- &nbsp;<label>forget&nbsp;me&nbsp;not: <input class="checkbox" type="checkbox" name="remember" value="1"></label>
+<input class="password" type="password" name="password" size="12" />
+ &nbsp;<label>forget&nbsp;me&nbsp;not: <input class="checkbox" type="checkbox" name="remember" value="1" /></label>
 </td>
 </tr>
 <tr>
 <th class="prompt">&nbsp;</th>
 <td class="entry">
-<input type="submit" value="GO!" alt="go" name="submit" class="submit">
+<input type="submit" value="GO!" alt="go" name="submit" class="submit" />
 </td>
 </tr>
 </table>
 <p>
-If you have forgotten your password then: <input type="submit" value="Help! I've forgotten my password!" alt="Enter a username, if you know it, and click here." name="lostpass" class="submit">
+If you have forgotten your password then: <input type="submit" value="Help! I've forgotten my password!" alt="Enter a username, if you know it, and click here." name="lostpass" class="submit" />
 </p>
 </form>
 </div>
@@ -595,16 +597,16 @@ EOTEXT;
 <table>
 <tr>
 <th class="prompt">Enter your User Name:</th>
-<td class="entry"><input class="text" type="text" name="username" size="12"></td>
+<td class="entry"><input class="text" type="text" name="username" size="12" /></td>
 </tr>
 <tr>
 <th class="prompt">Or your EMail Address:</th>
-<td class="entry"><input class="text" type="text" name="email_address" size="50"></td>
+<td class="entry"><input class="text" type="text" name="email_address" size="50" /></td>
 </tr>
 <tr>
 <th class="prompt">and click on -></th>
 <td class="entry">
-<input class="submit" type="submit" value="Send me a temporary password" alt="Enter a username, or e-mail address, and click here." name="lostpass">
+<input class="submit" type="submit" value="Send me a temporary password" alt="Enter a username, or e-mail address, and click here." name="lostpass" />
 </td>
 </tr>
 </table>

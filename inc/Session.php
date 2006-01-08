@@ -425,34 +425,15 @@ class Session
 
 
 /**
-* Checks that this user is logged in, and presents a login screen if they aren't.
+* Renders some HTML for a basic login panel
 *
-* The function can optionally confirm whether they are a member of one of a list
-* of groups, and deny access if they are not a member of any of them.
-*
-* @param string $groups The list of groups that the user must be a member of one of to be allowed to proceed.
-* @return boolean Whether or not the user is logged in and is a member of one of the required groups.
+* @return string The HTML to display a login panel.
 */
-  function LoginRequired( $groups = "" ) {
-    global $c, $session;
-
-    if ( $this->logged_in && $groups == "" ) return;
-    if ( ! $this->logged_in ) {
-      $c->messages[] = "You must log in to use this system.";
-      include_once("page-header.php");
-      if ( function_exists("local_index_not_logged_in") ) {
-        local_index_not_logged_in();
-      }
-      else {
-        $action_target = htmlspecialchars($_SERVER['REQUEST_URI']);
-        $this->Log("DBG: action_target='%s'", $action_target );
-        echo <<<EOTEXT
+  function RenderLoginPanel() {
+    $action_target = htmlspecialchars($_SERVER['REQUEST_URI']);
+    $this->Log("DBG: action_target='%s'", $action_target );
+    $html = <<<EOTEXT
 <div id="logon">
-<h1>Log On Please</h1>
-<p>For access to the $c->system_name you should log on with
-the username and password that have been issued to you.</p>
-
-<p>If you would like to request access, please e-mail $c->admin_email.</p>
 <form action="$action_target" method="post">
 <table>
 <tr>
@@ -481,6 +462,38 @@ If you have forgotten your password then: <input type="submit" value="Help! I've
 </div>
 
 EOTEXT;
+    return $html;
+  }
+
+
+/**
+* Checks that this user is logged in, and presents a login screen if they aren't.
+*
+* The function can optionally confirm whether they are a member of one of a list
+* of groups, and deny access if they are not a member of any of them.
+*
+* @param string $groups The list of groups that the user must be a member of one of to be allowed to proceed.
+* @return boolean Whether or not the user is logged in and is a member of one of the required groups.
+*/
+  function LoginRequired( $groups = "" ) {
+    global $c, $session;
+
+    if ( $this->logged_in && $groups == "" ) return;
+    if ( ! $this->logged_in ) {
+      $c->messages[] = "You must log in to use this system.";
+      include_once("page-header.php");
+      if ( function_exists("local_index_not_logged_in") ) {
+        local_index_not_logged_in();
+      }
+      else {
+        echo <<<EOHTML
+<h1>Log On Please</h1>
+<p>For access to the $c->system_name you should log on with
+the username and password that have been issued to you.</p>
+
+<p>If you would like to request access, please e-mail $c->admin_email.</p>
+EOHTML;
+        echo $this->RenderLoginPanel();
       }
     }
     else {

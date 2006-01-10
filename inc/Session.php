@@ -121,15 +121,74 @@ function check_temporary_passwords( $they_sent, $user_no ) {
 */
 class Session
 {
-  var $user_no = 0;
-  var $session_id = 0;
-  var $username = 'guest';
-  var $full_name = 'Guest';
-  var $email = '';
+  /**#@+
+  * @access private
+  */
   var $roles;
-  var $logged_in = false;
   var $cause = '';
+  /**#@-*/
+
+  /**#@+
+  * @access public
+  */
+
+  /**
+  * The user_no of the logged in user.
+  * @var int
+  */
+  var $user_no;
+
+  /**
+  * A unique id for this user's logged-in session.
+  * @var int
+  */
+  var $session_id = 0;
+
+  /**
+  * The user's username used to log in.
+  * @var int
+  */
+  var $username = 'guest';
+
+  /**
+  * The user's full name from their usr record.
+  * @var int
+  */
+  var $full_name = 'Guest';
+
+  /**
+  * The user's email address from their usr record.
+  * @var int
+  */
+  var $email = '';
+
+  /**
+  * Whether this user has actually logged in.
+  * @var int
+  */
+  var $logged_in = false;
+
+  /**
+  * Whether the user logged in to view the current page.  Perhaps some details on the
+  * login form might pollute an editable form and result in an unplanned submit.  This
+  * can be used to program around such a problem.
+  * @var boolean
+  */
   var $just_logged_in = false;
+
+  /**
+  * The date and time that the user logged on during their last session.
+  * @var string
+  */
+  var $last_session_start;
+
+  /**
+  * The date and time that the user requested their last page during their last
+  * session.
+  * @var string
+  */
+  var $last_session_end;
+  /**#@-*/
 
   /**
   * Create a new Session object.
@@ -175,12 +234,17 @@ class Session
     else {
       $sql = "SELECT session.*, usr.* FROM session JOIN usr USING ( user_no )";
     }
-    $sql .= " WHERE session_id = ? AND (md5(session_start::text) = ? OR session_key = ?) ORDER BY session_start DESC LIMIT 1";
+    $sql .= " WHERE session_id = ? AND (md5(session_start::text) = ? OR session_key = ?) ORDER BY session_start DESC LIMIT 2";
 
     $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
-    if ( $qry->Exec('Session') && $qry->rows == 1 )
+    if ( $qry->Exec('Session') && $qry->rows > 0 )
     {
       $this->AssignSessionDetails( $qry->Fetch() );
+      if ( $qry->rows > 1 ) {
+        $last_session = $qry->Fetch();
+        $this->last_session_start = $last_session->session_start;
+        $this->last_session_end   = $last_session->session_end;
+      }
       $qry = new PgQuery('UPDATE session SET session_end = current_timestamp WHERE session_id=?', $session_id);
       $qry->Exec('Session');
     }

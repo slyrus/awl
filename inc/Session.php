@@ -234,17 +234,12 @@ class Session
     else {
       $sql = "SELECT session.*, usr.* FROM session JOIN usr USING ( user_no )";
     }
-    $sql .= " WHERE session_id = ? AND (md5(session_start::text) = ? OR session_key = ?) ORDER BY session_start DESC LIMIT 2";
+    $sql .= " WHERE session.session_id = ? AND (md5(session.session_start::text) = ? OR session.session_key = ?) ORDER BY session.session_start DESC LIMIT 2";
 
     $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
-    if ( $qry->Exec('Session') && $qry->rows > 0 )
+    if ( $qry->Exec('Session') && 1 == $qry->rows )
     {
       $this->AssignSessionDetails( $qry->Fetch() );
-      if ( $qry->rows > 1 ) {
-        $last_session = $qry->Fetch();
-        $this->last_session_start = $last_session->session_start;
-        $this->last_session_end   = $last_session->session_end;
-      }
       $qry = new PgQuery('UPDATE session SET session_end = current_timestamp WHERE session_id=?', $session_id);
       $qry->Exec('Session');
     }

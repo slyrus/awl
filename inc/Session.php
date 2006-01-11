@@ -355,6 +355,10 @@ class Session
           if ( $debuggroups['Login'] )
             $this->Log( "DBG:: Login: Valid username/password for $username ($usr->user_no)" );
 
+          // Set the last_used timestamp to match the previous login.
+          $qry = new PgQuery('UPDATE usr SET last_used = (SELECT session_start FROM session WHERE session.user_no = ? ORDER BY session_id DESC LIMIT 1) WHERE user_no = ?;', $usr->user_no, $usr->user_no);
+          $qry->Exec('Session');
+
           // And create a session
           $sql = "INSERT INTO session (session_id, user_no, session_key) VALUES( ?, ?, ? )";
           $qry = new PgQuery( $sql, $session_id, $usr->user_no, $session_key );
@@ -373,6 +377,8 @@ class Session
               setcookie( "lsid", $cookie, time() + (86400 * 3600), "/" );   // will expire in ten or so years
             }
             $this->just_logged_in = true;
+
+            // Unset all of the submitted values, so we don't accidentally submit an unexpected form.
             unset($_POST['username']);
             unset($_POST['password']);
             unset($_POST['submit']);

@@ -363,7 +363,7 @@ class PgQuery
   */
   function Exec( $location = '', $line = 0, $file = '' )
    {
-    global $dbconn, $debuggroups;
+    global $dbconn, $debuggroups, $c;
     $this->location = trim($location);
     if ( $this->location == "" ) $this->location = substr($GLOBALS['PHP_SELF'],1);
 
@@ -376,7 +376,9 @@ class PgQuery
     $this->result = pg_exec( $dbconn, $this->querystring ); // execute the query
     $this->rows = pg_numrows($this->result); // number of rows returned
     $t2 = microtime(); // get end time
-    $this->execution_time = sprintf( "%2.06lf", duration( $t1, $t2 )); // calculate difference
+    $i_took = duration( $t1, $t2 );   // calculate difference
+    $c->total_query_time += $i_took;
+    $this->execution_time = sprintf( "%2.06lf", $i_took);
     $locn = sprintf( "%-12.12s", $this->location );
 
     if ( !$this->result ) // query failed

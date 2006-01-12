@@ -73,7 +73,9 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
       $value = "NULL";
     }
     else if ( eregi("bool", $typ) )  {
-      $value = ( $value == "" ? "NULL" : ($value == "f" || $value == "off" || $value == "no" ? "FALSE" : "TRUE" ));
+      $value = ( $value == false || $value == "f" || $value == "off" || $value == "no" ? "FALSE"
+                  : ( $value == true || $value == "t" || $value == "on" || $value == "yes" ? "TRUE"
+                      : "NULL" ));
     }
     else if ( eregi("int", $typ) )  {
       $value = intval( $value );

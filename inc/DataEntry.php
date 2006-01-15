@@ -515,9 +515,15 @@ class EntryForm
   * @return string The parsed type extra.
   */
   function _ParseAttributes( $ftype = '', $attributes = '' )  {
+
     if ( !is_array($attributes) ) {
-      list( $k, $v ) = explode( '=', $attributes );
-      $attributes = array( $k => $v );
+      if ( strpos( $attributes, '=' ) === false ) {
+        $attributes = array();
+      }
+      else {
+        list( $k, $v ) = explode( '=', $attributes );
+        $attributes = array( $k => $v );
+      }
     }
 
     // Default the help to the title, or to blank

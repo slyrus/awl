@@ -207,16 +207,16 @@ class User extends DBRecord {
     $html .= $ef->DataEntryLine( "Email", "%s", "text", "email",
               array( "size" => 50, "title" => "The user's e-mail address."), $this->prefix );
 
-    $html .= $ef->DataEntryLine( "Active", "%s", "checkbox", "active",
+    $html .= $ef->DataEntryLine( "Active", ($this->Get('active') == 't'? 'Yes' : 'No'), "checkbox", "active",
               array( "_label" => "User is active",
                      "title" => "Is this user active?."), $this->prefix );
 
-    $html .= $ef->DataEntryLine( "EMail OK", "%s", "date", "email_ok",
+    $html .= $ef->DataEntryLine( "EMail OK", $session->FormattedDate($this->Values->email_ok,'timestamp'), "timestamp", "email_ok",
               array( "title" => "When the user's e-mail account was validated."), $this->prefix );
 
-    $html .= $ef->DataEntryLine( "Joined", substr($this->Get('joined'),0,16) );
-    $html .= $ef->DataEntryLine( "Updated", substr($this->Get('updated'),0,16) );
-    $html .= $ef->DataEntryLine( "Last used", substr($this->Get('last_used'),0,16) );
+    $html .= $ef->DataEntryLine( "Joined", $session->FormattedDate($this->Get('joined'),'timestamp') );
+    $html .= $ef->DataEntryLine( "Updated", $session->FormattedDate($this->Get('updated'),'timestamp') );
+    $html .= $ef->DataEntryLine( "Last used", $session->FormattedDate($this->Get('last_used'),'timestamp') );
 
     return $html;
   }

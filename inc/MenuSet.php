@@ -247,7 +247,7 @@ class MenuSet {
   * @param string $main_class A CSS class for most menu options.
   * @param string $active_class A CSS class for active menu options.
   */
-  function MenuSet( $div_id, $main_class, $active_class ) {
+  function MenuSet( $div_id, $main_class = '', $active_class = 'active' ) {
     $this->options = array();
     $this->main_class = $main_class;
     $this->active_class = $active_class;

@@ -343,7 +343,7 @@ class Session
 
     $sql = "SELECT * FROM usr WHERE lower(username) = ? ";
     $qry = new PgQuery( $sql, strtolower($username) );
-    if ( $qry->Exec('Session::UPWLogin') && $qry->rows == 1 ) {
+    if ( $qry->Exec('Session::UPWLogin',__LINE,__FILE__) && $qry->rows == 1 ) {
       $usr = $qry->Fetch();
       if ( session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {
         // Now get the next session ID to create one from...
@@ -742,7 +742,7 @@ EOTEXT;
   * @param string $type If 'timestamp' then the time will also be shown.
   * @return string The nicely formatted date.
   */
-  function FormattedDate( $indate, $type ) {
+  function FormattedDate( $indate, $type=date ) {
     $out = "";
     if ( preg_match( '#^\d{1,2}[/-]\d{1,2}[/-]\d{2,4}#', $indate ) ) {
       // Looks like it's nice already - don't screw with it!

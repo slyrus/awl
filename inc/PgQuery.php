@@ -393,10 +393,10 @@ class PgQuery
     }
     elseif ( isset($debuggroups[$this->location]) && $debuggroups[$this->location] ) // query successful
     {
-      log_error( $locn, 'DBGQ', "Took: $this->execution_time for $this->querystring", $line, $file );
+      log_error( $locn, 'DBGQ', "Took: $this->execution_time for $this->querystring to find $this->rows rows.", $line, $file );
     }
 
-     return $this->result;
+    return $this->result;
   }
 
   /**

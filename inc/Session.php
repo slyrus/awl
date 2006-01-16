@@ -744,6 +744,10 @@ EOTEXT;
   */
   function FormattedDate( $indate, $type=date ) {
     $out = "";
+    if ( preg_match( '#^\s*$#', $indate ) ) {
+      // Looks like it's empty - just return empty
+      return $indate;
+    }
     if ( preg_match( '#^\d{1,2}[/-]\d{1,2}[/-]\d{2,4}#', $indate ) ) {
       // Looks like it's nice already - don't screw with it!
       return $indate;

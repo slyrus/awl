@@ -226,36 +226,26 @@ class DBRecord
   var $OtherTable;
 
   /**
-  * The field names for each of the other tables associated.  The first array index
-  * is the table name, the second array index is the field name, and the array value
-  * is the type of the field.
-  * @var array of arrays
+  * The field names for each of the other tables associated.  The array index
+  * is the table name, the string is a list of field names (and perhaps aliases)
+  * to stuff into the target list for the SELECT.
+  * @var array of string
   */
-  var $OtherFields;
-
-  /**
-  * The keys for the record as an array of key => value pairs.  The first array index
-  * is the table name, the second array index is the key field name, and the array value
-  * is the value of the key field.
-  * @var array of arrays
-  */
-  var $OtherKeys;
+  var $OtherTargets;
 
   /**
   * An array of JOIN ... clauses.  The first array index is the table name and the array value
-  * is the JOIN clause like "USING (myforeignkey)".  All joins for the purposes of this
-  * will be defined as 'table1 LEFT OUTER JOIN table2 "prefix2" [... join clause ...]'
+  * is the JOIN clause like "LEFT JOIN tn t1 USING (myforeignkey)".
   * @var array of string
   */
   var $OtherJoin;
 
   /**
-  * An array of field prefixes.  When read from the database, all records will be read
-  * into the same namespace (i.e. $this->Values->{$prefix.$fieldname} ) and this will
-  * enable identification of values from different tables where the field name is the same.
+  * An array of partial WHERE clauses.  These will be combined (if present) with the key
+  * where clause on the main table.
   * @var array of string
   */
-  var $OtherPrefix;
+  var $OtherWhere;
 
   /**#@-*/
 
@@ -305,14 +295,13 @@ class DBRecord
   * @param string $prefix A field prefix to use for these fields to distinguish them from fields
   *                       in other joined tables with the same name.
   */
-  function AddTable( $table, $keys = array(), $join, $prefix ) {
+  function AddTable( $table, $target_list, $join_clause, $and_where ) {
     global $session;
-    $session->Log("DBG: DBRecord::Initialise: called" );
+    $session->Log("DBG: DBRecord::AddTable: $table called" );
     $this->OtherTable[] = $table;
-    $this->OtherFields[$table] = get_fields($this->Table);
-    $this->OtherKeys[$table] = $keys;
-    $this->OtherJoin[$table] = $join;
-    $this->OtherPrefix[$table] = $prefix;
+    $this->OtherTargets[$table] = $target_list;
+    $this->OtherJoin[$table] = $join_clause;
+    $this->OtherWhere[$table] = $and_where;
   }
 
   /**
@@ -331,20 +320,37 @@ class DBRecord
   }
 
   /**
+  * Builds a table join clause
+  * @return string A simple SQL target join clause excluding the primary table.
+  */
+  function _BuildJoinClause() {
+    $clause = "";
+    foreach( $this->OtherJoins AS $t => $join ) {
+      if ( ! preg_match( '/^\s*$/', $join ) ) {
+        $clause .= ( $clause == "" ? "" : " " )  . $join;
+      }
+    }
+
+    return $clause;
+  }
+
+  /**
   * Builds a field target list
   * @return string A simple SQL target field list for each field, possibly including prefixes.
   */
   function _BuildFieldList() {
-    if ( $this->prefix == "" ) {
-      $list = "*";
-      return $list;
-    }
-
     $list = "";
     foreach( $this->Fields AS $fname => $ftype ) {
       $list .= ( $list == "" ? "" : ", " );
-      $list .= "$fname AS \"$this->prefix$fname\"";
+      $list .= "$fname" . ( $this->prefix == "" ? "" : " AS \"$this->prefix$fname\"" );
     }
+
+    foreach( $this->OtherTargets AS $t => $targets ) {
+      if ( ! preg_match( '/^\s*$/', $targets ) ) {
+        $list .= ( $list == "" ? "" : ", " )  . $targets;
+      }
+    }
+
     return $list;
   }
 
@@ -362,6 +368,15 @@ class DBRecord
       $where .= ( $where == "" ? "WHERE " : " AND " );
       $where .= "$k = " . qpg($v);
     }
+
+    if ( isset($this->OtherWhere) && is_array($this->OtherWhere) ) {
+      foreach( $this->OtherWhere AS $t => $and_where ) {
+        if ( ! preg_match( '/^\s*$/', $and_where ) ) {
+          $where .= ( $where == "" ? "WHERE " : " AND " )  . $and_where;
+        }
+      }
+    }
+
     return $where;
   }
 
@@ -415,6 +430,7 @@ class DBRecord
     if ( "" != $where ) {
       // $fieldlist = $this->_BuildFieldList();
       $fieldlist = "*";
+  //    $join = $this->_BuildJoinClause(true);
       $sql = "SELECT $fieldlist FROM $this->Table $where";
       $qry = new PgQuery($sql);
       if ( $qry->Exec( __CLASS__, __LINE__, __FILE__ ) && $qry->rows > 0 ) {

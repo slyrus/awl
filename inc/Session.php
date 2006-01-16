@@ -734,6 +734,38 @@ EOTEXT;
         $this->Log( "DBG: User $this->username - $this->fullname ($this->user_no) login status is $this->logged_in" );
     }
   }
+
+
+  /**
+  * Function to reformat an ISO date to something nicer and possibly more localised
+  * @param string $indate The ISO date to be formatted.
+  * @param string $type If 'timestamp' then the time will also be shown.
+  * @return string The nicely formatted date.
+  */
+  function FormattedDate( $indate, $type ) {
+    $out = "";
+    if ( preg_match( '#^\d{1,2}[/-]\d{1,2}[/-]\d{2,4}#', $indate ) ) {
+      // Looks like it's nice already - don't screw with it!
+      return $indate;
+    }
+    $yr = substr($indate,0,4);
+    $mo = substr($indate,5,2);
+    $dy = substr($indate,8,2);
+    switch ( $this->date_format_type ) {
+      case 'U':
+        $out = sprintf( "%d/%d/%d", $mo, $dy, $yr );
+        break;
+      case 'E':
+      default:
+        $out = sprintf( "%d/%d/%d", $dy, $mo, $yr );
+        break;
+    }
+    if ( $type == 'timestamp' ) {
+      $out .= substr($indate,10,6);
+    }
+    return $out;
+  }
+
 }
 
 

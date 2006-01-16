@@ -202,7 +202,12 @@ class EntryField
         break;
 
       case "date":
-        if ( !isset($this->attributes['size']) || $this->attributes['size'] == "" ) $size = " size=12";
+      case "timestamp":
+        if ( !isset($this->attributes['size']) || $this->attributes['size'] == "" ) $size = " size=" . ($this->ftype == 'date' ? "12" : "18");
+        $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".htmlentities($this->current)."\"%%attributes%%>";
+        break;
+
+        if ( !isset($this->attributes['size']) || $this->attributes['size'] == "" ) $size = " size=18";
         $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".htmlentities($this->current)."\"%%attributes%%>";
         break;
 
@@ -279,36 +284,6 @@ class EntryField
     $this->attributes = $attributes;
   }
 
-  /**
-  * Function to reformat an ISO date to something nicer.
-  * @param string $indate The ISO date to be formatted.
-  * @param string $show_time Whether to show the time as well as the date.
-  * @param string $ftype "E" for european, "U" for US.
-  * @return string The nicely formatted date.
-  */
-  function nice_date( $indate, $show_time = false, $ftype = 'E') {
-    $out = "";
-    if ( preg_match( '#^\d{1,2}[/-]\d{1,2}[/-]\d{2,4}#', $indate ) ) {
-      // Looks like it's nice already - don't screw with it!
-      return $indate;
-    }
-    $yr = substr($indate,0,4);
-    $mo = substr($indate,5,2);
-    $dy = substr($indate,8,2);
-    switch ( $ftype ) {
-      case 'U':
-        $out = sprintf( "%d/%d/%d", $mo, $dy, $yr );
-        break;
-      case 'E':
-      default:
-        $out = sprintf( "%d/%d/%d", $dy, $mo, $yr );
-        break;
-    }
-    if ( $show_time ) {
-      $out .= substr($indate,10,6);
-    }
-    return $out;
-  }
 }
 
 /**
@@ -604,7 +579,8 @@ class EntryForm
         $currval = $this->record->{"$fname"};
       }
     }
-    if ( $ftype == "date" ) $currval = EntryField::nice_date($currval);
+    if ( $ftype == "date" ) $currval = $session->FormattedDate($currval);
+    else if ( $ftype == "timestamp" ) $currval = $session->FormattedDate($currval, $ftype);
 
     // Now build the entry field and render it
     $field = new EntryField( $ftype, $fname, $this->_ParseAttributes($ftype,$attributes), $currval );

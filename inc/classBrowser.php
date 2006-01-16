@@ -26,7 +26,7 @@ function BrowserColumnValueReplacement($matches)
   // $matches[1] the match for the first subpattern
   // enclosed in '##...##' and so on
   // Use like: $s = preg_replace_callback("/##([^#]+)##/", "BrowserColumnValueReplacement", $s);
-  // $this->current_row needs to be assigned something relevant first...
+  // $BrowserCurrentRow needs to be assigned something relevant first...
 
   $field_name = $matches[1];
   error_log("Replacing $field_name with " . $BrowserCurrentRow->{$field_name});
@@ -49,15 +49,17 @@ class BrowserColumn
   var $Sql;
   var $Align;
   var $Class;
+  var $Type;
   var $current_row;
 
-  function BrowserColumn( $field, $header="", $align="", $format="", $sql="", $class="" ) {
+  function BrowserColumn( $field, $header="", $align="", $format="", $sql="", $class="", $datatype="" ) {
     $this->Field  = $field;
     $this->Sql    = $sql;
     $this->Header = $header;
     $this->Format = $format;
     $this->Class  = $class;
     $this->Align  = $align;
+    $this->Type   = $datatype;
   }
 
   function GetTarget() {
@@ -89,6 +91,12 @@ class BrowserColumn
   }
 
   function RenderValue( $value, $extraclass = "" ) {
+    global $session;
+
+    if ( $this->Type == 'date' || $this->Type == 'timestamp') {
+      $value = $session->FormattedDate( $value, $this->Type );
+    }
+
     $value = str_replace( "\n", "<br />", $value );
     if ( substr(strtolower($this->Format),0,3) == "<td" ) {
       $html = sprintf($this->Format,$value);
@@ -169,8 +177,8 @@ class Browser
   * @param string $sql An SQL fragment for calculating the value.
   * @param string $class A CSS class to apply to the cells of this column.
   */
-  function AddColumn( $field, $header="", $align="", $format="", $sql="", $class="" ) {
-    $this->Columns[] = new BrowserColumn( $field, $header, $align, $format, $sql, $class );
+  function AddColumn( $field, $header="", $align="", $format="", $sql="", $class="", $datatype="" ) {
+    $this->Columns[] = new BrowserColumn( $field, $header, $align, $format, $sql, $class, $datatype );
   }
 
   /**

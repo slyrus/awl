@@ -759,7 +759,12 @@ EOTEXT;
       case 'U':
         $out = sprintf( "%d/%d/%d", $mo, $dy, $yr );
         break;
+      case 'J':
+        $out = sprintf( "%d/%d/%d", $yr, $mo, $dy );
+        break;
       case 'E':
+        $out = sprintf( "%d/%d/%d", $dy, $mo, $yr );
+        break;
       default:
         $out = sprintf( "%d/%d/%d", $dy, $mo, $yr );
         break;

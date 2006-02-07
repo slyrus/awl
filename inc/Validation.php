@@ -93,6 +93,38 @@ EOHTML;
     return $html;
   }
 
+  /**
+  * Validates the form according to it's rules.
+  * @param object $object The data object that requires form validation.
+  * @return boolean True if the validation succeeded.
+  */
+  function Validate($object)
+  {
+    global $c;
+    if(! count($this->rules) ) return;
+
+    foreach($this->rules as $rule) {
+      list($fieldname, $error_message, $function_name, $jsparam) = $rule;
+
+      if (!$this->$function_name($object->Get($fieldname))) {
+        $valid = false;
+        $c->messages[] = $error_message;
+      }
+
+    }
+
+    return $valid;
+  }
+
+  /**
+  * Checks if a string is empty
+  * @param string $field_string The field value that is being checked.
+  * @return boolean True if the string is not empty.
+  */
+  function not_empty($field_string)
+  {
+    return ($field_string != "");
+  }
 }
 
 ?>

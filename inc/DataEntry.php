@@ -204,11 +204,11 @@ class EntryField
       case "date":
       case "timestamp":
         if ( !isset($this->attributes['size']) || $this->attributes['size'] == "" ) $size = " size=" . ($this->ftype == 'date' ? "12" : "18");
-        $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".htmlentities($this->current)."\"%%attributes%%>";
+        $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".$session->FormattedDate(htmlentities($this->current))."\"%%attributes%%>";
         break;
 
         if ( !isset($this->attributes['size']) || $this->attributes['size'] == "" ) $size = " size=18";
-        $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".htmlentities($this->current)."\"%%attributes%%>";
+        $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".$session->FormattedDate(htmlentities($this->current))."\"%%attributes%%>";
         break;
 
       case "checkbox":
@@ -547,6 +547,9 @@ class EntryForm
       $session->Log( "DBG: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, $this->record->{$fname} );
     if ( !$this->editmode ) {
       // Displaying editable values when we are not editing
+      // If it is a date, then format it according to the current user's date format type
+      if ($ftype == "date" || $ftype == "timestamp")
+        return sprintf($format, $session->FormattedDate($this->record->{$fname}) );
       return sprintf($format, $this->record->{$fname} );
     }
 
@@ -632,6 +635,7 @@ class EntryForm
 
     return $this->DataEntryLine( $prompt, $format, $ftype, $fname, $attributes, $prefix );
   }
+
 }
 
 ?>

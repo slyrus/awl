@@ -125,6 +125,16 @@ EOHTML;
   {
     return ($field_string != "");
   }
+
+  /**
+  * Checks that a string is not empty or zero
+  * @param string $select_string The select value that is being checked.
+  * @return boolean True if the string is not empty or equal to 0.
+  */
+  function selected($field_string)
+  {
+    return ($field_string != "" && $field_string != 0);
+  }
 }
 
 ?>

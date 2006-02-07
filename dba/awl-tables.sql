@@ -14,7 +14,8 @@ CREATE TABLE usr (
   password TEXT,
   fullname TEXT,
   email TEXT,
-  config_data TEXT
+  config_data TEXT,
+  date_format_type TEXT DEFAULT 'E' -- default to english date format dd/mm/yyyy
 );
 CREATE FUNCTION max_usr() RETURNS INT4 AS 'SELECT max(user_no) FROM usr' LANGUAGE 'sql';
 CREATE UNIQUE INDEX usr_sk1_unique_username ON usr ( lower(username) );

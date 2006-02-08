@@ -46,14 +46,11 @@ class Validation
   * You must call RenderRules below RenderFields when outputing the page
   * @param string $fieldname The name of the field.
   * @param string $error_message The message to display on unsuccessful validation.
-  * @param string $function_name The function to call to validate the field,
-  * taking one parameter, which is the field and returns true if the field is valid.
-  * @param string $jsparam An optional parameter to pass to the javascript function, eg regexp.
-  * Must be an object or regexp, or a string with extra quotes within them.
+  * @param string $function_name The function to call to validate the field
   */
-  function AddRule( $fieldname, $error_message, $function_name, $jsparam = '' )
+  function AddRule( $fieldname, $error_message, $function_name )
   {
-    $this->rules[] = array($fieldname, $error_message, $function_name, $jsparam);
+    $this->rules[] = array($fieldname, $error_message, $function_name );
   }
 
   /**
@@ -73,12 +70,10 @@ function $this->func_name(form)
 EOHTML;
 
     foreach($this->rules as $rule) {
-      list($fieldname, $error_message, $function_name, $jsparam) = $rule;
-
-      if ("" != $jsparam) $jsparam = ", " . $jsparam ; // for regexp
+      list($fieldname, $error_message, $function_name) = $rule;
 
     $html .= <<<EOHTML
-if(!$function_name(form.$fieldname$jsparam)) error_message += "$error_message\\n";
+if(!$function_name(form.$fieldname)) error_message += "$error_message\\n";
 EOHTML;
     }
 
@@ -101,10 +96,13 @@ EOHTML;
   function Validate($object)
   {
     global $c;
+
     if(! count($this->rules) ) return;
 
+    $valid = true;
+
     foreach($this->rules as $rule) {
-      list($fieldname, $error_message, $function_name, $jsparam) = $rule;
+      list($fieldname, $error_message, $function_name) = $rule;
 
       if (!$this->$function_name($object->Get($fieldname))) {
         $valid = false;
@@ -115,6 +113,10 @@ EOHTML;
 
     return $valid;
   }
+
+///////////////////////////
+// VALIDATION FUNCTIONS
+///////////////////////////
 
   /**
   * Checks if a string is empty
@@ -133,7 +135,75 @@ EOHTML;
   */
   function selected($field_string)
   {
-    return ($field_string != "" && $field_string != 0);
+    return (!($field_string == "" || $field_string == "0"));
+  }
+
+  /**
+  * Check that the given string is a positive dollar amount.
+  * Use not_empty first if string is required.
+  * @param string $field_string The amount to be checked.
+  * @return boolean Returns true if the given string is a positive dollar amount.
+  */
+  function positive_dollars($field_string)
+  {
+   if(!$field_string) return true;
+   $pattern = "^\$?[0-9]*\.?[0-9]?[0-9]?$";
+   if( ereg($pattern, $field_string) ) {
+     $field_string = ereg_replace("\$", "", $field_string);
+     $field_string = ereg_replace("\.", "", $field_string);
+     if( intval($field_string) > 0 ) return true;
+   }
+   return false;
+  }
+
+  /**
+  * Check that the given string is a valid email address.
+  * Use not_empty first if string is required.
+  * @param string $field_string The string to be checked.
+  * @return boolean Returns true if the given string is a valid email address.
+  */
+  function valid_email_format($field_string)
+  {
+   if(!$field_string) return true;
+   $pattern = "^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$";
+   return (ereg($pattern, $field_string));
+  }
+
+  /**
+  * Check that the given string matches the user's date format.
+  * Use not_empty first if string is required.
+  * @param string $field_string The string to be checked.
+  * @return boolean Returns true if the given string matches the user's date format from session.
+  */
+  function valid_date_format($field_string)
+  {
+   global $session;
+
+   if(!$field_string) return true;
+
+   switch($session->date_format_type) {
+      case 'J':
+        if (!ereg ("^([0-9]{4})[\/\-]([0-9]{1,2})[\/\-]([0-9]{1,2})$", $field_string, $regs)) return false;
+        $day = intval($regs[3]);
+        $month = intval($regs[2]);
+        $year = intval($regs[1]);
+        break;
+
+      case 'U':
+        if (!ereg ("^([0-9]{1,2})[\/\-]([0-9]{1,2})[\/\-]([0-9]{4})$", $field_string, $regs)) return false;
+        $day = intval($regs[2]);
+        $month = intval($regs[1]);
+        $year = intval($regs[3]);
+        break;
+
+      case 'E':
+      default:
+        if (!ereg ("^([0-9]{1,2})[\/\-]([0-9]{1,2})[\/\-]([0-9]{4})$", $field_string, $regs)) return false;
+        $day = intval($regs[1]);
+        $month = intval($regs[2]);
+        $year = intval($regs[3]);
+   }
+   return (checkdate ($month, $day, $year));
   }
 }
 

@@ -56,9 +56,10 @@ class Validation
   /**
   * Returns the javascript for form validation using the rules.
   * @param string $onsubmit The name of the function called on submission of the form.
+  * @param string $prefix Optional prefix for form fields.
   * @return string HTML/Javascript for form validation.
   */
-  function RenderJavascript()
+  function RenderJavascript($prefix = "")
   {
     if(! count($this->rules) ) return "";
 
@@ -73,7 +74,7 @@ EOHTML;
       list($fieldname, $error_message, $function_name) = $rule;
 
     $html .= <<<EOHTML
-if(!$function_name(form.$fieldname)) error_message += "$error_message\\n";
+if(!$function_name(form.$prefix$fieldname)) error_message += "$error_message\\n";
 EOHTML;
     }
 

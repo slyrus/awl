@@ -158,6 +158,19 @@ EOHTML;
   }
 
   /**
+  * Check that the given string is a positive integer.
+  * Use not_empty first if string is required.
+  * @param string $field_string The amount to be checked.
+  * @return boolean Returns true if the given string is a positive integer.
+  */
+  function positive_integer($field_string)
+  {
+   if(!$field_string) return true;
+   $pattern = "^[0-9]*$";
+    return ( ereg($pattern, $field_string) );
+  }
+
+  /**
   * Check that the given string is a valid email address.
   * Use not_empty first if string is required.
   * @param string $field_string The string to be checked.

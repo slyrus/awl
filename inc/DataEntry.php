@@ -207,10 +207,6 @@ class EntryField
         $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".$session->FormattedDate(htmlentities($this->current))."\"%%attributes%%>";
         break;
 
-        if ( !isset($this->attributes['size']) || $this->attributes['size'] == "" ) $size = " size=18";
-        $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".$session->FormattedDate(htmlentities($this->current))."\"%%attributes%%>";
-        break;
-
       case "checkbox":
         // We send a hidden field with a false value, which will be overridden by the real
         // field with a true value (if true) or not overridden (if false).

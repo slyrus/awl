@@ -208,6 +208,8 @@ class Session
   */
   function Session( $sid="" )
   {
+    global $sid, $sysname;
+
     $this->roles = array();
     $this->logged_in = false;
     $this->just_logged_in = false;
@@ -384,6 +386,20 @@ class Session
             unset($_POST['submit']);
             unset($_GET['submit']);
             unset($GLOBALS['submit']);
+
+            if ( function_exists('local_session_sql') ) {
+              $sql = local_session_sql();
+            }
+            else {
+              $sql = "SELECT session.*, usr.* FROM session JOIN usr USING ( user_no )";
+            }
+            $sql .= " WHERE session.session_id = ? AND (md5(session.session_start::text) = ? OR session.session_key = ?) ORDER BY session.session_start DESC LIMIT 2";
+
+            $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
+            if ( $qry->Exec('Session') && 1 == $qry->rows ) {
+              $this->AssignSessionDetails( $qry->Fetch() );
+            }
+
             $rc = true;
             return $rc;
           }
@@ -722,10 +738,11 @@ EOTEXT;
       $this->SendTemporaryPassword();
     }
     else if ( isset($_POST['username']) && isset($_POST['password']) ) {
+      $_username = $_POST['username'];
       // Try and log in if we have a username and password
       $this->Login( $_POST['username'], $_POST['password'] );
       if ( $debuggroups['Login'] )
-        $this->Log( "DBG: User $_POST[username] - $this->fullname ($this->user_no) login status is $this->logged_in" );
+        $this->Log( "DBG: User %s(%s) - %s (%d) login status is %d", $_POST['username'], $_username, $this->fullname, $this->user_no, $this->logged_in );
     }
     else if ( !isset($_COOKIE['sid']) && isset($_COOKIE['lsid']) && $_COOKIE['lsid'] != "" ) {
       // Validate long-term session details

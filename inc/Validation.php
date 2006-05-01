@@ -5,7 +5,7 @@
 * @package   AWL
 * @subpackage   Validation
 * @author    Emily Mossman <emily@catalyst.net.nz>
-* @copyright Emily Mossman
+* @copyright Catalyst .Net Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 
@@ -179,8 +179,9 @@ EOHTML;
   function valid_email_format($field_string)
   {
    if(!$field_string) return true;
-   $pattern = "^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$";
-   return (ereg($pattern, $field_string));
+   // Anything printable, followed by between 1 & 5 valid domain components, with a TLD to finish
+   $pattern = "/^[[:print:]]+@([a-z0-9][a-z0-9-]*\.){1,5}[a-z]{2,5}$/i";
+   return (preg_match($pattern, $field_string));
   }
 
   /**

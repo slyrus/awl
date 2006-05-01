@@ -135,6 +135,7 @@ class Browser
   var $OrderField;
   var $OrderDirection;
   var $OrderBrowserKey;
+  var $Grouping;
   var $Limit;
   var $Query;
   var $BeginRow;
@@ -267,6 +268,15 @@ class Browser
     $this->MoreWhere("OR",$more_where);
   }
 
+  function AddGrouping( $field, $browser_array_key=0 ) {
+    if ( $this->Grouping == "" )
+      $this->Grouping = "GROUP BY ";
+    else
+      $this->Grouping .= ", ";
+
+    $this->Grouping .= clean_component_name($field);
+  }
+
   /**
   * Add an ordering to the browser widget.
   *
@@ -379,7 +389,8 @@ class Browser
       }
     }
     $where_clause = ((isset($this->Where) && $this->Where != "") ? "WHERE $this->Where" : "" );
-    $sql = sprintf( "SELECT %s FROM %s %s %s %s", $target_fields, $this->Joins, $where_clause, $this->Order, $this->Limit);
+    $sql = sprintf( "SELECT %s FROM %s %s %s %s %s", $target_fields,
+                 $this->Joins, $where_clause, $this->Grouping, $this->Order, $this->Limit);
     $this->Query = new PgQuery( $sql );
     return $this->Query->Exec("Browse:$this->Title:DoQuery");
   }
@@ -451,7 +462,7 @@ class Browser
     }
 
     if ( count($this->Totals) > 0 ) {
-      $BrowserCurrentRow = new object;
+      $BrowserCurrentRow = (object) "";
       $html .= "<tr class=\"totals\">\n";
       foreach( $this->Columns AS $k => $column ) {
         if ( isset($this->Totals[$column->Field]) ) {

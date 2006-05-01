@@ -2,10 +2,10 @@
 /**
 * Classes to handle entry and viewing of field-based data.
 *
-* @package   AWL
+* @package   awl
 * @subpackage   DataEntry
 * @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Andrew McMillan
+* @copyright Catalyst IT Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 
@@ -32,7 +32,7 @@
 * field interface, but want to intimately control the layout (or parts of the layout),
 * otherwise you should be using {@link EntryForm} as the main class.
 *
-* @package AWL
+* @package awl
 */
 class EntryField
 {
@@ -287,7 +287,7 @@ class EntryField
 * layout of non-editable content (for viewing), with a simple switch to flip from
 * view mode to edit mode.
 *
-* @package AWL
+* @package awl
 */
 class EntryForm
 {

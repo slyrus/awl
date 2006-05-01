@@ -7,20 +7,29 @@
 * formatted as a link, or the entire row may be linked through an onclick
 * action.
 *
-* @package   AWL
+* @package   awl
 * @subpackage   Browser
 * @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Andrew McMillan
+* @copyright Catalyst IT Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 
+$BrowserCurrentRow = (object) array();
+
+/**
+* Return values from the current row for replacing into a template.
+*
+* This is used to return values from the current row, so they can
+* be inserted into a row template.  It is used as a callback
+* function for preg_replace_callback.
+*
+* @param array of string $matches An array containing a field name as offset 1
+*/
+function BrowserColumnValueReplacement($matches)
+{
 /**
 * @global object $BrowserCurrentRow  The row most recently read from the database.
 */
-$BrowserCurrentRow = (object) array();
-
-function BrowserColumnValueReplacement($matches)
-{
   global $BrowserCurrentRow;
   // as usual: $matches[0] is the complete match
   // $matches[1] the match for the first subpattern
@@ -39,7 +48,7 @@ function BrowserColumnValueReplacement($matches)
 * BrowserColumns are the basic building blocks.  You can specify just the
 * field name, and the column header or you can get fancy and specify an
 * alignment, format string, SQL formula and cell CSS class.
-* @package   AWL
+* @package   awl
 */
 class BrowserColumn
 {
@@ -122,7 +131,7 @@ class BrowserColumn
 * list of records in a table.
 * You can, of course, get a lot fancier with setting ordering, where clauses
 * totalled columns and so forth.
-* @package   AWL
+* @package   awl
 */
 class Browser
 {

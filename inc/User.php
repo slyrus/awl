@@ -5,7 +5,7 @@
 *
 * @package   awl
 * @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Andrew McMillan
+* @copyright Catalyst IT Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 

@@ -2,15 +2,16 @@
 /**
 * Classes to handle validation of form data.
 *
-* @package   AWL
+* @package   awl
 * @subpackage   Validation
 * @author    Emily Mossman <emily@catalyst.net.nz>
-* @copyright Catalyst .Net Ltd
+* @copyright Catalyst IT Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 
 /**
 * Rules used for validation of form fields.
+* @package   awl
 */
 class Validation
 {

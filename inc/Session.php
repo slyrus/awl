@@ -213,6 +213,7 @@ class Session
     $this->roles = array();
     $this->logged_in = false;
     $this->just_logged_in = false;
+    $this->login_failed = false;
 
     if ( $sid == "" ) {
       if ( ! isset($_COOKIE['sid']) ) return;
@@ -279,6 +280,38 @@ class Session
         $args[] = func_get_arg($i);
       }
       error_log( "$c->sysabbr: " . vsprintf($format,$args) );
+    }
+  }
+
+  /**
+  * Utility function to log debug stuff with printf expansion, and the ability to
+  * enable it selectively.
+  *
+  * The enabling is done by setting a variable "$debuggroups[$group] = 1"
+  *
+  * @param string $group The name of an arbitrary debug group.
+  * @param string $whatever A log string
+  * @param mixed $whatever... Further parameters to be replaced into the log string a la printf
+  */
+  function Dbg( $whatever )
+  {
+    global $debuggroups, $c;
+
+    $argc = func_num_args();
+    $dgroup = func_get_arg(0);
+
+    if ( ! (isset($debuggroups[$dgroup]) && $debuggroups[$dgroup]) ) return;
+
+    $format = func_get_arg(1);
+    if ( $argc == 2 || ($argc == 3 && func_get_arg(2) == "0" ) ) {
+      error_log( "$c->sysabbr: DBG: $dgroup: $format" );
+    }
+    else {
+      $args = array();
+      for( $i=2; $i < $argc; $i++ ) {
+        $args[] = func_get_arg($i);
+      }
+      error_log( "$c->sysabbr: DBG: $dgroup: " . vsprintf($format,$args) );
     }
   }
 
@@ -411,7 +444,7 @@ class Session
         }
       }
       else {
-        $client_messages[] = 'Invalid username or password.';
+        $c->messages[] = 'Invalid username or password.';
         if ( $debuggroups['Login'] )
           $this->cause = 'WARN: Invalid password.';
         else
@@ -419,14 +452,15 @@ class Session
       }
     }
     else {
-    $client_messages[] = 'Invalid username or password.';
+    $c->messages[] = 'Invalid username or password.';
     if ( $debuggroups['Login'] )
       $this->cause = 'WARN: Invalid username.';
     else
       $this->cause = 'WARN: Invalid username or password.';
     }
 
-    $this->Log( "DBG: Login $this->cause" );
+    $this->Log( "Login failure: $this->cause" );
+    $this->login_failed = true;
     $rc = false;
     return $rc;
   }
@@ -593,40 +627,38 @@ EOHTML;
 
 
 /**
-* Sends a temporary password in response to a request from a user.
+* E-mails a temporary password in response to a request from a user.
 *
-* This is probably only going to be called from somewhere internal, but perhaps
-* an application might want to decide when to call it.
+* This could be called from somewhere within the application that allows
+* someone to set up a user and invite them.
 *
 * This function includes EMail.php to actually send the password.
 */
-  function SendTemporaryPassword( ) {
+  function EmailTemporaryPassword( $username, $email_address, $body_template="" ) {
     global $c;
 
-    include("EMail.php");
-    $page_content = "";
     $password_sent = false;
     $where = "";
-    if ( isset($_POST['username']) && $_POST['username'] != "" ) {
-      $where = "WHERE active AND usr.username = ". qpg($_POST['username'] );
+    if ( isset($username) && $username != "" ) {
+      $where = "WHERE active AND usr.username = ". qpg($username );
     }
-    if ( ! $password_sent && isset($_POST['email_address']) && $_POST['email_address'] != "" ) {
-      $where = "WHERE active AND usr.email = ". qpg($_POST['email_address'] );
+    else if ( isset($email_address) && $email_address != "" ) {
+      $where = "WHERE active AND usr.email = ". qpg($email_address );
     }
 
     if ( $where != "" ) {
       $tmp_passwd = "";
       for ( $i=0; $i < 8; $i++ ) {
-        $tmp_passwd .= substr( "#.-=*%@0123456789abcdefghijklmnopqrstuvwxyz", rand(0,42), 1);
+        $tmp_passwd .= substr( "ABCDEFGHIJKLMNOPQRSTUVWXYZ+#.-=*%@0123456789abcdefghijklmnopqrstuvwxyz", rand(0,69), 1);
       }
       $sql = "SELECT * FROM usr $where";
       $qry = new PgQuery( $sql );
-      $qry->Exec("Session::SendTemporaryPassword");
+      $qry->Exec("Session::EmailTemporaryPassword");
       if ( $qry->rows > 0 ) {
         $sql = "BEGIN;";
 
         include_once("EMail.php");
-        $mail = new EMail( "Temporary Password for $c->system_name" );
+        $mail = new EMail( "Access to $c->system_name" );
         $mail->SetFrom($c->admin_email );
         $usernames = "";
         while ( $row = $qry->Fetch() ) {
@@ -638,24 +670,45 @@ EOHTML;
           $sql .= "COMMIT;";
           $qry = new PgQuery( $sql );
           $qry->Exec("Session::SendTemporaryPassword");
-          $body = <<<EOTEXT
-A temporary password has been requested for $c->system_name.
+          if ( !isset($body_template) || $body_template == "" ) {
+            $body_template = <<<EOTEXT
+A temporary password has been requested for @@system_name@@.
 
-Temporary Password: $tmp_passwd
+Temporary Password: @@password@@
 
 This has been applied to the following usernames:
-$usernames
+
+@@usernames@@
 and will be valid for 24 hours.
 
 If you have any problems, please contact the system administrator.
 
 EOTEXT;
+          }
+          $body = str_replace( '@@system_name@@', $c->system_name, $body_template);
+          $body = str_replace( '@@password@@', $tmp_passwd, $body);
+          $body = str_replace( '@@usernames@@', $usernames, $body);
           $mail->SetBody($body);
           $mail->Send();
           $password_sent = true;
         }
       }
     }
+    return $password_sent;
+  }
+
+
+/**
+* Sends a temporary password in response to a request from a user.
+*
+* This is probably only going to be called from somewhere internal.  An external
+* caller will probably just want the e-mail, without the HTML that this displays.
+*
+*/
+  function SendTemporaryPassword( ) {
+    global $c;
+
+    $password_sent = EmailTemporaryPassword( $_POST['username'], $_POST['email_address'] );
 
     if ( ! $password_sent && ((isset($_POST['username']) && $_POST['username'] != "" )
                               || (isset($_POST['email_address']) && $_POST['email_address'] != "" )) ) {
@@ -686,19 +739,19 @@ EOTEXT;
     else {
       $page_content = <<<EOTEXT
 <div id="logon">
-<h1>Forgotten Password</h1>
+<h1>Temporary Password</h1>
 <form action="$action_target" method="post">
 <table>
 <tr>
-<th class="prompt">Enter your User Name:</th>
+<th class="prompt" style="white-space: nowrap;">Enter your User Name:</th>
 <td class="entry"><input class="text" type="text" name="username" size="12" /></td>
 </tr>
 <tr>
-<th class="prompt">Or your EMail Address:</th>
+<th class="prompt" style="white-space: nowrap;">Or your EMail Address:</th>
 <td class="entry"><input class="text" type="text" name="email_address" size="50" /></td>
 </tr>
 <tr>
-<th class="prompt">and click on -></th>
+<th class="prompt" style="white-space: nowrap;">and click on -></th>
 <td class="entry">
 <input class="submit" type="submit" value="Send me a temporary password" alt="Enter a username, or e-mail address, and click here." name="lostpass" />
 </td>
@@ -741,8 +794,7 @@ EOTEXT;
       $_username = $_POST['username'];
       // Try and log in if we have a username and password
       $this->Login( $_POST['username'], $_POST['password'] );
-      if ( $debuggroups['Login'] )
-        $this->Log( "DBG: User %s(%s) - %s (%d) login status is %d", $_POST['username'], $_username, $this->fullname, $this->user_no, $this->logged_in );
+      $this->Dbg( "Login", "User %s(%s) - %s (%d) login status is %d", $_POST['username'], $_username, $this->fullname, $this->user_no, $this->logged_in );
     }
     else if ( !isset($_COOKIE['sid']) && isset($_COOKIE['lsid']) && $_COOKIE['lsid'] != "" ) {
       // Validate long-term session details

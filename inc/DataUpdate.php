@@ -132,6 +132,7 @@ function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
       // Sometimes we will have prepended 'xxxx' to the field name so that the field
       // name differs from the column name in the database.
       $_POST[$fn] = $_POST["xxxx$fn"];
+      $session->Dbg( "DataUpdate", "_POST: DBG: xxxx$fn => $typ (".$_POST[$fn].")");
     }
     if ( !isset($_POST[$fn]) ) continue;
     $value = str_replace( "'", "''", str_replace("\\", "\\\\", $_POST[$fn]));
@@ -143,7 +144,7 @@ function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
       $value = "NULL";
     }
     else if ( eregi("bool", $typ) )  {
-      $value = ( $value == "f" ? "FALSE" : "TRUE" );
+      $value = ( $value == "f" || $value == "off" ? "FALSE" : "TRUE" );
     }
     else if ( eregi("int", $typ) )  {
       $value = intval( $value );

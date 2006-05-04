@@ -366,9 +366,10 @@ class PgQuery
     global $dbconn, $debuggroups, $c;
     $this->location = trim($location);
     if ( $this->location == "" ) $this->location = substr($GLOBALS['PHP_SELF'],1);
+    // $locn = sprintf( "%-12.12s", $this->location );
+    $locn = $this->location;
 
-    if ( isset($debuggroups['querystring']) )
-    {
+    if ( isset($debuggroups['querystring']) ) {
       log_error( $this->location, 'query', $this->querystring, $line, $file );
     }
 
@@ -379,7 +380,6 @@ class PgQuery
     $i_took = duration( $t1, $t2 );   // calculate difference
     $c->total_query_time += $i_took;
     $this->execution_time = sprintf( "%2.06lf", $i_took);
-    $locn = sprintf( "%-12.12s", $this->location );
 
     if ( !$this->result ) // query failed
     {
@@ -503,8 +503,9 @@ class PgQuery
       $this->rownum = -1;
       while( $row = $this->Fetch(true) )
       {
-        $selected = ( ( $row[0] == $current || $row[1] == $current ) ? ' selected="selected"' : '' );
-        $nextrow = "<option value=\"$row[0]\"$selected>".htmlentities($row[1])."</option>";
+        if (is_array($current)) $selected = ( ( in_array($row[0],$current,true) || in_array($row[1],$current,true)) ? ' selected="selected"' : '' );
+        else $selected = ( ( "$row[0]" == "$current" || "$row[1]" == "$current" ) ? ' selected="selected"' : '' );
+        $nextrow = "<option value=\"".htmlentities($row[0])."\"$selected>".htmlentities($row[1])."</option>";
         $result .= $nextrow;
       }
     }

@@ -287,7 +287,7 @@ class MenuSet {
   }
 
   /**
-  // Add an option, which is a submenu
+  * Add an option, which is a submenu
   * @param object &$submenu_set A reference to a menu tree
   * @param string $label A Label for the new menu option
   * @param string $target The URL to target for this option.

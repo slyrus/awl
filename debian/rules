@@ -5,7 +5,7 @@
 package=libawl-php
 dt=debian/$(package)
 
-build: debian/rules
+build: debian/rules inc
 	$(checkdir)
 	cd ~andrew/projects/phpdoc/phpDocumentor-1.2.3 && ./phpdoc -c ~andrew/projects/awl/debian/awl-phpdoc.ini
 	touch build

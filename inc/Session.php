@@ -41,8 +41,7 @@ require_once('PgQuery.php');
 function session_salted_md5( $instr, $salt = "" ) {
   global $debuggroups, $session;
   if ( $salt == "" ) $salt = substr( md5(rand(100000,999999)), 2, 8);
-  if ( $debuggroups['Login'] )
-    $session->Log( "DBG: Making salted MD5: salt=$salt, instr=$instr, md5($salt$instr)=".md5($salt . $instr) );
+  $session->Dbg( "Login", "Making salted MD5: salt=$salt, instr=$instr, md5($salt$instr)=".md5($salt . $instr) );
   return ( sprintf("*%s*%s", $salt, md5($salt . $instr) ) );
 }
 
@@ -55,8 +54,7 @@ function session_salted_md5( $instr, $salt = "" ) {
 function session_validate_password( $they_sent, $we_have ) {
   global $debuggroups, $session;
 
-  if ( $debuggroups['Login'] )
-    $session->Log( "DBG: Comparing they_sent=$they_sent with $we_have" );
+  $session->Dbg( "Login", "Comparing they_sent=$they_sent with $we_have" );
 
   // In some cases they send us a salted md5 of the password, rather
   // than the password itself (i.e. if it is in a cookie)
@@ -76,8 +74,7 @@ function session_validate_password( $they_sent, $we_have ) {
     // A nicely salted md5sum like "*<salt>*<salted_md5>"
     $salt = $regs[1];
     $md5_sent = session_salted_md5( $they_sent, $salt ) ;
-    if ( $debuggroups['Login'] )
-      $session->Log( "DBG: Salt=$salt, comparing=$md5_sent with $pwcompare or $we_have" );
+    $session->Dbg( "Login", "Salt=$salt, comparing=$md5_sent with $pwcompare or $we_have" );
     return ( $md5_sent == $pwcompare );
   }
 
@@ -101,9 +98,9 @@ function check_temporary_passwords( $they_sent, $user_no ) {
   $sql = 'SELECT 1 AS ok FROM tmp_password WHERE user_no = ? AND password = ? AND valid_until > current_timestamp';
   $qry = new PgQuery( $sql, $user_no, $they_sent );
   if ( $qry->Exec('Session::check_temporary_passwords') ) {
-    $session->Log("DBG: Rows = $qry->rows");
+    $session->Dbg( "Login", "Rows = $qry->rows");
     if ( $row = $qry->Fetch() ) {
-      $session->Log("DBG: OK = $row->ok");
+      $session->Dbg( "Login", "OK = $row->ok");
       // Remove all the temporary passwords for that user...
       $sql = 'DELETE FROM tmp_password WHERE user_no = ? ';
       $qry = new PgQuery( $sql, $user_no );
@@ -373,12 +370,11 @@ class Session
   function Login( $username, $password ) {
     global $c, $debuggroups;
     $rc = false;
-    if ( $debuggroups['Login'] )
-      $this->Log( "DBG: Login: Attempting login for $username" );
+    $this->Dbg( "Login", "Attempting login for $username" );
 
     $sql = "SELECT * FROM usr WHERE lower(username) = ? ";
     $qry = new PgQuery( $sql, strtolower($username) );
-    if ( $qry->Exec('Session::UPWLogin',__LINE,__FILE__) && $qry->rows == 1 ) {
+    if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows == 1 ) {
       $usr = $qry->Fetch();
       if ( session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {
         // Now get the next session ID to create one from...
@@ -387,8 +383,7 @@ class Session
           $seq = $qry->Fetch();
           $session_id = $seq->nextval;
           $session_key = md5( rand(1010101,1999999999) . microtime() );  // just some random shite
-          if ( $debuggroups['Login'] )
-            $this->Log( "DBG:: Login: Valid username/password for $username ($usr->user_no)" );
+          $this->Dbg( "Login", "Valid username/password for $username ($usr->user_no)" );
 
           // Set the last_used timestamp to match the previous login.
           $qry = new PgQuery('UPDATE usr SET last_used = (SELECT session_start FROM session WHERE session.user_no = ? ORDER BY session_id DESC LIMIT 1) WHERE user_no = ?;', $usr->user_no, $usr->user_no);
@@ -405,7 +400,7 @@ class Session
             setcookie('sid',$sid, 0,'/');
             // Recognise that we have started a session now too...
             $this->Session($sid);
-            $this->Log( "DBG: Login: INFO: New session $session_id started for $username ($usr->user_no)" );
+            $this->Dbg( "Login", "New session $session_id started for $username ($usr->user_no)" );
             if ( isset($_POST['remember']) && intval($_POST['remember']) > 0 ) {
               $cookie .= md5( $this->user_no ) . ";";
               $cookie .= session_salted_md5($usr->user_no . $usr->username . $usr->password);
@@ -476,13 +471,12 @@ class Session
 * @return boolean Whether or not the user's lsid cookie got them in the door.
 */
   function LSIDLogin( $lsid ) {
-    global $sysname, $debuggroups, $client_messages;
-    if ( $debuggroups['Login'] )
-      $this->Log( "DBG: Login: Attempting login for $lsid" );
+    global $c, $debuggroups;
+    $this->Dbg( "Login", "Attempting login for $lsid" );
 
     list($md5_user_no,$validation_string) = split( ';', $lsid );
     $qry = new PgQuery( "SELECT * FROM usr WHERE md5(user_no)=?;", $md5_user_no );
-    if ( $qry->Exec('Session::LSIDLogin') && $qry->rows == 1 ) {
+    if ( $qry->Exec('Login') && $qry->rows == 1 ) {
       $usr = $qry->Fetch();
       list( $x, $salt, $y) = split('\*', $validation_string);
       $my_validation = session_salted_md5($usr->user_no . $usr->username . $usr->password, $salt);
@@ -493,8 +487,7 @@ class Session
           $seq = $qry->Fetch();
           $session_id = $seq->nextval;
           $session_key = md5( rand(1010101,1999999999) . microtime() );  // just some random shite
-          if ( $debuggroups['Login'] )
-            $this->Log( "DBG:: Login: Valid username/password for $username ($usr->user_no)" );
+          $this->Dbg( "Login", "Valid username/password for $username ($usr->user_no)" );
 
           // And create a session
           $sql = "INSERT INTO session (session_id, user_no, session_key) VALUES( ?, ?, ? )";
@@ -507,7 +500,7 @@ class Session
             setcookie('sid',$sid, 0,'/');
             // Recognise that we have started a session now too...
             $this->Session($sid);
-            $this->Log( "DBG: Login: INFO: New session $session_id started for $this->username ($usr->user_no)" );
+            $this->Dbg( "Login", "New session $session_id started for $this->username ($usr->user_no)" );
             return true;
           }
    // else ...
@@ -518,7 +511,7 @@ class Session
         }
       }
       else {
-        $this->Log("DBG: $validation_string != $my_validation ($salt - $usr->user_no, $usr->username, $usr->password)");
+        $this->Dbg( "Login", "$validation_string != $my_validation ($salt - $usr->user_no, $usr->username, $usr->password)");
         $client_messages[] = 'Invalid username or password.';
         if ( $debuggroups['Login'] )
           $this->cause = 'WARN: Invalid password.';
@@ -534,7 +527,7 @@ class Session
       $this->cause = 'WARN: Invalid username or password.';
     }
 
-    $this->Log( "DBG: Login $this->cause" );
+    $this->Dbg( "Login", "$this->cause" );
     return false;
   }
 
@@ -546,7 +539,7 @@ class Session
 */
   function RenderLoginPanel() {
     $action_target = htmlspecialchars(str_replace('?logout','',$_SERVER['REQUEST_URI']));
-    $this->Log("DBG: action_target='%s'", $action_target );
+    $this->Dbg( "Login", "action_target='%s'", $action_target );
     $html = <<<EOTEXT
 <div id="logon">
 <form action="$action_target" method="post">
@@ -708,7 +701,7 @@ EOTEXT;
   function SendTemporaryPassword( ) {
     global $c;
 
-    $password_sent = EmailTemporaryPassword( $_POST['username'], $_POST['email_address'] );
+    $password_sent = $this->EmailTemporaryPassword( $_POST['username'], $_POST['email_address'] );
 
     if ( ! $password_sent && ((isset($_POST['username']) && $_POST['username'] != "" )
                               || (isset($_POST['email_address']) && $_POST['email_address'] != "" )) ) {
@@ -776,7 +769,9 @@ EOTEXT;
       error_log("$sysname: Session: DBG: Logging out");
       setcookie( 'sid', '', 0,'/');
       unset($_COOKIE['sid']);
+      unset($GLOBALS['sid']);
       unset($_COOKIE['lsid']); // Allow a cookied person to be un-logged-in for one page view.
+      unset($GLOBALS['lsid']);
 
       if ( isset($_GET['forget']) ) setcookie( 'lsid', '', 0,'/');
     }
@@ -785,8 +780,7 @@ EOTEXT;
   function _CheckLogin() {
     global $debuggroups;
     if ( isset($_POST['lostpass']) ) {
-      if ( $debuggroups['Login'] )
-        $this->Log( "DBG: User '$_POST[username]' has lost the password." );
+      $this->Dbg( "Login", "User '$_POST[username]' has lost the password." );
 
       $this->SendTemporaryPassword();
     }
@@ -799,8 +793,7 @@ EOTEXT;
     else if ( !isset($_COOKIE['sid']) && isset($_COOKIE['lsid']) && $_COOKIE['lsid'] != "" ) {
       // Validate long-term session details
       $this->LSIDLogin( $_COOKIE['lsid'] );
-      if ( $debuggroups['Login'] )
-        $this->Log( "DBG: User $this->username - $this->fullname ($this->user_no) login status is $this->logged_in" );
+      $this->Dbg( "Login", "User $this->username - $this->fullname ($this->user_no) login status is $this->logged_in" );
     }
   }
 

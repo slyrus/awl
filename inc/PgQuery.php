@@ -494,8 +494,8 @@ class PgQuery
   * @param string $location for debugging purposes
   * @return string Select box HTML
   */
-  function BuildOptionList( $current = '', $location = 'options' )
-  {
+  function BuildOptionList( $current = '', $location = 'options' ) {
+    global $debuggroups;
     $result = '';
 
     // The query may already have been executed
@@ -503,8 +503,12 @@ class PgQuery
       $this->rownum = -1;
       while( $row = $this->Fetch(true) )
       {
-        if (is_array($current)) $selected = ( ( in_array($row[0],$current,true) || in_array($row[1],$current,true)) ? ' selected="selected"' : '' );
-        else $selected = ( ( "$row[0]" == "$current" || "$row[1]" == "$current" ) ? ' selected="selected"' : '' );
+        if (is_array($current)) {
+          $selected = ( ( in_array($row[0],$current,true) || in_array($row[1],$current,true)) ? ' selected="selected"' : '' );
+        }
+        else {
+          $selected = ( ( "$row[0]" == "$current" || "$row[1]" == "$current" ) ? ' selected="selected"' : '' );
+        }
         $nextrow = "<option value=\"".htmlentities($row[0])."\"$selected>".htmlentities($row[1])."</option>";
         $result .= $nextrow;
       }

@@ -30,7 +30,7 @@ function BrowserColumnValueReplacement($matches)
 /**
 * @global object $BrowserCurrentRow  The row most recently read from the database.
 */
-  global $BrowserCurrentRow;
+  global $BrowserCurrentRow, $session;
   // as usual: $matches[0] is the complete match
   // $matches[1] the match for the first subpattern
   // enclosed in '##...##' and so on
@@ -38,8 +38,14 @@ function BrowserColumnValueReplacement($matches)
   // $BrowserCurrentRow needs to be assigned something relevant first...
 
   $field_name = $matches[1];
-  error_log("Replacing $field_name with " . $BrowserCurrentRow->{$field_name});
-  $replacement = $BrowserCurrentRow->{$field_name};
+  if ( !isset($BrowserCurrentRow->{$field_name}) && substr($field_name,0,4) == "URL:" ) {
+    $field_name = substr($field_name,4);
+    $replacement = urlencode($BrowserCurrentRow->{$field_name});
+  }
+  else {
+    $replacement = $BrowserCurrentRow->{$field_name};
+  }
+  $session->Dbg("Browser", "Replacing %s with %s", $field_name, $replacement);
   return $replacement;
 }
 

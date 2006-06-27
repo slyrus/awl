@@ -538,7 +538,7 @@ class Session
 * @return string The HTML to display a login panel.
 */
   function RenderLoginPanel() {
-    $action_target = htmlspecialchars(str_replace('?logout','',$_SERVER['REQUEST_URI']));
+    $action_target = htmlspecialchars(preg_replace('/\?logout.*$/','',$_SERVER['REQUEST_URI']));
     $this->Dbg( "Login", "action_target='%s'", $action_target );
     $html = <<<EOTEXT
 <div id="logon">

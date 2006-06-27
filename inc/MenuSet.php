@@ -63,6 +63,12 @@ class MenuOption {
   var $submenu_set;
   /**#@-*/
 
+  /**
+  * A reference to this menu option itself
+  * @var reference
+  */
+  var $self;
+
   /**#@+
   * @access public
   */
@@ -91,6 +97,7 @@ class MenuOption {
     $this->sortkey = $sortkey;
 
     $this->rendered = "";
+    $this->self  =& $this;
   }
 
   /**
@@ -146,6 +153,17 @@ class MenuOption {
   function IsActive( ) {
     return ( $this->active );
   }
+
+  /**
+  * Whether this option is currently active.
+  * @return boolean The value of the active flag.
+  */
+  function MaybeActive( $test_pattern, $active_style ) {
+    if ( is_string($test_pattern) && preg_match($test_pattern,$_SERVER['REQUEST_URI']) ) {
+      $this->Active($active_style);
+    }
+    return ( $this->active );
+  }
 }
 
   /**
@@ -157,7 +175,7 @@ class MenuOption {
   */
   function _CompareMenuSequence( $a, $b ) {
     global $session;
-    $session->Log("Comparing %d with %d", $a->sortkey, $b->sortkey);
+    $session->Dbg("MenuSet", "Comparing %d with %d", $a->sortkey, $b->sortkey);
     return ($a->sortkey - $b->sortkey);
   }
 
@@ -266,11 +284,15 @@ class MenuSet {
   * @return mixed A reference to the MenuOption that was added, or false if none were added.
   */
   function &AddOption( $label, $target, $title="", $active=false, $sortkey=1000 ) {
-    $new_option = false;
-    if ( $this->_OptionExists( $label ) ) return $new_option;
-
+    global $session;
     $new_option =& new MenuOption( $label, $target, $title, $this->main_class, $sortkey );
-    array_push( $this->options, &$new_option );
+    if ( ($old_option = $this->_OptionExists( $label )) === false ) {
+      array_push( $this->options, &$new_option );
+    }
+    else {
+      $session->Dbg("MenuSet","Replacing existing option # $old_option ($label)");
+      $this->options[$old_option] = &$new_option;  // Overwrite the existing option
+    }
     if ( is_bool($active) && $active == false && $_SERVER['REQUEST_URI'] == $target ) {
       // If $active is not set, then we look for an exact match to the current URL
       $new_option->Active( $this->active_class );
@@ -296,7 +318,7 @@ class MenuSet {
   * @param int $sortkey An (optional) value to allow option ordering.
   * @return mixed A reference to the MenuOption that was added, or false if none were added.
   */
-  function &AddSubMenu( &$submenu_set, $label, $target, $title="", $active=false, $sortkey=1000 ) {
+  function &AddSubMenu( &$submenu_set, $label, $target, $title="", $active=false, $sortkey=2000 ) {
     $new_option =& $this->AddOption( $label, $target, $title, $active, $sortkey );
     $submenu_set->parent = &$new_option ;
     $new_option->AddSubmenu( &$submenu_set );
@@ -338,10 +360,7 @@ class MenuSet {
   function _OptionExists( $newlabel ) {
     $rc = false;
     foreach( $this->options AS $k => $v ) {
-      if ( $newlabel == $v->label ) {
-        $rc = true;
-        return $rc;
-      }
+      if ( $newlabel == $v->label ) return $k;
     }
     return $rc;
   }
@@ -365,6 +384,40 @@ class MenuSet {
   }
 
   /**
+  * Mark each MenuOption as active that has an active sub-menu entry.
+  *
+  * Currently needs to be called manually before rendering but
+  * really should probably be called as part of the render now,
+  * and then this could be a private routine.
+  */
+  function MakeSomethingActive( $test_pattern ) {
+    if ( $this->has_active_options ) return;  // Already true. 
+    foreach( $this->options AS $k => $v ) {
+      if ( isset($v->submenu_set) && $v->submenu_set->_HasActive() ) {
+        // Note that we need to do it this way, since $v is a copy, not a reference
+        $this->options[$k]->Active( $this->active_class );
+        $this->has_active_options = true;
+      }
+    }
+
+    foreach( $this->options AS $k => $v ) {
+      if ( isset($v->submenu_set) && $v->submenu_set->MakeSomethingActive($test_pattern) ) {
+        // Note that we need to do it this way, since $v is a copy, not a reference
+        $this->options[$k]->Active( $this->active_class );
+        $this->has_active_options = true;
+        return $this->has_active_options;
+      }
+      else {
+        if ( $this->options[$k]->MaybeActive( $test_pattern, $this->active_class ) ) {
+          $this->has_active_options = true;
+          return $this->has_active_options;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
   * _CompareSequence is used in sorting the menu options into the sequence order
   *
   * @param objectref $a The first menu option
@@ -373,7 +426,7 @@ class MenuSet {
   */
   function _CompareSequence( $a, $b ) {
     global $session;
-    $session->Log("Comparing %d with %d", $a->sortkey, $b->sortkey);
+    $session->Dbg("MenuSet","Comparing %d with %d", $a->sortkey, $b->sortkey);
     return ($a->sortkey - $b->sortkey);
   }
 

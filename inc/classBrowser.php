@@ -67,6 +67,23 @@ class BrowserColumn
   var $Type;
   var $current_row;
 
+  /**
+  * BrowserColumn constructor.  Only the first parameter is mandatory.
+  *
+  * @param string field The name of the column in the SQL result.
+  * @param string header The text to appear in the column header on output
+  *                      (@see BrowserColumn::RenderHeader()).  If this is not supplied then
+  *                      a default of the field name will be used. 
+  * @param string align left|center|right - text alignment.  Defaults to 'left'.
+  * @param string format A format (a-la-printf) to render data values within.
+  *                      (@see BrowserColumn::RenderValue()).  If this is not supplied
+  *                      then the default will ensure the column value is displayed as-is.
+  * @param string sql Some SQL which will return the desired value to be presented as column 'field' of
+  *                   the result. If this is blank then the column is assumed to be a real data column.
+  * @param string class Additional classes to apply to the column header and column value cells.
+  * @param string datatype This will allow 'date' or 'timestamp' to preformat the field correctly before
+  *                        using it in replacements or display.  Other types may be added in future.                               
+  */
   function BrowserColumn( $field, $header="", $align="", $format="", $sql="", $class="", $datatype="" ) {
     $this->Field  = $field;
     $this->Sql    = $sql;
@@ -77,11 +94,28 @@ class BrowserColumn
     $this->Type   = $datatype;
   }
 
+  /**
+  * GetTarget
+  *
+  * Retrieves a 'field' or '...SQL... AS field' definition for the target list of the SQL.
+  */
   function GetTarget() {
     if ( $this->Sql == "" ) return $this->Field;
     return "$this->Sql AS $this->Field";
   }
 
+  /**
+  * RenderHeader
+  * Renders the column header cell for this column.  This will be rendered as a <th>...</th>
+  * with class and alignment applied to it.  Browser column headers are clickable, and the
+  * ordering will also display an 'up' or 'down' triangle with the column header that the SQL
+  * is sorted on at the moment.
+  *
+  * @param string order_field The name of the field currently being sorted on.
+  * @param string order_direction Whether the sort is Ascending or Descending.
+  * @param int browser_array_key Used this to help handle separate ordering of
+  *                              multiple browsers on the same page.
+  */
   function RenderHeader( $order_field, $order_direction, $browser_array_key=0 ) {
     global $c;
     if ( $this->Align == "" ) $this->Align = "left";
@@ -142,6 +176,7 @@ class BrowserColumn
 class Browser
 {
   var $Title;
+  var $SubTitle;
   var $Columns;
   var $HiddenColumns;
   var $Joins;
@@ -167,6 +202,7 @@ class Browser
   function Browser( $title = "" ) {
     global $c, $session;
     $this->Title = $title;
+    $this->SubTitle = "";
     $this->Order = "";
     $this->Limit = "";
     $this->BeginRow = "<tr class=\"row%d\">\n";
@@ -218,10 +254,19 @@ class Browser
   * and then clone it in a loop you may want to assign a different Title for each
   * instance.
   *
-  * @param string $more_where The extra part of the where clause
+  * @param string $new_title The new title for the browser
   */
   function SetTitle( $new_title ) {
     $this->Title = $new_title;
+  }
+
+  /**
+  * Set a Sub Title for the browse.
+  *
+  * @param string $sub_title The sub title string
+  */
+  function SetSubTitle( $sub_title ) {
+    $this->SubTitle = $sub_title;
   }
 
   /**
@@ -289,7 +334,7 @@ class Browser
     else
       $this->Grouping .= ", ";
 
-    $this->Grouping .= clean_component_name($field);
+    $this->Grouping .= clean_string($field);
   }
 
   /**
@@ -315,7 +360,7 @@ class Browser
     else
       $this->Order .= ", ";
 
-    $this->OrderField = clean_component_name($field);
+    $this->OrderField = clean_string($field);
     $this->OrderBrowserKey = $browser_array_key;
     $this->Order .= $this->OrderField;
 
@@ -421,7 +466,7 @@ class Browser
   * @param string $title_tag The tag to use around the browser title (default 'h1')
   * @return string The rendered HTML fragment to display to the user.
   */
-  function Render( $title_tag = 'h1' ) {
+  function Render( $title_tag = 'h1', $subtitle_tag = 'h2' ) {
     global $c, $session, $BrowserCurrentRow;
 
     if ( !isset($this->Query) ) $this->DoQuery();  // Ensure the query gets run before we render!
@@ -430,6 +475,9 @@ class Browser
     $html = '<div id="browser">';
     if ( $this->Title != "" ) {
       $html .= "<$title_tag>$this->Title</$title_tag>\n";
+    }
+    if ( $this->SubTitle != "" ) {
+      $html .= "<$subtitle_tag>$this->SubTitle</$subtitle_tag>\n";
     }
 
     $html .= "<table id=\"browse_table\">\n";

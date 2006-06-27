@@ -101,6 +101,25 @@ function qpg($str = null)
 }
 
 /**
+* Clean a string of many suspicious characters
+*
+* While this is a fairly aggressive approach, it applies in many circumstances
+* where various strings should not contain things that might screw up (e.g.)
+* filesystem semantics.  Although not strictly a PgQuery function it's here
+* for the time being until I invent a new "generally useful functions" include.
+*
+* @param string $unclean The dirty filthy string needing washing.
+* @return string The pristine uncontaminated string we can safely use for Just About Anything(tm).
+*/
+function clean_string( $unclean, $type = 'full' ) {
+  global $session;
+  if ( $type != 'basic' ) $cleaned = strtolower($unclean); else $cleaned = &$unclean;
+  $cleaned = preg_replace( "/[\"!'\\\\()\[\]|\/*{}&%@~;:?<>]/", '', $cleaned );
+  $session->Dbg( "always", "Cleaned string from <<%s>> to <<%s>>", $unclean, $cleaned );
+  return $cleaned;
+}
+
+/**
 * Log error, optionally with file and line location of the caller.
 *
 * This function should not really be used outside of PgQuery.  For a more

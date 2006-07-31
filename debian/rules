@@ -27,6 +27,7 @@ binary-indep: checkroot build
 	# cp -a admin $(dt)/usr/share/awl
 	cp -a dba $(dt)/usr/share/awl
 	dh_installdocs
+	dh_installchangelogs
 	dh_fixperms
 	dh_installdeb
 	dpkg-gencontrol -P$(dt)

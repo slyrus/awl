@@ -1,3 +1,9 @@
+awl (0.3-2) unstable; urgency=low
+
+  * Put changelog in the right place.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Tue,  1 Aug 2006 08:21:46 +1200
+
 awl (0.3-1) unstable; urgency=low
 
   * Various changes made for APMS.

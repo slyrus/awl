@@ -37,7 +37,29 @@
 * The database connection.
 */
 if ( !isset($dbconn) ) {
-  die( 'Database is not connected!' );
+  /**
+  * Attempt to connect to the configured connect strings
+  */
+  $dbconn = false;
+  if ( isset($c->pg_connect) && is_array($c->pg_connect) ) {
+    foreach( $c->pg_connect AS $k => $v ) {
+      if ( !$dbconn ) $dbconn = pg_Connect($v);
+    }
+  }
+  if ( ! $dbconn ) {
+    echo <<<EOERRMSG
+  <html><head><title>Database Connection Failure</title></head><body>
+  <h1>Database Error</h1>
+  <h3>Could not connect to PostgreSQL database</h3>
+  </body>
+  </html>
+EOERRMSG;
+    if ( isset($c->pg_connect) && is_array($c->pg_connect) ) {
+      dbg_log_array("ERROR", "Connection failed", $c->pg_connect );
+    } 
+    exit;
+  }
+  
 }
 
 
@@ -114,7 +136,7 @@ function qpg($str = null)
 function clean_string( $unclean, $type = 'full' ) {
   global $session;
   if ( $type != 'basic' ) $cleaned = strtolower($unclean); else $cleaned = &$unclean;
-  $cleaned = preg_replace( "/[\"!'\\\\()\[\]|\/*{}&%@~;:?<>]/", '', $cleaned );
+  $cleaned = preg_replace( "/['\"!\\\\()\[\]|*\/{}&%@~;:?<>]/", '', $cleaned );
   $session->Dbg( "always", "Cleaned string from <<%s>> to <<%s>>", $unclean, $cleaned );
   return $cleaned;
 }
@@ -417,6 +439,7 @@ class PgQuery
 
     return $this->result;
   }
+
 
   /**
   * Fetch the next row from the query results

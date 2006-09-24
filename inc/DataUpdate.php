@@ -11,6 +11,7 @@
 * @copyright Catalyst IT Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
+require_once("AWLUtilities.php");
 
 /**
 * Get the names of the fields for a particular table

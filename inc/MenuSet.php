@@ -11,6 +11,7 @@
 * @copyright Catalyst IT Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
+require_once("AWLUtilities.php");
 
 /**
 * Each menu option is an object.
@@ -134,9 +135,9 @@ class MenuOption {
   * Mark it as active, with a fancy style to distinguish that
   * @param string $style A style used to highlight that the option is active.
   */
-  function Active( $style ) {
+  function Active( $style=false ) {
     $this->active = true;
-    $this->style = $style;
+    if ( $style ) $this->style = $style;
   }
 
   /**
@@ -397,6 +398,7 @@ class MenuSet {
         // Note that we need to do it this way, since $v is a copy, not a reference
         $this->options[$k]->Active( $this->active_class );
         $this->has_active_options = true;
+        return $this->has_active_options;
       }
     }
 
@@ -429,6 +431,7 @@ class MenuSet {
     $session->Dbg("MenuSet","Comparing %d with %d", $a->sortkey, $b->sortkey);
     return ($a->sortkey - $b->sortkey);
   }
+
 
   /**
   * Render the menu tree to an HTML fragment.

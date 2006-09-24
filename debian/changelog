@@ -1,3 +1,12 @@
+awl (0.4-0) unstable; urgency=low
+
+  * A number of changes due to excessive work on the start of a simple CalDAV
+    store.
+  * New AWLUtilities.php location for utility functions for logging and other
+    useful stuff.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Sun, 24 Sep 2006 17:23:20 +1200
+
 awl (0.3-2) unstable; urgency=low
 
   * Put changelog in the right place.

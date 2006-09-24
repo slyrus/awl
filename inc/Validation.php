@@ -8,6 +8,7 @@
 * @copyright Catalyst IT Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
+require_once("AWLUtilities.php");
 
 /**
 * Rules used for validation of form fields.

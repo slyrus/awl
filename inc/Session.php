@@ -22,69 +22,13 @@
 * @copyright Catalyst IT Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
+require_once("AWLUtilities.php");
 
 /**
 * All session data is held in the database.
 */
 require_once('PgQuery.php');
 
-
-/**
-* Make a salted MD5 string, given a string and (possibly) a salt.
-*
-* If no salt is supplied we will generate a random one.
-*
-* @param string $instr The string to be salted and MD5'd
-* @param string $salt Some salt to sprinkle into the string to be MD5'd so we don't get the same PW always hashing to the same value.
-* @return string The salt, a * and the MD5 of the salted string, as in SALT*SALTEDHASH
-*/
-function session_salted_md5( $instr, $salt = "" ) {
-  global $debuggroups, $session;
-  if ( $salt == "" ) $salt = substr( md5(rand(100000,999999)), 2, 8);
-  $session->Dbg( "Login", "Making salted MD5: salt=$salt, instr=$instr, md5($salt$instr)=".md5($salt . $instr) );
-  return ( sprintf("*%s*%s", $salt, md5($salt . $instr) ) );
-}
-
-/**
-* Checks what a user entered against the actual password on their account.
-* @param string $they_sent What the user entered.
-* @param string $we_have What we have in the database as their password.  Which may (or may not) be a salted MD5.
-* @return boolean Whether or not the users attempt matches what is already on file.
-*/
-function session_validate_password( $they_sent, $we_have ) {
-  global $debuggroups, $session;
-
-  $session->Dbg( "Login", "Comparing they_sent=$they_sent with $we_have" );
-
-  // In some cases they send us a salted md5 of the password, rather
-  // than the password itself (i.e. if it is in a cookie)
-  $pwcompare = $we_have;
-  if ( ereg('^\*(.+)\*.+$', $they_sent, $regs ) ) {
-    $pwcompare = session_salted_md5( $we_have, $regs[1] );
-    if ( $they_sent == $pwcompare ) return true;
-  }
-
-  if ( ereg('^\*\*.+$', $we_have ) ) {
-    //  The "forced" style of "**plaintext" to allow easier admin setting
-    // error_log( "$system_name: vpw: DBG: comparing=**they_sent" );
-    return ( "**$they_sent" == $pwcompare );
-  }
-
-  if ( ereg('^\*(.+)\*.+$', $we_have, $regs ) ) {
-    // A nicely salted md5sum like "*<salt>*<salted_md5>"
-    $salt = $regs[1];
-    $md5_sent = session_salted_md5( $they_sent, $salt ) ;
-    $session->Dbg( "Login", "Salt=$salt, comparing=$md5_sent with $pwcompare or $we_have" );
-    return ( $md5_sent == $pwcompare );
-  }
-
-  // Blank passwords are bad
-  if ( "" == "$we_have" || "" == "$they_sent" ) return false;
-
-  // Otherwise they just have a plain text string, which we
-  // compare directly, but case-insensitively
-  return ( $they_sent == $pwcompare || strtolower($they_sent) == strtolower($we_have) );
-}
 
 /**
 * Checks what a user entered against any currently valid temporary passwords on their account.
@@ -237,14 +181,12 @@ class Session
     $sql .= " WHERE session.session_id = ? AND (md5(session.session_start::text) = ? OR session.session_key = ?) ORDER BY session.session_start DESC LIMIT 2";
 
     $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
-    if ( $qry->Exec('Session') && 1 == $qry->rows )
-    {
+    if ( $qry->Exec('Session') && 1 == $qry->rows ) {
       $this->AssignSessionDetails( $qry->Fetch() );
       $qry = new PgQuery('UPDATE session SET session_end = current_timestamp WHERE session_id=?', $session_id);
       $qry->Exec('Session');
     }
-    else
-    {
+    else {
       //  Kill the existing cookie, which appears to be bogus
       setcookie('sid', '', 0,'/');
       $this->cause = 'ERR: Other than one session record matches. ' . $qry->rows;

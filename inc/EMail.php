@@ -7,6 +7,7 @@
 * @copyright Catalyst IT Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
+require_once("AWLUtilities.php");
 /**
 * Lightweight class for sending an e-mail.
 * @package awl

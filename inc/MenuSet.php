@@ -451,7 +451,7 @@ class MenuSet {
     $r = "<div id=\"$this->div_id\">\n";
     foreach( $options AS $k => $v ) {
       $r .= $v->Render();
-      if ( $v->IsActive() && isset($v->submenu_set) ) {
+      if ( $v->IsActive() && isset($v->submenu_set) && $v->submenu_set->Size() > 0 ) {
         $render_sub_menus = $v->submenu_set;
         if ( $submenus_inline )
           $render_sub_menus->Render();

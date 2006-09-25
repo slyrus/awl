@@ -136,40 +136,10 @@ function qpg($str = null)
 function clean_string( $unclean, $type = 'full' ) {
   global $session;
   if ( $type != 'basic' ) $cleaned = strtolower($unclean); else $cleaned = &$unclean;
-  $cleaned = preg_replace( "/['\"!\\\\()\[\]|*\/{}&%@~;:?<>]/", '', $cleaned );
+  $cleaned = preg_replace( "/['\"!\\\\()\[\]|*\/{}&%@~;:?<>]/", '', $cleaned ); //"// Stupid Bluefish Syntax highlighting...
   $session->Dbg( "always", "Cleaned string from <<%s>> to <<%s>>", $unclean, $cleaned );
   return $cleaned;
 }
-
-/**
-* Log error, optionally with file and line location of the caller.
-*
-* This function should not really be used outside of PgQuery.  For a more
-* useful generic logging interface consider calling $session->Log(...);
-*
-* @param string $locn    A string identifying the calling location.
-* @param string $tag     A tag string, e.g. identifying the type of event.
-* @param string $string  The information to be logged.
-* @param int    $line    The line number where the logged event occurred.
-* @param string $file    The file name where the logged event occurred.
-*/
-function log_error( $locn, $tag, $string, $line = 0, $file = 0)
-{
-  GLOBAL $c;
-  // replace more than one space with one space
-  $string = preg_replace('/\s+/', ' ', $string);
-
-  if ( $line != 0 && $file != 0 ) {
-    error_log( "$c->sysabbr $locn $tag: PgQuery error in '$file' on line $line ");
-  }
-
-  while( strlen( $string ) > 0 )  {
-    error_log( "$c->sysabbr $locn $tag: " . substr( $string, 0, 240), 0 );
-    $string = substr( "$string", 240 );
-  }
-
-}
-
 
 /**
 * Replaces PostgreSQL query with escaped parameters in preparation
@@ -355,6 +325,36 @@ class PgQuery
     return $this;
   }
 
+
+  /**
+  * Log error, optionally with file and line location of the caller.
+  *
+  * This function should not really be used outside of PgQuery.  For a more
+  * useful generic logging interface consider calling dbg_error_log(...);
+  *
+  * @param string $locn    A string identifying the calling location.
+  * @param string $tag     A tag string, e.g. identifying the type of event.
+  * @param string $string  The information to be logged.
+  * @param int    $line    The line number where the logged event occurred.
+  * @param string $file    The file name where the logged event occurred.
+  */
+  function _log_error( $locn, $tag, $string, $line = 0, $file = 0)
+  {
+    GLOBAL $c;
+    // replace more than one space with one space
+    $string = preg_replace('/\s+/', ' ', $string);
+  
+    if ( $line != 0 && $file != 0 ) {
+      error_log( "$c->sysabbr $locn $tag: PgQuery error in '$file' on line $line ");
+    }
+  
+    while( strlen( $string ) > 0 )  {
+      error_log( "$c->sysabbr $locn $tag: " . substr( $string, 0, 240), 0 );
+      $string = substr( "$string", 240 );
+    }
+  }
+  
+
   /**
   * Quote the given string so it can be safely used within string delimiters
   * in a query.
@@ -411,7 +411,7 @@ class PgQuery
     $locn = $this->location;
 
     if ( isset($debuggroups['querystring']) ) {
-      log_error( $this->location, 'query', $this->querystring, $line, $file );
+      $this->_log_error( $this->location, 'query', $this->querystring, $line, $file );
     }
 
     $t1 = microtime(); // get start time
@@ -425,16 +425,16 @@ class PgQuery
     if ( !$this->result ) // query failed
     {
       $this->errorstring = pg_errormessage(); // returns database error message
-      log_error( $locn, 'QF', $this->querystring, $line, $file );
-      log_error( $locn, 'QF', $this->errorstring, $line, $file );
+      $this->_log_error( $locn, 'QF', $this->querystring, $line, $file );
+      $this->_log_error( $locn, 'QF', $this->errorstring, $line, $file );
     }
     elseif ( $this->execution_time > $this->query_time_warning ) // if execution time is too long
     {
-      log_error( $locn, 'SQ', "Took: $this->execution_time for $this->querystring", $line, $file ); // SQ == Slow Query :-)
+      $this->_log_error( $locn, 'SQ', "Took: $this->execution_time for $this->querystring", $line, $file ); // SQ == Slow Query :-)
     }
     elseif ( isset($debuggroups[$this->location]) && $debuggroups[$this->location] ) // query successful
     {
-      log_error( $locn, 'DBGQ', "Took: $this->execution_time for $this->querystring to find $this->rows rows.", $line, $file );
+      $this->_log_error( $locn, 'DBGQ', "Took: $this->execution_time for $this->querystring to find $this->rows rows.", $line, $file );
     }
 
     return $this->result;
@@ -451,14 +451,14 @@ class PgQuery
     global $debuggroups;
 
     if ( isset($debuggroups["$this->location"]) && $debuggroups["$this->location"] > 2 ) {
-      log_error( $this->location, "Fetch", "$this->result Rows: $this->rows, Rownum: $this->rownum");
+      $this->_log_error( $this->location, "Fetch", "$this->result Rows: $this->rows, Rownum: $this->rownum");
     }
     if ( ! $this->result ) return false; // no results
     if ( ($this->rownum + 1) >= $this->rows ) return false; // reached the end of results
 
     $this->rownum++;
     if ( isset($debuggroups["$this->location"]) && $debuggroups["$this->location"] > 1 ) {
-      log_error( $this->location, "Fetch", "Fetching row $this->rownum" );
+      $this->_log_error( $this->location, "Fetch", "Fetching row $this->rownum" );
     }
     if ( $as_array )
     {
@@ -507,7 +507,7 @@ class PgQuery
     global $debuggroups;
 
     if ( isset($debuggroups["$this->location"]) && $debuggroups["$this->location"] > 2 ) {
-      log_error( $this->location, "FetchBackwards", "$this->result Rows: $this->rows, Rownum: $this->rownum");
+      $this->_log_error( $this->location, "FetchBackwards", "$this->result Rows: $this->rows, Rownum: $this->rownum");
     }
     if ( ! $this->result ) return false;
     if ( ($this->rownum - 1) == -1 ) return false;
@@ -516,7 +516,7 @@ class PgQuery
     $this->rownum--;
 
     if ( isset($debuggroups["$this->location"]) && $debuggroups["$this->location"] > 1 ) {
-      log_error( $this->location, "Fetch", "Fetching row $this->rownum" );
+      $this->_log_error( $this->location, "Fetch", "Fetching row $this->rownum" );
     }
     if ( $as_array )
     {

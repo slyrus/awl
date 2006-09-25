@@ -31,7 +31,7 @@ function BrowserColumnValueReplacement($matches)
 /**
 * @global object $BrowserCurrentRow  The row most recently read from the database.
 */
-  global $BrowserCurrentRow, $session;
+  global $BrowserCurrentRow;
   // as usual: $matches[0] is the complete match
   // $matches[1] the match for the first subpattern
   // enclosed in '##...##' and so on
@@ -46,7 +46,7 @@ function BrowserColumnValueReplacement($matches)
   else {
     $replacement = $BrowserCurrentRow->{$field_name};
   }
-  $session->Dbg("Browser", "Replacing %s with %s", $field_name, $replacement);
+  dbg_error_log( "Browser", ":BrowserColumnValueReplacement: Replacing %s with %s", $field_name, $replacement);
   return $replacement;
 }
 
@@ -201,7 +201,7 @@ class Browser
   * @param string $title A title for the browser (optional).
   */
   function Browser( $title = "" ) {
-    global $c, $session;
+    global $c;
     $this->Title = $title;
     $this->SubTitle = "";
     $this->Order = "";
@@ -210,7 +210,7 @@ class Browser
     $this->CloseRow = "</tr>\n";
     $this->BeginRowArgs = array('#even');
     $this->Totals = array();
-    $session->Log("DBG: New browser called $title");
+    dbg_error_log( "Browser", ":Browser: New browser called $title");
   }
 
   /**
@@ -468,11 +468,11 @@ class Browser
   * @return string The rendered HTML fragment to display to the user.
   */
   function Render( $title_tag = 'h1', $subtitle_tag = 'h2' ) {
-    global $c, $session, $BrowserCurrentRow;
+    global $c, $BrowserCurrentRow;
 
     if ( !isset($this->Query) ) $this->DoQuery();  // Ensure the query gets run before we render!
 
-    $session->Log("DBG: Rendering browser $this->Title");
+    dbg_error_log( "Browser", ":Render: browser $this->Title");
     $html = '<div id="browser">';
     if ( $this->Title != "" ) {
       $html .= "<$title_tag>$this->Title</$title_tag>\n";

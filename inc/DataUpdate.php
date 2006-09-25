@@ -19,7 +19,6 @@ require_once("AWLUtilities.php");
 * @return array of string The public fields in the table.
 */
 function get_fields( $tablename ) {
-  global $session;
   $sql = "SELECT f.attname, t.typname FROM pg_attribute f ";
   $sql .= "JOIN pg_class c ON ( f.attrelid = c.oid ) ";
   $sql .= "JOIN pg_type t ON ( f.atttypid = t.oid ) ";
@@ -29,7 +28,7 @@ function get_fields( $tablename ) {
   $fields = array();
   while( $row = $qry->Fetch() ) {
     $fields["$row->attname"] = $row->typname;
-    $session->Log( "DBG: DataUpdate::get_fields: %s => %s", $row->attname, $row->typname );
+    dbg_error_log( "DataUpdate", ":get_fields: %s => %s", $row->attname, $row->typname );
   }
   return $fields;
 }
@@ -45,7 +44,6 @@ function get_fields( $tablename ) {
 * @return string An SQL Update or Insert statement with all fields/values from the array.
 */
 function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
-  global $session;
   $fields = get_fields($tablename);
   $update = strtolower($type) == "update";
   if ( $update )
@@ -57,7 +55,7 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
   $vlst = "";
   foreach( $fields as $fn => $typ ) {
     // $prefixed_fn = $fprefix . $fn;
-    $session->Log( "DBG: sql_from_object: $fn => $typ (".$obj->{$fn}.")");
+    dbg_error_log( "DataUpdate", ":sql_from_object: $fn => $typ (".$obj->{$fn}.")");
     if ( !isset($obj->{$fn}) && isset($obj->{"xxxx$fn"}) ) {
       // Sometimes we will have prepended 'xxxx' to the field name so that the field
       // name differs from the column name in the database.
@@ -116,7 +114,6 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
 * @return string An SQL Update or Insert statement with all fields/values from the array.
 */
 function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
-  global $session;
   $fields = get_fields($tablename);
   $update = strtolower($type) == "update";
   if ( $update )
@@ -128,12 +125,12 @@ function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
   $vlst = "";
   foreach( $fields as $fn => $typ ) {
     $fn = $fprefix . $fn;
-    $session->Log( "_POST: DBG: $fn => $typ (".$_POST[$fn].")");
+    dbg_error_log( "DataUpdate", ":sql_from_post: $fn => $typ (".$_POST[$fn].")");
     if ( !isset($_POST[$fn]) && isset($_POST["xxxx$fn"]) ) {
       // Sometimes we will have prepended 'xxxx' to the field name so that the field
       // name differs from the column name in the database.
       $_POST[$fn] = $_POST["xxxx$fn"];
-      $session->Dbg( "DataUpdate", "_POST: DBG: xxxx$fn => $typ (".$_POST[$fn].")");
+      dbg_error_log( "DataUpdate", ":sql_from_post: xxxx$fn => $typ (".$_POST[$fn].")");
     }
     if ( !isset($_POST[$fn]) ) continue;
     $value = str_replace( "'", "''", str_replace("\\", "\\\\", $_POST[$fn]));
@@ -267,8 +264,7 @@ class DBRecord
   * Really numbingly simple construction.
   */
   function DBRecord( ) {
-    global $session;
-    $session->Log("DBG: DBRecord::Constructor: called" );
+    dbg_error_log( "DBRecord", ":Constructor: called" );
     $this->WriteType = "insert";
     $this->EditMode = false;
     $values = (object) array();
@@ -282,8 +278,7 @@ class DBRecord
   * @param array $keys An associative array containing fieldname => value pairs for the record key.
   */
   function Initialise( $table, $keys = array() ) {
-    global $session;
-    $session->Log("DBG: DBRecord::Initialise: called" );
+    dbg_error_log( "DBRecord", ":Initialise: called" );
     $this->Table = $table;
     $this->Fields = get_fields($this->Table);
     $this->Keys = $keys;
@@ -299,8 +294,7 @@ class DBRecord
   *                       in other joined tables with the same name.
   */
   function AddTable( $table, $target_list, $join_clause, $and_where ) {
-    global $session;
-    $session->Log("DBG: DBRecord::AddTable: $table called" );
+    dbg_error_log( "DBRecord", ":AddTable: $table called" );
     $this->OtherTable[] = $table;
     $this->OtherTargets[$table] = $target_list;
     $this->OtherJoin[$table] = $join_clause;
@@ -312,12 +306,11 @@ class DBRecord
   * field that exists in the Fields array.
   */
   function PostToValues( $prefix = "" ) {
-    global $session;
     foreach ( $this->Fields AS $fname => $ftype ) {
-      $session->Log("DBG: DBRecord::PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
+      dbg_error_log( "DBRecord", ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
       if ( isset($_POST["$prefix$fname"]) ) {
         $this->Set($fname, $_POST["$prefix$fname"]);
-        $session->Log("DBG: DBRecord::PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
+        dbg_error_log( "DBRecord", ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
       }
     }
   }
@@ -390,8 +383,7 @@ class DBRecord
   * @return mixed The new value of the field (i.e. $fval).
   */
   function Set($fname, $fval) {
-    global $session;
-    $session->Log("DBG: DBRecord::Set: %s => %s", $fname, $fval );
+    dbg_error_log( "DBRecord", ":Set: %s => %s", $fname, $fval );
     $this->Values->{$fname} = $fval;
     return $fval;
   }
@@ -402,8 +394,7 @@ class DBRecord
   * @return mixed The current value of the field.
   */
   function Get($fname) {
-    global $session;
-    $session->Log("DBG: DBRecord::Get: %s => %s", $fname, $this->Values->{$fname} );
+    dbg_error_log( "DBRecord", ":Get: %s => %s", $fname, $this->Values->{$fname} );
     return $this->Values->{$fname};
   }
 
@@ -412,8 +403,7 @@ class DBRecord
   * @return boolean Success.
   */
   function Write() {
-    global $session;
-    $session->Log( "DBG: Writing %s record as %s.", $this->Table, $this->WriteType );
+    dbg_error_log( "DBRecord", ":Write: %s record as %s.", $this->Table, $this->WriteType );
     $sql = sql_from_object( $this->Values, $this->WriteType, $this->Table, $this->_BuildWhereClause(), $this->prefix );
     $qry = new PgQuery($sql);
     return $qry->Exec( __CLASS__, __LINE__, __FILE__ );
@@ -425,7 +415,6 @@ class DBRecord
   * @return boolean Whether we actually read a record.
   */
   function Read() {
-    global $session;
     $i_read_the_record = false;
     $values = (object) array();
     $this->EditMode = true;
@@ -440,12 +429,12 @@ class DBRecord
         $i_read_the_record = true;
         $values = $qry->Fetch();
         $this->EditMode = false;  // Default to not editing if we read the record.
-        $session->Log( "DBG: DBRecord::Read: Read %s record from table.", $this->Table, $this->WriteType );
+        dbg_error_log( "DBRecord", ":Read: Read %s record from table.", $this->Table, $this->WriteType );
       }
     }
     $this->Values = &$values;
     $this->WriteType = ( $i_read_the_record ? "update" : "insert" );
-    $session->Log( "DBG: DBRecord::Read: Record %s write type is %s.", $this->Table, $this->WriteType );
+    dbg_error_log( "DBRecord", ":Read: Record %s write type is %s.", $this->Table, $this->WriteType );
     return $i_read_the_record;
   }
 }

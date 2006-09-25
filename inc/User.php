@@ -80,7 +80,7 @@ class User extends DBRecord {
                     || (0 == $this->user_no && $this->AllowedTo("insert") ) );
 
     if ( $this->user_no == 0 ) {
-      $session->Log("DBG: Initialising new user values");
+      dbg_error_log("User", "Initialising new user values");
 
       // Initialise to standard default values
 
@@ -98,6 +98,12 @@ class User extends DBRecord {
     global $session;
 
     $rc = false;
+    if ( $session->AllowedTo("Admin") ) {
+      $rc = true;
+      dbg_error_log("User",":AllowedTo: Admin is always allowed to %s", $whatever );
+      return $rc;
+    }
+
     switch( strtolower($whatever) ) {
 
       case 'view':
@@ -127,6 +133,7 @@ class User extends DBRecord {
       default:
         $rc = ( isset($session->roles[$whatever]) && $session->roles[$whatever] );
     }
+    dbg_error_log("User",":AllowedTo: %s is%s allowed to %s", $this->username, ($rc?"":" not"), $whatever );
     return $rc;
   }
 
@@ -150,10 +157,8 @@ class User extends DBRecord {
   * @return string An HTML fragment to display in the page.
   */
   function Render( ) {
-    global $session;
-
     $html = "";
-    $session->Log("DBG: User::Render: type=$this->WriteType, edit_mode=$this->EditMode" );
+    dbg_error_log("User", ":Render: type=$this->WriteType, edit_mode=$this->EditMode" );
 
     $ef = new EntryForm( $REQUEST_URI, $this->Values, $this->EditMode );
     $ef->NoHelp();  // Prefer this style, for the moment
@@ -228,7 +233,7 @@ class User extends DBRecord {
   */
   function Validate( ) {
     global $session, $c;
-    $session->Log("DBG: User::Validate: Validating user");
+    dbg_error_log("User", ":Validate: Validating user");
 
     $valid = true;
 
@@ -248,7 +253,7 @@ class User extends DBRecord {
       }
     }
 
-    $session->Log("DBG: User::Validate: User %s validation", ($valid ? "passed" : "failed"));
+    dbg_error_log("User", ":Validate: User %s validation", ($valid ? "passed" : "failed"));
     return $valid;
   }
 
@@ -256,12 +261,15 @@ class User extends DBRecord {
   *
   */
   function Write() {
-    global $session;
-    if ( parent::Write() && $this->WriteType == 'insert' ) {
-      $qry = new PgQuery( "SELECT currval('usr_user_no_seq');" );
-      $qry->Exec("User::Write");
-      $sequence_value = $qry->Fetch(true);  // Fetch as an array
-      $this->user_no = $sequence_value[0];
+    global $c;
+    if ( parent::Write() ) {
+      $c->messages[] = "User record written.";
+      if ( $this->WriteType == 'insert' ) {
+        $qry = new PgQuery( "SELECT currval('usr_user_no_seq');" );
+        $qry->Exec("User::Write");
+        $sequence_value = $qry->Fetch(true);  // Fetch as an array
+        $this->user_no = $sequence_value[0];
+      }
     }
   }
 

@@ -28,7 +28,12 @@ if ( !function_exists('dbg_error_log') ) {
     $args = func_get_args();
     $type = "DBG";
     $component = array_shift($args);
-    if ( $component == "ERROR" ) {
+    if ( substr( $component, 0, 3) == "LOG" ) {
+      // Special escape case for stuff that always gets logged.
+      $type = 'LOG';
+      $component = substr($component,4);
+    }
+    else if ( $component == "ERROR" ) {
       $type = "***";
     }
     else if ( isset($c->dbg["ALL"]) ) {
@@ -66,9 +71,13 @@ if ( !function_exists('dbg_log_array') ) {
   * @package awl
   */
   function dbg_log_array( $component, $name, $arr, $recursive = false ) {
+    if ( !isset($arr) || (gettype($arr) != 'array' && gettype($arr) != 'object') ) {
+      dbg_error_log( $component, "%s: array is not set, or is not an array!", $name);
+      return;
+    } 
     foreach ($arr as $key => $value) {
       dbg_error_log( $component, "%s: >>%s<< = >>%s<<", $name, $key, $value);
-      if ( $recursive && (gettype($value) == 'array' || (gettype($value) == 'object' && $key != 'self' && $key != 'parent') ) ) {
+      if ( $recursive && (gettype($value) == 'array' || (gettype($value) == 'object' && "$key" != 'self' && "$key" != 'parent') ) ) {
         dbg_log_array( $component, "$name"."[$key]", $value, $recursive );
       }
     }

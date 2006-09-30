@@ -75,6 +75,7 @@ class User extends DBRecord {
     // Initialise the record, possibly from the file.
     $this->Initialise('usr',$keys);
     $this->Read();
+    $this->GetRoles();
 
     $this->EditMode = ( ($_GET['edit'] && $this->AllowedTo($this->WriteType))
                     || (0 == $this->user_no && $this->AllowedTo("insert") ) );
@@ -143,10 +144,10 @@ class User extends DBRecord {
   */
   function GetRoles () {
     $this->roles = array();
-    $qry = new PgQuery( 'SELECT group_name AS role_name FROM group_member m join ugroup g ON g.group_no = m.group_no WHERE user_no = ? ', $this->user_no );
-    if ( $qry->Exec('Login') && $qry->rows > 0 ) {
+    $qry = new PgQuery( 'SELECT role_name FROM role_member JOIN roles USING (role_no) WHERE user_no = ? ', $this->user_no );
+    if ( $qry->Exec("User") && $qry->rows > 0 ) {
       while( $role = $qry->Fetch() ) {
-        $this->roles[$role->role_name] = true;
+        $this->roles[$role->role_name] = 't';
       }
     }
   }
@@ -171,6 +172,7 @@ class User extends DBRecord {
     $html .= "<table width=\"100%\" class=\"data\" cellspacing=\"0\" cellpadding=\"0\">\n";
 
     $html .= $this->RenderFields($ef);
+    $html .= $this->RenderRoles($ef);
 
     $html .= "</table>\n";
     if ( $ef->editmode ) {
@@ -223,6 +225,52 @@ class User extends DBRecord {
     $html .= $ef->DataEntryLine( "Joined", $session->FormattedDate($this->Get('joined'),'timestamp') );
     $html .= $ef->DataEntryLine( "Updated", $session->FormattedDate($this->Get('updated'),'timestamp') );
     $html .= $ef->DataEntryLine( "Last used", $session->FormattedDate($this->Get('last_used'),'timestamp') );
+
+    return $html;
+  }
+
+
+  /**
+  * Render the user's administrative roles
+  *
+  * @return string The string of html to be output
+  */
+  function RenderRoles( $ef, $title = "User Roles" ) {
+    global $session;
+    $html = "";
+
+    $html = ( $title == "" ? "" : $ef->BreakLine($title) );
+
+    $html .= '<tr><th class="prompt">User Roles</th><td class="entry">';
+    if ( $ef->editmode ) {
+      $sql = "SELECT role_name FROM roles ";
+      if ( ! ($session->AllowedTo('Admin') ) ) {
+        $sql .= "NATURAL JOIN role_member WHERE user_no=$session->user_no ";
+      }
+      $sql .= "ORDER BY roles.role_no";
+
+      $ef->record->roles = array();
+
+      // Select the records
+      $q = new PgQuery($sql, $user_no, $user_no);
+      if ( $q && $q->Exec("User") && $q->rows ) {
+        $i=0;
+        while( $row = $q->Fetch() ) {
+          dbg_error_log("User", ":RenderRoles: Is a member of '%s': %s", $row->role_name, $this->roles[$row->role_name] );
+          $ef->record->roles[$row->role_name] = $this->roles[$row->role_name];
+          $html .= $ef->DataEntryField( "", "checkbox", "roles[$row->role_name]",
+                          array("title" => "Does the user have the right to perform this role?",
+                                    "_label" => "$row->role_name" ) );
+        }
+      }
+    }
+    else {
+      foreach( $this->roles AS $k => $v ) {
+        if ( $i++ > 0 ) $html .= ", ";
+        $html .= $k;
+      }
+    }
+    $html .= '</td></tr>'."\n";
 
     return $html;
   }

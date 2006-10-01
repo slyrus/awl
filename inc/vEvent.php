@@ -57,6 +57,7 @@ class vEvent {
     // Probably a good idea to always have values for these things...
     if ( isset($c->local_tzid ) ) $this->properties['tz_id']    = $c->local_tzid;
     $this->properties['dtstamp']  = date('Ymd\THis');
+    $this->properties['last-modified']  = $this->properties['dtstamp'];
     $this->properties['sequence'] = 1;
     $this->properties['uid']      = sprintf( "%s@%s", time() * 1000 + rand(0,1000), $c->domain_name);
 
@@ -281,7 +282,7 @@ EOTXT;
 */
     return $result;
   }
-  
+
 
 }
 

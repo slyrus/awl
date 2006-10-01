@@ -31,6 +31,7 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 
+require_once("AWLUtilities.php");
 /**
 * @global resource $dbconn
 * @name $dbconn
@@ -134,10 +135,9 @@ function qpg($str = null)
 * @return string The pristine uncontaminated string we can safely use for Just About Anything(tm).
 */
 function clean_string( $unclean, $type = 'full' ) {
-  global $session;
   if ( $type != 'basic' ) $cleaned = strtolower($unclean); else $cleaned = &$unclean;
   $cleaned = preg_replace( "/['\"!\\\\()\[\]|*\/{}&%@~;:?<>]/", '', $cleaned ); //"// Stupid Bluefish Syntax highlighting...
-  $session->Dbg( "always", "Cleaned string from <<%s>> to <<%s>>", $unclean, $cleaned );
+  dbg_error_log( "PgQuery", "clean_string: Cleaned string from <<%s>> to <<%s>>", $unclean, $cleaned );
   return $cleaned;
 }
 
@@ -338,18 +338,17 @@ class PgQuery
   * @param int    $line    The line number where the logged event occurred.
   * @param string $file    The file name where the logged event occurred.
   */
-  function _log_error( $locn, $tag, $string, $line = 0, $file = 0)
+  function _log_error( $locn, $tag, $string, $line = 0, $file = "")
   {
-    GLOBAL $c;
     // replace more than one space with one space
     $string = preg_replace('/\s+/', ' ', $string);
   
-    if ( $line != 0 && $file != 0 ) {
-      error_log( "$c->sysabbr $locn $tag: PgQuery error in '$file' on line $line ");
+    if ( ($tag == 'QF' || $tag == 'SQ') && ( $line != 0 && $file != "" ) ) {
+      dbg_error_log( "LOG-$locn", " Query: %s: Error in '%s' on line %d", $tag, $file, $line );
     }
   
     while( strlen( $string ) > 0 )  {
-      error_log( "$c->sysabbr $locn $tag: " . substr( $string, 0, 240), 0 );
+      dbg_error_log( "LOG-$locn", " Query: %s: %s", $tag, substr( $string, 0, 240) );
       $string = substr( "$string", 240 );
     }
   }
@@ -407,11 +406,9 @@ class PgQuery
     global $dbconn, $debuggroups, $c;
     $this->location = trim($location);
     if ( $this->location == "" ) $this->location = substr($GLOBALS['PHP_SELF'],1);
-    // $locn = sprintf( "%-12.12s", $this->location );
-    $locn = $this->location;
 
     if ( isset($debuggroups['querystring']) ) {
-      $this->_log_error( $this->location, 'query', $this->querystring, $line, $file );
+      $this->_log_error( $this->location, 'DBGQ', $this->querystring, $line, $file );
     }
 
     $t1 = microtime(); // get start time
@@ -422,19 +419,19 @@ class PgQuery
     $c->total_query_time += $i_took;
     $this->execution_time = sprintf( "%2.06lf", $i_took);
 
-    if ( !$this->result ) // query failed
-    {
+    if ( !$this->result ) {
+     // query simply failed
       $this->errorstring = pg_errormessage(); // returns database error message
-      $this->_log_error( $locn, 'QF', $this->querystring, $line, $file );
-      $this->_log_error( $locn, 'QF', $this->errorstring, $line, $file );
+      $this->_log_error( $this->location, 'QF', $this->querystring, $line, $file );
+      $this->_log_error( $this->location, 'QF', $this->errorstring, $line, $file );
     }
-    elseif ( $this->execution_time > $this->query_time_warning ) // if execution time is too long
-    {
-      $this->_log_error( $locn, 'SQ', "Took: $this->execution_time for $this->querystring", $line, $file ); // SQ == Slow Query :-)
+    elseif ( $this->execution_time > $this->query_time_warning ) {
+     // if execution time is too long
+      $this->_log_error( $this->location, 'SQ', "Took: $this->execution_time for $this->querystring", $line, $file ); // SQ == Slow Query :-)
     }
-    elseif ( isset($debuggroups[$this->location]) && $debuggroups[$this->location] ) // query successful
-    {
-      $this->_log_error( $locn, 'DBGQ', "Took: $this->execution_time for $this->querystring to find $this->rows rows.", $line, $file );
+    elseif ( isset($debuggroups[$this->location]) && $debuggroups[$this->location] ) {
+     // query successful, but we're debugging and want to know how long it took anyway
+      $this->_log_error( $this->location, 'DBGQ', "Took: $this->execution_time for $this->querystring to find $this->rows rows.", $line, $file );
     }
 
     return $this->result;

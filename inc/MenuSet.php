@@ -175,8 +175,7 @@ class MenuOption {
   * @return int ( $a == b ? 0 ( $a > b ? 1 : -1 ))
   */
   function _CompareMenuSequence( $a, $b ) {
-    global $session;
-    $session->Dbg("MenuSet", "Comparing %d with %d", $a->sortkey, $b->sortkey);
+    dbg_error_log("MenuSet", ":_CompareMenuSequence: Comparing %d with %d", $a->sortkey, $b->sortkey);
     return ($a->sortkey - $b->sortkey);
   }
 
@@ -285,13 +284,12 @@ class MenuSet {
   * @return mixed A reference to the MenuOption that was added, or false if none were added.
   */
   function &AddOption( $label, $target, $title="", $active=false, $sortkey=1000 ) {
-    global $session;
     $new_option =& new MenuOption( $label, $target, $title, $this->main_class, $sortkey );
     if ( ($old_option = $this->_OptionExists( $label )) === false ) {
       array_push( $this->options, &$new_option );
     }
     else {
-      $session->Dbg("MenuSet","Replacing existing option # $old_option ($label)");
+      dbg_error_log("MenuSet",":AddOption: Replacing existing option # $old_option ($label)");
       $this->options[$old_option] = &$new_option;  // Overwrite the existing option
     }
     if ( is_bool($active) && $active == false && $_SERVER['REQUEST_URI'] == $target ) {
@@ -427,8 +425,7 @@ class MenuSet {
   * @return int ( $a == b ? 0 ( $a > b ? 1 : -1 ))
   */
   function _CompareSequence( $a, $b ) {
-    global $session;
-    $session->Dbg("MenuSet","Comparing %d with %d", $a->sortkey, $b->sortkey);
+    dbg_error_log("MenuSet",":_CompareSequence: Comparing %d with %d", $a->sortkey, $b->sortkey);
     return ($a->sortkey - $b->sortkey);
   }
 

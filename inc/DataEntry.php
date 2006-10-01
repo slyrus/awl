@@ -163,6 +163,7 @@ class EntryField
     global $session;
 
     $r = "<";
+    dbg_error_log( "EntryField", ":Render: Name: %s, Type: %s, Current: %s", $this->fname, $this->ftype, $this->current );
     switch ( $this->ftype ) {
 
       case "select":
@@ -527,27 +528,13 @@ class EntryForm
     }
     $fname = $prefix . $base_fname;
 
-/*
-    if ( substr($real_fname,0,4) == $prefix ) {
-      // Sometimes we will prepend a prefix to the field name so that the field
-      // name differs from the column name in the database.  We also remove it
-      // when it's submitted.
-      $fname = substr($real_fname,strlen($prefix));
-      // Also assign any posted value
-      if ( !isset($_POST[$fname]) && isset($_POST[$real_fname]) )
-        $_POST[$fname] = $_POST[$real_fname];
-    }
-    else {
-      $fname = $real_fname;
-    }
-*/
-      $session->Dbg( "DataEntry", "fmt='%s', fname='%s', fvalue='%s'", $format, $fname, $this->record->{$fname} );
+    dbg_error_log( "DataEntry", ":DataEntryField: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, $this->record->{$fname} );
     if ( !$this->editmode ) {
       // Displaying editable values when we are not editing
       // If it is a date, then format it according to the current user's date format type
       if ($ftype == "date" || $ftype == "timestamp")
         return sprintf($format, $session->FormattedDate($this->record->{$fname}) );
-      $session->Dbg( "DataEntry", "fmt='%s', fname='%s', fvalue='%s'", $format, $fname, $this->record->{$fname} );
+      dbg_error_log( "DataEntry", ":DataEntryField: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, $this->record->{$fname} );
       return sprintf($format, $this->record->{$fname} );
     }
 
@@ -556,7 +543,8 @@ class EntryForm
     if ( preg_match("/^(.+)\[(.+)\]$/", $fname, $parts) ) {
       $p1 = $parts[1];
       $p2 = $parts[2];
-//      error_log( "DBG: fname=$fname, p1=$p1, p2=$p2, POSTVAL=" . $_POST[$p1][$p2] . ", record=".$this->record->{"$p1"}["$p2"] );
+      dbg_error_log( "DataEntry", ":DataEntryField: fname=%s, p1=%s, p2=%s, POSTVAL=%s, \$this->record->{'%s'}['%s']=%s", 
+                                                  $fname, $p1, $p2, $_POST[$p1][$p2], $p1, $p2, $this->record->{"$p1"}["$p2"] );
       // FIXME - This could be changed to handle more dimensions on submitted variable names
       if ( isset($_POST[$p1]) ) {
         if ( isset($_POST[$p1][$p2]) ) {
@@ -618,7 +606,6 @@ class EntryForm
   */
   function MultiEntryLine( $prompt_options, $prompt_name, $default_prompt, $format, $ftype='', $fname='', $attributes='', $prefix )
   {
-    global $session;
 
     $prompt = "<select name=\"$prompt_name\">";
 

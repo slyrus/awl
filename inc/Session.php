@@ -37,18 +37,16 @@ require_once('PgQuery.php');
 * @return boolean Whether or not the user correctly guessed a temporary password within the necessary window of opportunity.
 */
 function check_temporary_passwords( $they_sent, $user_no ) {
-  global $debuggroups, $session;
-
   $sql = 'SELECT 1 AS ok FROM tmp_password WHERE user_no = ? AND password = ? AND valid_until > current_timestamp';
   $qry = new PgQuery( $sql, $user_no, $they_sent );
   if ( $qry->Exec('Session::check_temporary_passwords') ) {
-    $session->Dbg( "Login", "Rows = $qry->rows");
+    dbg_error_log( "Login", " check_temporary_passwords: Rows = $qry->rows");
     if ( $row = $qry->Fetch() ) {
-      $session->Dbg( "Login", "OK = $row->ok");
+      dbg_error_log( "Login", " check_temporary_passwords: OK = $row->ok");
       // Remove all the temporary passwords for that user...
       $sql = 'DELETE FROM tmp_password WHERE user_no = ? ';
       $qry = new PgQuery( $sql, $user_no );
-      $qry->Exec('Session::check_temporary_passwords');
+      $qry->Exec('Login',__LINE__,__FILE__);
       return true;
     }
   }
@@ -196,7 +194,7 @@ class Session
 
 
   /**
-  * Utility function to log stuff with printf expansion.
+  * DEPRECATED Utility function to log stuff with printf expansion.
   *
   * This function could be expanded to log something identifying the session, but
   * somewhat strangely this has not yet been done.
@@ -223,7 +221,7 @@ class Session
   }
 
   /**
-  * Utility function to log debug stuff with printf expansion, and the ability to
+  * DEPRECATED Utility function to log debug stuff with printf expansion, and the ability to
   * enable it selectively.
   *
   * The enabling is done by setting a variable "$debuggroups[$group] = 1"
@@ -310,9 +308,9 @@ class Session
 * @return boolean Whether or not the user correctly guessed a temporary password within the necessary window of opportunity.
 */
   function Login( $username, $password ) {
-    global $c, $debuggroups;
+    global $c;
     $rc = false;
-    $this->Dbg( "Login", "Attempting login for $username" );
+    dbg_error_log( "Login", " Login: Attempting login for $username" );
 
     $sql = "SELECT * FROM usr WHERE lower(username) = ? ";
     $qry = new PgQuery( $sql, strtolower($username) );
@@ -325,7 +323,7 @@ class Session
           $seq = $qry->Fetch();
           $session_id = $seq->nextval;
           $session_key = md5( rand(1010101,1999999999) . microtime() );  // just some random shite
-          $this->Dbg( "Login", "Valid username/password for $username ($usr->user_no)" );
+          dbg_error_log( "Login", " Login: Valid username/password for $username ($usr->user_no)" );
 
           // Set the last_used timestamp to match the previous login.
           $qry = new PgQuery('UPDATE usr SET last_used = (SELECT session_start FROM session WHERE session.user_no = ? ORDER BY session_id DESC LIMIT 1) WHERE user_no = ?;', $usr->user_no, $usr->user_no);
@@ -342,10 +340,11 @@ class Session
             setcookie('sid',$sid, 0,'/');
             // Recognise that we have started a session now too...
             $this->Session($sid);
-            $this->Dbg( "Login", "New session $session_id started for $username ($usr->user_no)" );
+            dbg_error_log( "Login", " Login: New session $session_id started for $username ($usr->user_no)" );
             if ( isset($_POST['remember']) && intval($_POST['remember']) > 0 ) {
               $cookie .= md5( $this->user_no ) . ";";
               $cookie .= session_salted_md5($usr->user_no . $usr->username . $usr->password);
+              $GLOBALS['lsid'] = $cookie;
               setcookie( "lsid", $cookie, time() + (86400 * 3600), "/" );   // will expire in ten or so years
             }
             $this->just_logged_in = true;
@@ -382,7 +381,7 @@ class Session
       }
       else {
         $c->messages[] = 'Invalid username or password.';
-        if ( $debuggroups['Login'] )
+        if ( isset($c->dbg['Login']) || isset($c->dbg['ALL']) )
           $this->cause = 'WARN: Invalid password.';
         else
           $this->cause = 'WARN: Invalid username or password.';
@@ -390,7 +389,7 @@ class Session
     }
     else {
     $c->messages[] = 'Invalid username or password.';
-    if ( $debuggroups['Login'] )
+    if ( isset($c->dbg['Login']) || isset($c->dbg['ALL']) )
       $this->cause = 'WARN: Invalid username.';
     else
       $this->cause = 'WARN: Invalid username or password.';
@@ -413,8 +412,8 @@ class Session
 * @return boolean Whether or not the user's lsid cookie got them in the door.
 */
   function LSIDLogin( $lsid ) {
-    global $c, $debuggroups;
-    $this->Dbg( "Login", "Attempting login for $lsid" );
+    global $c;
+    dbg_error_log( "Login", " LSIDLogin: Attempting login for $lsid" );
 
     list($md5_user_no,$validation_string) = split( ';', $lsid );
     $qry = new PgQuery( "SELECT * FROM usr WHERE md5(user_no)=?;", $md5_user_no );
@@ -429,7 +428,7 @@ class Session
           $seq = $qry->Fetch();
           $session_id = $seq->nextval;
           $session_key = md5( rand(1010101,1999999999) . microtime() );  // just some random shite
-          $this->Dbg( "Login", "Valid username/password for $username ($usr->user_no)" );
+          dbg_error_log( "Login", " LSIDLogin: Valid username/password for $username ($usr->user_no)" );
 
           // And create a session
           $sql = "INSERT INTO session (session_id, user_no, session_key) VALUES( ?, ?, ? )";
@@ -442,8 +441,32 @@ class Session
             setcookie('sid',$sid, 0,'/');
             // Recognise that we have started a session now too...
             $this->Session($sid);
-            $this->Dbg( "Login", "New session $session_id started for $this->username ($usr->user_no)" );
-            return true;
+            dbg_error_log( "Login", " LSIDLogin: New session $session_id started for $this->username ($usr->user_no)" );
+
+            $this->just_logged_in = true;
+
+            // Unset all of the submitted values, so we don't accidentally submit an unexpected form.
+            unset($_POST['username']);
+            unset($_POST['password']);
+            unset($_POST['submit']);
+            unset($_GET['submit']);
+            unset($GLOBALS['submit']);
+
+            if ( function_exists('local_session_sql') ) {
+              $sql = local_session_sql();
+            }
+            else {
+              $sql = "SELECT session.*, usr.* FROM session JOIN usr USING ( user_no )";
+            }
+            $sql .= " WHERE session.session_id = ? AND (md5(session.session_start::text) = ? OR session.session_key = ?) ORDER BY session.session_start DESC LIMIT 2";
+
+            $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
+            if ( $qry->Exec('Session') && 1 == $qry->rows ) {
+              $this->AssignSessionDetails( $qry->Fetch() );
+            }
+
+            $rc = true;
+            return $rc;
           }
    // else ...
           $this->cause = 'ERR: Could not create new session.';
@@ -453,9 +476,9 @@ class Session
         }
       }
       else {
-        $this->Dbg( "Login", "$validation_string != $my_validation ($salt - $usr->user_no, $usr->username, $usr->password)");
+        dbg_error_log( "Login", " LSIDLogin: $validation_string != $my_validation ($salt - $usr->user_no, $usr->username, $usr->password)");
         $client_messages[] = 'Invalid username or password.';
-        if ( $debuggroups['Login'] )
+        if ( isset($c->dbg['Login']) || isset($c->dbg['ALL']) )
           $this->cause = 'WARN: Invalid password.';
         else
           $this->cause = 'WARN: Invalid username or password.';
@@ -463,13 +486,13 @@ class Session
     }
     else {
     $client_messages[] = 'Invalid username or password.';
-    if ( $debuggroups['Login'] )
+    if ( isset($c->dbg['Login']) || isset($c->dbg['ALL']) )
       $this->cause = 'WARN: Invalid username.';
     else
       $this->cause = 'WARN: Invalid username or password.';
     }
 
-    $this->Dbg( "Login", "$this->cause" );
+    dbg_error_log( "Login", " LSIDLogin: $this->cause" );
     return false;
   }
 
@@ -481,7 +504,7 @@ class Session
 */
   function RenderLoginPanel() {
     $action_target = htmlspecialchars(preg_replace('/\?logout.*$/','',$_SERVER['REQUEST_URI']));
-    $this->Dbg( "Login", "action_target='%s'", $action_target );
+    dbg_error_log( "Login", " RenderLoginPanel: action_target='%s'", $action_target );
     $html = <<<EOTEXT
 <div id="logon">
 <form action="$action_target" method="post">
@@ -708,7 +731,7 @@ EOTEXT;
 
   function _CheckLogout() {
     if ( isset($_GET['logout']) ) {
-      error_log("$sysname: Session: DBG: Logging out");
+      dbg_error_log( "Login", ":_CheckLogout: Logging out");
       setcookie( 'sid', '', 0,'/');
       unset($_COOKIE['sid']);
       unset($GLOBALS['sid']);
@@ -720,22 +743,20 @@ EOTEXT;
   }
 
   function _CheckLogin() {
-    global $debuggroups;
     if ( isset($_POST['lostpass']) ) {
-      $this->Dbg( "Login", "User '$_POST[username]' has lost the password." );
-
+      dbg_error_log( "Login", ":_CheckLogin: User '$_POST[username]' has lost the password." );
       $this->SendTemporaryPassword();
     }
     else if ( isset($_POST['username']) && isset($_POST['password']) ) {
       $_username = $_POST['username'];
       // Try and log in if we have a username and password
       $this->Login( $_POST['username'], $_POST['password'] );
-      $this->Dbg( "Login", "User %s(%s) - %s (%d) login status is %d", $_POST['username'], $_username, $this->fullname, $this->user_no, $this->logged_in );
+      dbg_error_log( "Login", ":_CheckLogin: User %s(%s) - %s (%d) login status is %d", $_POST['username'], $_username, $this->fullname, $this->user_no, $this->logged_in );
     }
     else if ( !isset($_COOKIE['sid']) && isset($_COOKIE['lsid']) && $_COOKIE['lsid'] != "" ) {
       // Validate long-term session details
       $this->LSIDLogin( $_COOKIE['lsid'] );
-      $this->Dbg( "Login", "User $this->username - $this->fullname ($this->user_no) login status is $this->logged_in" );
+      dbg_error_log( "Login", ":_CheckLogin: User $this->username - $this->fullname ($this->user_no) login status is $this->logged_in" );
     }
   }
 

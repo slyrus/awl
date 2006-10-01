@@ -406,7 +406,7 @@ class DBRecord
     dbg_error_log( "DBRecord", ":Write: %s record as %s.", $this->Table, $this->WriteType );
     $sql = sql_from_object( $this->Values, $this->WriteType, $this->Table, $this->_BuildWhereClause(), $this->prefix );
     $qry = new PgQuery($sql);
-    return $qry->Exec( __CLASS__, __LINE__, __FILE__ );
+    return $qry->Exec( "DBRecord", __LINE__, __FILE__ );
   }
 
   /**
@@ -425,7 +425,7 @@ class DBRecord
   //    $join = $this->_BuildJoinClause(true);
       $sql = "SELECT $fieldlist FROM $this->Table $where";
       $qry = new PgQuery($sql);
-      if ( $qry->Exec( __CLASS__, __LINE__, __FILE__ ) && $qry->rows > 0 ) {
+      if ( $qry->Exec( "DBRecord", __LINE__, __FILE__ ) && $qry->rows > 0 ) {
         $i_read_the_record = true;
         $values = $qry->Fetch();
         $this->EditMode = false;  // Default to not editing if we read the record.

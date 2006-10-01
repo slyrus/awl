@@ -154,10 +154,9 @@ class BrowserColumn
     else {
       // These quite probably don't work.  The CSS standard for multiple classes is 'class="a b c"' but is lightly
       // implemented according to some web references.  Perhaps modern browsers are better?
-      $html = '<td class="'.$this->Align;
-      $html .= ($this->Class == "" ? "" : " $this->Class");
-      $html .= ($extraclass == "" ? "" : " $extraclass");
-      $html .= '">';
+      $class = $this->Align . ($this->Class == "" ? "" : " $this->Class") . ($extraclass == "" ? "" : " $extraclass");
+      if ( $class != "" ) $class = ' class="'.$class.'"'; 
+      $html = sprintf('<td%s>',$class);
       $html .= ($this->Format == "" ? $value : sprintf($this->Format,$value,$value));
       $html .= "</td>\n";
     }
@@ -182,6 +181,7 @@ class Browser
   var $HiddenColumns;
   var $Joins;
   var $Where;
+  var $Union;
   var $Order;
   var $OrderField;
   var $OrderDirection;
@@ -281,6 +281,19 @@ class Browser
   */
   function SetJoins( $join_list ) {
     $this->Joins = $join_list;
+  }
+
+  /**
+  * Set a Union SQL statement.
+  *
+  * In rare cases this might be useful.  It's currently a fairly simple hack
+  * which requires you to put an entire valid (& matching) UNION subclause
+  * (although without the UNION keyword).
+  *
+  * @param string $union_select
+  */
+  function SetUnion( $union_select ) {
+    $this->Union = $union_select;
   }
 
   /**
@@ -450,8 +463,12 @@ class Browser
       }
     }
     $where_clause = ((isset($this->Where) && $this->Where != "") ? "WHERE $this->Where" : "" );
-    $sql = sprintf( "SELECT %s FROM %s %s %s %s %s", $target_fields,
-                 $this->Joins, $where_clause, $this->Grouping, $this->Order, $this->Limit);
+    $sql = sprintf( "SELECT %s FROM %s %s %s ", $target_fields,
+                 $this->Joins, $where_clause, $this->Grouping );
+    if ( "$this->Union" != "" ) {
+      $sql .= "UNION $this->Union ";
+    }
+    $sql .= $this->Order . ' ' . $this->Limit;   
     $this->Query = new PgQuery( $sql );
     return $this->Query->Exec("Browse:$this->Title:DoQuery");
   }

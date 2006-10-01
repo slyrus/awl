@@ -210,7 +210,7 @@ class User extends DBRecord {
     }
 
     $html .= $ef->DataEntryLine( "Full Name", "%s", "text", "fullname",
-              array( "size" => 50, "title" => "The description of the system."), $this->prefix );
+              array( "size" => 50, "title" => "The user's full name."), $this->prefix );
 
     $html .= $ef->DataEntryLine( "Email", "%s", "text", "email",
               array( "size" => 50, "title" => "The user's e-mail address."), $this->prefix );

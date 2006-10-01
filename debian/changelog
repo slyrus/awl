@@ -1,3 +1,11 @@
+awl (0.4-1) unstable; urgency=low
+
+  * Logging changes.
+  * Add object for VEVENT iCalendar files.
+  * Improvements to User class to render roles.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Sun,  1 Oct 2006 20:33:39 +1300
+
 awl (0.4-0) unstable; urgency=low
 
   * A number of changes due to excessive work on the start of a simple CalDAV

@@ -1,3 +1,9 @@
+awl (0.5-0) unstable; urgency=low
+
+  * Add a basic library for XML document output.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Sun,  1 Oct 2006 23:21:59 +1300
+
 awl (0.4-1) unstable; urgency=low
 
   * Logging changes.

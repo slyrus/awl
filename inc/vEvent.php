@@ -56,10 +56,10 @@ class vEvent {
 
     // Probably a good idea to always have values for these things...
     if ( isset($c->local_tzid ) ) $this->properties['tz_id']    = $c->local_tzid;
-    $this->properties['dtstamp']  = date('Ymd\THis');
-    $this->properties['last-modified']  = $this->properties['dtstamp'];
-    $this->properties['sequence'] = 1;
-    $this->properties['uid']      = sprintf( "%s@%s", time() * 1000 + rand(0,1000), $c->domain_name);
+//    $this->properties['dtstamp']  = date('Ymd\THis');
+//    $this->properties['last-modified']  = $this->properties['dtstamp'];
+//    $this->properties['sequence'] = 1;
+//    $this->properties['uid']      = sprintf( "%s@%s", time() * 1000 + rand(0,1000), $c->domain_name);
 
     if ( !isset($args) || !is_array($args) ) return;
 
@@ -194,6 +194,15 @@ class vEvent {
 
 
   /**
+  * Returns a PostgreSQL Date Format string suitable for returning dates which
+  * have been cast to UTC
+  */
+  function SqlUTCFormat() {
+    return "'IYYYMMDD\"T\"HH24MISS\"Z\"'";
+  }
+
+
+  /**
   * Returns a PostgreSQL Date Format string suitable for returning iCal durations
   *  - this doesn't work for negative intervals, but events should not have such!
   */
@@ -201,6 +210,21 @@ class vEvent {
     return "'\"PT\"HH24\"H\"MI\"M\"'";
   }
 
+  /**
+  * Returns a suitably escaped RFC2445 content string.
+  *
+  * @param string The incoming name[;param] prefixing the string.
+  * @param string The incoming string to be escaped.
+  */
+  function RFC2445ContentEscape( $name, $value ) {
+    $value = str_replace( '\\', '\\\\', $value);
+    $value = str_replace( "\n", '\\n', $value);
+    $value = str_replace( "\r", '\\r', $value);
+//    $value = preg_replace( "\n", '\\n', $value);
+    $value = preg_replace( "/([,;:\"\'])/", '\\\\$1', $value);
+    $result = wordwrap("$name:$value", 75, " \r\n ", true ) . "\r\n";
+    return $result;
+  }
 
 /*
 BEGIN:VCALENDAR
@@ -248,38 +272,39 @@ END:VCALENDAR
   * Render the vEvent object as a text string which is a single VEVENT
   */
   function Render( ) {
-    $interesting = array( "uid", "dtstamp", "dtstart", "dtend", "duration", "summary",
-                          "location", "description", "action", "class", "transp", "sequence");
+    $interesting = array( "uid", "dtstamp", "dtstart", "duration", "summary", "uri", "last-modified",
+                          "location", "description", "class", "transp", "sequence", "timezone" );
 
+    $wrap_at = 75;
     $result = <<<EOTXT
-BEGIN:VCALENDAR
-CALSCALE:GREGORIAN
-PRODID:-//Catalyst.Net.NZ//NONSGML AWL Calendar//EN
-VERSION:2.0
-BEGIN:VEVENT
+BEGIN:VCALENDAR\r
+PRODID:-//Catalyst.Net.NZ//NONSGML AWL Calendar//EN\r
+VERSION:2.0\r
+BEGIN:VEVENT\r
 
 EOTXT;
 
     foreach( $interesting AS $k => $v ) {
       $v = strtoupper($v);
-      if ( isset($this->properties[$v]) )
-        $result .= sprintf("%s:%s\n", $v, $this->properties[$v]);
+      if ( isset($this->properties[$v]) && $this->properties[$v] != "" ) {
+        dbg_error_log( "vEvent", "Rendering '%s' which is '%s'", $v, $this->properties[$v] );
+        $result .= $this->RFC2445ContentEscape($v,$this->properties[$v]);
+      }
     }
+
+    // DTEND and DURATION may not exist together
+    if ( ( isset($this->properties['DTEND']) && $this->properties['DTEND'] != "" )
+         && !( isset($this->properties['DURATION']) && $this->properties['DURATION'] != "" ) ) {
+      dbg_error_log( "vEvent", "Rendering '%s' which is '%s'", 'DTEND',$this->properties['DTEND'] );
+      $result .= $this->RFC2445ContentEscape('DTEND',$this->properties['DTEND']);
+    }
+
     $result .= <<<EOTXT
-END:VEVENT
-END:VCALENDAR
+END:VEVENT\r
+END:VCALENDAR\r
 
 EOTXT;
 
-/*
-    $result = sprintf( $format,
-                         $this->properties['UID'],
-                         $this->properties['DTSTART'],
-                         $this->properties['DURATION'],
-                         $this->properties['SUMMARY'],
-                         $this->properties['LOCATION']
-                     );
-*/
     return $result;
   }
 

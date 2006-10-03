@@ -80,8 +80,11 @@ class vEvent {
   * @var vevent string
   */
   function BuildFromText( $vevent ) {
-    $vevent = preg_replace('/[\r\n]+ /', ' ', $vevent );
-    $lines = preg_split('/[\r\n]+/', $vevent );
+//    $vevent = preg_replace('/[\r\n]+ /', ' ', $vevent );
+//    $lines = preg_split('/[\r\n]+/', $vevent );
+    // According to RFC2445 we should do this:
+    $vevent = preg_replace('/\r\n /', '', $vevent );
+    $lines = preg_split('/\r\n/', $vevent );
     $properties = array();
 
     $vtimezone = "";
@@ -119,12 +122,20 @@ class vEvent {
       }
 
       if ( ($state == 'BEGIN:VEVENT' || $state == 'BEGIN:VTODO') && $state != $v ) {
-        list( $parameter, $value ) = preg_split('/:/', $v );
-        if ( preg_match('/^DT[A-Z]+;TZID=/', $parameter) ) {
-          list( $parameter, $tz_id ) = preg_split('/;/', $parameter );
-          $properties['TZID'] = $tz_id;
+        list( $property, $value ) = preg_split('/:/', $v, 2 );
+        if ( strpos( $property, ';' ) > 0 ) { 
+          $parameterlist = preg_split('/;/', $v );
+          $property = array_shift($parameterlist);
+          foreach( $parameterlist AS $pk => $pv ) { 
+            if ( preg_match('/^TZID=(.*)$/', $pv, $matches) ) {
+              $properties['TZID'] = $tz_id;
+            }
+            elseif ( $pv == "VALUE=DATE" ) {
+              $value .= 'T000000';
+            }
+          }
         }
-        $properties[strtoupper($parameter)] = $value;
+        $properties[strtoupper($property)] = $value;
       }
       if ( $state == 'BEGIN:VTIMEZONE' ) {
         $vtimezone .= $v . "\n";

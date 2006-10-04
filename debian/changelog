@@ -1,8 +1,10 @@
 awl (0.5-0) unstable; urgency=low
 
   * Add a basic library for XML document output.
+  * Various enhancements to Vevent.
+  * Some changes so PgQuery logs with $c->dbg settings.
 
- -- Andrew McMillan <debian@mcmillan.net.nz>  Sun,  1 Oct 2006 23:21:59 +1300
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Thu,  5 Oct 2006 00:40:39 +1300
 
 awl (0.4-1) unstable; urgency=low
 

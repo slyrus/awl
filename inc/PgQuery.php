@@ -407,7 +407,7 @@ class PgQuery
     $this->location = trim($location);
     if ( $this->location == "" ) $this->location = substr($GLOBALS['PHP_SELF'],1);
 
-    if ( isset($debuggroups['querystring']) ) {
+    if ( isset($debuggroups['querystring']) || isset($c->dbg['querystring']) || isset($c->dbg['ALL']) ) {
       $this->_log_error( $this->location, 'DBGQ', $this->querystring, $line, $file );
     }
 
@@ -429,7 +429,7 @@ class PgQuery
      // if execution time is too long
       $this->_log_error( $this->location, 'SQ', "Took: $this->execution_time for $this->querystring", $line, $file ); // SQ == Slow Query :-)
     }
-    elseif ( isset($debuggroups[$this->location]) && $debuggroups[$this->location] ) {
+    elseif ( isset($debuggroups[$this->location]) || isset($c->dbg[$this->location]) || isset($c->dbg['ALL']) ) {
      // query successful, but we're debugging and want to know how long it took anyway
       $this->_log_error( $this->location, 'DBGQ', "Took: $this->execution_time for $this->querystring to find $this->rows rows.", $line, $file );
     }

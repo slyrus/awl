@@ -82,9 +82,10 @@ class vEvent {
   function BuildFromText( $vevent ) {
 //    $vevent = preg_replace('/[\r\n]+ /', ' ', $vevent );
 //    $lines = preg_split('/[\r\n]+/', $vevent );
-    // According to RFC2445 we should do this:
-    $vevent = preg_replace('/\r\n /', '', $vevent );
-    $lines = preg_split('/\r\n/', $vevent );
+    // According to RFC2445 we should always end with CRLF, but the CalDAV spec says
+    // that normalising XML parses often muck with it and may remove the CR.
+    $vevent = preg_replace('/\r?\n /', '', $vevent );
+    $lines = preg_split('/\r?\n/', $vevent );
     $properties = array();
 
     $vtimezone = "";

@@ -30,7 +30,14 @@ class XMLElement {
   */
   function XMLElement( $tagname, $content=false, $attributes=false ) {
     $this->tagname=$tagname;
-    $this->content=$content;
+    if ( gettype($content) == "object" ) {
+      // Subtree to be parented here
+      $this->content=array($content);
+    }
+    else {
+      // Array or text
+      $this->content=$content;
+    }
     $this->attributes = $attributes;
   }
 
@@ -81,8 +88,9 @@ class XMLElement {
   *
   * @param int The indenting level for the pretty formatting of the element
   */
-  function Render($indent=0) {
-    $r = substr("                        ",0,$indent) . '<' . $this->tagname;
+  function Render($indent=0,$xmldef="") {
+    $r = ( $xmldef == "" ? "" : $xmldef."\n");  
+    $r .= substr("                        ",0,$indent) . '<' . $this->tagname;
     if ( gettype($this->attributes) == "array" ) {
       /**
       * Render the element attribute values

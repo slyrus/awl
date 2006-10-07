@@ -619,18 +619,31 @@ EOHTML;
         $mail = new EMail( "Access to $c->system_name" );
         $mail->SetFrom($c->admin_email );
         $usernames = "";
+        if ( isset($c->debug_email) ) {
+          $debug_to = "This e-mail would normally be sent to:\n ";  
+          $mail->AddTo( "WRMS Tester <$c->debug_email>" );
+        }
         while ( $row = $qry->Fetch() ) {
           $sql .= "INSERT INTO tmp_password ( user_no, password) VALUES( $row->user_no, '$tmp_passwd');";
-          $mail->AddTo( "$row->fullname <$row->email>" );
+          if ( isset($c->debug_email) ) {
+            $debug_to .= "$row->fullname <$row->email> ";  
+          }
+          else {
+            $mail->AddTo( "$row->fullname <$row->email>" );
+          }
           $usernames .= "        $row->username\n";
         }
         if ( $mail->To != "" ) {
+          if ( isset($c->debug_email) ) {
+            $debug_to .= "\n============================================================\n";  
+          }
           $sql .= "COMMIT;";
           $qry = new PgQuery( $sql );
           $qry->Exec("Session::SendTemporaryPassword");
           if ( !isset($body_template) || $body_template == "" ) {
             $body_template = <<<EOTEXT
-A temporary password has been requested for @@system_name@@.
+$debug_to
+@@debugging@@A temporary password has been requested for @@system_name@@.
 
 Temporary Password: @@password@@
 
@@ -646,6 +659,7 @@ EOTEXT;
           $body = str_replace( '@@system_name@@', $c->system_name, $body_template);
           $body = str_replace( '@@password@@', $tmp_passwd, $body);
           $body = str_replace( '@@usernames@@', $usernames, $body);
+          $body = str_replace( '@@debugging@@', $debug_to, $body);
           $mail->SetBody($body);
           $mail->Send();
           $password_sent = true;

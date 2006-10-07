@@ -76,7 +76,8 @@ if ( !function_exists('dbg_log_array') ) {
       return;
     } 
     foreach ($arr as $key => $value) {
-      dbg_error_log( $component, "%s: >>%s<< = >>%s<<", $name, $key, $value);
+      dbg_error_log( $component, "%s: >>%s<< = >>%s<<", $name, $key,
+                      (gettype($value) == 'array' || gettype($value) == 'object' ? gettype($value) : $value) );
       if ( $recursive && (gettype($value) == 'array' || (gettype($value) == 'object' && "$key" != 'self' && "$key" != 'parent') ) ) {
         dbg_log_array( $component, "$name"."[$key]", $value, $recursive );
       }

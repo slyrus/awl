@@ -429,7 +429,7 @@ class PgQuery
      // if execution time is too long
       $this->_log_error( $this->location, 'SQ', "Took: $this->execution_time for $this->querystring", $line, $file ); // SQ == Slow Query :-)
     }
-    elseif ( isset($debuggroups[$this->location]) || isset($c->dbg[$this->location]) || isset($c->dbg['ALL']) ) {
+    elseif ( isset($debuggroups[$this->location]) || isset($c->dbg[strtolower($this->location)]) || isset($c->dbg['ALL']) ) {
      // query successful, but we're debugging and want to know how long it took anyway
       $this->_log_error( $this->location, 'DBGQ', "Took: $this->execution_time for $this->querystring to find $this->rows rows.", $line, $file );
     }
@@ -447,7 +447,9 @@ class PgQuery
   {
     global $debuggroups;
 
-    if ( isset($debuggroups["$this->location"]) && $debuggroups["$this->location"] > 2 ) {
+    if ( ( isset($debuggroups["$this->location"]) && $debuggroups["$this->location"] > 2 )
+          || ( isset($c->dbg[strtolower($this->location)]) && isset($c->dbg[strtolower($this->location)]) )
+          || isset($c->dbg['ALL']) ) {
       $this->_log_error( $this->location, "Fetch", "$this->result Rows: $this->rows, Rownum: $this->rownum");
     }
     if ( ! $this->result ) return false; // no results

@@ -140,7 +140,7 @@ class vEvent {
       }
       if ( $state == 'BEGIN:VTIMEZONE' ) {
         $vtimezone .= $v . "\n";
-        list( $parameter, $value ) = preg_split('/:/', $v );
+        @list( $parameter, $value ) = preg_split('/:/', $v );
         if ( !isset($this->tz_locn) && $parameter == 'X-LIC-LOCATION' ) {
           $this->tz_locn = $value;
         }
@@ -168,7 +168,7 @@ class vEvent {
       }
     }
 
-    if ( !isset($this->tz_locn) ) {
+    if ( !isset($this->tz_locn) && isset($this->properties['TZID']) ) {
       // In case there was no X-LIC-LOCATION defined, let's hope there is something in the TZID
       $this->tz_locn = preg_replace('/^.*([a-z]+\/[a-z]+)$/i','$1',$this->properties['TZID'] );
     }
@@ -185,7 +185,7 @@ class vEvent {
   * Get the value of a property
   */
   function Get( $key ) {
-    return $this->properties[strtoupper($key)];
+   if ( isset($this->properties[strtoupper($key)]) ) return $this->properties[strtoupper($key)];
   }
 
 

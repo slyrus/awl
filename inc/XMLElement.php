@@ -99,7 +99,7 @@ class XMLElement {
         $r .= sprintf( ' %s="%s"', $k, htmlspecialchars($v) );
       }
     }
-    if ( (is_array($this->content) && count($this->content) > 0) || strlen($this->content) > 0 ) {
+    if ( (is_array($this->content) && count($this->content) > 0) || (!is_array($this->content) && strlen($this->content) > 0) ) {
       $r .= ">";
       if ( is_array($this->content) ) {
         /**

@@ -252,7 +252,7 @@ class iCalendar {
   * Returns a PostgreSQL Date Format string suitable for returning iCal dates
   */
   function SqlDateFormat() {
-    return "'IYYYMMDD\"T\"HH24MISS'";
+    return "'YYYYMMDD\"T\"HH24MISS'";
   }
 
 
@@ -261,7 +261,7 @@ class iCalendar {
   * have been cast to UTC
   */
   function SqlUTCFormat() {
-    return "'IYYYMMDD\"T\"HH24MISS\"Z\"'";
+    return "'YYYYMMDD\"T\"HH24MISS\"Z\"'";
   }
 
 

@@ -124,10 +124,10 @@ class vEvent {
 
       if ( ($state == 'BEGIN:VEVENT' || $state == 'BEGIN:VTODO') && $state != $v ) {
         list( $property, $value ) = preg_split('/:/', $v, 2 );
-        if ( strpos( $property, ';' ) > 0 ) { 
+        if ( strpos( $property, ';' ) > 0 ) {
           $parameterlist = preg_split('/;/', $v );
           $property = array_shift($parameterlist);
-          foreach( $parameterlist AS $pk => $pv ) { 
+          foreach( $parameterlist AS $pk => $pv ) {
             if ( preg_match('/^TZID=(.*)$/', $pv, $matches) ) {
               $properties['TZID'] = $tz_id;
             }
@@ -201,7 +201,7 @@ class vEvent {
   * Returns a PostgreSQL Date Format string suitable for returning iCal dates
   */
   function SqlDateFormat() {
-    return "'IYYYMMDD\"T\"HH24MISS'";
+    return "'YYYYMMDD\"T\"HH24MISS'";
   }
 
 
@@ -210,7 +210,7 @@ class vEvent {
   * have been cast to UTC
   */
   function SqlUTCFormat() {
-    return "'IYYYMMDD\"T\"HH24MISS\"Z\"'";
+    return "'YYYYMMDD\"T\"HH24MISS\"Z\"'";
   }
 
 

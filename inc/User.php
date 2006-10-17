@@ -164,7 +164,7 @@ class User extends DBRecord {
     $ef = new EntryForm( $REQUEST_URI, $this->Values, $this->EditMode );
     $ef->NoHelp();  // Prefer this style, for the moment
 
-    if ( $ef->editmode ) {
+    if ( $ef->EditMode ) {
       $html .= $ef->StartForm( array("autocomplete" => "off" ) );
       if ( $this->user_no > 0 ) $html .= $ef->HiddenField( "user_no", $this->user_no );
     }
@@ -175,7 +175,7 @@ class User extends DBRecord {
     $html .= $this->RenderRoles($ef);
 
     $html .= "</table>\n";
-    if ( $ef->editmode ) {
+    if ( $ef->EditMode ) {
       $html .= '<div id="footer">';
       $html .= $ef->SubmitButton( "submit", (("insert" == $this->WriteType) ? "Create" : "Update") );
       $html .= '</div>';
@@ -198,7 +198,7 @@ class User extends DBRecord {
 
     $html .= $ef->DataEntryLine( "User Name", "%s", "text", "username",
               array( "size" => 20, "title" => "The name this user can log into the system with."), $this->prefix );
-    if ( $ef->editmode && $this->AllowedTo('ChangePassword') ) {
+    if ( $ef->EditMode && $this->AllowedTo('ChangePassword') ) {
       $this->Set('new_password','******');
       unset($_POST['new_password']);
       $html .= $ef->DataEntryLine( "New Password", "%s", "password", "new_password",
@@ -242,7 +242,7 @@ class User extends DBRecord {
     $html = ( $title == "" ? "" : $ef->BreakLine($title) );
 
     $html .= '<tr><th class="prompt">User Roles</th><td class="entry">';
-    if ( $ef->editmode ) {
+    if ( $ef->EditMode ) {
       $sql = "SELECT role_name FROM roles ";
       if ( ! ($session->AllowedTo('Admin') ) ) {
         $sql .= "NATURAL JOIN role_member WHERE user_no=$session->user_no ";
@@ -306,7 +306,8 @@ class User extends DBRecord {
   }
 
   /**
-  *
+  * Write the User record.
+  * @return Success.
   */
   function Write() {
     global $c;
@@ -318,7 +319,9 @@ class User extends DBRecord {
         $sequence_value = $qry->Fetch(true);  // Fetch as an array
         $this->user_no = $sequence_value[0];
       }
+      return true;
     }
+    return false;
   }
 
 }

@@ -312,7 +312,7 @@ class EntryForm
   * Whether we are editing, or not
   * @var string
   */
-  var $editmode;
+  var $EditMode;
 
   /**
   * The name of the form
@@ -351,11 +351,11 @@ class EntryForm
   * @param objectref $record A reference to the database object we are displaying / editing.
   * @param boolean $editmode Whether we are editing.
   */
-  function EntryForm( $action, &$record, $editmode=false )
+  function EntryForm( $action, &$record, $editing=false )
   {
     $this->action   = $action;
     $this->record   = &$record;
-    $this->editmode = $editmode;
+    $this->EditMode = $editing;
     $this->break_line_format = '<tr><th class="ph" colspan="2">%s</th></tr>'."\n";
     $this->table_line_format = '<tr><th class="prompt">%s</th><td class="entry">%s<span class="help">%s</span></td></tr>'."\n";
   }
@@ -529,7 +529,7 @@ class EntryForm
     $fname = $prefix . $base_fname;
 
     dbg_error_log( "DataEntry", ":DataEntryField: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, $this->record->{$fname} );
-    if ( !$this->editmode ) {
+    if ( !$this->EditMode ) {
       // Displaying editable values when we are not editing
       // If it is a date, then format it according to the current user's date format type
       if ($ftype == "date" || $ftype == "timestamp")

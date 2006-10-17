@@ -194,6 +194,7 @@ class Browser
   var $BeginRowArgs;
   var $Totals;
   var $TotalFuncs;
+  var $ExtraRows;
 
   /**
   * The Browser class constructor
@@ -473,6 +474,17 @@ class Browser
     return $this->Query->Exec("Browse:$this->Title:DoQuery");
   }
 
+  /**
+  * Add an extra arbitrary row onto the end of the browser.
+  *
+  * @var array $column_values Contains an array of named fields, hopefully matching the column names. 
+  */
+  function AddRow( $column_values ) {
+    if ( !isset($this->ExtraRows) || typeof($this->ExtraRows) != 'array' ) $this->ExtraRows = array();
+    $this->ExtraRows[] = &$column_values;
+  }
+
+
 
   /**
   * This method is used to render the browser as HTML.  If the query has
@@ -554,6 +566,37 @@ class Browser
         }
       }
       $html .= "</tr>\n";
+    }
+
+
+    if ( count($this->ExtraRows) > 0 ) {
+      foreach( $this->ExtraRows AS $k => $v ) {
+        $BrowserCurrentRow = (object) $v;
+        // Work out the answers to any stuff that may be being substituted into the row start
+        foreach( $this->BeginRowArgs AS $k => $fld ) {
+          $rowanswers[$k] = $BrowserCurrentRow->{$fld};
+          if ( !isset( $rowanswers[$k] ) ) {
+            switch( $fld ) {
+              case '#even':
+                $rowanswers[$k] = ($this->Query->rownum % 2);
+                break;
+              default:
+                $rowanswers[$k] = $fld;
+            }
+          }
+        }
+
+        // Start the row
+        $html .= vsprintf( $this->BeginRow, $rowanswers);
+  
+        // Each column
+        foreach( $this->Columns AS $k => $column ) {
+          $html .= $column->RenderValue($BrowserCurrentRow->{$column->Field});
+        }
+
+        // Finish the row
+        $html .= $this->CloseRow;
+      }
     }
 
     $html .= "</tbody>\n</table>\n";

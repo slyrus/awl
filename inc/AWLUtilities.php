@@ -20,7 +20,9 @@ if ( !function_exists('dbg_error_log') ) {
   * If you want to see every log message then $c->dbg["ALL"] can be set, to
   * override the debugging status of the individual components.
   *
-  * @package awl
+  * @var string $component The component to identify itself, or "ERROR", or "LOG:component"
+  * @var string $format A format string for the log message
+  * @var [string $parameter ...] Parameters for the format string.
   */
   function dbg_error_log() {
     global $c;
@@ -40,7 +42,7 @@ if ( !function_exists('dbg_error_log') ) {
       $type = "ALL";
     }
     else if ( !isset($c->dbg[strtolower($component)]) ) return;
-  
+
     if ( 2 <= $argc ) {
       $format = array_shift($args);
     }
@@ -68,13 +70,17 @@ if ( !function_exists('apache_request_headers') ) {
 if ( !function_exists('dbg_log_array') ) {
   /**
   * Function to dump an array to the error log, possibly recursively
-  * @package awl
+  *
+  * @var string $component Which component should this log message identify itself from
+  * @var string $name What name should this array dump identify itself as
+  * @var array $arr The array to be dumped.
+  * @var boolean $recursive Should the dump recurse into arrays/objects in the array
   */
   function dbg_log_array( $component, $name, $arr, $recursive = false ) {
     if ( !isset($arr) || (gettype($arr) != 'array' && gettype($arr) != 'object') ) {
       dbg_error_log( $component, "%s: array is not set, or is not an array!", $name);
       return;
-    } 
+    }
     foreach ($arr as $key => $value) {
       dbg_error_log( $component, "%s: >>%s<< = >>%s<<", $name, $key,
                       (gettype($value) == 'array' || gettype($value) == 'object' ? gettype($value) : $value) );

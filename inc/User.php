@@ -219,6 +219,12 @@ class User extends DBRecord {
               array( "_label" => "User is active",
                      "title" => "Is this user active?."), $this->prefix );
 
+    $html .= $ef->DataEntryLine( "Date Style", ($this->Get('date_format_type') == 'E' ? 'European' : ($this->Get('date_format_type') == 'U' ? 'US of A' : 'ISO 8861')),
+                     "select", "date_format_type",
+                     array( "title" => "The style of dates used for this person.",
+                       "_E" => "European (d/m/y)", "_U" => "United States of America (m/d/y)", "_I" => "ISO Format (YYYY-MM-DD)" ),
+                     $this->prefix );
+
     $html .= $ef->DataEntryLine( "EMail OK", $session->FormattedDate($this->Values->email_ok,'timestamp'), "timestamp", "email_ok",
               array( "title" => "When the user's e-mail account was validated."), $this->prefix );
 
@@ -310,7 +316,7 @@ class User extends DBRecord {
   * @return Success.
   */
   function Write() {
-    global $c;
+    global $c, $session;
     if ( parent::Write() ) {
       $c->messages[] = "User record written.";
       if ( $this->WriteType == 'insert' ) {
@@ -319,7 +325,16 @@ class User extends DBRecord {
         $sequence_value = $qry->Fetch(true);  // Fetch as an array
         $this->user_no = $sequence_value[0];
       }
-      return true;
+      else {
+        if ( $this->user_no == $session->user_no && $this->Get("date_format_type") != $session->date_format_type ) {
+          // Ensure we match the date style setting
+          $session->date_format_type = $this->Get("date_format_type");
+          unset($_POST['email_ok']);
+          $qry = new PgQuery( "SET DATESTYLE TO ?;", ($this->Get("date_format_type") == 'E' ? 'European,ISO' : ($this->Get("date_format_type") == 'U' ? 'US,ISO' : 'ISO')) );
+          $qry->Exec();  
+        }
+      } 
+    return true;
     }
     return false;
   }

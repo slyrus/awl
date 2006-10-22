@@ -1,3 +1,19 @@
+awl (0.7-0) unstable; urgency=low
+
+  * Add ability for browser to have arbitrary extra rows.
+  * Some code cleanups and documentation additions.
+  * Fix minor XML collapse bug.
+  * Use YYYY for backward compatibility with PostgreSQL 7.4.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Wed, 18 Oct 2006 10:38:57 +1300
+
+awl (0.6-0) unstable; urgency=low
+
+  * Addition of iCalendar library to replace vEvent.
+  * Warning removal cleanup.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Sun,  8 Oct 2006 19:53:07 +1300
+
 awl (0.5-0) unstable; urgency=low
 
   * Add a basic library for XML document output.

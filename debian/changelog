@@ -1,3 +1,10 @@
+awl (0.8) unstable; urgency=low
+
+  * Fix date style handling and expose the date style on user maintenance.
+  * New release.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Mon, 23 Oct 2006 11:18:35 +1300
+
 awl (0.7-0) unstable; urgency=low
 
   * Add ability for browser to have arbitrary extra rows.

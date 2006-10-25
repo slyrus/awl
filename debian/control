@@ -7,7 +7,7 @@ Build-Depends: debhelper
 
 Package: libawl-php
 Architecture: all
-Depends: debconf (>= 1.0.32), perl, nvi | vim, bash
+Depends: debconf (>= 1.0.32), perl, bash
 Description: Andrew's Web Libraries - PHP Utility Libraries
  This package contains Andrew's Web Libraries.  This is a set
  of hopefully lightweight libraries for handling a variety of

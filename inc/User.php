@@ -331,13 +331,51 @@ class User extends DBRecord {
           $session->date_format_type = $this->Get("date_format_type");
           unset($_POST['email_ok']);
           $qry = new PgQuery( "SET DATESTYLE TO ?;", ($this->Get("date_format_type") == 'E' ? 'European,ISO' : ($this->Get("date_format_type") == 'U' ? 'US,ISO' : 'ISO')) );
-          $qry->Exec();  
+          $qry->Exec();
         }
-      } 
-    return true;
+      }
+      return $this->WriteRoles();
     }
     return false;
   }
 
+  /**
+  * Write the roles associated with the user
+  * @return Success.
+  */
+  function WriteRoles() {
+    global $c, $session;
+
+    if ( isset($_POST['roles']) && is_array($_POST['roles']) ) {
+      $roles = "";
+      foreach( $_POST['roles'] AS $k => $v ) {
+        if ( $v && $v != "off" ) {
+          $roles .= ( "$roles" == "" ? "" : ", " );
+          $roles .= qpg($k);
+        }
+      }
+      if ( $roles == "" )
+        $sql = "DELETE FROM role_member WHERE user_no = '$this->user_no';";
+      else {
+        $sql = "DELETE FROM role_member WHERE user_no = '$this->user_no' ";
+        $sql .= "AND role_no NOT IN ( SELECT role_no FROM roles WHERE role_name IN ($roles) );";
+        $sql .= "INSERT INTO role_member ( role_no, user_no) ";
+        $sql .=   "SELECT role_no, $this->user_no FROM roles WHERE role_name IN ( $roles ) ";
+        $sql .=     "EXCEPT SELECT role_no, user_no FROM role_member;";
+      }
+      $qry = new PgQuery($sql);
+      if ( !$qry->Exec("Sys::Write") ) {
+        if ( $session->AllowedTo("Admin") ) {
+          $client_messages[] = "ERROR: $qry->errorstring";
+        }
+        else {
+          $client_messages[] = "ERROR: There was a database error writing the roles information!";
+          $client_messages[] = "Please note the time and advise the administrator of your system.";
+        }
+        return false;
+      }
+    }
+    return true;
+  }
 }
 ?>

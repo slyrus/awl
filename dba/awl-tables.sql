@@ -77,5 +77,8 @@ GRANT SELECT,UPDATE ON
   , session_session_id_seq
   TO general;
 
-GRANT DELETE ON tmp_password TO general;
+GRANT DELETE ON
+    tmp_password
+  , role_member
+  TO general;
 COMMIT;

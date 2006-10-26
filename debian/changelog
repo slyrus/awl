@@ -1,3 +1,10 @@
+awl (0.9) unstable; urgency=low
+
+  * Actually save the user's roles when they are changed.
+  * New release.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Fri, 27 Oct 2006 12:20:29 +1300
+
 awl (0.8) unstable; urgency=low
 
   * Fix date style handling and expose the date style on user maintenance.

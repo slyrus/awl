@@ -66,12 +66,19 @@ if ( !function_exists("init_gettext") ) {
   * Initialise our use of Gettext
   */
   function init_gettext( $domain, $location ) {
-    global $session, $c;
-    if ( !isset($session) || !isset($session->locale) || $session->locale == 'en' ) return;
-
-    setlocale( LC_ALL, $session->locale);
     bindtextdomain( $domain, $location );
     textdomain( $domain );
+  }
+}
+
+
+if ( !function_exists("awl_set_locale") ) {
+  /**
+  * Set the translation to the user's locale.  At this stage all we do is
+  * call the gettext function.
+  */
+  function awl_set_locale( $locale ) {
+    setlocale( LC_ALL, $session->locale);
   }
 }
 

@@ -2,6 +2,12 @@
 
 BEGIN;
 
+CREATE TABLE supported_locales (
+  locale TEXT PRIMARY KEY,
+  locale_name_en TEXT,
+  locale_name_locale TEXT
+);
+
 -- This is the table of users for the system
 CREATE TABLE usr (
   user_no SERIAL PRIMARY KEY,
@@ -15,7 +21,8 @@ CREATE TABLE usr (
   fullname TEXT,
   email TEXT,
   config_data TEXT,
-  date_format_type TEXT DEFAULT 'E' -- default to english date format dd/mm/yyyy
+  date_format_type TEXT DEFAULT 'E', -- default to english date format dd/mm/yyyy
+  locale TEXT
 );
 CREATE FUNCTION max_usr() RETURNS INT4 AS 'SELECT max(user_no) FROM usr' LANGUAGE 'sql';
 CREATE UNIQUE INDEX usr_sk1_unique_username ON usr ( lower(username) );
@@ -77,8 +84,13 @@ GRANT SELECT,UPDATE ON
   , session_session_id_seq
   TO general;
 
+GRANT SELECT ON
+    supported_locales
+  TO general;
+
 GRANT DELETE ON
     tmp_password
   , role_member
   TO general;
+
 COMMIT;

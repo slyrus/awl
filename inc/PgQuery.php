@@ -57,10 +57,10 @@ if ( !isset($dbconn) ) {
 EOERRMSG;
     if ( isset($c->pg_connect) && is_array($c->pg_connect) ) {
       dbg_log_array("ERROR", "Connection failed", $c->pg_connect );
-    } 
+    }
     exit;
   }
-  
+
 }
 
 
@@ -342,17 +342,17 @@ class PgQuery
   {
     // replace more than one space with one space
     $string = preg_replace('/\s+/', ' ', $string);
-  
+
     if ( ($tag == 'QF' || $tag == 'SQ') && ( $line != 0 && $file != "" ) ) {
       dbg_error_log( "LOG-$locn", " Query: %s: Error in '%s' on line %d", $tag, $file, $line );
     }
-  
+
     while( strlen( $string ) > 0 )  {
       dbg_error_log( "LOG-$locn", " Query: %s: %s", $tag, substr( $string, 0, 240) );
       $string = substr( "$string", 240 );
     }
   }
-  
+
 
   /**
   * Quote the given string so it can be safely used within string delimiters
@@ -553,7 +553,7 @@ class PgQuery
         else {
           $selected = ( ( "$row[0]" == "$current" || "$row[1]" == "$current" ) ? ' selected="selected"' : '' );
         }
-        $nextrow = "<option value=\"".htmlentities($row[0])."\"$selected>".htmlentities($row[1])."</option>";
+        $nextrow = "<option value=\"".htmlentities($row[0])."\"$selected>".htmlspecialchars($row[1])."</option>";
         $result .= $nextrow;
       }
     }

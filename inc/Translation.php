@@ -50,12 +50,8 @@ if ( !function_exists("translate") ) {
   * Convert a string in English to whatever this user's locale is
   */
   function translate( $en ) {
-    global $session, $c;
-    if ( !isset($session) || !isset($session->locale) || $session->locale == 'en' ) return $en;
-    $xl = $en;
-
-    //  Do our translation...
-
+    $xl = gettext($en);
+    dbg_error_log("I18N","Translated =%s= into =%s=", $en, $xl );
     return $xl;
   }
 }
@@ -67,7 +63,9 @@ if ( !function_exists("init_gettext") ) {
   */
   function init_gettext( $domain, $location ) {
     bindtextdomain( $domain, $location );
+    $codeset = bind_textdomain_codeset( $awl_gettext_domain, "UTF-8" );
     textdomain( $domain );
+    dbg_error_log("I18N","Bound domain =%s= to location =%s= using character set =%s=", $domain, $location, $codeset );
   }
 }
 
@@ -78,7 +76,15 @@ if ( !function_exists("awl_set_locale") ) {
   * call the gettext function.
   */
   function awl_set_locale( $locale ) {
-    setlocale( LC_ALL, $session->locale);
+    if ( !is_array($locale) && ! preg_match('/^[a-z]{2}(_[A-Z]{2})?\./', $locale ) ) {
+      $locale = array( $locale, $locale.".UTF-8");
+    }
+    if ( $newlocale = setlocale( LC_ALL, $locale) ) {
+      dbg_error_log("I18N","Set locale to =%s=", $newlocale );
+    }
+    else {
+      dbg_log_array("I18N","Unsupported locale: ", $locale, false );
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 <!DOCTYPE webproject>
 <webproject>
-  <project usePreviewPrefix="0" previewPrefix="" type="Local" name="awl" encoding="utf8" >
+  <project usePreviewPrefix="0" type="Local" previewPrefix="" name="awl" encoding="utf8" >
     <upload/>
     <author>Andrew McMillan</author>
     <email>andrew@catalyst.net.nz</email>
@@ -30,5 +30,6 @@
     <annotations/>
     <item url="inc/vEvent.php" uploadstatus="1" />
     <item url="inc/AWLUtilities.php" uploadstatus="1" />
+    <item url="inc/Translation.php" />
   </project>
 </webproject>

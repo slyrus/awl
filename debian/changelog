@@ -1,3 +1,11 @@
+awl (0.10) unstable; urgency=low
+
+  * The beginnings of a framework for doing internationalisation.
+  * Fix the Forget Me Not functionality.
+  * New release.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Mon,  6 Nov 2006 10:35:30 +1300
+
 awl (0.9) unstable; urgency=low
 
   * Actually save the user's roles when they are changed.

@@ -290,7 +290,7 @@ class Session
     }
 
     $qry = new PgQuery( "SET DATESTYLE TO ?;", ($this->date_format_type == 'E' ? 'European,ISO' : ($this->date_format_type == 'U' ? 'US,ISO' : 'ISO')) );
-    $qry->Exec();  
+    $qry->Exec();
 
     $this->GetRoles();
     $this->logged_in = true;
@@ -345,7 +345,7 @@ class Session
             $this->Session($sid);
             dbg_error_log( "Login", " Login: New session $session_id started for $username ($usr->user_no)" );
             if ( isset($_POST['remember']) && intval($_POST['remember']) > 0 ) {
-              $cookie .= md5( $this->user_no ) . ";";
+              $cookie .= md5( $usr->user_no ) . ";";
               $cookie .= session_salted_md5($usr->user_no . $usr->username . $usr->password);
               $GLOBALS['lsid'] = $cookie;
               setcookie( "lsid", $cookie, time() + (86400 * 3600), "/" );   // will expire in ten or so years
@@ -623,13 +623,13 @@ EOHTML;
         $mail->SetFrom($c->admin_email );
         $usernames = "";
         if ( isset($c->debug_email) ) {
-          $debug_to = "This e-mail would normally be sent to:\n ";  
+          $debug_to = "This e-mail would normally be sent to:\n ";
           $mail->AddTo( "WRMS Tester <$c->debug_email>" );
         }
         while ( $row = $qry->Fetch() ) {
           $sql .= "INSERT INTO tmp_password ( user_no, password) VALUES( $row->user_no, '$tmp_passwd');";
           if ( isset($c->debug_email) ) {
-            $debug_to .= "$row->fullname <$row->email> ";  
+            $debug_to .= "$row->fullname <$row->email> ";
           }
           else {
             $mail->AddTo( "$row->fullname <$row->email>" );
@@ -638,7 +638,7 @@ EOHTML;
         }
         if ( $mail->To != "" ) {
           if ( isset($c->debug_email) ) {
-            $debug_to .= "\n============================================================\n";  
+            $debug_to .= "\n============================================================\n";
           }
           $sql .= "COMMIT;";
           $qry = new PgQuery( $sql );

@@ -192,7 +192,7 @@ class User extends DBRecord {
   * @return string An HTML fragment to display in the page.
   */
   function RenderFields($ef , $title = "User Details" ) {
-    global $session;
+    global $session, $c;
 
     $html = ( $title == "" ? "" : $ef->BreakLine($title) );
 
@@ -224,6 +224,16 @@ class User extends DBRecord {
                      array( "title" => "The style of dates used for this person.",
                        "_E" => "European (d/m/y)", "_U" => "United States of America (m/d/y)", "_I" => "ISO Format (YYYY-MM-DD)" ),
                      $this->prefix );
+
+    if ( isset($c->default_locale) ) {
+      if ( $this->Get('locale') == '' ) {
+        $this->Set('locale',$c->default_locale);
+      }
+      $html .= $ef->DataEntryLine( "Language", "%s", "lookup", "locale",
+                      array( "title" => "The preferred language for this person.",
+                        "_sql" => "SELECT locale, locale_name_locale FROM supported_locales ORDER BY locale ASC;" ),
+                      $this->prefix );
+    }
 
     $html .= $ef->DataEntryLine( "EMail OK", $session->FormattedDate($this->Values->email_ok,'timestamp'), "timestamp", "email_ok",
               array( "title" => "When the user's e-mail account was validated."), $this->prefix );

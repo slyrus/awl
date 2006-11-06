@@ -173,7 +173,7 @@ class EntryField
           if ( substr($k, 0, 1) != '_' ) continue;
           if ( $k == '_help' ) continue;
           $k = substr($k,1);
-          $r .= "<option value=\"".htmlentities($k)."\"";
+          $r .= "<option value=\"".htmlspecialchars($k)."\"";
           if ( "$this->current" == "$k" ) $r .= " selected";
           $r .= ">$v</option>" ;
         }
@@ -189,7 +189,7 @@ class EntryField
           if ( $k == 'help' || $k == "sql" || $k == "type" ) continue;
           if ( $k == "null" ) $k = "";
           if ( $k == "zero" ) $k = "0";
-          $r .= "<option value=\"".htmlentities($k)."\"";
+          $r .= "<option value=\"".htmlspecialchars($k)."\"";
           if ( "$this->current" == "$k" ) $r .= " selected";
           $r .= ">$v</option>" ;
         }
@@ -206,7 +206,7 @@ class EntryField
       case "date":
       case "timestamp":
         if ( !isset($this->attributes['size']) || $this->attributes['size'] == "" ) $size = " size=" . ($this->ftype == 'date' ? "12" : "18");
-        $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".$session->FormattedDate(htmlentities($this->current))."\"%%attributes%%>";
+        $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".$session->FormattedDate(htmlspecialchars($this->current))."\"%%attributes%%>";
         break;
 
       case "checkbox":
@@ -237,7 +237,7 @@ class EntryField
         break;
 
       case "submit":
-        $r .= "input type=\"submit\" name=\"$this->fname\" value=\"".htmlentities($this->current)."\"%%attributes%%>";
+        $r .= "input type=\"submit\" name=\"$this->fname\" value=\"".htmlspecialchars($this->current)."\"%%attributes%%>";
         break;
 
       case "textarea":
@@ -246,15 +246,15 @@ class EntryField
 
       case "file":
         if ( !isset($this->attributes['size']) || $this->attributes['size'] == "" ) $size = " size=25";
-        $r .= "input type=\"file\" name=\"$this->fname\"$size value=\"".htmlentities($this->current)."\"%%attributes%%>";
+        $r .= "input type=\"file\" name=\"$this->fname\"$size value=\"".htmlspecialchars($this->current)."\"%%attributes%%>";
         break;
 
       case "password":
-        $r .= "input type=\"password\" name=\"$this->fname\" value=\"".htmlentities($this->current)."\"%%attributes%%>";
+        $r .= "input type=\"password\" name=\"$this->fname\" value=\"".htmlspecialchars($this->current)."\"%%attributes%%>";
         break;
 
       default:
-        $r .= "input type=\"text\" name=\"$this->fname\" value=\"".htmlentities($this->current)."\"%%attributes%%>";
+        $r .= "input type=\"text\" name=\"$this->fname\" value=\"".htmlspecialchars($this->current)."\"%%attributes%%>";
         break;
     }
 
@@ -265,7 +265,7 @@ class EntryField
       if ( $k == '_readonly' ) $attribute_values .= " readonly";
       else if ( $k == '_disabled' ) $attribute_values .= " disabled";
       if ( substr($k, 0, 1) == '_' ) continue;
-      $attribute_values .= " $k=\"".htmlentities($v)."\"";
+      $attribute_values .= " $k=\"".htmlspecialchars($v)."\"";
     }
     $r = str_replace( '%%attributes%%', $attribute_values, $r );
 
@@ -443,7 +443,7 @@ class EntryForm
     reset( $extra_attributes );
     $attribute_values = "";
     while( list($k,$v) = each( $extra_attributes ) ) {
-      $attribute_values .= " $k=\"".htmlentities($v)."\"";
+      $attribute_values .= " $k=\"".htmlspecialchars($v)."\"";
     }
     return "<form$attribute_values>\n";
   }
@@ -462,7 +462,7 @@ class EntryForm
   */
   function BreakLine( $text = '' )
   {
-    return sprintf( $this->break_line_format, $text);
+    return sprintf( $this->break_line_format, translate($text));
   }
 
   /**
@@ -473,7 +473,7 @@ class EntryForm
   * @return string The HTML fragment for the hidden field.
   */
   function HiddenField($fname,$fvalue) {
-    return sprintf( '<input type="hidden" name="%s" value="%s" />%s', $fname, htmlentities($fvalue), "\n" );
+    return sprintf( '<input type="hidden" name="%s" value="%s" />%s', $fname, htmlspecialchars($fvalue), "\n" );
   }
 
   /**
@@ -543,7 +543,7 @@ class EntryForm
     if ( preg_match("/^(.+)\[(.+)\]$/", $fname, $parts) ) {
       $p1 = $parts[1];
       $p2 = $parts[2];
-      dbg_error_log( "DataEntry", ":DataEntryField: fname=%s, p1=%s, p2=%s, POSTVAL=%s, \$this->record->{'%s'}['%s']=%s", 
+      dbg_error_log( "DataEntry", ":DataEntryField: fname=%s, p1=%s, p2=%s, POSTVAL=%s, \$this->record->{'%s'}['%s']=%s",
                                                   $fname, $p1, $p2, $_POST[$p1][$p2], $p1, $p2, $this->record->{"$p1"}["$p2"] );
       // FIXME - This could be changed to handle more dimensions on submitted variable names
       if ( isset($_POST[$p1]) ) {

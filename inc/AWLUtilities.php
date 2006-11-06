@@ -170,4 +170,8 @@ if ( !function_exists("replace_uri_params") ) {
   }
 }
 
+if ( !function_exists("translate") ) {
+  require_once("Translation.php");
+}
+
 ?>

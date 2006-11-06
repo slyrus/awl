@@ -553,7 +553,7 @@ class PgQuery
         else {
           $selected = ( ( "$row[0]" == "$current" || "$row[1]" == "$current" ) ? ' selected="selected"' : '' );
         }
-        $nextrow = "<option value=\"".htmlentities($row[0])."\"$selected>".htmlspecialchars($row[1])."</option>";
+        $nextrow = "<option value=\"".htmlspecialchars($row[0])."\"$selected>".htmlspecialchars($row[1])."</option>";
         $result .= $nextrow;
       }
     }

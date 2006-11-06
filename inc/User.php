@@ -177,7 +177,7 @@ class User extends DBRecord {
     $html .= "</table>\n";
     if ( $ef->EditMode ) {
       $html .= '<div id="footer">';
-      $html .= $ef->SubmitButton( "submit", (("insert" == $this->WriteType) ? "Create" : "Update") );
+      $html .= $ef->SubmitButton( "submit", (("insert" == $this->WriteType) ? translate("Create") : translate("Update")) );
       $html .= '</div>';
       $html .= $ef->EndForm();
     }
@@ -191,56 +191,57 @@ class User extends DBRecord {
   * @param string $title The title to display above the entry fields.
   * @return string An HTML fragment to display in the page.
   */
-  function RenderFields($ef , $title = "User Details" ) {
+  function RenderFields($ef , $title = null ) {
     global $session, $c;
 
-    $html = ( $title == "" ? "" : $ef->BreakLine($title) );
+    if ( $title == null ) $title = i18n("User Details");
+    $html = ( $title == "" ? "" : $ef->BreakLine(translate($title)) );
 
-    $html .= $ef->DataEntryLine( "User Name", "%s", "text", "username",
-              array( "size" => 20, "title" => "The name this user can log into the system with."), $this->prefix );
+    $html .= $ef->DataEntryLine( translate("User Name"), "%s", "text", "username",
+              array( "size" => 20, "title" => translate("The name this user can log into the system with.")), $this->prefix );
     if ( $ef->EditMode && $this->AllowedTo('ChangePassword') ) {
       $this->Set('new_password','******');
       unset($_POST['new_password']);
-      $html .= $ef->DataEntryLine( "New Password", "%s", "password", "new_password",
-                array( "size" => 20, "title" => "The user's password for logging in."), $this->prefix );
+      $html .= $ef->DataEntryLine( translate("New Password"), "%s", "password", "new_password",
+                array( "size" => 20, "title" => translate("The user's password for logging in.")), $this->prefix );
       $this->Set('confirm_password', '******');
       unset($_POST['confirm_password']);
-      $html .= $ef->DataEntryLine( "Confirm", "%s", "password", "confirm_password",
-                array( "size" => 20, "title" => "Confirm the new password."), $this->prefix );
+      $html .= $ef->DataEntryLine( translate("Confirm"), "%s", "password", "confirm_password",
+                array( "size" => 20, "title" => translate("Confirm the new password.")), $this->prefix );
     }
 
-    $html .= $ef->DataEntryLine( "Full Name", "%s", "text", "fullname",
-              array( "size" => 50, "title" => "The user's full name."), $this->prefix );
+    $html .= $ef->DataEntryLine( translate("Full Name"), "%s", "text", "fullname",
+              array( "size" => 50, "title" => translate("The user's full name.")), $this->prefix );
 
-    $html .= $ef->DataEntryLine( "Email", "%s", "text", "email",
-              array( "size" => 50, "title" => "The user's e-mail address."), $this->prefix );
+    $html .= $ef->DataEntryLine( translate("Email"), "%s", "text", "email",
+              array( "size" => 50, "title" => translate("The user's e-mail address.")), $this->prefix );
 
-    $html .= $ef->DataEntryLine( "Active", ($this->Get('active') == 't'? 'Yes' : 'No'), "checkbox", "active",
-              array( "_label" => "User is active",
-                     "title" => "Is this user active?."), $this->prefix );
+    $html .= $ef->DataEntryLine( translate("Active"), ($this->Get('active') == 't'? 'Yes' : 'No'), "checkbox", "active",
+              array( "_label" => translate("User is active"),
+                     "title" => translate("Is this user active?")), $this->prefix );
 
-    $html .= $ef->DataEntryLine( "Date Style", ($this->Get('date_format_type') == 'E' ? 'European' : ($this->Get('date_format_type') == 'U' ? 'US of A' : 'ISO 8861')),
+    $html .= $ef->DataEntryLine( translate("Date Style"), ($this->Get('date_format_type') == 'E' ? 'European' : ($this->Get('date_format_type') == 'U' ? 'US of A' : 'ISO 8861')),
                      "select", "date_format_type",
-                     array( "title" => "The style of dates used for this person.",
-                       "_E" => "European (d/m/y)", "_U" => "United States of America (m/d/y)", "_I" => "ISO Format (YYYY-MM-DD)" ),
+                     array( "title" => translate("The style of dates used for this person."),
+                       "_E" => translate("European (d/m/y)"), "_U" => translate("United States of America (m/d/y)"), "_I" => translate("ISO Format (YYYY-MM-DD)") ),
                      $this->prefix );
 
     if ( isset($c->default_locale) ) {
       if ( $this->Get('locale') == '' ) {
         $this->Set('locale',$c->default_locale);
       }
-      $html .= $ef->DataEntryLine( "Language", "%s", "lookup", "locale",
-                      array( "title" => "The preferred language for this person.",
+      $html .= $ef->DataEntryLine( translate("Language"), "%s", "lookup", "locale",
+                      array( "title" => translate("The preferred language for this person."),
                         "_sql" => "SELECT locale, locale_name_locale FROM supported_locales ORDER BY locale ASC;" ),
                       $this->prefix );
     }
 
-    $html .= $ef->DataEntryLine( "EMail OK", $session->FormattedDate($this->Values->email_ok,'timestamp'), "timestamp", "email_ok",
-              array( "title" => "When the user's e-mail account was validated."), $this->prefix );
+    $html .= $ef->DataEntryLine( translate("EMail OK"), $session->FormattedDate($this->Values->email_ok,'timestamp'), "timestamp", "email_ok",
+              array( "title" => translate("When the user's e-mail account was validated.")), $this->prefix );
 
-    $html .= $ef->DataEntryLine( "Joined", $session->FormattedDate($this->Get('joined'),'timestamp') );
-    $html .= $ef->DataEntryLine( "Updated", $session->FormattedDate($this->Get('updated'),'timestamp') );
-    $html .= $ef->DataEntryLine( "Last used", $session->FormattedDate($this->Get('last_used'),'timestamp') );
+    $html .= $ef->DataEntryLine( translate("Joined"), $session->FormattedDate($this->Get('joined'),'timestamp') );
+    $html .= $ef->DataEntryLine( translate("Updated"), $session->FormattedDate($this->Get('updated'),'timestamp') );
+    $html .= $ef->DataEntryLine( translate("Last used"), $session->FormattedDate($this->Get('last_used'),'timestamp') );
 
     return $html;
   }
@@ -251,13 +252,14 @@ class User extends DBRecord {
   *
   * @return string The string of html to be output
   */
-  function RenderRoles( $ef, $title = "User Roles" ) {
+  function RenderRoles( $ef, $title = null ) {
     global $session;
     $html = "";
 
-    $html = ( $title == "" ? "" : $ef->BreakLine($title) );
+    if ( $title == null ) $title = i18n("User Roles");
+    $html = ( $title == "" ? "" : $ef->BreakLine(translate($title)) );
 
-    $html .= '<tr><th class="prompt">User Roles</th><td class="entry">';
+    $html .= '<tr><th class="prompt">'.translate("User Roles").'</th><td class="entry">';
     if ( $ef->EditMode ) {
       $sql = "SELECT role_name FROM roles ";
       if ( ! ($session->AllowedTo('Admin') ) ) {
@@ -275,8 +277,8 @@ class User extends DBRecord {
           dbg_error_log("User", ":RenderRoles: Is a member of '%s': %s", $row->role_name, $this->roles[$row->role_name] );
           $ef->record->roles[$row->role_name] = $this->roles[$row->role_name];
           $html .= $ef->DataEntryField( "", "checkbox", "roles[$row->role_name]",
-                          array("title" => "Does the user have the right to perform this role?",
-                                    "_label" => "$row->role_name" ) );
+                          array("title" => translate("Does the user have the right to perform this role?"),
+                                    "_label" => translate($row->role_name) ) );
         }
       }
     }
@@ -316,6 +318,9 @@ class User extends DBRecord {
         $valid = false;
       }
     }
+    else {
+      $this->Undefine('password');
+    }
 
     dbg_error_log("User", ":Validate: User %s validation", ($valid ? "passed" : "failed"));
     return $valid;
@@ -328,7 +333,7 @@ class User extends DBRecord {
   function Write() {
     global $c, $session;
     if ( parent::Write() ) {
-      $c->messages[] = "User record written.";
+      $c->messages[] = translate("User record written.");
       if ( $this->WriteType == 'insert' ) {
         $qry = new PgQuery( "SELECT currval('usr_user_no_seq');" );
         $qry->Exec("User::Write");
@@ -376,11 +381,11 @@ class User extends DBRecord {
       $qry = new PgQuery($sql);
       if ( !$qry->Exec("Sys::Write") ) {
         if ( $session->AllowedTo("Admin") ) {
-          $client_messages[] = "ERROR: $qry->errorstring";
+          $client_messages[] = sprintf( translate("ERROR: %s"), $qry->errorstring);
         }
         else {
-          $client_messages[] = "ERROR: There was a database error writing the roles information!";
-          $client_messages[] = "Please note the time and advise the administrator of your system.";
+          $client_messages[] = translate("ERROR: There was a database error writing the roles information!");
+          $client_messages[] = translate("Please note the time and advise the administrator of your system.");
         }
         return false;
       }

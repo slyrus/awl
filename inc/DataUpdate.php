@@ -399,6 +399,18 @@ class DBRecord
   }
 
   /**
+  * Unsets a single field from the record
+  * @param string $fname The name of the field to unset the value for
+  * @return mixed The current value of the field.
+  */
+  function Undefine($fname) {
+    $current = $this->Values->{$fname};
+    dbg_error_log( "DBRecord", ":Unset: %s =was> %s", $fname, $this->Values->{$fname} );
+    unset($this->Values->{$fname});
+    return $current;
+  }
+
+  /**
   * To write the record to the database
   * @return boolean Success.
   */

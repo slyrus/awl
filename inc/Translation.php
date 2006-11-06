@@ -1,5 +1,5 @@
 <?php
-     if ( !function_exists("i18n") ) {
+if ( !function_exists("i18n") ) {
   /**
   * Mark a string as being internationalized.  This is a semaphore method; it
   * does nothing but it allows us to easily identify strings that require
@@ -11,20 +11,23 @@
   * that must be translated. Mark any place, where localization at runtime shall take place
   * by using the function translate().
   *
+  * In the help I have used 'xlate' rather than 'translate' and 'x18n' rather than 'i18n'
+  * so that the tools skip this particular file for translation :-)
+  *
   * E.g. instead of:
   *   print 'TEST to be displayed in different languages';
   * use:
-  *   print translate('TEST to be displayed in different languages');
+  *   print xlate('TEST to be displayed in different languages');
   * and you are all set for pure literals. The translation teams will receive that literal
   * string as a job to translate and will translate it (when the message is clear enough).
   * At runtime the message is then localized when printed.
   * The input string can contain a hint to assist translators:
-  *   print translate('TT <!-- abbreviation for Translation Test -->');
+  *   print xlate('TT <!-- abbreviation for Translation Test -->');
   * The hint portion of the string will not be printed.
   *
   * But consider this case:
   *   $message_to_be_localized = 'TEST to be displayed in different languages';
-  *   print translate($message_to_be_localized);
+  *   print xlate($message_to_be_localized);
   *
   * The translate() function is called in the right place for runtime handling, but there
   * is no message at gettext preprocessing time to be given to the translation teams,
@@ -33,8 +36,8 @@
   * teams, but not translated at runtime!
   *
   * This method resolves all such cases. Simply mark the candidates:
-  *   $message_to_be_localized = i18n('TEST to be displayed in different languages');
-  *   print translate($message_to_be_localized);
+  *   $message_to_be_localized = x18n('TEST to be displayed in different languages');
+  *   print xlate($message_to_be_localized);
   *
   * @param string the value
   * @return string the same value

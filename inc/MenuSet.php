@@ -107,14 +107,14 @@ class MenuOption {
   */
   function Render( ) {
     $r = sprintf('<a href="%s" class="%s" title="%s"%s>%s</a>',
-            $this->target, $this->style, htmlentities($this->title), "%%attributes%%",
-            htmlentities($this->label), $this->style );
+            $this->target, $this->style, htmlspecialchars($this->title), "%%attributes%%",
+            htmlspecialchars($this->label), $this->style );
 
     // Now process the generic attributes
     $attribute_values = "";
     foreach( $this->attributes AS $k => $v ) {
       if ( substr($k, 0, 1) == '_' ) continue;
-      $attribute_values .= " $k=\"".htmlentities($v)."\"";
+      $attribute_values .= " $k=\"".htmlspecialchars($v)."\"";
     }
     $r = str_replace( '%%attributes%%', $attribute_values, $r );
 
@@ -390,7 +390,7 @@ class MenuSet {
   * and then this could be a private routine.
   */
   function MakeSomethingActive( $test_pattern ) {
-    if ( $this->has_active_options ) return;  // Already true. 
+    if ( $this->has_active_options ) return;  // Already true.
     foreach( $this->options AS $k => $v ) {
       if ( isset($v->submenu_set) && $v->submenu_set->_HasActive() ) {
         // Note that we need to do it this way, since $v is a copy, not a reference

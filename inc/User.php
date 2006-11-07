@@ -213,7 +213,7 @@ class User extends DBRecord {
     $html .= $ef->DataEntryLine( translate("Full Name"), "%s", "text", "fullname",
               array( "size" => 50, "title" => translate("The user's full name.")), $this->prefix );
 
-    $html .= $ef->DataEntryLine( translate("Email"), "%s", "text", "email",
+    $html .= $ef->DataEntryLine( translate("EMail"), "%s", "text", "email",
               array( "size" => 50, "title" => translate("The user's e-mail address.")), $this->prefix );
 
     $html .= $ef->DataEntryLine( translate("Active"), ($this->Get('active') == 't'? 'Yes' : 'No'), "checkbox", "active",

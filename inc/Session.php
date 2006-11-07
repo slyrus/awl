@@ -383,7 +383,7 @@ class Session
         }
       }
       else {
-        $c->messages[] = 'Invalid username or password.';
+        $c->messages[] = i18n('Invalid username or password.');
         if ( isset($c->dbg['Login']) || isset($c->dbg['ALL']) )
           $this->cause = 'WARN: Invalid password.';
         else
@@ -391,7 +391,7 @@ class Session
       }
     }
     else {
-    $c->messages[] = 'Invalid username or password.';
+    $c->messages[] = i18n('Invalid username or password.');
     if ( isset($c->dbg['Login']) || isset($c->dbg['ALL']) )
       $this->cause = 'WARN: Invalid username.';
     else
@@ -480,7 +480,7 @@ class Session
       }
       else {
         dbg_error_log( "Login", " LSIDLogin: $validation_string != $my_validation ($salt - $usr->user_no, $usr->username, $usr->password)");
-        $client_messages[] = 'Invalid username or password.';
+        $client_messages[] = i18n('Invalid username or password.');
         if ( isset($c->dbg['Login']) || isset($c->dbg['ALL']) )
           $this->cause = 'WARN: Invalid password.';
         else
@@ -488,7 +488,7 @@ class Session
       }
     }
     else {
-    $client_messages[] = 'Invalid username or password.';
+    $client_messages[] = i18n('Invalid username or password.');
     if ( isset($c->dbg['Login']) || isset($c->dbg['ALL']) )
       $this->cause = 'WARN: Invalid username.';
     else
@@ -508,31 +508,39 @@ class Session
   function RenderLoginPanel() {
     $action_target = htmlspecialchars(preg_replace('/\?logout.*$/','',$_SERVER['REQUEST_URI']));
     dbg_error_log( "Login", " RenderLoginPanel: action_target='%s'", $action_target );
+    $userprompt = translate("User Name");
+    $pwprompt = translate("Password");
+    $rememberprompt = str_replace( ' ', '&nbsp;', translate("forget me not"));
+    $gobutton = htmlspecialchars(translate("GO!"));
+    $gotitle = htmlspecialchars(translate("Enter your username and password then click here to log in."));
+    $temppwprompt = translate("If you have forgotten your password then");
+    $temppwbutton = htmlspecialchars(translate("Help! I've forgotten my password!"));
+    $temppwtitle = htmlspecialchars(translate("Enter a username, if you know it, and click here, to be e-mailed a temporary password."));
     $html = <<<EOTEXT
 <div id="logon">
 <form action="$action_target" method="post">
 <table>
 <tr>
-<th class="prompt">User Name:</th>
+<th class="prompt">$userprompt:</th>
 <td class="entry">
 <input class="text" type="text" name="username" size="12" /></td>
 </tr>
 <tr>
-<th class="prompt">Password:</th>
+<th class="prompt">$pwprompt:</th>
 <td class="entry">
 <input class="password" type="password" name="password" size="12" />
- &nbsp;<label>forget&nbsp;me&nbsp;not: <input class="checkbox" type="checkbox" name="remember" value="1" /></label>
+ &nbsp;<label>$rememberprompt: <input class="checkbox" type="checkbox" name="remember" value="1" /></label>
 </td>
 </tr>
 <tr>
 <th class="prompt">&nbsp;</th>
 <td class="entry">
-<input type="submit" value="GO!" alt="go" name="submit" class="submit" />
+<input type="submit" value="$gobutton" title="$gotitle" name="submit" class="submit" />
 </td>
 </tr>
 </table>
 <p>
-If you have forgotten your password then: <input type="submit" value="Help! I've forgotten my password!" alt="Enter a username, if you know it, and click here." name="lostpass" class="submit" />
+$temppwprompt: <input type="submit" value="$temppwbutton" title="$temppwtitle" name="lostpass" class="submit" />
 </p>
 </form>
 </div>
@@ -556,19 +564,14 @@ EOTEXT;
 
     if ( $this->logged_in && $groups == "" ) return;
     if ( ! $this->logged_in ) {
-      $c->messages[] = "You must log in to use this system.";
+      $c->messages[] = i18n("You must log in to use this system.");
       include_once("page-header.php");
       if ( function_exists("local_index_not_logged_in") ) {
         local_index_not_logged_in();
       }
       else {
-        echo <<<EOHTML
-<h1>Log On Please</h1>
-<p>For access to the $c->system_name you should log on with
-the username and password that have been issued to you.</p>
-
-<p>If you would like to request access, please e-mail $c->admin_email.</p>
-EOHTML;
+        $login_html = translate( "<h1>Log On Please</h1><p>For access to the %s you should log on withthe username and password that have been issued to you.</p><p>If you would like to request access, please e-mail %s.</p>");
+        printf( $login_html, $c->system_name, $c->admin_email );
         echo $this->RenderLoginPanel();
       }
     }
@@ -577,7 +580,7 @@ EOHTML;
       foreach( $valid_groups AS $k => $v ) {
         if ( $this->AllowedTo($v) ) return;
       }
-      $c->messages[] = "You are not authorised to use this function.";
+      $c->messages[] = i18n("You are not authorised to use this function.");
       include_once("page-header.php");
     }
 

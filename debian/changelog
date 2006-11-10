@@ -1,3 +1,10 @@
+awl (0.11) unstable; urgency=low
+
+  * Significantly better translation readiness.
+  * New release.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Fri, 10 Nov 2006 15:21:44 +1300
+
 awl (0.10) unstable; urgency=low
 
   * The beginnings of a framework for doing internationalisation.

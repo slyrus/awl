@@ -30,6 +30,6 @@
     <annotations/>
     <item url="inc/vEvent.php" uploadstatus="1" />
     <item url="inc/AWLUtilities.php" uploadstatus="1" />
-    <item url="inc/Translation.php" />
+    <item url="inc/Translation.php" uploadstatus="1" />
   </project>
 </webproject>

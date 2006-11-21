@@ -828,7 +828,11 @@ EOTEXT;
   * @return string A string we can use as either a GET or POST value (i.e. a hidden field, or a varname=hash pair.
   */
   function BuildConfirmationHash( $method, $varname ) {
-    $confirmation_hash = session_salted_md5( $varname.$session->session_key, "" );
+    /**
+    * We include session_start in this because it is never passed to the client
+    * and since it includes microseconds would be very hard to predict.
+    */
+    $confirmation_hash = session_salted_md5( $session->session_start.$varname.$session->session_key, "" );
     if ( $method == 'GET' ) {
       $confirm = $varname .'='. urlencode($confirmation_hash);
     }
@@ -856,7 +860,7 @@ EOTEXT;
     if ( ereg('^\*(.+)\*.+$', $hashwegot, $regs ) ) {
       // A nicely salted md5sum like "*<salt>*<salted_md5>"
       $salt = $regs[1];
-      $test_against = session_salted_md5( $varname.$session->session_key, $salt ) ;
+      $test_against = session_salted_md5( $session->session_start.$varname.$session->session_key, $salt ) ;
 
       if ( $hashwegot == $test_against ) return true;
     }

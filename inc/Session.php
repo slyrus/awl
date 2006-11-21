@@ -817,6 +817,52 @@ EOTEXT;
     return $out;
   }
 
+
+  /**
+  * Build a hash which we can use for confirmation that we didn't get e-mailed
+  * a bogus link by someone, and that we actually got here by traversing the
+  * website.
+  *
+  * @param string $method Either 'GET' or 'POST' depending on the way we will use this.
+  * @param string $varname The name of the variable which we will confirm
+  * @return string A string we can use as either a GET or POST value (i.e. a hidden field, or a varname=hash pair.
+  */
+  function BuildConfirmationHash( $method, $varname ) {
+    $confirmation_hash = session_salted_md5( $varname.$session->session_key, "" );
+    if ( $method == 'GET' ) {
+      $confirm = $varname .'='. urlencode($confirmation_hash);
+    }
+    else {
+      $confirm = sprintf( '<input type="hidden" name="%s" value="%s">', $varname, htmlspecialchars($confirmation_hash) );
+    }
+    return $confirm;
+  }
+
+
+  /**
+  * Check a hash which we created through BuildConfirmationHash
+  *
+  * @param string $method Either 'GET' or 'POST' depending on the way we will use this.
+  * @param string $varname The name of the variable which we will confirm
+  * @return string A string we can use as either a GET or POST value (i.e. a hidden field, or a varname=hash pair.
+  */
+  function CheckConfirmationHash( $method, $varname ) {
+    if ( $method == 'GET' ) {
+      $hashwegot = $_GET[$varname];
+    }
+    else {
+      $hashwegot = $_POST[$varname];
+    }
+    if ( ereg('^\*(.+)\*.+$', $hashwegot, $regs ) ) {
+      // A nicely salted md5sum like "*<salt>*<salted_md5>"
+      $salt = $regs[1];
+      $test_against = session_salted_md5( $varname.$session->session_key, $salt ) ;
+
+      if ( $hashwegot == $test_against ) return true;
+    }
+    return false;
+  }
+
 }
 
 

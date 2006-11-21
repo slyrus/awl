@@ -315,6 +315,39 @@ EOTXT;
 
 
   /**
+  * Render the iCalendar object as a text string which is a single VFREEBUSY
+  */
+  function RenderFreeBusy( ) {
+    $interesting = array( "uid", "dtstamp", "dtstart", "duration", "last-modified", "rrule", "timezone" );
+
+    $wrap_at = 75;
+    $type = 'VFREEBUSY';
+    $result = "BEGIN:$type\r\n";
+
+    foreach( $interesting AS $k => $v ) {
+      $value = $this->Get($v);
+      if ( isset($value) && $value != "" ) {
+        dbg_error_log( "iCalendar", "Rendering '%s' which is '%s'", $v, $value );
+        $result .= $this->RFC2445ContentEscape( strtoupper($v), $value);
+      }
+    }
+
+    // DTEND and DURATION may not exist together
+    $dtend = $this->Get('DTEND');
+    $duration = $this->Get('DURATION');
+    if ( isset($dtend) && $dtend != "" && ( !isset($duration) || $duration == "") ) {
+      dbg_error_log( "iCalendar", "Rendering '%s' which is '%s'", 'DTEND', $dtend );
+      $result .= $this->RFC2445ContentEscape('DTEND',$dtend);
+    }
+
+    $result .= "END:$type\r\n";
+
+    return $result;
+  }
+
+
+
+  /**
   * Render the iCalendar object as a text string which is a single VEVENT (or other)
   */
   function Render( $type = 'VEVENT' ) {

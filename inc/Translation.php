@@ -66,7 +66,7 @@ if ( !function_exists("init_gettext") ) {
   */
   function init_gettext( $domain, $location ) {
     bindtextdomain( $domain, $location );
-    $codeset = bind_textdomain_codeset( $awl_gettext_domain, "UTF-8" );
+    $codeset = bind_textdomain_codeset( $domain, "UTF-8" );
     textdomain( $domain );
     dbg_error_log("I18N","Bound domain =%s= to location =%s= using character set =%s=", $domain, $location, $codeset );
   }

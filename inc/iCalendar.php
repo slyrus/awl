@@ -151,7 +151,7 @@ class iCalendar {
           $subtype = $matches[2];
           if ( $subtype == 'VTIMEZONE' ) {
             $this->parsing_vtimezone = true;
-            $this->vtimezone = $line;
+            $this->vtimezone = $line."\n";
           }
           if ( !isset($properties['INSIDE']) ) $properties['INSIDE'] = array();
           $properties['INSIDE'][] = $subtype;
@@ -221,6 +221,8 @@ class iCalendar {
   * them into something that PostgreSQL can understand...
   */
   function DealWithTimeZones() {
+    global $c;
+
     $tzid = $this->Get('TZID');
     if ( isset($c->save_time_zone_defs) && $c->save_time_zone_defs ) {
       $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
@@ -228,19 +230,20 @@ class iCalendar {
         $row = $qry->Fetch();
         $this->tz_locn = $row->tz_locn;
       }
+      dbg_error_log( "icalendar", " TZCrap: TZID '%s', DB Rows=%d, Location '%s'", $tzid, $qry->rows, $this->tz_locn );
     }
 
-    if ( !isset($this->tz_locn) && $tzid != '' ) {
+    if ( (!isset($this->tz_locn) || $this->tz_locn == '') && $tzid != '' ) {
       /**
       * In case there was no X-LIC-LOCATION defined, let's hope there is something in the TZID
       * that we can use.  We are looking for a string like "Pacific/Auckland" if possible.
       */
-      $this->tz_locn = preg_replace('/^.*([a-z]+\/[a-z]+)$/i','$1',$tzid );
+      $tzname = preg_replace('#^[^a-z]*([a-z]+/[a-z]+)$#i','$1',$tzid );
       /**
       * Unfortunately this kind of thing will never work well :-(
       *
-      if ( strstr( $this->tz_locn, ' ' ) ) {
-        $words = preg_split('/\s/', $this->tz_locn );
+      if ( strstr( $tzname, ' ' ) ) {
+        $words = preg_split('/\s/', $tzname );
         $tzabbr = '';
         foreach( $words AS $i => $word ) {
           $tzabbr .= substr( $word, 0, 1);
@@ -248,22 +251,20 @@ class iCalendar {
         $this->tz_locn = $tzabbr;
       }
       */
-      if ( strstr( $this->tz_locn, '/' ) === false ) {
-        $this->tz_locn = '';
+      if ( preg_match( '#\S+/\S+#', $tzname) ) {
+        $this->tz_locn = $tzname;
       }
+      dbg_error_log( "icalendar", " TZCrap: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
     }
 
-    if ( isset($c->save_time_zone_defs) && $c->save_time_zone_defs && $qry->rows != 1 ) {
+    if ( $tzid != '' && isset($c->save_time_zone_defs) && $c->save_time_zone_defs && $qry->rows != 1 ) {
       $qry2 = new PgQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
                                    $tzid, $this->tz_locn, $this->vtimezone );
       $qry2->Exec("iCalendar");
     }
 
-    if ( $this->tz_locn == "" ) {
-      $this->tz_locn = $this->Get("tzid");
-      if ( (!isset($this->tz_locn) || $this->tz_locn == "") && isset($c->local_tzid) ) {
-        $this->tz_locn = $c->local_tzid;
-      }
+    if ( (!isset($this->tz_locn) || $this->tz_locn == "") && isset($c->local_tzid) ) {
+      $this->tz_locn = $c->local_tzid;
     }
   }
 

@@ -416,7 +416,7 @@ class PgQuery
     }
     $t1 = microtime(); // get start time
     $this->result = pg_exec( $dbconn, $this->querystring ); // execute the query
-    $this->rows = pg_numrows($this->result); // number of rows returned
+    $this->rows = ($this->result ? pg_numrows($this->result) : -1); // number of rows returned
     $t2 = microtime(); // get end time
     $i_took = duration( $t1, $t2 );   // calculate difference
     $c->total_query_time += $i_took;

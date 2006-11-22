@@ -1,3 +1,13 @@
+awl (0.12) unstable; urgency=low
+
+  * Add BuildConfirmationHash() and CheckConfirmationHash() methods to reduce
+    vulnerability to some scripting attacks, when used.
+  * Fix incorrect variable name in Translation.php (closes sf-600138)
+  * Many enhancements to the iCalendar class.
+  * Minor double-error niggle in PgQuery fixed.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Wed, 22 Nov 2006 23:08:14 +1300
+
 awl (0.11) unstable; urgency=low
 
   * Significantly better translation readiness.

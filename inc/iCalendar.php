@@ -53,19 +53,36 @@ class iCalendar {
   function iCalendar( $args ) {
     global $c;
 
-    // Probably a good idea to always have values for these things...
-    if ( isset($c->local_tzid ) ) $this->properties['tz_id']    = $c->local_tzid;
-
-    if ( !isset($args) || !is_array($args) ) return;
+    $this->parsing_vtimezone = false;
+    $this->tz_locn = "";
+    if ( !isset($args) || !(is_array($args) || is_object($args)) ) return;
+    if ( is_object($args) ) {
+      settype($args,'array');
+    }
 
     if ( isset($args['icalendar']) ) {
       $this->BuildFromText($args['icalendar']);
       $this->DealWithTimeZones();
       return;
     }
+    if ( isset($args['type'] ) ) {
+      $this->type = $args['type'];
+    }
+    else {
+      $this->type = 'VEVENT';  // Default to event
+    }
+    $this->properties = array( 'VCALENDAR' => array( array( $this->type => array() )));
 
     foreach( $args AS $k => $v ) {
-      $this->properties[strtoupper($k)] = $v;
+      dbg_error_log( "iCalendar", ":Initialise: %s to >>>%s<<<", $k, $v );
+      $this->Put($k,$v);
+    }
+
+    if ( $this->tz_locn == "" ) {
+      $this->tz_locn = $this->Get("tzid");
+      if ( (!isset($this->tz_locn) || $this->tz_locn == "") && isset($c->local_tzid) ) {
+        $this->tz_locn = $c->local_tzid;
+      }
     }
   }
 
@@ -115,16 +132,15 @@ class iCalendar {
     while( isset($this->lines[$this->_current_parse_line]) ) {
       $i = $this->_current_parse_line++;
       $line =& $this->lines[$i];
-      dbg_error_log( "iCalendar", ":Parse: LINE %03d: >>>%s<<<", $i, $line );
-      if ( $type == 'TIMEZONE' ) {
+      dbg_error_log( "iCalendar", ":Parse:%s LINE %03d: >>>%s<<<", $type, $i, $line );
+      if ( $this->parsing_vtimezone ) {
         $this->vtimezone .= $line."\n";
-        if ( !isset($this->tz_locn) && $parameter == 'X-LIC-LOCATION' ) {
-          $this->tz_locn = $value;
-        }
       }
-      $this->vtimezone = "";
       if ( preg_match( '/^(BEGIN|END):([^:]+)$/', $line, $matches ) ) {
         if ( $matches[1] == 'END' && $matches[2] == $type ) {
+          if ( $type == 'VTIMEZONE' ) {
+            $this->parsing_vtimezone = false;
+          }
           return $properties;
         }
         else if( $matches[1] == 'END' ) {
@@ -133,7 +149,10 @@ class iCalendar {
         }
         else if( $matches[1] == 'BEGIN' ) {
           $subtype = $matches[2];
-          if ( $subtype == 'TIMEZONE' ) $this->vtimezone .= $line;
+          if ( $subtype == 'VTIMEZONE' ) {
+            $this->parsing_vtimezone = true;
+            $this->vtimezone = $line;
+          }
           if ( !isset($properties['INSIDE']) ) $properties['INSIDE'] = array();
           $properties['INSIDE'][] = $subtype;
           if ( !isset($properties[$subtype]) ) $properties[$subtype] = array();
@@ -158,9 +177,9 @@ class iCalendar {
               }
             }
           }
-          if ( $type == 'TIMEZONE' && !isset($this->tz_locn) && $parameter == 'X-LIC-LOCATION' ) {
-              $this->tz_locn = $value;
-          }
+        }
+        if ( $this->parsing_vtimezone && (!isset($this->tz_locn) || $this->tz_locn == "") && $property == 'X-LIC-LOCATION' ) {
+          $this->tz_locn = $value;
         }
         $properties[strtoupper($property)] = $value;
       }
@@ -202,23 +221,49 @@ class iCalendar {
   * them into something that PostgreSQL can understand...
   */
   function DealWithTimeZones() {
-    if ( isset($c->save_time_zone_defs) ) {
-      $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $this->properties['TZID'] );
+    $tzid = $this->Get('TZID');
+    if ( isset($c->save_time_zone_defs) && $c->save_time_zone_defs ) {
+      $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
       if ( $qry->Exec('iCalendar') && $qry->rows == 1 ) {
         $row = $qry->Fetch();
         $this->tz_locn = $row->tz_locn;
       }
     }
 
-    if ( !isset($this->tz_locn) && isset($this->properties['TZID']) ) {
-      // In case there was no X-LIC-LOCATION defined, let's hope there is something in the TZID
-      $this->tz_locn = preg_replace('/^.*([a-z]+\/[a-z]+)$/i','$1',$this->properties['TZID'] );
+    if ( !isset($this->tz_locn) && $tzid != '' ) {
+      /**
+      * In case there was no X-LIC-LOCATION defined, let's hope there is something in the TZID
+      * that we can use.  We are looking for a string like "Pacific/Auckland" if possible.
+      */
+      $this->tz_locn = preg_replace('/^.*([a-z]+\/[a-z]+)$/i','$1',$tzid );
+      /**
+      * Unfortunately this kind of thing will never work well :-(
+      *
+      if ( strstr( $this->tz_locn, ' ' ) ) {
+        $words = preg_split('/\s/', $this->tz_locn );
+        $tzabbr = '';
+        foreach( $words AS $i => $word ) {
+          $tzabbr .= substr( $word, 0, 1);
+        }
+        $this->tz_locn = $tzabbr;
+      }
+      */
+      if ( strstr( $this->tz_locn, '/' ) === false ) {
+        $this->tz_locn = '';
+      }
     }
 
-    if ( isset($c->save_time_zone_defs) && $qry->rows != 1 ) {
+    if ( isset($c->save_time_zone_defs) && $c->save_time_zone_defs && $qry->rows != 1 ) {
       $qry2 = new PgQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
-                                   $this->properties['TZID'], $this->tz_locn, $this->properties['VTIMEZONE'] );
+                                   $tzid, $this->tz_locn, $this->vtimezone );
       $qry2->Exec("iCalendar");
+    }
+
+    if ( $this->tz_locn == "" ) {
+      $this->tz_locn = $this->Get("tzid");
+      if ( (!isset($this->tz_locn) || $this->tz_locn == "") && isset($c->local_tzid) ) {
+        $this->tz_locn = $c->local_tzid;
+      }
     }
   }
 
@@ -235,6 +280,7 @@ class iCalendar {
   * Put the value of a property
   */
   function Put( $key, $value ) {
+    if ( $value == "" ) return;
     return $this->properties['VCALENDAR'][0][$this->type][0][strtoupper($key)] = $value;
   }
 
@@ -283,7 +329,6 @@ class iCalendar {
     $value = str_replace( '\\', '\\\\', $value);
     $value = str_replace( "\n", '\\n', $value);
     $value = str_replace( "\r", '\\r', $value);
-//    $value = preg_replace( "\n", '\\n', $value);
     $value = preg_replace( "/([,;:\"\'])/", '\\\\$1', $value);
     $result = wordwrap("$name:$value", 75, " \r\n ", true ) . "\r\n";
     return $result;
@@ -313,25 +358,31 @@ EOTXT;
   }
 
 
-
   /**
-  * Render the iCalendar object as a text string which is a single VFREEBUSY
+  * Render the iCalendar object as a text string which is a single VEVENT (or other)
   */
-  function RenderFreeBusy( ) {
-    $interesting = array( "uid", "dtstamp", "dtstart", "duration", "last-modified", "rrule", "timezone" );
+  function Render( $as_calendar = true, $type = 'VEVENT', $interesting = false ) {
+    if ( !is_array($interesting) ) {
+      $interesting = array( "uid", "dtstamp", "dtstart", "duration", "summary", "uri", "last-modified",
+                          "location", "description", "class", "transp", "sequence", "due" );
+    }
 
     $wrap_at = 75;
-    $type = 'VFREEBUSY';
-    $result = "BEGIN:$type\r\n";
+    $result = ($as_calendar ? $this->iCalHeader() : "");
+    $result .= "BEGIN:$type\r\n";
 
     foreach( $interesting AS $k => $v ) {
+      $v = strtoupper($v);
       $value = $this->Get($v);
       if ( isset($value) && $value != "" ) {
         dbg_error_log( "iCalendar", "Rendering '%s' which is '%s'", $v, $value );
-        $result .= $this->RFC2445ContentEscape( strtoupper($v), $value);
+        $result .= $this->RFC2445ContentEscape($v,$value);
       }
     }
 
+    /**
+    * FIXME I think that DTEND/DURATION don't apply to VTODO, and DUE applies instead
+    */
     // DTEND and DURATION may not exist together
     $dtend = $this->Get('DTEND');
     $duration = $this->Get('DURATION');
@@ -340,45 +391,15 @@ EOTXT;
       $result .= $this->RFC2445ContentEscape('DTEND',$dtend);
     }
 
-    $result .= "END:$type\r\n";
-
-    return $result;
-  }
-
-
-
-  /**
-  * Render the iCalendar object as a text string which is a single VEVENT (or other)
-  */
-  function Render( $type = 'VEVENT' ) {
-    $interesting = array( "uid", "dtstamp", "dtstart", "duration", "summary", "uri", "last-modified",
-                          "location", "description", "class", "transp", "sequence", "timezone" );
-
-    $wrap_at = 75;
-    $result = $this->iCalHeader();
-    $result .= "BEGIN:$type\r\n";
-
-    foreach( $interesting AS $k => $v ) {
-      $v = strtoupper($v);
-      if ( isset($this->properties[$v]) && $this->properties[$v] != "" ) {
-        dbg_error_log( "iCalendar", "Rendering '%s' which is '%s'", $v, $this->properties[$v] );
-        $result .= $this->RFC2445ContentEscape($v,$this->properties[$v]);
-      }
-    }
-
-    // DTEND and DURATION may not exist together
-    if ( ( isset($this->properties['DTEND']) && $this->properties['DTEND'] != "" )
-         && !( isset($this->properties['DURATION']) && $this->properties['DURATION'] != "" ) ) {
-      dbg_error_log( "iCalendar", "Rendering '%s' which is '%s'", 'DTEND',$this->properties['DTEND'] );
-      $result .= $this->RFC2445ContentEscape('DTEND',$this->properties['DTEND']);
+    if ( isset($this->vtimezone) && $this->vtimezone != "" ) {
+      $result .= $this->vtimezone;
     }
 
     $result .= "END:$type\r\n";
-    $result .= $this->iCalFooter();
+    $result .= ($as_calendar ? $this->iCalFooter() : "" );
 
     return $result;
   }
-
 
 }
 

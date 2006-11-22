@@ -360,10 +360,17 @@ EOTXT;
 
   /**
   * Render the iCalendar object as a text string which is a single VEVENT (or other)
+  *
+  * @param boolean $as_calendar Whether or not to wrap the event in a VCALENDAR
+  * @param string $type The type of iCalendar object (VEVENT, VTODO, VFREEBUSY etc.)
+  * @param array $properties The names of the properties we want in our rendered result.
   */
-  function Render( $as_calendar = true, $type = 'VEVENT', $interesting = false ) {
-    if ( !is_array($interesting) ) {
-      $interesting = array( "uid", "dtstamp", "dtstart", "duration", "summary", "uri", "last-modified",
+  function Render( $as_calendar = true, $type = 'VEVENT', $properties = false ) {
+    /**
+    * FIXME This should really render the full nested structure of the event.
+    */
+    if ( !is_array($properties) ) {
+      $properties = array( "uid", "dtstamp", "dtstart", "duration", "summary", "uri", "last-modified",
                           "location", "description", "class", "transp", "sequence", "due" );
     }
 
@@ -371,7 +378,7 @@ EOTXT;
     $result = ($as_calendar ? $this->iCalHeader() : "");
     $result .= "BEGIN:$type\r\n";
 
-    foreach( $interesting AS $k => $v ) {
+    foreach( $properties AS $k => $v ) {
       $v = strtoupper($v);
       $value = $this->Get($v);
       if ( isset($value) && $value != "" ) {

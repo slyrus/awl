@@ -322,7 +322,7 @@ class Session
     *
     */
     $authenticated = false;
-    if ( isset($c->authenticate_hook) && isset($c->authenticate_hook['call']) && function_exists(isset($c->authenticate_hook['call'])) ) {
+    if ( isset($c->authenticate_hook) && isset($c->authenticate_hook['call']) && function_exists($c->authenticate_hook['call']) ) {
       /**
       * The authenticate hook needs to:
       *   - Accept a username / password

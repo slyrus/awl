@@ -335,7 +335,7 @@ class PgQuery
 
  /**
   * Use a different database connection for this query
-  * @param  resource The database connection to use.
+  * @param  resource $new_connection The database connection to use.
   */
   function SetConnection( $new_connection ) {
     $this->connection = $new_connection;

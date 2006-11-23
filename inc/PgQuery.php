@@ -18,11 +18,12 @@
 *  - Simple syntax for iterating through a result set.
 *
 * The database should be connected in a variable $dbconn before
-* PgQuery.php is included.  PgQuery does not attempt to connect
-* to the database - the pg_connect() function seems perfectly
-* adequate to the task.
+* PgQuery.php is included.  If not already connected, PgQuery will attempt to
+* connect to the database, successively applying connection parameters from
+* the array in $c->pg_connect.
 *
-* We will die if the database is not currently connected.
+* We will die if the database is not currently connected and we fail to find
+* a working connection.
 *
 * @package   awl
 * @subpackage   PgQuery
@@ -310,6 +311,7 @@ class PgQuery
   * @return The PgQuery object
   */
   function PgQuery() {
+    global $dbconn;
     $this->result = 0;
     $this->rows = 0;
     $this->execution_time = 0;
@@ -414,7 +416,7 @@ class PgQuery
   * @return resource The actual result of the query (FWIW)
   */
   function Exec( $location = '', $line = 0, $file = '' ) {
-    global $dbconn, $debuggroups, $c;
+    global $debuggroups, $c;
     $this->location = trim($location);
     if ( $this->location == "" ) $this->location = substr($GLOBALS['PHP_SELF'],1);
 
@@ -426,7 +428,7 @@ class PgQuery
       ini_set('display_errors',0);
     }
     $t1 = microtime(); // get start time
-    $this->result = pg_exec( $dbconn, $this->querystring ); // execute the query
+    $this->result = pg_exec( $this->connection, $this->querystring ); // execute the query
     $this->rows = ($this->result ? pg_numrows($this->result) : -1); // number of rows returned
     $t2 = microtime(); // get end time
     $i_took = duration( $t1, $t2 );   // calculate difference

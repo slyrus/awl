@@ -65,7 +65,7 @@ EOERRMSG;
 
 
 /**
-* A duration (in decimal seconds) between two times.
+* A duration (in decimal seconds) between two times which are the result of calls to microtime()
 *
 * This simple function is used by the PgQuery class because the
 * microtime function doesn't return a decimal time, so a simple
@@ -75,8 +75,7 @@ EOERRMSG;
 * @param microtime $t2 end time
 * @return double difference
 */
-function duration( $t1, $t2 )                   // Enter two times from microtime() call
-{
+function duration( $t1, $t2 ) {
   list ( $ms1, $s1 ) = explode ( " ", $t1 );   // Format times - by spliting seconds and microseconds
   list ( $ms2, $s2 ) = explode ( " ", $t2 );
   $s1 = $s2 - $s1;
@@ -100,8 +99,7 @@ function duration( $t1, $t2 )                   // Enter two times from microtim
 * @param mixed $str Data to be converted to a string suitable for including as a value in SQL.
 * @return string NULL, TRUE, FALSE, a plain number, or the original string quoted and with ' and \ characters escaped
 */
-function qpg($str = null)
-{
+function qpg($str = null) {
 
   switch (strtolower(gettype($str))) {
     case 'null':
@@ -227,6 +225,13 @@ class PgQuery
   * @access private
   */
   /**
+  * holds the connection to the database
+  * should be internal
+  * @var resource
+  */
+  var $connection;
+
+  /**
   * stores a query string
   * should be read-only
   * @var string
@@ -304,12 +309,12 @@ class PgQuery
   * @param mixed The values to replace into the SQL string.
   * @return The PgQuery object
   */
-  function PgQuery()
-  {
+  function PgQuery() {
     $this->result = 0;
     $this->rows = 0;
     $this->execution_time = 0;
     $this->rownum = -1;
+    $this->connection = $dbconn;
 
     $argc = func_num_args();
 
@@ -326,6 +331,16 @@ class PgQuery
   }
 
 
+ /**
+  * Use a different database connection for this query
+  * @param  resource The database connection to use.
+  */
+  function SetConnection( $new_connection ) {
+    $this->connection = $new_connection;
+  }
+
+
+
   /**
   * Log error, optionally with file and line location of the caller.
   *
@@ -338,8 +353,7 @@ class PgQuery
   * @param int    $line    The line number where the logged event occurred.
   * @param string $file    The file name where the logged event occurred.
   */
-  function _log_error( $locn, $tag, $string, $line = 0, $file = "")
-  {
+  function _log_error( $locn, $tag, $string, $line = 0, $file = "") {
     // replace more than one space with one space
     $string = preg_replace('/\s+/', ' ', $string);
 
@@ -364,8 +378,7 @@ class PgQuery
   * @param mixed $str Data to be converted to a string suitable for including as a value in SQL.
   * @return string NULL, TRUE, FALSE, a plain number, or the original string quoted and with ' and \ characters escaped
   */
-  function quote($str = null)
-  {
+  function quote($str = null) {
     return qpg($str);
   }
 
@@ -377,8 +390,7 @@ class PgQuery
   * @param string $field The value which has alread been quoted and escaped.
   * @return array An array with the value associated with a key of 'plain'
   */
-  function Plain( $field )
-  {
+  function Plain( $field ) {
     // Abuse the array type to extend our ability to avoid \\ and ' replacement
     $rv = array( 'plain' => $field );
     return $rv;
@@ -401,8 +413,7 @@ class PgQuery
   * @param string $file The file where Exec was called
   * @return resource The actual result of the query (FWIW)
   */
-  function Exec( $location = '', $line = 0, $file = '' )
-   {
+  function Exec( $location = '', $line = 0, $file = '' ) {
     global $dbconn, $debuggroups, $c;
     $this->location = trim($location);
     if ( $this->location == "" ) $this->location = substr($GLOBALS['PHP_SELF'],1);
@@ -446,8 +457,7 @@ class PgQuery
   * @param boolean $as_array True if thing to be returned is array
   * @return mixed query row
   */
-  function Fetch($as_array = false)
-  {
+  function Fetch($as_array = false) {
     global $debuggroups;
 
     if ( ( isset($debuggroups["$this->location"]) && $debuggroups["$this->location"] > 2 )
@@ -492,8 +502,7 @@ class PgQuery
   * }
   * </code>
   */
-  function UnFetch()
-  {
+  function UnFetch() {
     global $debuggroups;
     $this->rownum--;
     if ( $this->rownum < -1 ) $this->rownum = -1;
@@ -504,8 +513,7 @@ class PgQuery
   * @param boolean $as_array True if thing to be returned is array (default: <b>False</b>
   * @return mixed query row
   */
-  function FetchBackwards($as_array = false)
-  {
+  function FetchBackwards($as_array = false) {
     global $debuggroups;
 
     if ( isset($debuggroups["$this->location"]) && $debuggroups["$this->location"] > 2 ) {
@@ -561,8 +569,5 @@ class PgQuery
    }
 
 }
-///////////////////////////////////////////////////////////////////////////
-//   E N D   O F   C L A S S   F O R   D A T A B A S E   Q U E R I E S   //
-///////////////////////////////////////////////////////////////////////////
 
 ?>

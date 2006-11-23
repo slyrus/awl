@@ -315,11 +315,33 @@ class Session
     $rc = false;
     dbg_error_log( "Login", " Login: Attempting login for $username" );
 
+    /**
+    * TODO In here we will need to put code to call the auth plugin, in order to
+    * ensure the 'usr' table has current valid data.  At this stage we are just
+    * thinking it through... like ...
+    *
+    */
+    $authenticated = false;
+    if ( isset($c->authenticate_hook) && isset($c->authenticate_hook['call']) && function_exists(isset($c->authenticate_hook['call'])) ) {
+      /**
+      * The authenticate hook needs to:
+      *   - Accept a username / password
+      *   - Confirm the username / password are correct
+      *   - Create (or update) a 'usr' record in our database
+      *   - Return the 'usr' record as an object
+      *   - Return === false when authentication fails
+      * It can expect that:
+      *   - Configuration data will be in $c->authenticate_hook['config'], which might be an array, or whatever is needed.
+      */
+      $usr = call_user_func( $c->authenticate_hook['call'], $username, $password );
+      if ( $usr === false ) unset($usr); else $authenticated = true;
+    }
+
     $sql = "SELECT * FROM usr WHERE lower(username) = ? ";
     $qry = new PgQuery( $sql, strtolower($username) );
-    if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows == 1 ) {
-      $usr = $qry->Fetch();
-      if ( session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {
+    if ( $authenticated || ($qry->Exec('Login',__LINE,__FILE__) && $qry->rows == 1) ) {
+      if ( ! $authenticated ) $usr = $qry->Fetch();
+      if ( $authenticated || session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {
         // Now get the next session ID to create one from...
         $qry = new PgQuery( "SELECT nextval('session_session_id_seq')" );
         if ( $qry->Exec('Login') && $qry->rows == 1 ) {

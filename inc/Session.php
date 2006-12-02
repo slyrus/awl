@@ -808,7 +808,7 @@ EOTEXT;
   * @param string $type If 'timestamp' then the time will also be shown.
   * @return string The nicely formatted date.
   */
-  function FormattedDate( $indate, $type=date ) {
+  function FormattedDate( $indate, $type='date' ) {
     $out = "";
     if ( preg_match( '#^\s*$#', $indate ) ) {
       // Looks like it's empty - just return empty

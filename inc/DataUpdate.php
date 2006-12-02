@@ -267,6 +267,7 @@ class DBRecord
     dbg_error_log( "DBRecord", ":Constructor: called" );
     $this->WriteType = "insert";
     $this->EditMode = false;
+    $this->prefix = "";
     $values = (object) array();
     $this->Values = &$values;
   }
@@ -307,10 +308,10 @@ class DBRecord
   */
   function PostToValues( $prefix = "" ) {
     foreach ( $this->Fields AS $fname => $ftype ) {
-      dbg_error_log( "DBRecord", ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
+      @dbg_error_log( "DBRecord", ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
       if ( isset($_POST["$prefix$fname"]) ) {
         $this->Set($fname, $_POST["$prefix$fname"]);
-        dbg_error_log( "DBRecord", ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
+        @dbg_error_log( "DBRecord", ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
       }
     }
   }

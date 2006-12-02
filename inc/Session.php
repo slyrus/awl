@@ -93,7 +93,7 @@ class Session
   * The user's full name from their usr record.
   * @var int
   */
-  var $full_name = 'Guest';
+  var $fullname = 'Guest';
 
   /**
   * The user's email address from their usr record.
@@ -339,7 +339,7 @@ class Session
 
     $sql = "SELECT * FROM usr WHERE lower(username) = ? ";
     $qry = new PgQuery( $sql, strtolower($username) );
-    if ( $authenticated || ($qry->Exec('Login',__LINE,__FILE__) && $qry->rows == 1) ) {
+    if ( $authenticated || ($qry->Exec('Login',__LINE__,__FILE__) && $qry->rows == 1) ) {
       if ( ! $authenticated ) $usr = $qry->Fetch();
       if ( $authenticated || session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {
         // Now get the next session ID to create one from...
@@ -790,10 +790,9 @@ EOTEXT;
       $this->SendTemporaryPassword();
     }
     else if ( isset($_POST['username']) && isset($_POST['password']) ) {
-      $_username = $_POST['username'];
       // Try and log in if we have a username and password
       $this->Login( $_POST['username'], $_POST['password'] );
-      dbg_error_log( "Login", ":_CheckLogin: User %s(%s) - %s (%d) login status is %d", $_POST['username'], $_username, $this->fullname, $this->user_no, $this->logged_in );
+      @dbg_error_log( "Login", ":_CheckLogin: User %s(%s) - %s (%d) login status is %d", $_POST['username'], $this->fullname, $this->user_no, $this->logged_in );
     }
     else if ( !isset($_COOKIE['sid']) && isset($_COOKIE['lsid']) && $_COOKIE['lsid'] != "" ) {
       // Validate long-term session details

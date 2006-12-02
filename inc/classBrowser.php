@@ -74,7 +74,7 @@ class BrowserColumn
   * @param string field The name of the column in the SQL result.
   * @param string header The text to appear in the column header on output
   *                      (@see BrowserColumn::RenderHeader()).  If this is not supplied then
-  *                      a default of the field name will be used. 
+  *                      a default of the field name will be used.
   * @param string align left|center|right - text alignment.  Defaults to 'left'.
   * @param string format A format (a-la-printf) to render data values within.
   *                      (@see BrowserColumn::RenderValue()).  If this is not supplied
@@ -83,7 +83,7 @@ class BrowserColumn
   *                   the result. If this is blank then the column is assumed to be a real data column.
   * @param string class Additional classes to apply to the column header and column value cells.
   * @param string datatype This will allow 'date' or 'timestamp' to preformat the field correctly before
-  *                        using it in replacements or display.  Other types may be added in future.                               
+  *                        using it in replacements or display.  Other types may be added in future.
   */
   function BrowserColumn( $field, $header="", $align="", $format="", $sql="", $class="", $datatype="" ) {
     $this->Field  = $field;
@@ -155,7 +155,7 @@ class BrowserColumn
       // These quite probably don't work.  The CSS standard for multiple classes is 'class="a b c"' but is lightly
       // implemented according to some web references.  Perhaps modern browsers are better?
       $class = $this->Align . ($this->Class == "" ? "" : " $this->Class") . ($extraclass == "" ? "" : " $extraclass");
-      if ( $class != "" ) $class = ' class="'.$class.'"'; 
+      if ( $class != "" ) $class = ' class="'.$class.'"';
       $html = sprintf('<td%s>',$class);
       $html .= ($this->Format == "" ? $value : sprintf($this->Format,$value,$value));
       $html .= "</td>\n";
@@ -469,7 +469,7 @@ class Browser
     if ( "$this->Union" != "" ) {
       $sql .= "UNION $this->Union ";
     }
-    $sql .= $this->Order . ' ' . $this->Limit;   
+    $sql .= $this->Order . ' ' . $this->Limit;
     $this->Query = new PgQuery( $sql );
     return $this->Query->Exec("Browse:$this->Title:DoQuery");
   }
@@ -477,7 +477,7 @@ class Browser
   /**
   * Add an extra arbitrary row onto the end of the browser.
   *
-  * @var array $column_values Contains an array of named fields, hopefully matching the column names. 
+  * @var array $column_values Contains an array of named fields, hopefully matching the column names.
   */
   function AddRow( $column_values ) {
     if ( !isset($this->ExtraRows) || typeof($this->ExtraRows) != 'array' ) $this->ExtraRows = array();
@@ -521,8 +521,10 @@ class Browser
 
       // Work out the answers to any stuff that may be being substituted into the row start
       foreach( $this->BeginRowArgs AS $k => $fld ) {
-        $rowanswers[$k] = $BrowserCurrentRow->{$fld};
-        if ( !isset( $rowanswers[$k] ) ) {
+        if ( isset($BrowserCurrentRow->{$fld}) ) {
+          $rowanswers[$k] = $BrowserCurrentRow->{$fld};
+        }
+        else {
           switch( $fld ) {
             case '#even':
               $rowanswers[$k] = ($this->Query->rownum % 2);
@@ -588,7 +590,7 @@ class Browser
 
         // Start the row
         $html .= vsprintf( $this->BeginRow, $rowanswers);
-  
+
         // Each column
         foreach( $this->Columns AS $k => $column ) {
           $html .= $column->RenderValue($BrowserCurrentRow->{$column->Field});

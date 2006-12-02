@@ -49,7 +49,7 @@ if ( !function_exists('dbg_error_log') ) {
     else {
       $format = "%s";
     }
-    error_log( $c->sysabbr.": $type: $component:". vsprintf( $format, $args ) );
+    @error_log( $c->sysabbr.": $type: $component:". vsprintf( $format, $args ) );
   }
 }
 

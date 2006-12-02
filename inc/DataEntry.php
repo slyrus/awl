@@ -205,6 +205,7 @@ class EntryField
 
       case "date":
       case "timestamp":
+        $size = '';
         if ( !isset($this->attributes['size']) || $this->attributes['size'] == "" ) $size = " size=" . ($this->ftype == 'date' ? "12" : "18");
         $r .= "input type=\"text\" name=\"$this->fname\"$size value=\"".$session->FormattedDate(htmlspecialchars($this->current))."\"%%attributes%%>";
         break;
@@ -528,13 +529,13 @@ class EntryForm
     }
     $fname = $prefix . $base_fname;
 
-    dbg_error_log( "DataEntry", ":DataEntryField: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, $this->record->{$fname} );
+    dbg_error_log( "DataEntry", ":DataEntryField: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, (isset($this->record->{$fname})?$this->record->{$fname}:'value not set') );
     if ( !$this->EditMode ) {
       // Displaying editable values when we are not editing
       // If it is a date, then format it according to the current user's date format type
       if ($ftype == "date" || $ftype == "timestamp")
         return sprintf($format, $session->FormattedDate($this->record->{$fname}) );
-      dbg_error_log( "DataEntry", ":DataEntryField: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, $this->record->{$fname} );
+      dbg_error_log( "DataEntry", ":DataEntryField: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, (isset($this->record->{$fname})?$this->record->{$fname}:'value not set') );
       return sprintf($format, $this->record->{$fname} );
     }
 

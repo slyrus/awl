@@ -418,7 +418,7 @@ class PgQuery
   function Exec( $location = '', $line = 0, $file = '' ) {
     global $debuggroups, $c;
     $this->location = trim($location);
-    if ( $this->location == "" ) $this->location = substr($GLOBALS['PHP_SELF'],1);
+    if ( $this->location == "" ) $this->location = substr($_SERVER['PHP_SELF'],1);
 
     if ( isset($debuggroups['querystring']) || isset($c->dbg['querystring']) || isset($c->dbg['ALL']) ) {
       $this->_log_error( $this->location, 'DBGQ', $this->querystring, $line, $file );

@@ -576,8 +576,10 @@ class Browser
         $BrowserCurrentRow = (object) $v;
         // Work out the answers to any stuff that may be being substituted into the row start
         foreach( $this->BeginRowArgs AS $k => $fld ) {
-          $rowanswers[$k] = $BrowserCurrentRow->{$fld};
-          if ( !isset( $rowanswers[$k] ) ) {
+          if ( isset( $BrowserCurrentRow->{$fld} ) ) {
+            $rowanswers[$k] = $BrowserCurrentRow->{$fld};
+          }
+          else {
             switch( $fld ) {
               case '#even':
                 $rowanswers[$k] = ($this->Query->rownum % 2);

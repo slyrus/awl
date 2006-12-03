@@ -77,7 +77,7 @@ class User extends DBRecord {
     $this->Read();
     $this->GetRoles();
 
-    $this->EditMode = ( ($_GET['edit'] && $this->AllowedTo($this->WriteType))
+    $this->EditMode = ( (isset($_GET['edit']) && $_GET['edit'] && $this->AllowedTo($this->WriteType))
                     || (0 == $this->user_no && $this->AllowedTo("insert") ) );
 
     if ( $this->user_no == 0 ) {
@@ -270,11 +270,11 @@ class User extends DBRecord {
       $ef->record->roles = array();
 
       // Select the records
-      $q = new PgQuery($sql, $user_no, $user_no);
+      $q = new PgQuery($sql);
       if ( $q && $q->Exec("User") && $q->rows ) {
         $i=0;
         while( $row = $q->Fetch() ) {
-          dbg_error_log("User", ":RenderRoles: Is a member of '%s': %s", $row->role_name, $this->roles[$row->role_name] );
+          @dbg_error_log("User", ":RenderRoles: Is a member of '%s': %s", $row->role_name, $this->roles[$row->role_name] );
           $ef->record->roles[$row->role_name] = $this->roles[$row->role_name];
           $html .= $ef->DataEntryField( "", "checkbox", "roles[$row->role_name]",
                           array("title" => translate("Does the user have the right to perform this role?"),
@@ -283,6 +283,7 @@ class User extends DBRecord {
       }
     }
     else {
+      $i = 0;
       foreach( $this->roles AS $k => $v ) {
         if ( $i++ > 0 ) $html .= ", ";
         $html .= $k;

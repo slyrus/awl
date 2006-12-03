@@ -544,7 +544,7 @@ class EntryForm
     if ( preg_match("/^(.+)\[(.+)\]$/", $fname, $parts) ) {
       $p1 = $parts[1];
       $p2 = $parts[2];
-      dbg_error_log( "DataEntry", ":DataEntryField: fname=%s, p1=%s, p2=%s, POSTVAL=%s, \$this->record->{'%s'}['%s']=%s",
+      @dbg_error_log( "DataEntry", ":DataEntryField: fname=%s, p1=%s, p2=%s, POSTVAL=%s, \$this->record->{'%s'}['%s']=%s",
                                                   $fname, $p1, $p2, $_POST[$p1][$p2], $p1, $p2, $this->record->{"$p1"}["$p2"] );
       // FIXME - This could be changed to handle more dimensions on submitted variable names
       if ( isset($_POST[$p1]) ) {

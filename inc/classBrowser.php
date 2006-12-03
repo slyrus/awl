@@ -595,7 +595,7 @@ class Browser
 
         // Each column
         foreach( $this->Columns AS $k => $column ) {
-          $html .= $column->RenderValue($BrowserCurrentRow->{$column->Field});
+          $html .= $column->RenderValue( (isset($BrowserCurrentRow->{$column->Field}) ? $BrowserCurrentRow->{$column->Field} : '') );
         }
 
         // Finish the row

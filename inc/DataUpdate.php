@@ -395,7 +395,7 @@ class DBRecord
   * @return mixed The current value of the field.
   */
   function Get($fname) {
-    dbg_error_log( "DBRecord", ":Get: %s => %s", $fname, $this->Values->{$fname} );
+    @dbg_error_log( "DBRecord", ":Get: %s => %s", $fname, $this->Values->{$fname} );
     return $this->Values->{$fname};
   }
 

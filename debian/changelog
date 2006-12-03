@@ -1,3 +1,12 @@
+awl (0.13) unstable; urgency=low
+
+  * Remove unassigned value warnings and others that show up when we enable
+    E_NOTICE in php.ini.
+  * Allow for something to hook into the authentication process.  Include a
+    simple example.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Sun,  3 Dec 2006 18:36:39 +1300
+
 awl (0.12) unstable; urgency=low
 
   * Add BuildConfirmationHash() and CheckConfirmationHash() methods to reduce

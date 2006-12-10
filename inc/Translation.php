@@ -79,11 +79,14 @@ if ( !function_exists("awl_set_locale") ) {
   * call the gettext function.
   */
   function awl_set_locale( $locale ) {
+    global $c;
+
     if ( !is_array($locale) && ! preg_match('/^[a-z]{2}(_[A-Z]{2})?\./', $locale ) ) {
       $locale = array( $locale, $locale.".UTF-8");
     }
     if ( $newlocale = setlocale( LC_ALL, $locale) ) {
       dbg_error_log("I18N","Set locale to =%s=", $newlocale );
+      $c->current_locale = $newlocale;
     }
     else {
       dbg_log_array("I18N","Unsupported locale: ", $locale, false );

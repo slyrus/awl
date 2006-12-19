@@ -20,6 +20,7 @@ class XMLElement {
   var $tagname;
   var $attributes;
   var $content;
+  var $_parent;
 
   /**
   * Constructor - nothing fancy as yet.
@@ -32,11 +33,11 @@ class XMLElement {
     $this->tagname=$tagname;
     if ( gettype($content) == "object" ) {
       // Subtree to be parented here
-      $this->content=array($content);
+      $this->content = array(&$content);
     }
     else {
       // Array or text
-      $this->content=$content;
+      $this->content = $content;
     }
     $this->attributes = $attributes;
   }
@@ -62,13 +63,102 @@ class XMLElement {
   }
 
   /**
+  * Accessor for the tag name
+  *
+  * @return string The tag name of the element
+  */
+  function GetTag() {
+    return $this->tagname;
+  }
+
+  /**
+  * Accessor for the attributes
+  *
+  * @return array The attributes of this element
+  */
+  function GetAttributes() {
+    return $this->attributes;
+  }
+
+  /**
+  * Accessor for the content
+  *
+  * @return array The content of this element
+  */
+  function GetContent() {
+    return $this->content;
+  }
+
+  /**
+  * Return an array of elements matching the specified tag
+  *
+  * @return array The XMLElements within the tree which match this tag
+  */
+  function GetElements( $tag, $recursive=false ) {
+    $elements = array();
+    printf( "Getting elements like %s %swithin %s\n", $tag, ($recursive?'recursively ':''), $this->tagname );
+    if ( gettype($this->content) == "array" ) {
+      foreach( $this->content AS $k => $v ) {
+        if ( $v->tagname == $tag ) {
+          $elements[] = $v;
+        }
+        if ( $recursive ) {
+          $elements = $elements + $this->GetElements($tag,true);
+        }
+      }
+    }
+    return $elements;
+  }
+
+
+  /**
+  * Return an array of elements matching the specified path
+  *
+  * @return array The XMLElements within the tree which match this tag
+  */
+  function GetPath( $path ) {
+    $elements = array();
+    printf( "Querying within '%s' for path '%s'\n", $this->tagname, $path );
+    if ( !preg_match( '#(/)?([^/]+)(/?.*)$#', $path, $matches ) ) return $elements;
+//    printf( "Matches: %s -- %s -- %s\n", $matches[1], $matches[2], $matches[3] );
+    if ( $matches[2] == '*' || $matches[2] == $this->tagname ) {
+      if ( $matches[3] == '' ) {
+        /**
+        * That is the full path
+        */
+        $elements[] = $this;
+      }
+      else if ( gettype($this->content) == "array" ) {
+        /**
+        * There is more to the path, so we recurse into that sub-part
+        */
+        foreach( $this->content AS $k => $v ) {
+          $elements = $elements + $v->GetPath($matches[3]);
+        }
+      }
+    }
+
+    if ( $matches[1] != '/' && gettype($this->content) == "array" ) {
+      /**
+      * If our input $path was not rooted, we recurse further
+      */
+      foreach( $this->content AS $k => $v ) {
+        $elements = $elements + $v->GetPath($path);
+      }
+    }
+    return $elements;
+  }
+
+
+  /**
   * Add a sub-element
   *
   * @param object An XMLElement to be appended to the array of sub-elements
   */
-  function AddSubTag($v) {
+  function AddSubTag(&$v) {
     if ( gettype($this->content) != "array" ) $this->content = array();
-    $this->content[] = $v;
+    $this->content[] =& $v;
+    return count($this->content);
   }
 
   /**
@@ -78,9 +168,11 @@ class XMLElement {
   * @param mixed Either a string of content, or an array of sub-elements
   * @param array An array of attribute name/value pairs
   */
-  function NewElement( $tagname, $content=false, $attributes=false ) {
+  function &NewElement( $tagname, $content=false, $attributes=false ) {
     if ( gettype($this->content) != "array" ) $this->content = array();
-    $this->content[] = new XMLElement($tagname,$content,$attributes);
+    $element =& new XMLElement($tagname,$content,$attributes);
+    $this->content[] =& $element;
+    return $element;
   }
 
   /**
@@ -89,7 +181,7 @@ class XMLElement {
   * @param int The indenting level for the pretty formatting of the element
   */
   function Render($indent=0,$xmldef="") {
-    $r = ( $xmldef == "" ? "" : $xmldef."\n");  
+    $r = ( $xmldef == "" ? "" : $xmldef."\n");
     $r .= substr("                        ",0,$indent) . '<' . $this->tagname;
     if ( gettype($this->attributes) == "array" ) {
       /**
@@ -117,7 +209,6 @@ class XMLElement {
         /**
         * Render the content, with special characters escaped
         *
-        * FIXME This should switch to CDATA in some situations.
         */
         $r .= htmlspecialchars($this->content, ENT_NOQUOTES );
       }
@@ -128,6 +219,41 @@ class XMLElement {
     }
     return $r;
   }
+}
+
+
+/**
+* Rebuild an XML tree in our own style from the parsed XML tags using
+* a tail-recursive approach.
+*
+* @param array $xmltags An array of XML tags we get from using the PHP XML parser
+* @param intref &$start_from A pointer to our current integer offset into $xmltags
+* @return mixed Either a single XMLElement, or an array of XMLElement objects.
+*/
+function BuildXMLTree( $xmltags, &$start_from ) {
+  $content = array();
+
+  for( $i=0; $i<10; $i++ ) {
+    $tagdata = $xmltags[$start_from++];
+    if ( !isset($tagdata) ) break;
+    if ( $tagdata['type'] == "close" ) break;
+    if ( $tagdata['type'] == "open" ) {
+      $subtree = BuildXMLTree( $xmltags, $start_from );
+      $content[] = new XMLElement($tagdata['tag'],$subtree);
+    }
+    else if ( $tagdata['type'] == "complete" ) {
+      $content[] = new XMLElement($tagdata['tag'],$tagdata['value'],$tagdata['attributes']);
+    }
+  }
+
+  /**
+  * If there is only one element, return it directly, otherwise return the
+  * array of them
+  */
+  if ( count($content) == 1 ) {
+    return $content[0];
+  }
+  return $content;
 }
 
 ?>

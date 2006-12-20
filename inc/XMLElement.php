@@ -18,6 +18,7 @@ require_once("AWLUtilities.php");
 */
 class XMLElement {
   var $tagname;
+  var $xmlns;
   var $attributes;
   var $content;
   var $_parent;
@@ -40,6 +41,9 @@ class XMLElement {
       $this->content = $content;
     }
     $this->attributes = $attributes;
+    if ( isset($this->attributes['xmlns']) ) {
+      $this->xmlns = $this->attributes['xmlns'];
+    }
   }
 
   /**
@@ -51,6 +55,9 @@ class XMLElement {
   function SetAttribute($k,$v) {
     if ( gettype($this->attributes) != "array" ) $this->attributes = array();
     $this->attributes[$k] = $v;
+    if ( strtolower($k) == 'xmlns' ) {
+      $this->xmlns = $v;
+    }
   }
 
   /**

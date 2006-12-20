@@ -125,9 +125,9 @@ class XMLElement {
   */
   function GetPath( $path ) {
     $elements = array();
-    printf( "Querying within '%s' for path '%s'\n", $this->tagname, $path );
+    // printf( "Querying within '%s' for path '%s'\n", $this->tagname, $path );
     if ( !preg_match( '#(/)?([^/]+)(/?.*)$#', $path, $matches ) ) return $elements;
-//    printf( "Matches: %s -- %s -- %s\n", $matches[1], $matches[2], $matches[3] );
+    // printf( "Matches: %s -- %s -- %s\n", $matches[1], $matches[2], $matches[3] );
     if ( $matches[2] == '*' || $matches[2] == $this->tagname ) {
       if ( $matches[3] == '' ) {
         /**
@@ -140,7 +140,7 @@ class XMLElement {
         * There is more to the path, so we recurse into that sub-part
         */
         foreach( $this->content AS $k => $v ) {
-          $elements = $elements + $v->GetPath($matches[3]);
+          $elements = array_merge( $elements, $v->GetPath($matches[3]) );
         }
       }
     }
@@ -150,9 +150,10 @@ class XMLElement {
       * If our input $path was not rooted, we recurse further
       */
       foreach( $this->content AS $k => $v ) {
-        $elements = $elements + $v->GetPath($path);
+        $elements = array_merge( $elements, $v->GetPath($path) );
       }
     }
+    // printf( "Found %d within '%s' for path '%s'\n", count($elements), $this->tagname, $path );
     return $elements;
   }
 

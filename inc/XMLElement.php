@@ -128,7 +128,7 @@ class XMLElement {
     // printf( "Querying within '%s' for path '%s'\n", $this->tagname, $path );
     if ( !preg_match( '#(/)?([^/]+)(/?.*)$#', $path, $matches ) ) return $elements;
     // printf( "Matches: %s -- %s -- %s\n", $matches[1], $matches[2], $matches[3] );
-    if ( $matches[2] == '*' || $matches[2] == $this->tagname ) {
+    if ( $matches[2] == '*' || strtolower($matches[2]) == strtolower($this->tagname) ) {
       if ( $matches[3] == '' ) {
         /**
         * That is the full path

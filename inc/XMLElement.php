@@ -183,6 +183,37 @@ class XMLElement {
     return $element;
   }
 
+
+  /**
+  * Render just the internal content
+  *
+  * @return string The content of this element, as a string without this element wrapping it.
+  */
+  function RenderContent($indent=0,$xmldef="") {
+    $r = "";
+    if ( is_array($this->content) ) {
+      /**
+      * Render the sub-elements with a deeper indent level
+      */
+      $r .= "\n";
+      foreach( $this->content AS $k => $v ) {
+        if ( is_object($v) ) {
+          $r .= $v->Render($indent+1);
+        }
+      }
+      $r .= substr("                        ",0,$indent);
+    }
+    else {
+      /**
+      * Render the content, with special characters escaped
+      *
+      */
+      $r .= htmlspecialchars($this->content, ENT_NOQUOTES );
+    }
+    return $r;
+  }
+
+
   /**
   * Render the document tree into (nicely formatted) XML
   *
@@ -201,25 +232,7 @@ class XMLElement {
     }
     if ( (is_array($this->content) && count($this->content) > 0) || (!is_array($this->content) && strlen($this->content) > 0) ) {
       $r .= ">";
-      if ( is_array($this->content) ) {
-        /**
-        * Render the sub-elements with a deeper indent level
-        */
-        $r .= "\n";
-        foreach( $this->content AS $k => $v ) {
-          if ( is_object($v) ) {
-            $r .= $v->Render($indent+1);
-          }
-        }
-        $r .= substr("                        ",0,$indent);
-      }
-      else {
-        /**
-        * Render the content, with special characters escaped
-        *
-        */
-        $r .= htmlspecialchars($this->content, ENT_NOQUOTES );
-      }
+      $r .= $this->RenderContent($indent,$xmldef);
       $r .= '</' . $this->tagname.">\n";
     }
     else {

@@ -238,7 +238,7 @@ class iCalendar {
       * In case there was no X-LIC-LOCATION defined, let's hope there is something in the TZID
       * that we can use.  We are looking for a string like "Pacific/Auckland" if possible.
       */
-      $tzname = preg_replace('#^[^a-z]*([a-z]+/[a-z]+)$#i','$1',$tzid );
+      $tzname = preg_replace('#^(.*[^a-z])?([a-z]+/[a-z]+)$#i','$1',$tzid );
       /**
       * Unfortunately this kind of thing will never work well :-(
       *

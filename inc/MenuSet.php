@@ -320,7 +320,7 @@ class MenuSet {
   function &AddSubMenu( &$submenu_set, $label, $target, $title="", $active=false, $sortkey=2000 ) {
     $new_option =& $this->AddOption( $label, $target, $title, $active, $sortkey );
     $submenu_set->parent = &$new_option ;
-    $new_option->AddSubmenu( &$submenu_set );
+    $new_option->AddSubmenu( $submenu_set );
     return $new_option ;
   }
 

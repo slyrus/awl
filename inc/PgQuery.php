@@ -460,12 +460,12 @@ class PgQuery
   * @return mixed query row
   */
   function Fetch($as_array = false) {
-    global $debuggroups;
+    global $c, $debuggroups;
 
     if ( ( isset($debuggroups["$this->location"]) && $debuggroups["$this->location"] > 2 )
-          || ( isset($c->dbg[strtolower($this->location)]) && isset($c->dbg[strtolower($this->location)]) )
-          || isset($c->dbg['ALL']) ) {
-      $this->_log_error( $this->location, "Fetch", "$this->result Rows: $this->rows, Rownum: $this->rownum");
+            || (isset($c) && is_object($c) && ( isset($c->dbg[strtolower($this->location)]) && isset($c->dbg[strtolower($this->location)]) )
+                                             || isset($c->dbg['ALL']) ) {
+        $this->_log_error( $this->location, "Fetch", "$this->result Rows: $this->rows, Rownum: $this->rownum");
     }
     if ( ! $this->result ) return false; // no results
     if ( ($this->rownum + 1) >= $this->rows ) return false; // reached the end of results

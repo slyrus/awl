@@ -286,7 +286,7 @@ class MenuSet {
   function &AddOption( $label, $target, $title="", $active=false, $sortkey=1000 ) {
     $new_option =& new MenuOption( $label, $target, $title, $this->main_class, $sortkey );
     if ( ($old_option = $this->_OptionExists( $label )) === false ) {
-      array_push( $this->options, &$new_option );
+      $this->options[] = &$new_option ;
     }
     else {
       dbg_error_log("MenuSet",":AddOption: Replacing existing option # $old_option ($label)");

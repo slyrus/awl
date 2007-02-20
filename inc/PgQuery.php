@@ -463,8 +463,8 @@ class PgQuery
     global $c, $debuggroups;
 
     if ( ( isset($debuggroups["$this->location"]) && $debuggroups["$this->location"] > 2 )
-            || (isset($c) && is_object($c) && ( isset($c->dbg[strtolower($this->location)]) && isset($c->dbg[strtolower($this->location)]) )
-                                             || isset($c->dbg['ALL']) ) {
+       || (isset($c) && is_object($c) && ( isset($c->dbg[strtolower($this->location)]) && isset($c->dbg[strtolower($this->location)]) )
+                                        || isset($c->dbg['ALL']) ) ) {
         $this->_log_error( $this->location, "Fetch", "$this->result Rows: $this->rows, Rownum: $this->rownum");
     }
     if ( ! $this->result ) return false; // no results

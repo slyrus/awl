@@ -1,8 +1,15 @@
+awl (0.16) unstable; urgency=low
+
+  * Fix some warnings under PHP5.
+  * Minor change to query logging.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Tue,  6 Mar 2007 15:03:49 +1300
+
 awl (0.15) unstable; urgency=low
 
   * Release 0.15.
 
- -- Andrew McMillan <debian@mcmillan.net.nz>  Mon, 19 Feb 2007 21:03:33 +1300
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Mon, 19 Feb 2007 21:04:22 +1300
 
 awl (0.14) unstable; urgency=low
 

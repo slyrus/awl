@@ -1,3 +1,9 @@
+awl (0.17) unstable; urgency=low
+
+  * Added a clone() function for forward compatibility with PHP5.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Mon, 19 Mar 2007 12:48:35 +1200
+
 awl (0.16) unstable; urgency=low
 
   * Fix some warnings under PHP5.

@@ -222,4 +222,13 @@ if ( !function_exists("translate") ) {
   require_once("Translation.php");
 }
 
+ if ( !function_exists("clone") && version_compare(phpversion(), '5.0') < 0) {
+  /**
+  * PHP5 screws with the assignment operator changing so that $a = $b means that
+  * $a becomes a reference to $b.  There is a clone() that we can use in PHP5, so
+  * we have to emulate that for PHP4.  Bleargh.
+  */
+  eval( 'function clone($object) { return $object; }' );
+}
+
 ?>

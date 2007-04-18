@@ -829,7 +829,7 @@ EOTEXT;
         $out = sprintf( "%d/%d/%d", $dy, $mo, $yr );
         break;
       default:
-        $out = sprintf( "%d-%d-%d", $yr, $mo, $dy );
+        $out = sprintf( "%d-%02d-%02d", $yr, $mo, $dy );
         break;
     }
     if ( $type == 'timestamp' ) {

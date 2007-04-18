@@ -1,3 +1,9 @@
+awl (0.18) unstable; urgency=low
+
+  * Improve formatting of default date.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Wed, 18 Apr 2007 22:10:21 +1200
+
 awl (0.17) unstable; urgency=low
 
   * Added a clone() function for forward compatibility with PHP5.

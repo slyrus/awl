@@ -1,4 +1,12 @@
 <?php
+/**
+* Functions involved in translating with gettext
+* @package awl
+* @subpackage   Translation
+* @author    Andrew McMillan <andrew@catalyst.net.nz>
+* @copyright Catalyst IT Ltd
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+*/
 if ( !function_exists("i18n") ) {
   /**
   * Mark a string as being internationalized.  This is a semaphore method; it

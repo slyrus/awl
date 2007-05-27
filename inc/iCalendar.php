@@ -257,7 +257,7 @@ class iCalendar {
       dbg_error_log( "icalendar", " TZCrap: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
     }
 
-    if ( $tzid != '' && isset($c->save_time_zone_defs) && $c->save_time_zone_defs && $qry->rows != 1 ) {
+    if ( $tzid != '' && isset($c->save_time_zone_defs) && $c->save_time_zone_defs && $qry->rows != 1 && isset($this->vtimezone) && $this->vtimezone != "" ) {
       $qry2 = new PgQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
                                    $tzid, $this->tz_locn, $this->vtimezone );
       $qry2->Exec("iCalendar");

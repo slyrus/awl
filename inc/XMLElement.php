@@ -79,6 +79,15 @@ class XMLElement {
   }
 
   /**
+  * Accessor for a single attribute
+  * @param string $attr The name of the attribute.
+  * @return string The value of that attribute of the element
+  */
+  function GetAttribute( $attr ) {
+    return $this->attributes[$attr];
+  }
+
+  /**
   * Accessor for the attributes
   *
   * @return array The attributes of this element

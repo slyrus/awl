@@ -263,17 +263,15 @@ class XMLElement {
 function BuildXMLTree( $xmltags, &$start_from ) {
   $content = array();
 
-  for( $i=0; $i<10; $i++ ) {
-    $tagdata = $xmltags[$start_from++];
-    if ( !isset($tagdata) ) break;
-    if ( $tagdata['type'] == "close" ) break;
-    if ( $tagdata['type'] == "open" ) {
-      $subtree = BuildXMLTree( $xmltags, $start_from );
-      $content[] = new XMLElement($tagdata['tag'],$subtree);
-    }
-    else if ( $tagdata['type'] == "complete" ) {
-      $content[] = new XMLElement($tagdata['tag'],$tagdata['value'],$tagdata['attributes']);
-    }
+  $tagdata = $xmltags[$start_from++];
+  if ( !isset($tagdata) ) break;
+  if ( $tagdata['type'] == "close" ) break;
+  if ( $tagdata['type'] == "open" ) {
+    $subtree = BuildXMLTree( $xmltags, $start_from );
+    $content[] = new XMLElement($tagdata['tag'],$subtree);
+  }
+  else if ( $tagdata['type'] == "complete" ) {
+    $content[] = new XMLElement($tagdata['tag'],$tagdata['value'],$tagdata['attributes']);
   }
 
   /**

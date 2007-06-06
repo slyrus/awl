@@ -112,14 +112,13 @@ class XMLElement {
   */
   function GetElements( $tag, $recursive=false ) {
     $elements = array();
-    printf( "Getting elements like %s %swithin %s\n", $tag, ($recursive?'recursively ':''), $this->tagname );
     if ( gettype($this->content) == "array" ) {
       foreach( $this->content AS $k => $v ) {
         if ( $v->tagname == $tag ) {
           $elements[] = $v;
         }
         if ( $recursive ) {
-          $elements = $elements + $this->GetElements($tag,true);
+          $elements = $elements + $v->GetElements($tag,true);
         }
       }
     }

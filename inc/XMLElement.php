@@ -268,7 +268,7 @@ function BuildXMLTree( $xmltags, &$start_from ) {
     if ( $tagdata['type'] == "close" ) break;
     if ( $tagdata['type'] == "open" ) {
       $subtree = BuildXMLTree( $xmltags, $start_from );
-      $content[] = new XMLElement($tagdata['tag'],$subtree);
+      $content[] = new XMLElement($tagdata['tag'],$subtree,$tagdata['attributes']);
     }
     else if ( $tagdata['type'] == "complete" ) {
       $content[] = new XMLElement($tagdata['tag'],$tagdata['value'],$tagdata['attributes']);

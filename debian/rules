@@ -7,13 +7,13 @@ dt=debian/$(package)
 
 build: debian/rules inc
 	$(checkdir)
-	cd ~andrew/projects/phpdoc/phpDocumentor-1.2.3 && ./phpdoc -c ~andrew/projects/awl/debian/awl-phpdoc.ini
+	make
 	touch build
 
 clean:
 	$(checkdir)
+	make clean
 	rm -f build
-	rm -f `find . -name "*~"`
 	-rm -rf $(dt) debian/files* core debian/substvars debian/html
 
 binary-indep: checkroot build

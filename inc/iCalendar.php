@@ -22,25 +22,25 @@ class iCalProp {
 
   /**
    * The name of this property
-   * 
+   *
    * @var string
    */
   var $name;
-  
+
   /**
    * An array of parameters to this property, represented as key/value pairs.
    *
    * @var array
    */
   var $parameters;
-  
+
   /**
    * The value of this property.
    *
    * @var string
    */
   var $content;
-  
+
   /**#@-*/
 
   /**
@@ -48,7 +48,7 @@ class iCalProp {
    *   propname[;param1=pval1[; ... ]]:propvalue
    * however we allow ourselves to assume that the RFC2445 content unescaping has already
    * happened, which is reasonable as this is done in iCalendar::BuildFromText().
-   * 
+   *
    * @param string $propstring The string from the iCalendar which contains this property.
    */
   function iCalProp($propstring) {
@@ -68,9 +68,9 @@ class iCalProp {
 
   /**
    * Get/Set name property
-   * 
+   *
    * @param string $newname [optional] A new name for the property
-   * 
+   *
    * @return string The name for the property.
    */
   function Name( $newname = null ) {
@@ -80,21 +80,21 @@ class iCalProp {
 
   /**
    * Test if our value contains a string
-   * 
+   *
    * @param string $search The needle which we shall search the haystack for.
-   * 
+   *
    * @return string The name for the property.
    */
   function TextMatch( $search ) {
     return strstr( $this->content, $search );
   }
 
-  
+
   /**
    * Get the value of a parameter
-   * 
+   *
    * @param string $name The name of the parameter to retrieve the value for
-   * 
+   *
    * @return string The value of the parameter
    */
   function GetParameterValue( $name ) {
@@ -289,8 +289,8 @@ class iCalendar {
   */
   function BuildFromText( $icalendar ) {
     /**
-     * This unescapes the (CRLF + linear space) wrapping specified in RFC2445. According 
-     * to RFC2445 we should always end with CRLF but the CalDAV spec says that normalising 
+     * This unescapes the (CRLF + linear space) wrapping specified in RFC2445. According
+     * to RFC2445 we should always end with CRLF but the CalDAV spec says that normalising
      * XML parsers often muck with it and may remove the CR.
      */
     $icalendar = preg_replace('/\r?\n[ \t]/', '', $icalendar );
@@ -435,11 +435,11 @@ class iCalendar {
   /**
    * Return all sub-components of the given type, which are part of the
    * component we pass in as an array of lines.
-   * 
+   *
    * @param array $component The component to be parsed
    * @param string $type The type of sub-components to be extracted
    * @param int $count The number of sub-components to extract (default: 9999)
-   * 
+   *
    * @return array The sub-component lines
    */
   function ExtractSubComponent( $component, $type, $count=9999 ) {
@@ -465,15 +465,15 @@ class iCalendar {
     return $answer;
   }
 
-  
+
   /**
    * Extract a particular property from the provided component.  In doing so we
    * make the assumption that the content has previously been unescaped (which is
    * done in the BuildFromText() method).
-   * 
+   *
    * @param array $component An array of lines of this component
    * @param string $type The type of parameter
-   * 
+   *
    * @return array An array of iCalProperty objects
    */
   function ExtractProperty( $component, $type, $count=9999 ) {
@@ -483,24 +483,25 @@ class iCalendar {
     foreach( $component AS $k => $v ) {
       if ( preg_match( "/$type"."[;:]/i", $v ) ) {
         $answer[] = new iCalProp($v);
+        dbg_error_log( "iCalendar", ":ExtractProperty: Found property %s", $type );
         if ( --$count < 1 ) return $answer;
       }
     }
     return $answer;
   }
-  
-  
+
+
   /**
    * Applies the filter conditions, possibly recursively, to the value which will be either
    * a single property, or an array of lines of the component under test.
-   * 
+   *
    * @TODO Eventually we need to handle all of these possibilities, which will mean writing
    * several routines:
    *  - Get Property from Component
    *  - Get Parameter from Property
    *  - Test TimeRange
-   * For the moment we will leave these, until there is a perceived need. 
-   * 
+   * For the moment we will leave these, until there is a perceived need.
+   *
    * @param array $filter An array of XMLElement defining the filter(s)
    * @param mixed $value Either a string which is the single property, or an array of lines, for the component.
    * @return boolean Whether the filter passed / failed.
@@ -508,14 +509,21 @@ class iCalendar {
   function ApplyFilter( $filter, $value ) {
     foreach( $filter AS $k => $v ) {
       $tag = $v->GetTag();
-      if ('URN:IETF:PARAMS:XML:NS:CALDAV:IS-NOT-DEFINED' && isset($value) )
+      $value_type = gettype($value);
+      $value_defined = (isset($value) && $value_type == 'string') || ($value_type == 'array' && count($value) > 0 );
+      if ( $tag == 'URN:IETF:PARAMS:XML:NS:CALDAV:IS-NOT-DEFINED' && $value_defined ) {
+        dbg_error_log( "iCalendar", ":ApplyFilter: Value is set ('%s'), want unset, for filter %s", count($value), $tag );
         return false;
+      }
+      elseif ( $tag == 'URN:IETF:PARAMS:XML:NS:CALDAV:IS-DEFINED' && !$value_defined ) {
+        dbg_error_log( "iCalendar", ":ApplyFilter: Want value, but it is not set for filter %s", $tag );
+        return false;
+      }
       else {
-        if ( !isset($value) ) return false; // Also handles the IF-DEFINED case silently
-        switch( $tag ) {      
+        switch( $tag ) {
           case 'URN:IETF:PARAMS:XML:NS:CALDAV:TIME-RANGE':
-            // TODO: While this is unimplemented at present, most time-range tests should occur at the SQL level.
-            break;      
+            /** TODO: While this is unimplemented here at present, most time-range tests should occur at the SQL level. */
+            break;
           case 'URN:IETF:PARAMS:XML:NS:CALDAV:TEXT-MATCH':
             $search = $v->GetContent();
             // In this case $value will either be a string, or an array of iCalProp objects
@@ -525,24 +533,31 @@ class iCalendar {
                 $match = false;
                 foreach( $value AS $k1 => $v1 ) {
                   // $v1 could be an iCalProp object
-                  if ( $match = $v1->TextMatch($search[0])) break;
+                  if ( $match = $v1->TextMatch($search)) break;
                 }
+              }
+              else {
+                dbg_error_log( "iCalendar", ":ApplyFilter: TEXT-MATCH will only work on strings or arrays of iCalProp.  %s unsupported", gettype($value) );
+                return true;  // We return _true_ in this case, so the client sees the item
               }
             }
             else {
               $match = strstr( $value, $search[0] );
             }
             $negate = $v->GetAttribute("NEGATE-CONDITION");
-            if ( isset($negate) && strtolower($negate) == "yes" && $match ) return false;
-            break;      
+            if ( isset($negate) && strtolower($negate) == "yes" && $match ) {
+              dbg_error_log( "iCalendar", ":ApplyFilter: TEXT-MATCH of %s'%s' against '%s'", (isset($negate) && strtolower($negate) == "yes"?'!':''), $search, $value );
+              return false;
+            }
+            break;
           case 'URN:IETF:PARAMS:XML:NS:CALDAV:COMP-FILTER':
             $subfilter = $v->GetContent();
             $component = $this->ExtractSubComponent($value,$v->GetAttribute("NAME"));
             if ( ! $this->ApplyFilter($subfilter,$component) ) return false;
-            break;      
+            break;
           case 'URN:IETF:PARAMS:XML:NS:CALDAV:PROP-FILTER':
             $subfilter = $v->GetContent();
-            $properties = $this->ExtractProperties($value,$v->GetAttribute("NAME"));
+            $properties = $this->ExtractProperty($value,$v->GetAttribute("NAME"));
             if ( ! $this->ApplyFilter($subfilter,$properties) ) return false;
             break;
           case 'URN:IETF:PARAMS:XML:NS:CALDAV:PARAM-FILTER':
@@ -550,32 +565,37 @@ class iCalendar {
             $parameter = $this->ExtractParameter($value,$v->GetAttribute("NAME"));
             if ( ! $this->ApplyFilter($subfilter,$parameter) ) return false;
             break;
-        }      
+        }
       }
     }
     return true;
   }
-  
+
   /**
    * Test a PROP-FILTER or COMP-FILTER and return a true/false
    * COMP-FILTER (is-defined | is-not-defined | (time-range?, prop-filter*, comp-filter*))
    * PROP-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))
    *
    * @param array $filter An array of XMLElement defining the filter
-   * 
+   *
    * @return boolean Whether or not this iCalendar passes the test
    */
-  function TestFilter( $filter ) {
-    $name = $ical->Get($v->GetAttribute("NAME"));
-    $filter = $v->GetContent();
-    if ( $filter->GetTag() == "URN:IETF:PARAMS:XML:NS:CALDAV:PROP-FILTER" ) {
-      $value = $this->ExtractProperties($this->lines,$name);
+  function TestFilter( $filters ) {
+
+    foreach( $filters AS $k => $v ) {
+      $tag = $v->GetTag();
+      $name = $v->GetAttribute("NAME");
+      $filter = $v->GetContent();
+      if ( $tag == "URN:IETF:PARAMS:XML:NS:CALDAV:PROP-FILTER" ) {
+        $value = $this->ExtractProperty($this->lines,$name);
+      }
+      else {
+        $value = $this->ExtractSubComponent($this->lines,$v->GetAttribute("NAME"));
+      }
+      if ( count($value) == 0 ) unset($value);
+      if ( ! $this->ApplyFilter($filter,$value) ) return false;
     }
-    else {
-      $value = $this->ExtractSubComponent($this->lines,$v->GetAttribute("NAME"));
-    }
-    if ( count($value) == 0 ) unset($value);
-    return $this->ApplyFilter($filter,$value);
+    return true;
   }
 
   /**

@@ -182,6 +182,13 @@ class iCalendar {
   }
 
   /**
+  * An array of property names that we should always want when rendering an iCalendar
+  */
+  function DefaultPropertyList() {
+    return array( "uid", "dtstamp", "dtstart", "duration", "last-modified","class", "transp", "sequence", "due", "summary" );
+  }
+
+  /**
   * A function to extract the contents of a BEGIN:SOMETHING to END:SOMETHING (perhaps multiply)
   * and return just that bit (or, of course, those bits :-)
   *

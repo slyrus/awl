@@ -1,3 +1,13 @@
+awl (0.19) unstable; urgency=low
+
+  * More care when recording timezones.
+  * New PHPDocumentor structure.
+  * Various fixes and enhancements to XMLElement.php
+  * New packaging layout.
+  * Changes to iCalendar.php to implement CalDAV filters.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Thu, 14 Jun 2007 20:31:55 +0100
+
 awl (0.18) unstable; urgency=low
 
   * Improve formatting of default date.

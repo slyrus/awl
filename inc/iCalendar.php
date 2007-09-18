@@ -282,7 +282,7 @@ class iCalendar {
         if ( $this->parsing_vtimezone && (!isset($this->tz_locn) || $this->tz_locn == "") && $property == 'X-LIC-LOCATION' ) {
           $this->tz_locn = $value;
         }
-        $properties[strtoupper($property)] = $value;
+        $properties[strtoupper($property)] = $this->RFC2445ContentUnescape($value);
       }
     }
     return $properties;
@@ -303,6 +303,7 @@ class iCalendar {
     $icalendar = preg_replace('/\r?\n[ \t]/', '', $icalendar );
 
     $this->lines = preg_split('/\r?\n/', $icalendar );
+
     $this->_current_parse_line = 0;
     $this->properties = $this->ParseSomeLines('');
 
@@ -318,6 +319,21 @@ class iCalendar {
     }
 
   }
+
+
+  /**
+  * Returns a content string with the RFC2445 escaping removed
+  *
+  * @param string $escaped The incoming string to be escaped.
+  * @return string The string with RFC2445 content escaping removed.
+  */
+  function RFC2445ContentUnescape( $escaped ) {
+    $unescaped = str_replace( '\\n', "\n", $escaped);
+    $unescaped = str_replace( '\\N', "\n", $unescaped);
+    $unescaped = preg_replace( "/\\\\([,;:\"\\\\])/", '$1', $unescaped);
+    return $unescaped;
+  }
+
 
 
   /**
@@ -427,15 +443,29 @@ class iCalendar {
   /**
   * Returns a suitably escaped RFC2445 content string.
   *
-  * @param string The incoming name[;param] prefixing the string.
-  * @param string The incoming string to be escaped.
+  * @param string $name The incoming name[;param] prefixing the string.
+  * @param string $value The incoming string to be escaped.
   */
   function RFC2445ContentEscape( $name, $value ) {
-    $value = str_replace( '\\', '\\\\', $value);
-    $value = str_replace( "\n", '\\n', $value);
-    $value = str_replace( "\r", '\\r', $value);
-    $value = preg_replace( "/([,;:\"\'])/", '\\\\$1', $value);
-    $result = wordwrap("$name:$value", 75, " \r\n ", true ) . "\r\n";
+    $property = preg_replace( '/[;].*$/', '', $name );
+    switch( $property ) {
+        /** Content escaping does not apply to these properties culled from RFC2445 */
+      case 'ATTACH':                case 'GEO':                       case 'PERCENT-COMPLETE':      case 'PRIORITY':
+      case 'COMPLETED':             case 'DTEND':                     case 'DUE':                   case 'DTSTART':
+      case 'DURATION':              case 'FREEBUSY':                  case 'TZOFFSETFROM':          case 'TZOFFSETTO':
+      case 'TZURL':                 case 'ATTENDEE':                  case 'ORGANIZER':             case 'RECURRENCE-ID':
+      case 'URL':                   case 'EXDATE':                    case 'EXRULE':                case 'RDATE':
+      case 'RRULE':                 case 'REPEAT':                    case 'TRIGGER':               case 'CREATED':
+      case 'DTSTAMP':               case 'LAST-MODIFIED':             case 'SEQUENCE':
+        break;
+
+        /** Content escaping applies by default to other properties */
+      default:
+        $value = str_replace( '\\', '\\\\', $value);
+        $value = preg_replace( '/\r?\n/', '\\n', $value);
+        $value = preg_replace( "/([,;:\"])/", '\\\\$1', $value);
+    }
+    $result = wordwrap("$name:$value", 73, " \r\n ", true ) . "\r\n";
     return $result;
   }
 

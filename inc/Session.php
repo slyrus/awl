@@ -308,12 +308,14 @@ class Session
 *
 * @param string $username The user's login name, or at least what they entered it as.
 * @param string $password The user's password, or at least what they entered it as.
+* @param string $authenticated If true, then authentication has already happened and the password is not checked, though the user must still exist.
 * @return boolean Whether or not the user correctly guessed a temporary password within the necessary window of opportunity.
 */
-  function Login( $username, $password ) {
+  function Login( $username, $password, $authenticated = false ) {
     global $c;
     $rc = false;
     dbg_error_log( "Login", " Login: Attempting login for $username" );
+    if ( isset($usr) ) unset($usr);  /** In case someone is running with register_globals on */
 
     /**
     * TODO In here we will need to put code to call the auth plugin, in order to
@@ -321,8 +323,7 @@ class Session
     * thinking it through... like ...
     *
     */
-    $authenticated = false;
-    if ( isset($c->authenticate_hook) && isset($c->authenticate_hook['call']) && function_exists($c->authenticate_hook['call']) ) {
+    if ( !$authenticated && isset($c->authenticate_hook) && isset($c->authenticate_hook['call']) && function_exists($c->authenticate_hook['call']) ) {
       /**
       * The authenticate hook needs to:
       *   - Accept a username / password
@@ -339,8 +340,7 @@ class Session
 
     $sql = "SELECT * FROM usr WHERE lower(username) = ? ";
     $qry = new PgQuery( $sql, strtolower($username) );
-    if ( $authenticated || ($qry->Exec('Login',__LINE__,__FILE__) && $qry->rows == 1) ) {
-      if ( ! $authenticated ) $usr = $qry->Fetch();
+    if ( isset($usr) || ($qry->Exec('Login',__LINE__,__FILE__) && $qry->rows == 1 && $usr = $qry->Fetch() ) ) {
       if ( $authenticated || session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {
         // Now get the next session ID to create one from...
         $qry = new PgQuery( "SELECT nextval('session_session_id_seq')" );
@@ -798,6 +798,15 @@ EOTEXT;
       // Validate long-term session details
       $this->LSIDLogin( $_COOKIE['lsid'] );
       dbg_error_log( "Login", ":_CheckLogin: User $this->username - $this->fullname ($this->user_no) login status is $this->logged_in" );
+    }
+    else if ( !isset($_COOKIE['sid']) && isset($c->authenticate_hook['server_auth_type']) && $c->authenticate_hook['server_auth_type'] == $_SERVER['AUTH_TYPE']) {
+      /**
+      * The authentication has happened in the server, and we should accept it.
+      * Perhaps this 'split' is not a good idea though.  People may want to use the
+      * full ID as the username.  A further option may be desirable.
+      */
+      list($username) = split('@', $_SERVER['REMOTE_USER']);
+      $this->Login($username, "", true);  // Password will not be checked.
     }
   }
 

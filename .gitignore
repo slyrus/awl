@@ -2,3 +2,5 @@ awl.bfproject
 build
 awl.session
 built-docs
+*~
+.*.swp

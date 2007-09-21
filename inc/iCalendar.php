@@ -41,6 +41,13 @@ class iCalProp {
    */
   var $content;
 
+  /**
+   * The original value that this was parsed from, if that's the way it happened.
+   *
+   * @var string
+   */
+  var $rendered;
+
   /**#@-*/
 
   /**
@@ -51,7 +58,25 @@ class iCalProp {
    *
    * @param string $propstring The string from the iCalendar which contains this property.
    */
-  function iCalProp($propstring) {
+  function iCalProp( $propstring = null ) {
+    $this->name = "";
+    $this->content = "";
+    $this->parameters = array();
+    unset($this->rendered);
+    if ( $propstring != null ) $this->ParseFrom($propstring);
+  }
+
+
+  /**
+   * The constructor parses the incoming string, which is formatted as per RFC2445 as a
+   *   propname[;param1=pval1[; ... ]]:propvalue
+   * however we allow ourselves to assume that the RFC2445 content unescaping has already
+   * happened, which is reasonable as this is done in iCalendar::BuildFromText().
+   *
+   * @param string $propstring The string from the iCalendar which contains this property.
+   */
+  function ParseFrom( $propstring ) {
+    $this->rendered = $propstring;
     $pos = strpos( $propstring, ':');
     $start = substr( $propstring, 0, $pos1 - 1);
     $this->content = substr( $propstring, $pos1 + 1);
@@ -66,6 +91,7 @@ class iCalProp {
     }
   }
 
+
   /**
    * Get/Set name property
    *
@@ -74,8 +100,27 @@ class iCalProp {
    * @return string The name for the property.
    */
   function Name( $newname = null ) {
-    if ( $newname != null ) $this->name = $newname;
+    if ( $newname != null ) {
+      $this->name = $newname;
+      if ( isset($this->rendered) ) unset($this->rendered);
+    }
     return $this->name;
+  }
+
+
+  /**
+   * Get/Set the content of the property
+   *
+   * @param string $newvalue [optional] A new value for the property
+   *
+   * @return string The value of the property.
+   */
+  function Value( $newvalue = null ) {
+    if ( $newvalue != null ) {
+      $this->content = $newvalue;
+      if ( isset($this->rendered) ) unset($this->rendered);
+    }
+    return $this->content;
   }
 
   /**
@@ -99,6 +144,267 @@ class iCalProp {
    */
   function GetParameterValue( $name ) {
     if ( $this->parameters[$name] ) return $this->parameters[$name];
+  }
+
+  /**
+   * Set the value of a parameter
+   *
+   * @param string $name The name of the parameter to set the value for
+   *
+   * @param string $value The value of the parameter
+   */
+  function SetParameterValue( $name, $value ) {
+    if ( isset($this->rendered) ) unset($this->rendered);
+    $this->parameters[$name] = $value;
+  }
+
+  /**
+  * Render the set of parameters as key1=value1[;key2=value2[; ...]] with
+  * any colons or semicolons escaped.
+  */
+  function RenderParameters() {
+    $rendered = "";
+    foreach( $this->parameters AS $k => $v ) {
+      $escaped = preg_replace( "/([;:\"])/", '\\\\$1', $v);
+      $rendered .= sprintf( ";%s=%s", $k, $escaped );
+    }
+    return $rendered;
+  }
+
+
+  /**
+  * Render a suitably escaped RFC2445 content string.
+  */
+  function Render() {
+    // If we still have the string it was parsed in from, it hasn't been screwed with
+    // and we can just return that without modification.
+    if ( isset($this->rendered) ) return $this->rendered;
+
+    $property = preg_replace( '/[;].*$/', '', $this->name );
+    $escaped = $this->value;
+    switch( $property ) {
+        /** Content escaping does not apply to these properties culled from RFC2445 */
+      case 'ATTACH':                case 'GEO':                       case 'PERCENT-COMPLETE':      case 'PRIORITY':
+      case 'DURATION':              case 'FREEBUSY':                  case 'TZOFFSETFROM':          case 'TZOFFSETTO':
+      case 'TZURL':                 case 'ATTENDEE':                  case 'ORGANIZER':             case 'RECURRENCE-ID':
+      case 'URL':                   case 'EXRULE':                    case 'SEQUENCE':              case 'CREATED':
+      case 'RRULE':                 case 'REPEAT':                    case 'TRIGGER':
+        break;
+
+      case 'COMPLETED':             case 'DTEND':
+      case 'DUE':                   case 'DTSTART':
+      case 'DTSTAMP':               case 'LAST-MODIFIED':
+      case 'CREATED':               case 'EXDATE':
+      case 'RDATE':
+        if ( isset($this->parameters['VALUE']) && $this->parameters['VALUE'] == 'DATE' ) {
+          $escaped = substr( $escaped, 0, 8);
+        }
+        break;
+
+        /** Content escaping applies by default to other properties */
+      default:
+        $escaped = str_replace( '\\', '\\\\', $escaped);
+        $escaped = preg_replace( '/\r?\n/', '\\n', $escaped);
+        $escaped = preg_replace( "/([,;:\"])/", '\\\\$1', $escaped);
+    }
+    $this->rendered = wordwrap( sprintf( "%s%s:%s", $this->name, $this->RenderParameters(), $escaped), 73, " \r\n ", true ) . "\r\n";
+    return $this->rendered;
+  }
+
+}
+
+
+/**
+* A Class for representing components within an iCalendar
+*
+* @package awl
+*/
+class iCalComponent {
+  /**#@+
+   * @access private
+   */
+
+  /**
+   * The type of this component, such as 'VEVENT', 'VTODO', 'VTIMEZONE', etc.
+   *
+   * @var string
+   */
+  var $type;
+
+  /**
+   * An array of properties, which are iCalProp objects
+   *
+   * @var array
+   */
+  var $properties;
+
+  /**
+   * An array of (sub-)components, which are iCalComponent objects
+   *
+   * @var array
+   */
+  var $components;
+
+  /**
+   * The rendered result (or what was originally parsed, if there have been no changes)
+   *
+   * @var array
+   */
+  var $rendered;
+
+  /**#@-*/
+
+  function iCalComponent() {
+    $this->type = "";
+    $this->properties = array();
+    $this->components = array();
+    $this->rendered = "";
+  }
+
+
+  function ParseFrom( $content ) {
+    $this->rendered = $content;
+    $content = $this->UnwrapComponent($content);
+
+    $lines = preg_split('/\r?\n/', $content );
+
+    $type = false;
+    $subtype = false;
+    $finish = null;
+    $subfinish = null;
+    foreach( $lines AS $k => $v ) {
+      if ( $type === false ) {
+        if ( preg_match( '^BEGIN:(.+)$', $v, $matches ) ) {
+          // We have found the start of the main component
+          $type = $matches[1];
+          $finish = 'END:$type';
+          $this->type = $type;
+        }
+        else {
+          $this->rendered = null;
+          unset($lines[$k]);  // The content has crap before the start
+        }
+      }
+      else if ( $type == null ) {
+        unset($lines[$k]);  // The content has crap after the end
+        $this->rendered = null;
+      }
+      else if ( $v == $finish ) {
+        $type = null;  // We have reached the end of our component
+      }
+      else {
+        if ( $subtype === false && preg_match( '^BEGIN:(.+)$', $v, $matches ) ) {
+          // We have found the start of a sub-component
+          $subtype = $matches[1];
+          $subfinish = 'END:$subtype';
+          $subcomponent = "$v\r\n";
+        }
+        else if ( $subtype ) {
+          // We are inside a sub-component
+          $subcomponent .= "$v\r\n";
+          if ( $v == $subfinish ) {
+            // We have found the end of a sub-component
+            $subcomponent .= "$v\r\n";
+            $this->components[] = new iCalComponent($subcomponent);
+            $subtype = false;
+          }
+        }
+        else {
+          // It must be a normal property line within a component.
+          $property = new iCalProp($v);
+          $this->properties[$property->Name()] = clone($property);
+        }
+      }
+    }
+
+    $this->_current_parse_line = 0;
+    $this->properties = $this->ParseSomeLines('');
+  }
+
+
+  /**
+    * This unescapes the (CRLF + linear space) wrapping specified in RFC2445. According
+    * to RFC2445 we should always end with CRLF but the CalDAV spec says that normalising
+    * XML parsers often muck with it and may remove the CR.  We accept either case.
+    */
+  function UnwrapComponent( $content ) {
+    return preg_replace('/\r?\n[ \t]/', '', $content );
+  }
+
+  /**
+    * This imposes the (CRLF + linear space) wrapping specified in RFC2445. According
+    * to RFC2445 we should always end with CRLF but the CalDAV spec says that normalising
+    * XML parsers often muck with it and may remove the CR.  We output RFC2445 compliance.
+    */
+  function WrapComponent( $content ) {
+    return wordwrap( $content, 73, " \r\n ", true ) . "\r\n";
+  }
+
+  function GetType() {
+    return $this->type;
+  }
+
+
+  function SetType( $type ) {
+    if ( isset($this->rendered) ) unset($this->rendered);
+    $this->type = $type;
+    return $this->type;
+  }
+
+
+  function GetProperty( $name ) {
+    return $this->properties[$name];
+  }
+
+
+  function SetProperty( $name, $value ) {
+    if ( isset($this->rendered) ) unset($this->rendered);
+    $this->properties[$name] = $value;
+    return $this->properties[$name];
+  }
+
+
+  function GetPropertyParameter( $property, $name ) {
+    if ( ! isset($this->properties[$property]) ) return null;
+    return $this->properties[$property]->GetParameterValue($name);
+  }
+
+
+  function SetPropertyParameter( $property, $name, $value ) {
+    if ( isset($this->rendered) ) unset($this->rendered);
+    $this->properties[$property]->SetParameterValue($name,$value);
+    return $value;
+  }
+
+
+  function GetComponents( $type = null ) {
+    $components = clone($this->components);
+    if ( $type != null ) {
+      foreach( $components AS $k => $v ) {
+        if ( $v->GetType() != $type ) {
+          unset($components[$k]);
+        }
+      }
+      $components = array_values($components);
+    }
+    return $components;
+  }
+
+
+  function SetComponents( $new_components ) {
+    if ( isset($this->rendered) ) unset($this->rendered);
+    $this->components  = clone($new_components);
+  }
+
+
+  function Render() {
+    if ( ! isset($this->rendered) ) {
+      $this->rendered = "BEGIN:$this->type\r\n";
+      foreach( $this->properties AS $v ) {   $this->rendered .= $v->Render();  }
+      foreach( $this->components AS $v ) {   $this->rendered .= $v->Render();  }
+      $this->rendered .= "END:$this->type\r\n";
+    }
+    return $this->rendered;
   }
 
 }

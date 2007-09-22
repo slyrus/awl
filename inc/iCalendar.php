@@ -254,6 +254,9 @@ class iCalComponent {
 
   /**#@-*/
 
+  /**
+  * A basic constructor
+  */
   function iCalComponent() {
     $this->type = "";
     $this->properties = array();
@@ -261,7 +264,10 @@ class iCalComponent {
     $this->rendered = "";
   }
 
-
+  /**
+  * Parse the text $content into sets of iCalProp & iCalComponent within this iCalComponent
+  * @param string $content The raw RFC2445-compliant iCalendar component, including BEGIN:TYPE & END:TYPE
+  */
   function ParseFrom( $content ) {
     $this->rendered = $content;
     $content = $this->UnwrapComponent($content);
@@ -281,13 +287,13 @@ class iCalComponent {
           $this->type = $type;
         }
         else {
-          $this->rendered = null;
           unset($lines[$k]);  // The content has crap before the start
+          if ( $v != "" ) $this->rendered = null;
         }
       }
       else if ( $type == null ) {
         unset($lines[$k]);  // The content has crap after the end
-        $this->rendered = null;
+        if ( $v != "" ) $this->rendered = null;
       }
       else if ( $v == $finish ) {
         $type = null;  // We have reached the end of our component
@@ -311,8 +317,7 @@ class iCalComponent {
         }
         else {
           // It must be a normal property line within a component.
-          $property = new iCalProp($v);
-          $this->properties[$property->Name()] = clone($property);
+          $this->properties[] = new iCalProp($v);
         }
       }
     }
@@ -340,11 +345,17 @@ class iCalComponent {
     return wordwrap( $content, 73, " \r\n ", true ) . "\r\n";
   }
 
+  /**
+  * Return the type of component which this is
+  */
   function GetType() {
     return $this->type;
   }
 
 
+  /**
+  * Set the type of component which this is
+  */
   function SetType( $type ) {
     if ( isset($this->rendered) ) unset($this->rendered);
     $this->type = $type;
@@ -352,33 +363,70 @@ class iCalComponent {
   }
 
 
-  function GetProperty( $name ) {
-    return $this->properties[$name];
+  /**
+  * Get all properties, or the properties matching a particular type
+  */
+  function GetProperties( $type = null ) {
+    $properties = $this->properties;
+    if ( $type != null ) {
+      foreach( $properties AS $k => $v ) {
+        if ( $v->GetType() != $type ) {
+          unset($properties[$k]);
+        }
+      }
+      $properties = array_values($properties);
+    }
+    return $properties;
   }
 
 
-  function SetProperty( $name, $value ) {
+  /**
+  * Clear all properties, or the properties matching a particular type
+  * @param string $type The type of property - omit for all properties
+  */
+  function ClearProperties( $type = null ) {
+    if ( $type != null ) {
+      // First remove all the existing ones of that type
+      foreach( $this->properties AS $k => $v ) {
+        if ( $v->GetType() == $type ) {
+          unset($this->properties[$k]);
+          if ( isset($this->rendered) ) unset($this->rendered);
+        }
+      }
+    }
+    else {
+      if ( isset($this->rendered) ) unset($this->rendered);
+      $this->properties = array();
+    }
+  }
+
+
+  /**
+  * Set all properties, or the ones matching a particular type
+  */
+  function SetProperties( $new_properties, $type = null ) {
+    if ( isset($this->rendered) && count($new_properties) > 0 ) unset($this->rendered);
+    $this->ClearProperties($type);
+    $this->properties = array_values( $this->properties + $new_properties );
+  }
+
+
+  /**
+  * Adds a new property
+  *
+  * @param iCalProp $new_property The new property to append to the set
+  */
+  function AddProperty( $new_property ) {
     if ( isset($this->rendered) ) unset($this->rendered);
-    $this->properties[$name] = $value;
-    return $this->properties[$name];
+    $this->properties[] = $new_property;
   }
 
 
-  function GetPropertyParameter( $property, $name ) {
-    if ( ! isset($this->properties[$property]) ) return null;
-    return $this->properties[$property]->GetParameterValue($name);
-  }
-
-
-  function SetPropertyParameter( $property, $name, $value ) {
-    if ( isset($this->rendered) ) unset($this->rendered);
-    $this->properties[$property]->SetParameterValue($name,$value);
-    return $value;
-  }
-
-
+  /**
+  *
+  */
   function GetComponents( $type = null ) {
-    $components = clone($this->components);
+    $components = $this->components;
     if ( $type != null ) {
       foreach( $components AS $k => $v ) {
         if ( $v->GetType() != $type ) {
@@ -390,19 +438,61 @@ class iCalComponent {
     return $components;
   }
 
-
-  function SetComponents( $new_components ) {
-    if ( isset($this->rendered) ) unset($this->rendered);
-    $this->components  = clone($new_components);
+  /**
+  * Clear all components, or the components matching a particular type
+  * @param string $type The type of component - omit for all components
+  */
+  function ClearComponents( $type = null ) {
+    if ( $type != null ) {
+      // First remove all the existing ones of that type
+      foreach( $this->components AS $k => $v ) {
+        if ( $v->GetType() == $type ) {
+          unset($this->components[$k]);
+          if ( isset($this->rendered) ) unset($this->rendered);
+        }
+      }
+    }
+    else {
+      if ( isset($this->rendered) ) unset($this->rendered);
+      $this->components = array();
+    }
   }
 
 
+  /**
+  * Sets some or all sub-components of the component to the supplied new components
+  *
+  * @param array of iCalComponent $new_components The new components to replace the existing ones
+  * @param string $type The type of components to be replaced.  Defaults to null, which means all components will be replaced.
+  */
+  function SetComponents( $new_components, $type = null ) {
+    if ( isset($this->rendered) ) unset($this->rendered);
+    if ( count($new_components) > 0 ) $this->ClearComponents($type);
+    $this->components = $this->components + $new_components;
+  }
+
+
+  /**
+  * Adds a new subcomponent
+  *
+  * @param iCalComponent $new_component The new component to append to the set
+  */
+  function AddComponent( $new_component ) {
+    if ( isset($this->rendered) ) unset($this->rendered);
+    $this->components[] = $new_component;
+  }
+
+
+  /**
+  *
+  */
   function Render() {
     if ( ! isset($this->rendered) ) {
       $this->rendered = "BEGIN:$this->type\r\n";
       foreach( $this->properties AS $v ) {   $this->rendered .= $v->Render();  }
       foreach( $this->components AS $v ) {   $this->rendered .= $v->Render();  }
-      $this->rendered .= "END:$this->type\r\n";
+      $this->rendered .= "END:$this->type";
+      $this->rendered = $this->WrapComponent($this->rendered);
     }
     return $this->rendered;
   }

@@ -63,7 +63,9 @@ class iCalProp {
     $this->content = "";
     $this->parameters = array();
     unset($this->rendered);
-    if ( $propstring != null ) $this->ParseFrom($propstring);
+    if ( $propstring != null && gettype($propstring) == 'string' ) {
+      $this->ParseFrom($propstring);
+    }
   }
 
 
@@ -78,15 +80,19 @@ class iCalProp {
   function ParseFrom( $propstring ) {
     $this->rendered = $propstring;
     $pos = strpos( $propstring, ':');
-    $start = substr( $propstring, 0, $pos1 - 1);
-    $this->content = substr( $propstring, $pos1 + 1);
+    $start = substr( $propstring, 0, $pos);
+
+    $unescaped = str_replace( '\\n', "\n", substr( $propstring, $pos + 1));
+    $unescaped = str_replace( '\\N', "\n", $unescaped);
+    $this->content = preg_replace( "/\\\\([,;:\"\\\\])/", '$1', $unescaped);
+
     $parameters = explode(';',$start);
     $this->name = array_shift( $parameters );
     $this->parameters = array();
     foreach( $parameters AS $k => $v ) {
       $pos = strpos($v,'=');
-      $name = substr( $v, 0, $pos1 - 1);
-      $value = substr( $v, $pos1 + 1);
+      $name = substr( $v, 0, $pos);
+      $value = substr( $v, $pos + 1);
       $this->parameters[$name] = $value;
     }
   }
@@ -257,11 +263,14 @@ class iCalComponent {
   /**
   * A basic constructor
   */
-  function iCalComponent() {
+  function iCalComponent( $content = null ) {
     $this->type = "";
     $this->properties = array();
     $this->components = array();
     $this->rendered = "";
+    if ( $content != null && gettype($content) == 'string' ) {
+      $this->ParseFrom($content);
+    }
   }
 
   /**
@@ -279,51 +288,58 @@ class iCalComponent {
     $finish = null;
     $subfinish = null;
     foreach( $lines AS $k => $v ) {
+      if ( preg_match('/^\s*$/', $v ) ) continue;
+      dbg_error_log( "iCalendar",  "::ParseFrom: Parsing line: $v");
       if ( $type === false ) {
-        if ( preg_match( '^BEGIN:(.+)$', $v, $matches ) ) {
+        if ( preg_match( '/^BEGIN:(.+)$/', $v, $matches ) ) {
           // We have found the start of the main component
           $type = $matches[1];
-          $finish = 'END:$type';
+          $finish = "END:$type";
           $this->type = $type;
+          dbg_error_log( "iCalendar", "::ParseFrom: Start component of type '%s'", $type);
         }
         else {
+          dbg_error_log( "iCalendar", "::ParseFrom: Ignoring crap before start of component");
           unset($lines[$k]);  // The content has crap before the start
           if ( $v != "" ) $this->rendered = null;
         }
       }
       else if ( $type == null ) {
+        dbg_error_log( "iCalendar", "::ParseFrom: Ignoring crap after end of component");
         unset($lines[$k]);  // The content has crap after the end
         if ( $v != "" ) $this->rendered = null;
       }
       else if ( $v == $finish ) {
+        dbg_error_log( "iCalendar", "::ParseFrom: End of component");
         $type = null;  // We have reached the end of our component
       }
       else {
-        if ( $subtype === false && preg_match( '^BEGIN:(.+)$', $v, $matches ) ) {
+        if ( $subtype === false && preg_match( '/^BEGIN:(.+)$/', $v, $matches ) ) {
           // We have found the start of a sub-component
           $subtype = $matches[1];
-          $subfinish = 'END:$subtype';
+          $subfinish = "END:$subtype";
           $subcomponent = "$v\r\n";
+          dbg_error_log( "iCalendar", "::ParseFrom: Found a subcomponent '%s'", $subtype);
         }
         else if ( $subtype ) {
           // We are inside a sub-component
-          $subcomponent .= "$v\r\n";
+          $subcomponent .= $this->WrapComponent($v);
           if ( $v == $subfinish ) {
+            dbg_error_log( "iCalendar", "::ParseFrom: End of subcomponent '%s'", $subtype);
             // We have found the end of a sub-component
-            $subcomponent .= "$v\r\n";
             $this->components[] = new iCalComponent($subcomponent);
             $subtype = false;
           }
+          else
+            dbg_error_log( "iCalendar", "::ParseFrom: Inside a subcomponent '%s'", $subtype );
         }
         else {
+          dbg_error_log( "iCalendar", "::ParseFrom: Parse property of component");
           // It must be a normal property line within a component.
           $this->properties[] = new iCalProp($v);
         }
       }
     }
-
-    $this->_current_parse_line = 0;
-    $this->properties = $this->ParseSomeLines('');
   }
 
 
@@ -342,7 +358,7 @@ class iCalComponent {
     * XML parsers often muck with it and may remove the CR.  We output RFC2445 compliance.
     */
   function WrapComponent( $content ) {
-    return wordwrap( $content, 73, " \r\n ", true ) . "\r\n";
+    return wordwrap( $content, 73, " \r\n ", false ) . "\r\n";
   }
 
   /**
@@ -370,7 +386,7 @@ class iCalComponent {
     $properties = $this->properties;
     if ( $type != null ) {
       foreach( $properties AS $k => $v ) {
-        if ( $v->GetType() != $type ) {
+        if ( $v->Name() != $type ) {
           unset($properties[$k]);
         }
       }
@@ -423,7 +439,20 @@ class iCalComponent {
 
 
   /**
-  *
+  * Get all sub-components, or at least get those matching a type
+  * @return array an array of the sub-components
+  */
+  function FirstNonTimezone( $type = null ) {
+    foreach( $this->components AS $k => $v ) {
+      if ( $v->GetType() != 'VTIMEZONE' ) return $v;
+    }
+    return false;
+  }
+
+
+  /**
+  * Get all sub-components, or at least get those matching a type
+  * @return array an array of the sub-components
   */
   function GetComponents( $type = null ) {
     $components = $this->components;
@@ -511,6 +540,12 @@ class iCalendar {
   */
 
   /**
+  * The component-ised version of the iCalendar
+  * @var component iCalComponent
+  */
+  var $component;
+
+  /**
   * An array of arbitrary properties, containing arbitrary arrays of arbitrary properties
   * @var properties array
   */
@@ -544,16 +579,22 @@ class iCalendar {
   function iCalendar( $args ) {
     global $c;
 
-    $this->parsing_vtimezone = false;
     $this->tz_locn = "";
     if ( !isset($args) || !(is_array($args) || is_object($args)) ) return;
     if ( is_object($args) ) {
       settype($args,'array');
     }
 
+    $this->component = new iCalComponent();
     if ( isset($args['icalendar']) ) {
-      $this->BuildFromText($args['icalendar']);
-      $this->DealWithTimeZones();
+      $this->component->ParseFrom($args['icalendar']);
+      $this->lines = preg_split('/\r?\n/', $args['icalendar'] );
+      /**
+      * TODO: Need to handle timezones!!!
+      */
+      $first = $this->component->FirstNonTimezone();
+      $this->type = $first->GetType();
+      $this->properties = $first->GetProperties();
       return;
     }
     if ( isset($args['type'] ) ) {
@@ -562,13 +603,30 @@ class iCalendar {
     else {
       $this->type = 'VEVENT';  // Default to event
     }
-    $this->properties = array( 'VCALENDAR' => array( array( $this->type => array() )));
+    $this->component->SetType('VCALENDAR');
+    $this->component->SetProperties(
+        array(
+          new iCalProp('PRODID:-//Catalyst.Net.NZ//NONSGML AWL Calendar//EN'),
+          new iCalProp('VERSION:2.0')
+        )
+    );
+    $first = new iCalComponent();
+    $first->SetType($this->type);
+    $this->properties = array();
 
     foreach( $args AS $k => $v ) {
       dbg_error_log( "iCalendar", ":Initialise: %s to >>>%s<<<", $k, $v );
-      $this->Put($k,$v);
+      $property = new iCalProp();
+      $property->Name($k);
+      $property->Value($v);
+      $this->properties[] = $property;
     }
+    $first->SetProperties($this->properties);
+    $this->component->SetComponents = array( $first );
 
+    /**
+    * TODO: Need to handle timezones!!!
+    */
     if ( $this->tz_locn == "" ) {
       $this->tz_locn = $this->Get("tzid");
       if ( (!isset($this->tz_locn) || $this->tz_locn == "") && isset($c->local_tzid) ) {
@@ -577,14 +635,16 @@ class iCalendar {
     }
   }
 
+
   /**
   * An array of property names that we should always want when rendering an iCalendar
   */
   function DefaultPropertyList() {
-    return array( "uid", "dtstamp", "dtstart", "duration", "last-modified","class", "transp", "sequence", "due", "summary" );
+    return array( "UID", "DTSTAMP", "DTSTART", "DURATION", "LAST-MODIFIED","CLASS", "TRANSP", "SEQUENCE", "DUE", "SUMMARY" );
   }
 
   /**
+  * @deprecated
   * A function to extract the contents of a BEGIN:SOMETHING to END:SOMETHING (perhaps multiply)
   * and return just that bit (or, of course, those bits :-)
   *
@@ -618,6 +678,7 @@ class iCalendar {
 
 
   /**
+  * @deprecated
   * Function to parse lines from BEGIN:SOMETHING to END:SOMETHING into a nested array structure
   *
   * @var string The "SOMETHING" from the BEGIN:SOMETHING line we just met
@@ -686,6 +747,7 @@ class iCalendar {
 
 
   /**
+  * @deprecated
   * Build the iCalendar object from a text string which is a single iCalendar resource
   *
   * @var string The RFC2445 iCalendar resource to be parsed
@@ -718,6 +780,7 @@ class iCalendar {
 
 
   /**
+  * @deprecated
   * Returns a content string with the RFC2445 escaping removed
   *
   * @param string $escaped The incoming string to be escaped.
@@ -733,6 +796,7 @@ class iCalendar {
 
 
   /**
+  * @deprecated
   * Do what must be done with time zones from on file.  Attempt to turn
   * them into something that PostgreSQL can understand...
   */
@@ -786,10 +850,21 @@ class iCalendar {
 
 
   /**
-  * Get the value of a property
+  * Get the value of a property in the first non-VTIMEZONE
   */
   function Get( $key ) {
-    if ( isset($this->properties['VCALENDAR'][0][$this->type][0][strtoupper($key)]) ) return $this->properties['VCALENDAR'][0][$this->type][0][strtoupper($key)];
+    /**
+    * The property we work on is the first non-VTIMEZONE we find.
+    */
+    $component = $this->component->FirstNonTimezone();
+    $properties = $component->GetProperties(strtoupper($key));
+    if ( count($properties) == 1 ) {
+      return $properties[0]->Value();
+    }
+    else if ( count($properties) == 0 ) {
+      return null;
+    }
+    return $properties;
   }
 
 
@@ -798,7 +873,13 @@ class iCalendar {
   */
   function Put( $key, $value ) {
     if ( $value == "" ) return;
-    return $this->properties['VCALENDAR'][0][$this->type][0][strtoupper($key)] = $value;
+    $key = strtoupper($key);
+    $property = new iCalProp();
+    $property->Name($key);
+    $property->Value($value);
+    $component = $this->component->FirstNonTimezone();
+    $component->SetProperties( array($property), $key);
+    return $this->Get($key);
   }
 
 
@@ -837,6 +918,7 @@ class iCalendar {
   }
 
   /**
+  * @deprecated
   * Returns a suitably escaped RFC2445 content string.
   *
   * @param string $name The incoming name[;param] prefixing the string.
@@ -1032,6 +1114,7 @@ class iCalendar {
   }
 
   /**
+  * @deprecated
   * Returns the header we always use at the start of our iCalendar resources
   */
   function iCalHeader() {
@@ -1046,6 +1129,7 @@ EOTXT;
 
 
   /**
+  * @deprecated
   * Returns the footer we always use at the finish of our iCalendar resources
   */
   function iCalFooter() {
@@ -1057,50 +1141,21 @@ EOTXT;
   * Render the iCalendar object as a text string which is a single VEVENT (or other)
   *
   * @param boolean $as_calendar Whether or not to wrap the event in a VCALENDAR
-  * @param string $type The type of iCalendar object (VEVENT, VTODO, VFREEBUSY etc.)
-  * @param array $properties The names of the properties we want in our rendered result.
+  * @param string $type The type of iCalendar object (VEVENT, VTODO, VFREEBUSY etc.)     @deprecated
+  * @param array $properties The names of the properties we want in our rendered result. @deprecated
   */
-  function Render( $as_calendar = true, $type = 'VEVENT', $properties = false ) {
-    /**
-    * FIXME This should really render the full nested structure of the event.
-    */
-    if ( !is_array($properties) ) {
-      $properties = array( "uid", "dtstamp", "dtstart", "duration", "summary", "uri", "last-modified",
-                          "location", "description", "class", "transp", "sequence", "due" );
+  function Render( $as_calendar = true, $type = null, $properties = false ) {
+    if ( $as_calendar ) {
+      return $this->component->Render();
     }
-
-    $wrap_at = 75;
-    $result = ($as_calendar ? $this->iCalHeader() : "");
-    $result .= "BEGIN:$type\r\n";
-
-    foreach( $properties AS $k => $v ) {
-      $v = strtoupper($v);
-      $value = $this->Get($v);
-      if ( isset($value) && $value != "" ) {
-        dbg_error_log( "iCalendar", "Rendering '%s' which is '%s'", $v, $value );
-        $result .= $this->RFC2445ContentEscape($v,$value);
+    else {
+      $components = $this->component->GetComponents($type);
+      $rendered = "";
+      foreach( $components AS $k => $v ) {
+        $rendered .= $v->Render();
       }
+      return $rendered;
     }
-
-    /**
-    * FIXME I think that DTEND/DURATION don't apply to VTODO, and DUE applies instead
-    */
-    // DTEND and DURATION may not exist together
-    $dtend = $this->Get('DTEND');
-    $duration = $this->Get('DURATION');
-    if ( isset($dtend) && $dtend != "" && ( !isset($duration) || $duration == "") ) {
-      dbg_error_log( "iCalendar", "Rendering '%s' which is '%s'", 'DTEND', $dtend );
-      $result .= $this->RFC2445ContentEscape('DTEND',$dtend);
-    }
-
-    if ( isset($this->vtimezone) && $this->vtimezone != "" ) {
-      $result .= $this->vtimezone;
-    }
-
-    $result .= "END:$type\r\n";
-    $result .= ($as_calendar ? $this->iCalFooter() : "" );
-
-    return $result;
   }
 
 }

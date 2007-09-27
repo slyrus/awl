@@ -589,12 +589,11 @@ class iCalendar {
     if ( isset($args['icalendar']) ) {
       $this->component->ParseFrom($args['icalendar']);
       $this->lines = preg_split('/\r?\n/', $args['icalendar'] );
-      /**
-      * TODO: Need to handle timezones!!!
-      */
+      $this->SaveTimeZones();
       $first = $this->component->FirstNonTimezone();
       $this->type = $first->GetType();
       $this->properties = $first->GetProperties();
+      $this->properties['VCALENDAR'] = array('***ERROR*** This class is being referenced in an unsupported way!');
       return;
     }
     if ( isset($args['type'] ) ) {
@@ -624,6 +623,8 @@ class iCalendar {
     $first->SetProperties($this->properties);
     $this->component->SetComponents = array( $first );
 
+    $this->properties['VCALENDAR'] = array('***ERROR*** This class is being referenced in an unsupported way!');
+
     /**
     * TODO: Need to handle timezones!!!
     */
@@ -637,6 +638,69 @@ class iCalendar {
 
 
   /**
+  * Save any timezones by TZID in the PostgreSQL database for future re-use.
+  */
+  function SaveTimeZones() {
+    global $c;
+
+    $timezones = $this->component->GetComponents('VTIMEZONE');
+    if ( $timezones === false || count($timezones) == 0 ) return;
+    $this->vtimezone = $timezones[0]->Render();  // Backward compatibility
+
+    $tzid = $this->Get('TZID');
+    if ( isset($c->save_time_zone_defs) && $c->save_time_zone_defs ) {
+      foreach( $timezones AS $k => $tz ) {
+        $tzids = $tz->GetProperties('TZID');
+        $tznames = $tz->GetProperties('X-LIC-LOCATION');
+        if ( count($tzids) != 1 || count($tznames) > 1 ) {
+          dbg_error_log( "icalendar", "::SaveTimeZones: Timezone contains %d TZID properties!  Skipped.", count($tzids) );
+          continue;
+        }
+        $tzid = $tzids[0]->Value();
+        $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
+        if ( $qry->Exec('iCalendar') && $qry->rows == 1 ) {
+          $row = $qry->Fetch();
+          if ( !isset($first_tzid) ) $first_tzid = $row->tz_locn;
+          continue;
+        }
+
+        if ( $tzid != "" && $qry->rows == 0 ) {
+
+          if ( count($tznames) > 0 ) {
+            $tzname = $tznames[0]->Value();
+          }
+          else {
+            /**
+            * Try and convert the TZID to a string like "Pacific/Auckland" if possible.
+            */
+            $tzname = preg_replace('#^(.*[^a-z])?([a-z]+/[a-z]+)$#i','$2',$tzid );
+          }
+
+          $qry2 = new PgQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
+                                      $tzid, $tzname, $tz->Render() );
+          $qry2->Exec("iCalendar");
+        }
+      }
+    }
+    if ( ! isset($this->tzid) && isset($first_tzid) ) $this->tzid = $first_tzid;
+
+    if ( (!isset($this->tz_locn) || $this->tz_locn == '') && isset($first_tzid) && $first_tzid != '' ) {
+      $tzname = preg_replace('#^(.*[^a-z])?([a-z]+/[a-z]+)$#i','$2', $first_tzid );
+      if ( preg_match( '#\S+/\S+#', $tzname) ) {
+        $this->tz_locn = $tzname;
+      }
+      dbg_error_log( "icalendar", " TZCrap: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
+    }
+
+    if ( (!isset($this->tz_locn) || $this->tz_locn == "") && isset($c->local_tzid) ) {
+      $this->tz_locn = $c->local_tzid;
+    }
+    if ( ! isset($this->tzid) && isset($this->tz_locn) ) $this->tzid = $this->tz_locn;
+  }
+
+
+  /**
+  * @deprecated
   * An array of property names that we should always want when rendering an iCalendar
   */
   function DefaultPropertyList() {
@@ -853,6 +917,12 @@ class iCalendar {
   * Get the value of a property in the first non-VTIMEZONE
   */
   function Get( $key ) {
+    if ( strtoupper($key) == 'TZID' ) {
+      // backward compatibility hack
+      dbg_error_log( "icalendar", " TZCrap: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
+      if ( isset($this->tzid) ) return $this->tzid;
+      return $this->tz_locn;
+    }
     /**
     * The property we work on is the first non-VTIMEZONE we find.
     */

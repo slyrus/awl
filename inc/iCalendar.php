@@ -404,7 +404,7 @@ class iCalComponent {
     if ( $type != null ) {
       // First remove all the existing ones of that type
       foreach( $this->properties AS $k => $v ) {
-        if ( $v->GetType() == $type ) {
+        if ( $v->Name() == $type ) {
           unset($this->properties[$k]);
           if ( isset($this->rendered) ) unset($this->rendered);
         }
@@ -704,7 +704,7 @@ class iCalendar {
   * An array of property names that we should always want when rendering an iCalendar
   */
   function DefaultPropertyList() {
-    return array( "UID", "DTSTAMP", "DTSTART", "DURATION", "LAST-MODIFIED","CLASS", "TRANSP", "SEQUENCE", "DUE", "SUMMARY" );
+    return array( "UID", "DTSTAMP", "DTSTART", "DURATION", "LAST-MODIFIED","CLASS", "TRANSP", "SEQUENCE", "DUE", "SUMMARY", "RRULE" );
   }
 
   /**

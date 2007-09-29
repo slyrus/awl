@@ -187,7 +187,7 @@ class iCalProp {
     if ( isset($this->rendered) ) return $this->rendered;
 
     $property = preg_replace( '/[;].*$/', '', $this->name );
-    $escaped = $this->value;
+    $escaped = $this->content;
     switch( $property ) {
         /** Content escaping does not apply to these properties culled from RFC2445 */
       case 'ATTACH':                case 'GEO':                       case 'PERCENT-COMPLETE':      case 'PRIORITY':
@@ -213,7 +213,7 @@ class iCalProp {
         $escaped = preg_replace( '/\r?\n/', '\\n', $escaped);
         $escaped = preg_replace( "/([,;:\"])/", '\\\\$1', $escaped);
     }
-    $this->rendered = wordwrap( sprintf( "%s%s:%s", $this->name, $this->RenderParameters(), $escaped), 73, " \r\n ", true ) . "\r\n";
+    $this->rendered = wordwrap( sprintf( "%s%s:%s", $this->name, $this->RenderParameters(), $escaped), 73, " \r\n ", true );
     return $this->rendered;
   }
 
@@ -409,6 +409,7 @@ class iCalComponent {
           if ( isset($this->rendered) ) unset($this->rendered);
         }
       }
+      $this->properties = array_values($this->properties);
     }
     else {
       if ( isset($this->rendered) ) unset($this->rendered);
@@ -442,7 +443,7 @@ class iCalComponent {
   * Get all sub-components, or at least get those matching a type
   * @return array an array of the sub-components
   */
-  function FirstNonTimezone( $type = null ) {
+  function &FirstNonTimezone( $type = null ) {
     foreach( $this->components AS $k => $v ) {
       if ( $v->GetType() != 'VTIMEZONE' ) return $v;
     }
@@ -518,7 +519,7 @@ class iCalComponent {
   function Render() {
     if ( ! isset($this->rendered) ) {
       $this->rendered = "BEGIN:$this->type\r\n";
-      foreach( $this->properties AS $v ) {   $this->rendered .= $v->Render();  }
+      foreach( $this->properties AS $v ) {   $this->rendered .= $v->Render() . "\r\n";  }
       foreach( $this->components AS $v ) {   $this->rendered .= $v->Render();  }
       $this->rendered .= "END:$this->type";
       $this->rendered = $this->WrapComponent($this->rendered);

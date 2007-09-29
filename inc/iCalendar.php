@@ -424,7 +424,9 @@ class iCalComponent {
   function SetProperties( $new_properties, $type = null ) {
     if ( isset($this->rendered) && count($new_properties) > 0 ) unset($this->rendered);
     $this->ClearProperties($type);
-    $this->properties = array_values( $this->properties + $new_properties );
+    foreach( $new_properties AS $k => $v ) {
+      $this->AddProperty($v);
+    }
   }
 
 

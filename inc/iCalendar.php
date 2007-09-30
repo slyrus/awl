@@ -593,7 +593,7 @@ class iCalendar {
       $this->component->ParseFrom($args['icalendar']);
       $this->lines = preg_split('/\r?\n/', $args['icalendar'] );
       $this->SaveTimeZones();
-      $first = $this->component->FirstNonTimezone();
+      $first =& $this->component->FirstNonTimezone();
       $this->type = $first->GetType();
       $this->properties = $first->GetProperties();
       $this->properties['VCALENDAR'] = array('***ERROR*** This class is being referenced in an unsupported way!');
@@ -929,7 +929,7 @@ class iCalendar {
     /**
     * The property we work on is the first non-VTIMEZONE we find.
     */
-    $component = $this->component->FirstNonTimezone();
+    $component =& $this->component->FirstNonTimezone();
     $properties = $component->GetProperties(strtoupper($key));
     if ( count($properties) == 1 ) {
       return $properties[0]->Value();
@@ -951,7 +951,7 @@ class iCalendar {
     $property->Name($key);
     $property->Value($value);
     if (isset($this->component->rendered) ) unset( $this->component->rendered );
-    $component = $this->component->FirstNonTimezone();
+    $component =& $this->component->FirstNonTimezone();
     $component->SetProperties( array($property), $key);
     return $this->Get($key);
   }

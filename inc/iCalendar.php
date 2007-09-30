@@ -447,7 +447,7 @@ class iCalComponent {
   */
   function &FirstNonTimezone( $type = null ) {
     foreach( $this->components AS $k => $v ) {
-      if ( $v->GetType() != 'VTIMEZONE' ) return $v;
+      if ( $v->GetType() != 'VTIMEZONE' ) return $this->components[$k];
     }
     return false;
   }

@@ -364,9 +364,11 @@ class Browser
   * @param string $browser_array_key Use this to distinguish between multiple
   *               browser widgets on the same page.  Leave it empty if you only
   *               have a single browser instance.
+  * @param string $secondary Use this to indicate a default secondary order
+  *               which shouldn't interfere with the default primary order.
   */
-  function AddOrder( $field, $direction, $browser_array_key=0 ) {
-    if ( isset( $_GET['o'][$browser_array_key]) && isset($_GET['d'][$browser_array_key]) ) {
+  function AddOrder( $field, $direction, $browser_array_key=0, $secondary=0 ) {
+    if ( $secondary == 0 && isset( $_GET['o'][$browser_array_key]) && isset($_GET['d'][$browser_array_key]) ) {
       $field = $_GET['o'][$browser_array_key];
       $direction = $_GET['d'][$browser_array_key];
     }
@@ -375,17 +377,22 @@ class Browser
     else
       $this->Order .= ", ";
 
-    $this->OrderField = clean_string($field);
-    $this->OrderBrowserKey = $browser_array_key;
-    $this->Order .= $this->OrderField;
+    $field = clean_string($field);
+    if ( $secondary == 0 ) {
+      $this->OrderField = clean_string($field);
+      $this->OrderBrowserKey = $browser_array_key;
+    }
+    $this->Order .= $field;
 
     if ( preg_match( '/^A/i', $direction) ) {
       $this->Order .= " ASC";
-      $this->OrderDirection = 'A';
+      if ( $secondary == 0)
+        $this->OrderDirection = 'A';
     }
     else {
       $this->Order .= " DESC";
-      $this->OrderDirection = 'D';
+      if ( $secondary == 0)
+        $this->OrderDirection = 'D';
     }
   }
 

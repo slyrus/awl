@@ -950,6 +950,7 @@ class iCalendar {
     $property = new iCalProp();
     $property->Name($key);
     $property->Value($value);
+    if (isset($this->component->rendered) ) unset( $this->component->rendered );
     $component = $this->component->FirstNonTimezone();
     $component->SetProperties( array($property), $key);
     return $this->Get($key);

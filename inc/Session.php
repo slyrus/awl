@@ -338,7 +338,7 @@ class Session
       if ( $usr === false ) unset($usr); else $authenticated = true;
     }
 
-    $sql = "SELECT * FROM usr WHERE lower(username) = ? ";
+    $sql = "SELECT * FROM usr WHERE lower(username) = ? AND active";
     $qry = new PgQuery( $sql, strtolower($username) );
     if ( isset($usr) || ($qry->Exec('Login',__LINE__,__FILE__) && $qry->rows == 1 && $usr = $qry->Fetch() ) ) {
       if ( $authenticated || session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {

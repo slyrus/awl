@@ -544,13 +544,19 @@ class PgQuery
 
   /**
   * Build an option list from the query.
-  * @param string $current Default selection of dro down box (optional)
+  * @param string $current Default selection of drop down box (optional)
   * @param string $location for debugging purposes
+  * @param array $parameters an array further parameters, including 'maxwidth' => 20 to set a maximum width
   * @return string Select box HTML
   */
-  function BuildOptionList( $current = '', $location = 'options' ) {
+  function BuildOptionList( $current = '', $location = 'options', $parameters = false ) {
     global $debuggroups;
     $result = '';
+
+    if ( isset($maxwidth) ) unset($maxwidth);
+    if ( is_array($parameters) ) {
+      if ( isset($parameters['maxwidth']) ) $maxwidth = max(4,intval($parameters['maxwidth']));
+    }
 
     // The query may already have been executed
     if ( $this->rows > 0 || $this->Exec($location) ) {
@@ -563,7 +569,9 @@ class PgQuery
         else {
           $selected = ( ( "$row[0]" == "$current" || "$row[1]" == "$current" ) ? ' selected="selected"' : '' );
         }
-        $nextrow = "<option value=\"".htmlspecialchars($row[0])."\"$selected>".htmlspecialchars($row[1])."</option>";
+        $display_value = $row[1];
+        if ( isset($maxwidth) ) $display_value = substr( $display_value, 0, $maxwidth);
+        $nextrow = "<option value=\"".htmlspecialchars($row[0])."\"$selected>".htmlspecialchars($display_value)."</option>";
         $result .= $nextrow;
       }
     }

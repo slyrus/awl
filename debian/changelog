@@ -1,3 +1,11 @@
+awl (0.20) unstable; urgency=low
+
+  * Rewrite of iCalendar.php to fully parse the structure.
+  * Allow second-level ordering of Browse widgets.
+  * Add optional parameters to PgQuery::BuildOptionList
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Tue, 16 Oct 2007 13:30:52 +1300
+
 awl (0.19) unstable; urgency=low
 
   * More care when recording timezones.

@@ -516,17 +516,26 @@ class iCalComponent {
 
 
   /**
-  *
+  *  Renders the component, possibly restricted to only the listed properties
   */
-  function Render() {
-    if ( ! isset($this->rendered) ) {
-      $this->rendered = "BEGIN:$this->type\r\n";
-      foreach( $this->properties AS $v ) {   $this->rendered .= $v->Render() . "\r\n";  }
-      foreach( $this->components AS $v ) {   $this->rendered .= $v->Render();  }
-      $this->rendered .= "END:$this->type";
-      $this->rendered = $this->WrapComponent($this->rendered);
+  function Render( $restricted_properties = null) {
+
+    $unrestricted = (!isset($restricted_properties) || count($restricted_properties) == 0);
+
+    if ( isset($this->rendered) && $unrestricted )
+      return $this->rendered;
+
+    $rendered = "BEGIN:$this->type\r\n";
+    foreach( $this->properties AS $v ) {
+      if ( $unrestricted || isset($restricted_properties[$v]) ) $rendered .= $v->Render() . "\r\n";
     }
-    return $this->rendered;
+    foreach( $this->components AS $v ) {   $rendered .= $v->Render();  }
+    $rendered .= "END:$this->type";
+    $rendered = $this->WrapComponent($this->rendered);
+
+    if ( $unrestricted ) $this->rendered = $rendered;
+
+    return $rendered;
   }
 
 }
@@ -707,7 +716,9 @@ class iCalendar {
   * An array of property names that we should always want when rendering an iCalendar
   */
   function DefaultPropertyList() {
-    return array( "UID", "DTSTAMP", "DTSTART", "DURATION", "LAST-MODIFIED","CLASS", "TRANSP", "SEQUENCE", "DUE", "SUMMARY", "RRULE" );
+    return array( "UID" => 1, "DTSTAMP" => 1, "DTSTART" => 1, "DURATION" => 1,
+                  "LAST-MODIFIED" => 1,"CLASS" => 1, "TRANSP" => 1, "SEQUENCE" => 1,
+                  "DUE" => 1, "SUMMARY" => 1, "RRULE" => 1 );
   }
 
   /**
@@ -1215,10 +1226,10 @@ EOTXT;
   * Render the iCalendar object as a text string which is a single VEVENT (or other)
   *
   * @param boolean $as_calendar Whether or not to wrap the event in a VCALENDAR
-  * @param string $type The type of iCalendar object (VEVENT, VTODO, VFREEBUSY etc.)     @deprecated
-  * @param array $properties The names of the properties we want in our rendered result. @deprecated
+  * @param string $type The type of iCalendar object (VEVENT, VTODO, VFREEBUSY etc.)
+  * @param array $restrict_properties The names of the properties we want in our rendered result.
   */
-  function Render( $as_calendar = true, $type = null, $properties = false ) {
+  function Render( $as_calendar = true, $type = null, $restrict_properties = null ) {
     if ( $as_calendar ) {
       return $this->component->Render();
     }
@@ -1226,7 +1237,7 @@ EOTXT;
       $components = $this->component->GetComponents($type);
       $rendered = "";
       foreach( $components AS $k => $v ) {
-        $rendered .= $v->Render();
+        $rendered .= $v->Render($restrict_properties);
       }
       return $rendered;
     }

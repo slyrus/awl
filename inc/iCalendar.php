@@ -531,7 +531,7 @@ class iCalComponent {
     }
     foreach( $this->components AS $v ) {   $rendered .= $v->Render();  }
     $rendered .= "END:$this->type";
-    $rendered = $this->WrapComponent($this->rendered);
+    $rendered = $this->WrapComponent($rendered);
 
     if ( $unrestricted ) $this->rendered = $rendered;
 

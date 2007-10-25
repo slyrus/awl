@@ -68,6 +68,12 @@ EOERRMSG;
       include_once("DataUpdate.php");
       $qry = new PgQuery( sql_from_object( $usr, $type, 'usr', "WHERE user_no=$usr->user_no" ) );
       $qry->Exec('Login',__LINE,__FILE__);
+
+      /**
+      * We disallow login by inactive users _after_ we have updated the local copy
+      */
+      if ( isset($usr->active) && $usr->active == 'f' ) return false;
+
       return $usr;
     }
   }

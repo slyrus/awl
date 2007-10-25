@@ -1,3 +1,10 @@
+awl (0.21) unstable; urgency=low
+
+  * Add support for rendering a restricted set of properties.
+  * Disallow login for inactive users in auth_other_awl
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Thu, 25 Oct 2007 15:11:17 +1300
+
 awl (0.20) unstable; urgency=low
 
   * Rewrite of iCalendar.php to fully parse the structure.

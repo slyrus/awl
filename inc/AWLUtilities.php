@@ -112,6 +112,28 @@ if ( !function_exists("session_salted_md5") ) {
 
 
 
+if ( !function_exists("session_salted_sha1") && version_compare(phpversion(), "4.9.9") > 0 ) {
+  /**
+  * Make a salted SHA1 string, given a string and (possibly) a salt.  PHP5 only (although it
+  * could be made to work on PHP4 (@see http://www.openldap.org/faq/data/cache/347.html). The
+  * algorithm used here is compatible with OpenLDAP so passwords generated through this function
+  * should be able to be migrated to OpenLDAP by using the part following the second '*', i.e.
+  * the '{SSHA}....' part.
+  *
+  * If no salt is supplied we will generate a random one.
+  *
+  * @param string $instr The string to be salted and SHA1'd
+  * @param string $salt Some salt to sprinkle into the string to be SHA1'd so we don't get the same PW always hashing to the same value.
+  * @return string A *, the salt, a * and the SHA1 of the salted string, as in *SALT*SALTEDHASH
+  */
+  function session_salted_sha1( $instr, $salt = "" ) {
+    if ( $salt == "" ) $salt = substr( str_replace('*','',base64_encode(sha1(rand(100000,9999999),true))), 2, 9);
+    dbg_error_log( "Login", "Making salted SHA1: salt=$salt, instr=$instr, encoded($instr$salt)=".base64_encode(sha1($instr . $salt, true).$salt) );
+    return ( sprintf("*%s*{SSHA}%s", $salt, base64_encode(sha1($instr.$salt, true) . $salt ) ) );
+  }
+}
+
+
 if ( !function_exists("session_validate_password") ) {
   /**
   * Checks what a user entered against the actual password on their account.
@@ -120,12 +142,19 @@ if ( !function_exists("session_validate_password") ) {
   * @return boolean Whether or not the users attempt matches what is already on file.
   */
   function session_validate_password( $they_sent, $we_have ) {
-    if ( ereg('^\*\*.+$', $we_have ) ) {
+    if ( preg_match('/^\*\*.+$/', $we_have ) ) {
       //  The "forced" style of "**plaintext" to allow easier admin setting
       return ( "**$they_sent" == $we_have );
     }
 
-    if ( ereg('^\*(.+)\*.+$', $we_have, $regs ) ) {
+    if ( function_exists("session_salted_sha1") && preg_match('/^\*(.+)\*{[A-Z]+}.+$/', $we_have, $regs ) ) {
+      // A nicely salted sha1sum like "*<salt>*<salted_sha1>"
+      $salt = $regs[1];
+      $sha1_sent = session_salted_sha1( $they_sent, $salt ) ;
+      return ( $sha1_sent == $we_have );
+    }
+
+    if ( preg_match('/^\*(.+)\*.+$/', $we_have, $regs ) ) {
       // A nicely salted md5sum like "*<salt>*<salted_md5>"
       $salt = $regs[1];
       $md5_sent = session_salted_md5( $they_sent, $salt ) ;

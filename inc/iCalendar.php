@@ -484,7 +484,7 @@ class iCalComponent {
           if ( isset($this->rendered) ) unset($this->rendered);
         }
         else {
-          if ( $this->components[$k]->ClearComponents($type) ) {
+          if ( ! $this->components[$k]->ClearComponents($type) ) {
             if ( isset($this->rendered) ) unset($this->rendered);
           }
         }

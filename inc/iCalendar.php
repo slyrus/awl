@@ -470,6 +470,7 @@ class iCalComponent {
     return $components;
   }
 
+
   /**
   * Clear all components, or the components matching a particular type
   * @param string $type The type of component - omit for all components
@@ -482,7 +483,13 @@ class iCalComponent {
           unset($this->components[$k]);
           if ( isset($this->rendered) ) unset($this->rendered);
         }
+        else {
+          if ( $this->components[$k]->ClearComponents($type) ) {
+            if ( isset($this->rendered) ) unset($this->rendered);
+          }
+        }
       }
+      return isset($this->rendered);
     }
     else {
       if ( isset($this->rendered) ) unset($this->rendered);

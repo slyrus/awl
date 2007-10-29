@@ -13,24 +13,36 @@
 */
 require_once("AWLUtilities.php");
 
+
+/**
+* @var array $_AWL_field_cache is a cache of the field names for a table
+*/
+$_AWL_field_cache = array();
+
+
 /**
 * Get the names of the fields for a particular table
 * @param string $tablename The name of the table.
 * @return array of string The public fields in the table.
 */
 function get_fields( $tablename ) {
-  $sql = "SELECT f.attname, t.typname FROM pg_attribute f ";
-  $sql .= "JOIN pg_class c ON ( f.attrelid = c.oid ) ";
-  $sql .= "JOIN pg_type t ON ( f.atttypid = t.oid ) ";
-  $sql .= "WHERE relname = ? AND attnum >= 0 order by f.attnum;";
-  $qry = new PgQuery( $sql, $tablename );
-  $qry->Exec("DataUpdate");
-  $fields = array();
-  while( $row = $qry->Fetch() ) {
-    $fields["$row->attname"] = $row->typname;
-    dbg_error_log( "DataUpdate", ":get_fields: %s => %s", $row->attname, $row->typname );
+  global $_AWL_field_cache;
+
+  if ( !isset($_AWL_field_cache[$tablename]) ) {
+    dbg_error_log( "DataUpdate", ":get_fields: Loaded fields for table '$tablename'" );
+    $sql = "SELECT f.attname, t.typname FROM pg_attribute f ";
+    $sql .= "JOIN pg_class c ON ( f.attrelid = c.oid ) ";
+    $sql .= "JOIN pg_type t ON ( f.atttypid = t.oid ) ";
+    $sql .= "WHERE relname = ? AND attnum >= 0 order by f.attnum;";
+    $qry = new PgQuery( $sql, $tablename );
+    $qry->Exec("DataUpdate");
+    $fields = array();
+    while( $row = $qry->Fetch() ) {
+      $fields["$row->attname"] = $row->typname;
+    }
+    $_AWL_field_cache[$tablename] = $fields;
   }
-  return $fields;
+  return $_AWL_field_cache[$tablename];
 }
 
 

@@ -1,3 +1,13 @@
+awl (0.22) unstable; urgency=low
+
+  * Add a Salted SHA-1 password hashing algorithm compatible with OpenLDAP and
+    make it the default.
+  * iCalendar: ClearComponents should be recursive.
+  * DataUpdate: Add a cache for the field names retrieved from the DB.
+  * AuthPlugins: Add an optional 'where' clause to auth_other_awl
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Thu, 01 Nov 2007 21:22:00 +1300
+
 awl (0.21) unstable; urgency=low
 
   * Add support for rendering a restricted set of properties.

@@ -28,7 +28,7 @@ CREATE FUNCTION max_usr() RETURNS INT4 AS 'SELECT max(user_no) FROM usr' LANGUAG
 CREATE UNIQUE INDEX usr_sk1_unique_username ON usr ( lower(username) );
 
 CREATE TABLE usr_setting (
-  user_no INT4 REFERENCES usr ( user_no ),
+  user_no INT4 REFERENCES usr ( user_no ) ON DELETE CASCADE,
   setting_name TEXT,
   setting_value TEXT,
   PRIMARY KEY ( user_no, setting_name )
@@ -49,13 +49,13 @@ CREATE FUNCTION max_roles() RETURNS INT4 AS 'SELECT max(role_no) FROM roles' LAN
 
 CREATE TABLE role_member (
     role_no INT4 REFERENCES roles ( role_no ),
-    user_no INT4 REFERENCES usr ( user_no )
+    user_no INT4 REFERENCES usr ( user_no ) ON DELETE CASCADE
 );
 
 
 CREATE TABLE session (
     session_id SERIAL PRIMARY KEY,
-    user_no INT4 REFERENCES usr ( user_no ),
+    user_no INT4 REFERENCES usr ( user_no ) ON DELETE CASCADE,
     session_start TIMESTAMPTZ DEFAULT current_timestamp,
     session_end TIMESTAMPTZ DEFAULT current_timestamp,
     session_key TEXT,

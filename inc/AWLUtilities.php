@@ -147,11 +147,32 @@ if ( !function_exists("session_validate_password") ) {
       return ( "**$they_sent" == $we_have );
     }
 
-    if ( function_exists("session_salted_sha1") && preg_match('/^\*(.+)\*{[A-Z]+}.+$/', $we_have, $regs ) ) {
-      // A nicely salted sha1sum like "*<salt>*{SSHA}<salted_sha1>"
-      $salt = $regs[1];
-      $sha1_sent = session_salted_sha1( $they_sent, $salt ) ;
-      return ( $sha1_sent == $we_have );
+    if ( preg_match('/^\*(.+)\*{[A-Z]+}.+$/', $we_have, $regs ) ) {
+      if ( function_exists("session_salted_sha1") ) {
+        // A nicely salted sha1sum like "*<salt>*{SSHA}<salted_sha1>"
+        $salt = $regs[1];
+        $sha1_sent = session_salted_sha1( $they_sent, $salt ) ;
+        return ( $sha1_sent == $we_have );
+      }
+      else {
+        dbg_error_log( "ERROR", "Password is salted SHA-1 but you are using PHP4!" );
+        echo <<<EOERRMSG
+<html>
+<head>
+<title>Salted SHA1 Password format not supported with PHP4</title>
+</head>
+<body>
+<h1>Salted SHA1 Password format not supported with PHP4</h1>
+<p>At some point you have used PHP5 to set the password for this user and now you are
+   using PHP4.  You will need to assign a new password to this user using PHP4, or ensure
+   you use PHP5 everywhere (recommended).</p>
+<p>AWL has now switched to using salted SHA-1 passwords by preference in a format
+   compatible with OpenLDAP.</p>
+</body>
+</html>
+EOERRMSG;
+        exit;
+      }
     }
 
     if ( preg_match('/^\*(.+)\*.+$/', $we_have, $regs ) ) {

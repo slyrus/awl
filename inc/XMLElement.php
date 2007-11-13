@@ -47,6 +47,17 @@ class XMLElement {
   }
 
   /**
+  * Count the number of elements
+  * @return int The number of elements
+  */
+  function CountElements( ) {
+    if ( $this->content === false ) return 0;
+    if ( is_array($this->content) ) return count($this->content);
+    if ( $this->content == '' ) return 0;
+    return 1;
+  }
+
+  /**
   * Set an element attribute to a value
   *
   * @param string The attribute name

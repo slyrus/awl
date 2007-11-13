@@ -32,7 +32,28 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 
+if ( ! function_exists('pg_Connect') ) {
+  echo <<<EOERRMSG
+<html>
+<head>
+<title>PostgreSQL Support Not Present</title>
+</head>
+<body>
+<h1>PostgreSQL Support Not Present</h1>
+<h3>PHP is not configured to support the PostgreSQL database</h3>
+<p>You need to ensure that the PostgreSQL support module is installed, and then to configure
+it in your php.ini file by adding a line like this:</p>
+<pre>
+extension=pgsql.so
+</pre>
+  </body>
+  </html>
+EOERRMSG;
+  exit;
+}
+
 require_once("AWLUtilities.php");
+
 /**
 * @global resource $dbconn
 * @name $dbconn

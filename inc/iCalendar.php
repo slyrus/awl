@@ -640,7 +640,7 @@ class iCalendar {
       $this->properties[] = $property;
     }
     $first->SetProperties($this->properties);
-    $this->component->SetComponents = array( $first );
+    $this->component->SetComponents( array($first) );
 
     $this->properties['VCALENDAR'] = array('***ERROR*** This class is being referenced in an unsupported way!');
 

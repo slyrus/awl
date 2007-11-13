@@ -148,7 +148,7 @@ if ( !function_exists("session_validate_password") ) {
     }
 
     if ( function_exists("session_salted_sha1") && preg_match('/^\*(.+)\*{[A-Z]+}.+$/', $we_have, $regs ) ) {
-      // A nicely salted sha1sum like "*<salt>*<salted_sha1>"
+      // A nicely salted sha1sum like "*<salt>*{SSHA}<salted_sha1>"
       $salt = $regs[1];
       $sha1_sent = session_salted_sha1( $they_sent, $salt ) ;
       return ( $sha1_sent == $we_have );

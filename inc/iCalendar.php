@@ -273,6 +273,28 @@ class iCalComponent {
     }
   }
 
+
+  /**
+  * Collect an array of all parameters of our properties which are the specified type
+  * Mainly used for collecting the full variety of references TZIDs
+  */
+  function CollectParameterValues( $parameter_name ) {
+    $values = array();
+    foreach( $this->components AS $k => $v ) {
+      $also = $v->CollectParameterValues($parameter_name);
+      $values = array_merge( $values, $also );
+    }
+    foreach( $this->properties AS $k => $v ) {
+      $also = $v->GetParameterValue($parameter_name);
+      if ( isset($also) && $also != "" ) {
+        dbg_error_log( "iCalendar", "::CollectParameterValues(%s) : Found '%s'", $parameter_name, $also);
+        $values[$also] = 1;
+      }
+    }
+    return $values;
+  }
+
+
   /**
   * Parse the text $content into sets of iCalProp & iCalComponent within this iCalComponent
   * @param string $content The raw RFC2445-compliant iCalendar component, including BEGIN:TYPE & END:TYPE
@@ -662,6 +684,12 @@ class iCalendar {
   function SaveTimeZones() {
     global $c;
 
+    $this->tzid_list = array_keys($this->component->CollectParameterValues('TZID'));
+    if ( ! isset($this->tzid) && count($this->tzid_list) > 0 ) {
+      dbg_error_log( "icalendar", "::TZID_List[0] = '%s', count=%d", $this->tzid_list[0], count($this->tzid_list) );
+      $this->tzid = $this->tzid_list[0];
+    }
+
     $timezones = $this->component->GetComponents('VTIMEZONE');
     if ( $timezones === false || count($timezones) == 0 ) return;
     $this->vtimezone = $timezones[0]->Render();  // Backward compatibility
@@ -676,6 +704,7 @@ class iCalendar {
           continue;
         }
         $tzid = $tzids[0]->Value();
+
         $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
         if ( $qry->Exec('iCalendar') && $qry->rows == 1 ) {
           $row = $qry->Fetch();
@@ -708,7 +737,7 @@ class iCalendar {
       if ( preg_match( '#\S+/\S+#', $tzname) ) {
         $this->tz_locn = $tzname;
       }
-      dbg_error_log( "icalendar", " TZCrap: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
+      dbg_error_log( "icalendar", " TZCrap1: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
     }
 
     if ( (!isset($this->tz_locn) || $this->tz_locn == "") && isset($c->local_tzid) ) {
@@ -895,7 +924,7 @@ class iCalendar {
         $row = $qry->Fetch();
         $this->tz_locn = $row->tz_locn;
       }
-      dbg_error_log( "icalendar", " TZCrap: TZID '%s', DB Rows=%d, Location '%s'", $tzid, $qry->rows, $this->tz_locn );
+      dbg_error_log( "icalendar", " TZCrap2: TZID '%s', DB Rows=%d, Location '%s'", $tzid, $qry->rows, $this->tz_locn );
     }
 
     if ( (!isset($this->tz_locn) || $this->tz_locn == '') && $tzid != '' ) {
@@ -919,7 +948,7 @@ class iCalendar {
       if ( preg_match( '#\S+/\S+#', $tzname) ) {
         $this->tz_locn = $tzname;
       }
-      dbg_error_log( "icalendar", " TZCrap: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
+      dbg_error_log( "icalendar", " TZCrap3: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
     }
 
     if ( $tzid != '' && isset($c->save_time_zone_defs) && $c->save_time_zone_defs && $qry->rows != 1 && isset($this->vtimezone) && $this->vtimezone != "" ) {
@@ -940,7 +969,7 @@ class iCalendar {
   function Get( $key ) {
     if ( strtoupper($key) == 'TZID' ) {
       // backward compatibility hack
-      dbg_error_log( "icalendar", " TZCrap: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
+      dbg_error_log( "icalendar", " Get(TZID): TZID '%s', Location '%s'", $this->tzid, $this->tz_locn );
       if ( isset($this->tzid) ) return $this->tzid;
       return $this->tz_locn;
     }

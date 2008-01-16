@@ -1,3 +1,13 @@
+awl (0.23) unstable; urgency=low
+
+  * [iCalendar] Fixes to timezone handling.
+  * [iCalendar] Bugfix in SetComponents
+  * [XMLElement] Method to return count of sub-elements.
+  * [Session] Log detailed error when SSHA passwords are present but not
+    supported.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Wed, 16 Jan 2008 21:52:28 +1300
+
 awl (0.22) unstable; urgency=low
 
   * Add a Salted SHA-1 password hashing algorithm compatible with OpenLDAP and

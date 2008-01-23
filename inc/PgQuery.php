@@ -66,7 +66,7 @@ if ( !isset($dbconn) ) {
   $dbconn = false;
   if ( isset($c->pg_connect) && is_array($c->pg_connect) ) {
     foreach( $c->pg_connect AS $k => $v ) {
-      if ( !$dbconn ) $dbconn = pg_Connect($v);
+      if ( !$dbconn ) $dbconn = ((isset($c->use_persistent) && $c->use_persistent) ? pg_pConnect($v) : pg_Connect($v) );
     }
   }
   if ( ! $dbconn ) {

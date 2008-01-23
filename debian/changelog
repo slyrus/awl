@@ -1,3 +1,9 @@
+awl (0.24) unstable; urgency=low
+
+  * Add the ability to open Database connections persistently.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Wed, 23 Jan 2008 23:51:16 +1300
+
 awl (0.23) unstable; urgency=low
 
   * [iCalendar] Fixes to timezone handling.

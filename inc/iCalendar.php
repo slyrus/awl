@@ -989,9 +989,9 @@ class iCalendar {
 
 
   /**
-  * Put the value of a property
+  * Set the value of a property
   */
-  function Put( $key, $value ) {
+  function Set( $key, $value ) {
     if ( $value == "" ) return;
     $key = strtoupper($key);
     $property = new iCalProp();
@@ -1003,6 +1003,14 @@ class iCalendar {
     return $this->Get($key);
   }
 
+  /**
+  * Because I screwed up with the name originally...
+  * @DEPRECATED
+  * TODO: Remove this function after June 2008.
+  */
+  function Put( $key, $value ) {
+    $this->Set($key,$value);
+  }
 
   /**
   * Returns a PostgreSQL Date Format string suitable for returning HTTP (RFC2068) dates

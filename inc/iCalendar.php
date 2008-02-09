@@ -378,9 +378,17 @@ class iCalComponent {
     * This imposes the (CRLF + linear space) wrapping specified in RFC2445. According
     * to RFC2445 we should always end with CRLF but the CalDAV spec says that normalising
     * XML parsers often muck with it and may remove the CR.  We output RFC2445 compliance.
+    *
+    * In order to preserve pre-existing wrapping in the component, we split the incoming
+    * string on line breaks before running wordwrap over each component of that.
     */
   function WrapComponent( $content ) {
-    return wordwrap( $content, 73, " \r\n ", false ) . "\r\n";
+    $strs = preg_split( "/\r?\n/", $content );
+    $wrapped = "";
+    foreach ($strs as $str) {
+      $wrapped .= wordwrap($str, 73, " \r\n ") . "\r\n";
+    }
+    return $wrapped;
   }
 
   /**

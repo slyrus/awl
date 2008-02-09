@@ -1,3 +1,10 @@
+awl (0.25) unstable; urgency=low
+
+  * [iCalendar] Fix naming of Set function.
+  * [iCalendar] Fix wrapping of components.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Sat, 09 Feb 2008 20:08:21 +1300
+
 awl (0.24) unstable; urgency=low
 
   * Add the ability to open Database connections persistently.

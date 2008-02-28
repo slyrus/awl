@@ -573,10 +573,12 @@ class PgQuery
   function BuildOptionList( $current = '', $location = 'options', $parameters = false ) {
     global $debuggroups;
     $result = '';
+    $translate = false;
 
     if ( isset($maxwidth) ) unset($maxwidth);
     if ( is_array($parameters) ) {
       if ( isset($parameters['maxwidth']) ) $maxwidth = max(4,intval($parameters['maxwidth']));
+      if ( isset($parameters['translate']) ) $translate = true;
     }
 
     // The query may already have been executed
@@ -591,6 +593,7 @@ class PgQuery
           $selected = ( ( "$row[0]" == "$current" || "$row[1]" == "$current" ) ? ' selected="selected"' : '' );
         }
         $display_value = $row[1];
+        if ( isset($translate) ) $display_value = translate( $display_value );
         if ( isset($maxwidth) ) $display_value = substr( $display_value, 0, $maxwidth);
         $nextrow = "<option value=\"".htmlspecialchars($row[0])."\"$selected>".htmlspecialchars($display_value)."</option>";
         $result .= $nextrow;

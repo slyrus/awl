@@ -66,6 +66,7 @@ class BrowserColumn
   var $Align;
   var $Class;
   var $Type;
+  var $Translatable;
   var $current_row;
 
   /**
@@ -93,6 +94,7 @@ class BrowserColumn
     $this->Class  = $class;
     $this->Align  = $align;
     $this->Type   = $datatype;
+    $this->Translatable = false;
   }
 
   /**
@@ -140,11 +142,19 @@ class BrowserColumn
     return $html;
   }
 
+  function SetTranslatable() {
+    $this->Translatable = true;
+  }
+
   function RenderValue( $value, $extraclass = "" ) {
     global $session;
 
     if ( $this->Type == 'date' || $this->Type == 'timestamp') {
       $value = $session->FormattedDate( $value, $this->Type );
+    }
+
+    if ( $this->Translatable ) {
+      $value = translate($value);
     }
 
     $value = str_replace( "\n", "<br />", $value );
@@ -260,6 +270,24 @@ class Browser
   */
   function SetTitle( $new_title ) {
     $this->Title = $new_title;
+  }
+
+  /**
+  * Set the named columns to be translatable
+  *
+  * @param array $column_list The list of columns which are translatable
+  */
+  function SetTranslatable( $column_list ) {
+    $top = count($this->Columns);
+    for( $i=0; $i < $top; $i++ ) {
+      dbg_error_log( "Browser", "Comparing %s with column name list", $this->Columns[$i]->Field);
+      if ( in_array($this->Columns[$i]->Field,$column_list) ) $this->Columns[$i]->SetTranslatable();
+    }
+    $top = count($this->HiddenColumns);
+    for( $i=0; $i < $top; $i++ ) {
+      dbg_error_log( "Browser", "Comparing %s with column name list", $this->HiddenColumns[$i]->Field);
+      if ( in_array($this->HiddenColumns[$i]->Field,$column_list) ) $this->HiddenColumns[$i]->SetTranslatable();
+    }
   }
 
   /**
@@ -617,4 +645,3 @@ class Browser
   }
 
 }
-?>

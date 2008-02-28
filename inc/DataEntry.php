@@ -199,7 +199,7 @@ class EntryField
         else {
           $qry = new PgQuery( "SELECT code_id, code_value FROM codes WHERE code_type = ? ORDER BY code_seq, code_id", $this->attributes['_type'] );
         }
-        $r .= $qry->BuildOptionList( $this->current, "rndr:$this->fname" );
+        $r .= $qry->BuildOptionList( $this->current, "rndr:$this->fname", array('translate'=>1) );
         $r .= "</select>";
         break;
 
@@ -624,4 +624,3 @@ class EntryForm
 
 }
 
-?>

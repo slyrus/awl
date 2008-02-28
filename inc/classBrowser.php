@@ -15,6 +15,9 @@
 */
 require_once("AWLUtilities.php");
 
+/**
+* Ensure that this is not set elsewhere.
+*/
 $BrowserCurrentRow = (object) array();
 
 /**
@@ -67,6 +70,7 @@ class BrowserColumn
   var $Class;
   var $Type;
   var $Translatable;
+  var $Hook;
   var $current_row;
 
   /**
@@ -85,8 +89,15 @@ class BrowserColumn
   * @param string class Additional classes to apply to the column header and column value cells.
   * @param string datatype This will allow 'date' or 'timestamp' to preformat the field correctly before
   *                        using it in replacements or display.  Other types may be added in future.
+  * @param string $hook The name of a global function which will preprocess the column value
+  *
+  * The hook function should be defined as follows:
+  *   function hookfunction( $column_value, $column_name, $database_row ) {
+  *     ...
+  *     return $value;
+  *   }
   */
-  function BrowserColumn( $field, $header="", $align="", $format="", $sql="", $class="", $datatype="" ) {
+  function BrowserColumn( $field, $header="", $align="", $format="", $sql="", $class="", $datatype="", $hook=null ) {
     $this->Field  = $field;
     $this->Sql    = $sql;
     $this->Header = $header;
@@ -95,6 +106,7 @@ class BrowserColumn
     $this->Align  = $align;
     $this->Type   = $datatype;
     $this->Translatable = false;
+    $this->Hook   = $hook;
   }
 
   /**
@@ -151,6 +163,11 @@ class BrowserColumn
 
     if ( $this->Type == 'date' || $this->Type == 'timestamp') {
       $value = $session->FormattedDate( $value, $this->Type );
+    }
+
+    if ( $this->Hook && function_exists($this->Hook) ) {
+      dbg_error_log( "Browser", ":Browser: Hook for $this->Hook on column $this->Field");
+      $value = call_user_func( $this->Hook, $value, $this->Field, $GLOBAL['BrowserCurrentRow'] );
     }
 
     if ( $this->Translatable ) {
@@ -240,9 +257,17 @@ class Browser
   * @param string $format A sprintf format for displaying column values.
   * @param string $sql An SQL fragment for calculating the value.
   * @param string $class A CSS class to apply to the cells of this column.
+  * @param string $hook The name of a global function which will preprocess the column value
+  *
+  * The hook function should be defined as follows:
+  *   function hookfunction( $column_value, $column_name, $database_row ) {
+  *     ...
+  *     return $value;
+  *   }
+  *
   */
-  function AddColumn( $field, $header="", $align="", $format="", $sql="", $class="", $datatype="" ) {
-    $this->Columns[] = new BrowserColumn( $field, $header, $align, $format, $sql, $class, $datatype );
+  function AddColumn( $field, $header="", $align="", $format="", $sql="", $class="", $datatype="", $hook=null ) {
+    $this->Columns[] = new BrowserColumn( $field, $header, $align, $format, $sql, $class, $datatype, $hook );
   }
 
   /**

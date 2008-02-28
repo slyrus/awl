@@ -1,3 +1,10 @@
+awl (0.26) unstable; urgency=low
+
+  * Improve translatability of interfaces.
+  * [classBrowser] Provide a pre-formatting hook for column value manipulation.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Fri, 29 Feb 2008 07:36:07 +1300
+
 awl (0.25) unstable; urgency=low
 
   * [iCalendar] Fix naming of Set function.

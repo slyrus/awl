@@ -69,28 +69,3 @@ CREATE TABLE tmp_password (
   valid_until TIMESTAMPTZ DEFAULT (current_timestamp + '1 day'::interval)
 );
 COMMIT;
-
-BEGIN;
-GRANT SELECT,INSERT,UPDATE ON
-    usr
-  , usr_setting
-  , roles
-  , role_member
-  , session
-  , tmp_password
-  TO general;
-GRANT SELECT,UPDATE ON
-    usr_user_no_seq
-  , session_session_id_seq
-  TO general;
-
-GRANT SELECT ON
-    supported_locales
-  TO general;
-
-GRANT DELETE ON
-    tmp_password
-  , role_member
-  TO general;
-
-COMMIT;

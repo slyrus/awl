@@ -9,7 +9,6 @@ CREATE TABLE awl_db_revision (
    schema_name TEXT,
    applied_on TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp
 );
-GRANT SELECT ON awl_db_revision TO general;
 
 CREATE or REPLACE FUNCTION check_db_revision( INT, INT, INT ) RETURNS BOOLEAN AS '
    DECLARE

@@ -441,7 +441,7 @@ class Session
     dbg_error_log( "Login", " LSIDLogin: Attempting login for $lsid" );
 
     list($md5_user_no,$validation_string) = split( ';', $lsid );
-    $qry = new PgQuery( "SELECT * FROM usr WHERE md5(user_no)=?;", $md5_user_no );
+    $qry = new PgQuery( "SELECT * FROM usr WHERE md5(user_no::text)=?;", $md5_user_no );
     if ( $qry->Exec('Login') && $qry->rows == 1 ) {
       $usr = $qry->Fetch();
       list( $x, $salt, $y) = split('\*', $validation_string);

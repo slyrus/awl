@@ -1,9 +1,23 @@
+awl (0.28) unstable; urgency=low
+
+  * Remove references to the 'general' database user.
+  * Add type cast to work correctly with PostgreSQL 8.3
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Fri, 18 Apr 2008 17:32:01 +1200
+
+awl (0.27) unstable; urgency=low
+
+  * Changes to database creation scripts to separate table definitions from
+    ownership definitions.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Sun, 13 Apr 2008 00:21:46 +1200
+
 awl (0.26) unstable; urgency=low
 
   * Improve translatability of interfaces.
   * [classBrowser] Provide a pre-formatting hook for column value manipulation.
 
- -- Andrew McMillan <debian@mcmillan.net.nz>  Fri, 29 Feb 2008 07:36:07 +1300
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Sun, 13 Apr 2008 00:19:26 +1200
 
 awl (0.25) unstable; urgency=low
 

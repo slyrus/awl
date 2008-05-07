@@ -99,6 +99,10 @@ class User extends DBRecord {
     global $session;
 
     $rc = false;
+
+    /**
+    * First we globally short-circuit the 'admin can do anything'
+    */
     if ( $session->AllowedTo("Admin") ) {
       $rc = true;
       dbg_error_log("User",":AllowedTo: Admin is always allowed to %s", $whatever );
@@ -108,18 +112,15 @@ class User extends DBRecord {
     switch( strtolower($whatever) ) {
 
       case 'view':
-        $rc = ( $session->AllowedTo("Admin")
-                || ($this->user_no > 0 && $session->user_no == $this->user_no) );
+        $rc = ( $this->user_no > 0 && $session->user_no == $this->user_no );
         break;
 
       case 'update':
-        $rc = ( $session->AllowedTo("Admin")
-                || ($this->user_no > 0 && $session->user_no == $this->user_no) );
+        $rc = ( $this->user_no > 0 && $session->user_no == $this->user_no );
         break;
 
       case 'changepassword':
-        $rc = ( $session->AllowedTo("Admin")
-                || ($this->user_no > 0 && $session->user_no == $this->user_no)
+        $rc = ( ($this->user_no > 0 && $session->user_no == $this->user_no)
                 || ("insert" == $this->WriteType) );
         break;
 
@@ -128,7 +129,7 @@ class User extends DBRecord {
       case 'create':
 
       case 'insert':
-        $rc =  ( $session->AllowedTo("Admin") );
+        $rc = false;
         break;
 
       default:

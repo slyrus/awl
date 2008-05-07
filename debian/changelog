@@ -1,3 +1,9 @@
+awl (0.29) unstable; urgency=low
+
+  * Minor code cleanup.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Wed, 07 May 2008 21:16:28 +1200
+
 awl (0.28) unstable; urgency=low
 
   * Remove references to the 'general' database user.

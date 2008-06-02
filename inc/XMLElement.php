@@ -273,16 +273,20 @@ class XMLElement {
 function BuildXMLTree( $xmltags, &$start_from ) {
   $content = array();
 
-  for( $i; $i < 50000; $i++ ) {
+  if ( !isset($start_from) ) $start_from = 0;
+
+  for( $i=0; $i < 50000; $i++ ) {
     $tagdata = $xmltags[$start_from++];
-    if ( !isset($tagdata) ) break;
+    if ( !isset($tagdata) || !isset($tagdata['tag']) || !isset($tagdata['type']) ) break;
     if ( $tagdata['type'] == "close" ) break;
+    $attributes = ( isset($tagdata['attributes']) ? $tagdata['attributes'] : false );
     if ( $tagdata['type'] == "open" ) {
       $subtree = BuildXMLTree( $xmltags, $start_from );
-      $content[] = new XMLElement($tagdata['tag'],$subtree,$tagdata['attributes']);
+      $content[] = new XMLElement($tagdata['tag'], $subtree, $attributes );
     }
     else if ( $tagdata['type'] == "complete" ) {
-      $content[] = new XMLElement($tagdata['tag'],$tagdata['value'],$tagdata['attributes']);
+      $value = ( isset($tagdata['value']) ? $tagdata['value'] : false );
+      $content[] = new XMLElement($tagdata['tag'], $value, $attributes );
     }
   }
 

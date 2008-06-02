@@ -160,6 +160,7 @@ class BrowserColumn
 
   function RenderValue( $value, $extraclass = "" ) {
     global $session;
+    global $BrowserCurrentRow;
 
     if ( $this->Type == 'date' || $this->Type == 'timestamp') {
       $value = $session->FormattedDate( $value, $this->Type );
@@ -167,7 +168,7 @@ class BrowserColumn
 
     if ( $this->Hook && function_exists($this->Hook) ) {
       dbg_error_log( "Browser", ":Browser: Hook for $this->Hook on column $this->Field");
-      $value = call_user_func( $this->Hook, $value, $this->Field, $GLOBAL['BrowserCurrentRow'] );
+      $value = call_user_func( $this->Hook, $value, $this->Field, $BrowserCurrentRow );
     }
 
     if ( $this->Translatable ) {

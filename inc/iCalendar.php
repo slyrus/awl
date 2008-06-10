@@ -10,7 +10,7 @@
 *
 *   iCalComponent( array(iCalComponent), array(iCalProp) )
 *
-* Once parsed, $ical->component will point to the first non-timezone component in
+* Once parsed, $ical->component will point to the wrapping VCALENDAR component of
 * the iCalendar.  This will be fine for simple iCalendar usage as sampled below,
 * but more complex iCalendar such as a VEVENT with RRULE which has repeat overrides
 * will need quite a bit more thought to process correctly.
@@ -92,7 +92,7 @@ class iCalProp {
    * The constructor parses the incoming string, which is formatted as per RFC2445 as a
    *   propname[;param1=pval1[; ... ]]:propvalue
    * however we allow ourselves to assume that the RFC2445 content unescaping has already
-   * happened, which is reasonable as this is done in iCalendar::BuildFromText().
+   * happened when iCalComponent::ParseFrom() called iCalComponent::UnwrapComponent().
    *
    * @param string $propstring The string from the iCalendar which contains this property.
    */
@@ -111,7 +111,7 @@ class iCalProp {
    * The constructor parses the incoming string, which is formatted as per RFC2445 as a
    *   propname[;param1=pval1[; ... ]]:propvalue
    * however we allow ourselves to assume that the RFC2445 content unescaping has already
-   * happened, which is reasonable as this is done in iCalendar::BuildFromText().
+   * happened when iCalComponent::ParseFrom() called iCalComponent::UnwrapComponent().
    *
    * @param string $propstring The string from the iCalendar which contains this property.
    */
@@ -800,6 +800,7 @@ class iCalendar {
   * @TODO Remove this function.
   */
   function DefaultPropertyList() {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'DefaultPropertyList' );
     return array( "UID" => 1, "DTSTAMP" => 1, "DTSTART" => 1, "DURATION" => 1,
                   "LAST-MODIFIED" => 1,"CLASS" => 1, "TRANSP" => 1, "SEQUENCE" => 1,
                   "DUE" => 1, "SUMMARY" => 1, "RRULE" => 1 );
@@ -818,6 +819,7 @@ class iCalendar {
   * @TODO Remove this function.
   */
   function JustThisBitPlease( $type, $count=1 ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'JustThisBitPlease' );
     $answer = "";
     $intags = false;
     $start = "BEGIN:$type";
@@ -851,6 +853,7 @@ class iCalendar {
   * @TODO Remove this function.
   */
   function &ParseSomeLines( $type ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'ParseSomeLines' );
     $props = array();
     $properties =& $props;
     while( isset($this->lines[$this->_current_parse_line]) ) {
@@ -921,6 +924,7 @@ class iCalendar {
   * @TODO Remove this function.
   */
   function BuildFromText( $icalendar ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'BuildFromText' );
     /**
      * This unescapes the (CRLF + linear space) wrapping specified in RFC2445. According
      * to RFC2445 we should always end with CRLF but the CalDAV spec says that normalising
@@ -957,6 +961,7 @@ class iCalendar {
   * @TODO Remove this function.
   */
   function RFC2445ContentUnescape( $escaped ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'RFC2445ContentUnescape' );
     $unescaped = str_replace( '\\n', "\n", $escaped);
     $unescaped = str_replace( '\\N', "\n", $unescaped);
     $unescaped = preg_replace( "/\\\\([,;:\"\\\\])/", '$1', $unescaped);
@@ -975,6 +980,7 @@ class iCalendar {
   function DealWithTimeZones() {
     global $c;
 
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'DealWithTimeZones' );
     $tzid = $this->Get('TZID');
     if ( isset($c->save_time_zone_defs) && $c->save_time_zone_defs ) {
       $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
@@ -1067,6 +1073,7 @@ class iCalendar {
   * TODO: Remove this function after June 2008.
   */
   function Put( $key, $value ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'Put' );
     $this->Set($key,$value);
   }
 
@@ -1114,6 +1121,7 @@ class iCalendar {
   * @TODO Remove this function.
   */
   function RFC2445ContentEscape( $name, $value ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'RFC2445ContentEscape' );
     $property = preg_replace( '/[;].*$/', '', $name );
     switch( $property ) {
         /** Content escaping does not apply to these properties culled from RFC2445 */
@@ -1172,8 +1180,8 @@ class iCalendar {
 
   /**
    * Extract a particular property from the provided component.  In doing so we
-   * make the assumption that the content has previously been unescaped (which is
-   * done in the BuildFromText() method).
+   * assume that the content was unescaped when iCalComponent::ParseFrom()
+   * called iCalComponent::UnwrapComponent().
    *
    * @param array $component An array of lines of this component
    * @param string $type The type of parameter
@@ -1309,6 +1317,7 @@ class iCalendar {
   * @TODO Remove this function.
   */
   function iCalHeader() {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'iCalHeader' );
     return <<<EOTXT
 BEGIN:VCALENDAR\r
 PRODID:-//Catalyst.Net.NZ//NONSGML AWL Calendar//EN\r
@@ -1326,6 +1335,7 @@ EOTXT;
   * @TODO Remove this function.
   */
   function iCalFooter() {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'iCalFooter' );
     return "END:VCALENDAR\r\n";
   }
 

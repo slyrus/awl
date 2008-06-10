@@ -1,12 +1,50 @@
 <?php
 /**
-* A Class for handling iCalendar data
+* A Class for handling iCalendar data.
+*
+* When parsed the underlying structure is roughly as follows:
+*
+*   iCalendar( array(iCalComponent), array(iCalProp) )
+*
+* each iCalComponent is similarly structured:
+*
+*   iCalComponent( array(iCalComponent), array(iCalProp) )
+*
+* Once parsed, $ical->component will point to the first non-timezone component in
+* the iCalendar.  This will be fine for simple iCalendar usage as sampled below,
+* but more complex iCalendar such as a VEVENT with RRULE which has repeat overrides
+* will need quite a bit more thought to process correctly.
+*
+* @example
+* To create a new iCalendar from several data values:
+*   $ical = new iCalendar( array('DTSTART' => $dtstart, 'SUMMARY' => $summary, 'DURATION' => $duration ) );
+*
+* @example
+* To render it as an iCalendar string:
+*   echo $ical->Render();
+*
+* @example
+* To render just the VEVENTs in the iCalendar with a restricted list of properties:
+*   echo $ical->Render( false, 'VEVENT', array( 'DTSTART', 'DURATION', 'DTEND', 'RRULE', 'SUMMARY') );
+*
+* @example
+* To parse an existing iCalendar string for manipulation:
+*   $ical = new iCalendar( array('icalendar' => $icalendar_text ) );
+*
+* @example
+* To clear any 'VALARM' components in an iCalendar object
+*   $ical->component->ClearComponents('VALARM');
+*
+* @example
+* To replace any 'RRULE' property in an iCalendar object
+*   $ical->component->SetProperties( 'RRULE', $rrule_definition );
 *
 * @package awl
 * @subpackage iCalendar
 * @author Andrew McMillan <andrew@catalyst.net.nz>
 * @copyright Catalyst IT Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
+*
 */
 require_once("XMLElement.php");
 
@@ -756,8 +794,10 @@ class iCalendar {
 
 
   /**
-  * @deprecated
   * An array of property names that we should always want when rendering an iCalendar
+  *
+  * @deprecated This function is deprecated and will be removed eventually.
+  * @TODO Remove this function.
   */
   function DefaultPropertyList() {
     return array( "UID" => 1, "DTSTAMP" => 1, "DTSTART" => 1, "DURATION" => 1,
@@ -766,7 +806,6 @@ class iCalendar {
   }
 
   /**
-  * @deprecated
   * A function to extract the contents of a BEGIN:SOMETHING to END:SOMETHING (perhaps multiply)
   * and return just that bit (or, of course, those bits :-)
   *
@@ -774,6 +813,9 @@ class iCalendar {
   * @var integer The number of SOMETHINGS we want to get.
   *
   * @return string A string from BEGIN:SOMETHING to END:SOMETHING, possibly multiple of these
+  *
+  * @deprecated This function is deprecated and will be removed eventually.
+  * @TODO Remove this function.
   */
   function JustThisBitPlease( $type, $count=1 ) {
     $answer = "";
@@ -800,11 +842,13 @@ class iCalendar {
 
 
   /**
-  * @deprecated
   * Function to parse lines from BEGIN:SOMETHING to END:SOMETHING into a nested array structure
   *
   * @var string The "SOMETHING" from the BEGIN:SOMETHING line we just met
   * @return arrayref An array of the things we found between (excluding) the BEGIN & END, some of which might be sub-arrays
+  *
+  * @deprecated This function is deprecated and will be removed eventually.
+  * @TODO Remove this function.
   */
   function &ParseSomeLines( $type ) {
     $props = array();
@@ -869,10 +913,12 @@ class iCalendar {
 
 
   /**
-  * @deprecated
   * Build the iCalendar object from a text string which is a single iCalendar resource
   *
   * @var string The RFC2445 iCalendar resource to be parsed
+  *
+  * @deprecated This function is deprecated and will be removed eventually.
+  * @TODO Remove this function.
   */
   function BuildFromText( $icalendar ) {
     /**
@@ -902,11 +948,13 @@ class iCalendar {
 
 
   /**
-  * @deprecated
   * Returns a content string with the RFC2445 escaping removed
   *
   * @param string $escaped The incoming string to be escaped.
   * @return string The string with RFC2445 content escaping removed.
+  *
+  * @deprecated This function is deprecated and will be removed eventually.
+  * @TODO Remove this function.
   */
   function RFC2445ContentUnescape( $escaped ) {
     $unescaped = str_replace( '\\n', "\n", $escaped);
@@ -918,9 +966,11 @@ class iCalendar {
 
 
   /**
-  * @deprecated
   * Do what must be done with time zones from on file.  Attempt to turn
   * them into something that PostgreSQL can understand...
+  *
+  * @deprecated This function is deprecated and will be removed eventually.
+  * @TODO Remove this function.
   */
   function DealWithTimeZones() {
     global $c;
@@ -1055,11 +1105,13 @@ class iCalendar {
   }
 
   /**
-  * @deprecated
   * Returns a suitably escaped RFC2445 content string.
   *
   * @param string $name The incoming name[;param] prefixing the string.
   * @param string $value The incoming string to be escaped.
+  *
+  * @deprecated This function is deprecated and will be removed eventually.
+  * @TODO Remove this function.
   */
   function RFC2445ContentEscape( $name, $value ) {
     $property = preg_replace( '/[;].*$/', '', $name );
@@ -1251,8 +1303,10 @@ class iCalendar {
   }
 
   /**
-  * @deprecated
   * Returns the header we always use at the start of our iCalendar resources
+  *
+  * @deprecated This function is deprecated and will be removed eventually.
+  * @TODO Remove this function.
   */
   function iCalHeader() {
     return <<<EOTXT
@@ -1266,8 +1320,10 @@ EOTXT;
 
 
   /**
-  * @deprecated
   * Returns the footer we always use at the finish of our iCalendar resources
+  *
+  * @deprecated This function is deprecated and will be removed eventually.
+  * @TODO Remove this function.
   */
   function iCalFooter() {
     return "END:VCALENDAR\r\n";
@@ -1296,5 +1352,3 @@ EOTXT;
   }
 
 }
-
-?>

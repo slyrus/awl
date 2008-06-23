@@ -683,8 +683,10 @@ class iCalendar {
       $this->properties['VCALENDAR'] = array('***ERROR*** This class is being referenced in an unsupported way!');
       return;
     }
+
     if ( isset($args['type'] ) ) {
       $this->type = $args['type'];
+      unset( $args['type'] );
     }
     else {
       $this->type = 'VEVENT';  // Default to event

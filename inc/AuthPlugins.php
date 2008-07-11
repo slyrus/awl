@@ -87,4 +87,24 @@ EOERRMSG;
 
 }
 
-?>
+
+/**
+* Authentication has already happened.  We know the username, we just need
+* to do the authorisation / access control.  The password is ignored.
+*
+* @package   awl
+*/
+function auth_external( $username, $password ) {
+  global $c;
+
+  $qry = new PgQuery("SELECT * FROM usr WHERE active AND lower(username) = ? ", strtolower($username) );
+  if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows == 1 ) {
+    $usr = $qry->Fetch();
+    return $usr;
+  }
+
+  return false;
+
+}
+
+

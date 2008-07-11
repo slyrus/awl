@@ -2,4 +2,5 @@ compat
 files
 html
 libawl-php
-
+awl-doc
+*.debhelper.log

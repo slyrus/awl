@@ -1,13 +1,16 @@
 Source: awl
-Section: catalyst
+Section: web
 Priority: extra
 Maintainer: Andrew McMillan <andrew@catalyst.net.nz>
-Standards-Version: 3.5.9
-Build-Depends: debhelper
+Standards-Version: 3.7.3
+Build-Depends: debhelper (>= 5)
+Vcs-git: git://git.catalyst.net.nz/awl.git
+Vcs-browser: http://git.catalyst.net.nz/?p=awl.git
+Homepage: http://andrew.mcmillan.net.nz/projects/awl
 
 Package: libawl-php
 Architecture: all
-Depends: debconf (>= 1.0.32), perl, bash
+Depends: debconf (>= 1.0.32), perl, bash, php5 | php4 (>= 4:4.3)
 Description: Andrew's Web Libraries - PHP Utility Libraries
  This package contains Andrew's Web Libraries.  This is a set
  of hopefully lightweight libraries for handling a variety of
@@ -17,6 +20,25 @@ Description: Andrew's Web Libraries - PHP Utility Libraries
   - DB Records
   - Simple reporting
   - DB Schema Updating
+  - iCalendar parsing
  .
- There is some documentation in phpdoc format for some of these
- things, but not all.
+ There is some documentation in the awl-doc package.
+
+Package: awl-doc
+Architecture: all
+Depends: debconf (>= 1.0.32)
+Description: Andrew's Web Libraries - API documentation
+ This package documents Andrew's Web Libraries.  This is a set
+ of hopefully lightweight libraries for handling a variety of
+ useful things for web programming, including:
+  - Session management
+  - User management
+  - DB Records
+  - Simple reporting
+  - DB Schema Updating
+  - iCalendar parsing
+ .
+ This package contains detailed technical documentation for the
+ classes and methods in these libraries.
+
+

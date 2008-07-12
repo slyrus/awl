@@ -1,7 +1,7 @@
 Source: awl
 Section: web
 Priority: extra
-Maintainer: Andrew McMillan <andrew@catalyst.net.nz>
+Maintainer: Andrew McMillan <debian@mcmillan.net.nz>
 Standards-Version: 3.7.3
 Build-Depends: debhelper (>= 5)
 Vcs-git: git://git.catalyst.net.nz/awl.git

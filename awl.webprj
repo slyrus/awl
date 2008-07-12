@@ -3,7 +3,7 @@
   <project usePreviewPrefix="0" type="Local" previewPrefix="" name="awl" encoding="utf8" >
     <upload/>
     <author>Andrew McMillan</author>
-    <email>andrew@catalyst.net.nz</email>
+    <email>debian@mcmillan.net.nz</email>
     <defaultDTD>-//W3C//DTD XHTML 1.1//EN</defaultDTD>
     <item url="dba/" uploadstatus="1" />
     <item modified_time="1125863755" url="dba/awl-tables.sql" uploadstatus="1" />

@@ -10,7 +10,7 @@ Homepage: http://andrew.mcmillan.net.nz/projects/awl
 
 Package: libawl-php
 Architecture: all
-Depends: debconf (>= 1.0.32), perl, bash, php5 | php4 (>= 4:4.3)
+Depends: debconf (>= 1.0.32), perl, php5 | php4 (>= 4:4.3)
 Description: Andrew's Web Libraries - PHP Utility Libraries
  This package contains Andrew's Web Libraries.  This is a set
  of hopefully lightweight libraries for handling a variety of

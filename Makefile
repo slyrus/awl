@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 # 
 
-package=libawl-php
+package=awl
 version=$(shell cat VERSION)
 
 all: built-docs 

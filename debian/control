@@ -2,7 +2,7 @@ Source: awl
 Section: web
 Priority: extra
 Maintainer: Andrew McMillan <debian@mcmillan.net.nz>
-Standards-Version: 3.7.3
+Standards-Version: 3.8.0
 Build-Depends: debhelper (>= 5)
 Vcs-git: git://git.catalyst.net.nz/awl.git
 Vcs-browser: http://git.catalyst.net.nz/?p=awl.git
@@ -26,6 +26,7 @@ Description: Andrew's Web Libraries - PHP Utility Libraries
  There is some documentation in the awl-doc package.
 
 Package: awl-doc
+Section: doc
 Architecture: all
 Depends: debconf (>= 1.0.32)
 Description: Andrew's Web Libraries - API documentation

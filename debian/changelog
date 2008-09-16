@@ -3,8 +3,9 @@ awl (0.32) unstable; urgency=low
   * Include docs & don't compress classTree.js (closes: #493687)
   * Recommend php5|4 rather than depend (closes: #493686)
   * debian/compat should be in the source package.
+  * Clean up minor lintian warnings.
 
- -- Andrew McMillan <debian@mcmillan.net.nz>  Tue, 16 Sep 2008 13:45:36 +1200
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Tue, 16 Sep 2008 14:03:22 +1200
 
 awl (0.31) unstable; urgency=low
 

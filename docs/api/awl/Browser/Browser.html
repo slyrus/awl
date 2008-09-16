@@ -1,0 +1,1383 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos  -->
+			<title>Docs For Class Browser</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+						<script src="../../media/lib/classTree.js"></script>
+												<script language="javascript" type="text/javascript">
+				var imgPlus = new Image();
+				var imgMinus = new Image();
+				imgPlus.src = "../../media/images/plus.png";
+				imgMinus.src = "../../media/images/minus.png";
+				
+				function showNode(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+							var oImg = document.layers["img" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+							var oImg = document.all["img" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+							var oImg = document.getElementById("img" + Node);
+									break;
+							}
+					oImg.src = imgMinus.src;
+					oTable.style.display = "block";
+				}
+				
+				function hideNode(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+							var oImg = document.layers["img" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+							var oImg = document.all["img" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+							var oImg = document.getElementById("img" + Node);
+									break;
+							}
+					oImg.src = imgPlus.src;
+					oTable.style.display = "none";
+				}
+				
+				function nodeIsVisible(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+									break;
+							}
+					return (oTable && oTable.style.display == "block");
+				}
+				
+				function toggleNodeVisibility(Node){
+					if (nodeIsVisible(Node)){
+						hideNode(Node);
+					}else{
+						showNode(Node);
+					}
+				}
+			</script>
+					</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name"><img src="../../media/images/Class_logo.png"
+														alt=" Class"
+														title=" Class"
+														style="vertical-align: middle"> Browser</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Start a new Browser, add columns, set a join and Render it to create a basic  list of records in a table.</p>
+<p class="description"><p>You can, of course, get a lot fancier with setting ordering, where clauses  totalled columns and so forth.</p></p>
+		<p class="notes">
+			Located in <a class="field" href="_classBrowser.php.html">/classBrowser.php</a> (line <span class="field">204</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																																																																																																																																																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$BeginRow" title="details" class="var-name">$BeginRow</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$BeginRowArgs" title="details" class="var-name">$BeginRowArgs</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$CloseRow" title="details" class="var-name">$CloseRow</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$Columns" title="details" class="var-name">$Columns</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$ExtraRows" title="details" class="var-name">$ExtraRows</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$Grouping" title="details" class="var-name">$Grouping</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$HiddenColumns" title="details" class="var-name">$HiddenColumns</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$Joins" title="details" class="var-name">$Joins</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$Limit" title="details" class="var-name">$Limit</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$Order" title="details" class="var-name">$Order</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$OrderBrowserKey" title="details" class="var-name">$OrderBrowserKey</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$OrderDirection" title="details" class="var-name">$OrderDirection</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$OrderField" title="details" class="var-name">$OrderField</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$Query" title="details" class="var-name">$Query</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$SubTitle" title="details" class="var-name">$SubTitle</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$Title" title="details" class="var-name">$Title</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$TotalFuncs" title="details" class="var-name">$TotalFuncs</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$Totals" title="details" class="var-name">$Totals</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$Union" title="details" class="var-name">$Union</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$Where" title="details" class="var-name">$Where</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																																																																																							
+				<div class="method-definition">
+					<img src="../../media/images/Constructor.png" alt=" "/>
+											<span class="method-result">Browser</span>
+										<a href="#Browser" title="details" class="method-name">Browser</a>
+											([<span class="var-type">string</span>&nbsp;<span class="var-name">$title</span> = <span class="var-default">&quot;&quot;</span>])
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#AddColumn" title="details" class="method-name">AddColumn</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$header</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$align</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$format</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$sql</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$class</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$datatype</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$hook</span> = <span class="var-default">null</span>])
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#AddGrouping" title="details" class="method-name">AddGrouping</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$field</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$browser_array_key</span> = <span class="var-default">0</span>])
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#AddHidden" title="details" class="method-name">AddHidden</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$sql</span> = <span class="var-default">&quot;&quot;</span>])
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#AddOrder" title="details" class="method-name">AddOrder</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$direction</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$browser_array_key</span> = <span class="var-default">0</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$secondary</span> = <span class="var-default">0</span>])
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#AddRow" title="details" class="method-name">AddRow</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$column_values</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#AddTotal" title="details" class="method-name">AddTotal</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$column_name</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$total_function</span> = <span class="var-default">false</span>])
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#AndWhere" title="details" class="method-name">AndWhere</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$more_where</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">boolean</span>
+										<a href="#DoQuery" title="details" class="method-name">DoQuery</a>
+										()
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#MoreWhere" title="details" class="method-name">MoreWhere</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$operator</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$more_where</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#OrWhere" title="details" class="method-name">OrWhere</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$more_where</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">string</span>
+										<a href="#Render" title="details" class="method-name">Render</a>
+											([<span class="var-type">string</span>&nbsp;<span class="var-name">$title_tag</span> = <span class="var-default">'h1'</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$subtitle_tag</span> = <span class="var-default">'h2'</span>])
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#RowFormat" title="details" class="method-name">RowFormat</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$beginrow</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$closerow</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$rowargs</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#SetJoins" title="details" class="method-name">SetJoins</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$join_list</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#SetSubTitle" title="details" class="method-name">SetSubTitle</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$sub_title</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#SetTitle" title="details" class="method-name">SetTitle</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$new_title</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#SetTranslatable" title="details" class="method-name">SetTranslatable</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$column_list</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#SetUnion" title="details" class="method-name">SetUnion</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$union_select</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#SetWhere" title="details" class="method-name">SetWhere</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$where_clause</span>)
+									</div>
+											</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			
+<a name="var$BeginRow" id="$BeginRow"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$BeginRow</span>
+						(line <span class="line-number">220</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$BeginRowArgs" id="$BeginRowArgs"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$BeginRowArgs</span>
+						(line <span class="line-number">222</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$CloseRow" id="$CloseRow"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$CloseRow</span>
+						(line <span class="line-number">221</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$Columns" id="$Columns"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Columns</span>
+						(line <span class="line-number">208</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$ExtraRows" id="$ExtraRows"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$ExtraRows</span>
+						(line <span class="line-number">225</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$Grouping" id="$Grouping"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Grouping</span>
+						(line <span class="line-number">217</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$HiddenColumns" id="$HiddenColumns"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$HiddenColumns</span>
+						(line <span class="line-number">209</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$Joins" id="$Joins"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Joins</span>
+						(line <span class="line-number">210</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$Limit" id="$Limit"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Limit</span>
+						(line <span class="line-number">218</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$Order" id="$Order"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Order</span>
+						(line <span class="line-number">213</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$OrderBrowserKey" id="$OrderBrowserKey"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$OrderBrowserKey</span>
+						(line <span class="line-number">216</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$OrderDirection" id="$OrderDirection"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$OrderDirection</span>
+						(line <span class="line-number">215</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$OrderField" id="$OrderField"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$OrderField</span>
+						(line <span class="line-number">214</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$Query" id="$Query"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Query</span>
+						(line <span class="line-number">219</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$SubTitle" id="$SubTitle"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$SubTitle</span>
+						(line <span class="line-number">207</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$Title" id="$Title"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Title</span>
+						(line <span class="line-number">206</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$TotalFuncs" id="$TotalFuncs"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$TotalFuncs</span>
+						(line <span class="line-number">224</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$Totals" id="$Totals"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Totals</span>
+						(line <span class="line-number">223</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$Union" id="$Union"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Union</span>
+						(line <span class="line-number">212</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$Where" id="$Where"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Where</span>
+						(line <span class="line-number">211</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodBrowser" id="Browser"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Constructor.png" />
+		<span class="method-title">Constructor Browser</span> (line <span class="line-number">232</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The Browser class constructor</p>
+	
+	<div class="method-signature">
+		<span class="method-result">Browser</span>
+		<span class="method-name">
+			Browser
+		</span>
+					([<span class="var-type">string</span>&nbsp;<span class="var-name">$title</span> = <span class="var-default">&quot;&quot;</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$title</span><span class="var-description">: A title for the browser (optional).</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodAddColumn" id="AddColumn"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">AddColumn</span> (line <span class="line-number">270</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add a column to the Browser.</p>
+<p class="description"><p>This constructs a new BrowserColumn, appending it to the array of columns  in this Browser.</p><p>Note that if the $format parameter starts with '&lt;td&gt;' the format will replace  the column format, otherwise it will be used within '&lt;td&gt;...&lt;/td&gt;' tags.</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../../awl/Browser/BrowserColumn.html">BrowserColumn</a></li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			AddColumn
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$header</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$align</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$format</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$sql</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$class</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$datatype</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$hook</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span><span class="var-description">: The name of the field.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$header</span><span class="var-description">: A column header for the field.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$align</span><span class="var-description">: An alignment for column values.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$format</span><span class="var-description">: A sprintf format for displaying column values.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$sql</span><span class="var-description">: An SQL fragment for calculating the value.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$class</span><span class="var-description">: A CSS class to apply to the cells of this column.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$hook</span><span class="var-description">: <p>The name of a global function which will preprocess the column value</p><p>The hook function should be defined as follows:    function hookfunction( $column_value, $column_name, $database_row ) {      ...      return $value;    }</p></span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$datatype</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodAddGrouping" id="AddGrouping"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">AddGrouping</span> (line <span class="line-number">400</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			AddGrouping
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$field</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$browser_array_key</span> = <span class="var-default">0</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$field</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$browser_array_key</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodAddHidden" id="AddHidden"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">AddHidden</span> (line <span class="line-number">284</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add a hidden column - one that is present in the SQL result, but for  which there is no column displayed.</p>
+<p class="description"><p>This can be useful for including a value in (e.g.) clickable links or title  attributes which is not actually displayed as a visible column.</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			AddHidden
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$sql</span> = <span class="var-default">&quot;&quot;</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span><span class="var-description">: The name of the field.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$sql</span><span class="var-description">: An SQL fragment to calculate the field, if it is calculated.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodAddOrder" id="AddOrder"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">AddOrder</span> (line <span class="line-number">424</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add an ordering to the browser widget.</p>
+<p class="description"><p>The ordering can be overridden by GET parameters which will be  rendered into the column headers so that a user can click on  the column headers to control the actual order.</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			AddOrder
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$direction</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$browser_array_key</span> = <span class="var-default">0</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$secondary</span> = <span class="var-default">0</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span><span class="var-description">: The name of the field to be ordered by.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$direction</span><span class="var-description">: A for Ascending, otherwise it will be descending order.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$browser_array_key</span><span class="var-description">: Use this to distinguish between multiple                browser widgets on the same page.  Leave it empty if you only                have a single browser instance.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$secondary</span><span class="var-description">: Use this to indicate a default secondary order                which shouldn't interfere with the default primary order.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodAddRow" id="AddRow"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">AddRow</span> (line <span class="line-number">543</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add an extra arbitrary row onto the end of the browser.</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Contains an array of named fields, hopefully matching the column names.</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			AddRow
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$column_values</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$column_values</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodAddTotal" id="AddTotal"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">AddTotal</span> (line <span class="line-number">464</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Mark a column as something to be totalled.  You can also specify the name of  a function which may modify the value before the actual totalling.</p>
+<p class="description"><p>The callback function will be called with each row, with the first argument  being the entire record object and the second argument being only the column  being totalled.  The callback should return a number, to be added to the total.</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			AddTotal
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$column_name</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$total_function</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$column_name</span><span class="var-description">: The name of the column to be totalled.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$total_function</span><span class="var-description">: The name of the callback function.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodAndWhere" id="AndWhere"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">AndWhere</span> (line <span class="line-number">387</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add an OR ...  to the SQL Where clause</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			AndWhere
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$more_where</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$more_where</span><span class="var-description">: The extra part of the where clause</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodDoQuery" id="DoQuery"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">DoQuery</span> (line <span class="line-number">515</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This method is used to build and execute the database query.</p>
+<p class="description"><p>You need not call this method, since Browser::Render() will call it for  you if you have not done so at that point.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The success / fail status of the PgQuery::Exec()</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			DoQuery
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodMoreWhere" id="MoreWhere"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">MoreWhere</span> (line <span class="line-number">374</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add an [operator] ... to the SQL Where clause</p>
+<p class="description"><p>You will generally want to call OrWhere or AndWhere rather than  this function, but hey: who am I to tell you how to code!</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			MoreWhere
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$operator</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$more_where</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$operator</span><span class="var-description">: The operator to combine with previous where clause parts.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$more_where</span><span class="var-description">: The extra part of the where clause</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodOrWhere" id="OrWhere"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">OrWhere</span> (line <span class="line-number">396</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add an OR ... to the SQL Where clause</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			OrWhere
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$more_where</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$more_where</span><span class="var-description">: The extra part of the where clause</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodRender" id="Render"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">Render</span> (line <span class="line-number">560</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This method is used to render the browser as HTML.  If the query has  not yet been executed then this will call DoQuery to do so.</p>
+<p class="description"><p>The browser (including the title) will be displayed in a div with id=&quot;browser&quot; so  that you can style '#browser tr.header', '#browser tr.totals' and so forth.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The rendered HTML fragment to display to the user.</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			Render
+		</span>
+					([<span class="var-type">string</span>&nbsp;<span class="var-name">$title_tag</span> = <span class="var-default">'h1'</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$subtitle_tag</span> = <span class="var-default">'h2'</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$title_tag</span><span class="var-description">: The tag to use around the browser title (default 'h1')</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$subtitle_tag</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodRowFormat" id="RowFormat"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">RowFormat</span> (line <span class="line-number">494</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set the format for an output row.</p>
+<p class="description"><p>The row format is set as an sprintf format string for the start of the row,  and a plain text string for the close of the row.  Subsequent arguments  are interpreted as names of fields, the values of which will be sprintf'd  into the beginrow string for each row.</p><p>Some special field names exist beginning with the '#' character which have  'magic' functionality, including '#even' which will insert '0' for even  rows and '1' for odd rows, allowing a nice colour alternation if the  beginrow format refers to it like: 'class=&quot;r%d&quot;' so that even rows will  become 'class=&quot;r0&quot;' and odd rows will be 'class=&quot;r1&quot;'.</p><p>At present only '#even' exists, although other magic values may be defined  in future.</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			RowFormat
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$beginrow</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$closerow</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$rowargs</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$beginrow</span><span class="var-description">: The new printf format for the start of the row.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$closerow</span><span class="var-description">: The new string for the close of the row.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$rowargs</span><span class="var-description">: ... The row arguments which will be sprintf'd into  the $beginrow format for each row</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSetJoins" id="SetJoins"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">SetJoins</span> (line <span class="line-number">337</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set the tables and joins for the SQL.</p>
+<p class="description"><p>For a single table this should just contain the name of that table, but for  multiple tables it should be the full content of the SQL 'FROM ...' clause  (excluding the actual 'FROM' keyword).</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SetJoins
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$join_list</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$join_list</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSetSubTitle" id="SetSubTitle"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">SetSubTitle</span> (line <span class="line-number">324</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set a Sub Title for the browse.</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SetSubTitle
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$sub_title</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$sub_title</span><span class="var-description">: The sub title string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSetTitle" id="SetTitle"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">SetTitle</span> (line <span class="line-number">297</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set the Title for the browse.</p>
+<p class="description"><p>This can also be set in the constructor but if you create a template Browser  and then clone it in a loop you may want to assign a different Title for each  instance.</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SetTitle
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$new_title</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$new_title</span><span class="var-description">: The new title for the browser</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSetTranslatable" id="SetTranslatable"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">SetTranslatable</span> (line <span class="line-number">306</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set the named columns to be translatable</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SetTranslatable
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$column_list</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$column_list</span><span class="var-description">: The list of columns which are translatable</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSetUnion" id="SetUnion"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">SetUnion</span> (line <span class="line-number">350</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set a Union SQL statement.</p>
+<p class="description"><p>In rare cases this might be useful.  It's currently a fairly simple hack  which requires you to put an entire valid (&amp; matching) UNION subclause  (although without the UNION keyword).</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SetUnion
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$union_select</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$union_select</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSetWhere" id="SetWhere"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">SetWhere</span> (line <span class="line-number">361</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set the SQL Where clause to a specific value.</p>
+<p class="description"><p>The WHERE keyword should not be included.</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SetWhere
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$where_clause</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$where_clause</span><span class="var-description">: A valide SQL WHERE ... clause.</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+	
+	<p class="notes" id="credit">
+		Documentation generated on Tue, 16 Sep 2008 12:07:37 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
+	</p>
+	</div></body>
+</html>

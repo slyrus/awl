@@ -62,7 +62,7 @@ binary-common:
 #	dh_undocumented
 #	dh_strip
 #	dh_link
-	dh_compress
+	dh_compress --exclude=.js
 	dh_fixperms
 #	dh_perl
 #	dh_python

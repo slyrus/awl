@@ -175,7 +175,8 @@ class iCalProp {
    * @return string The name for the property.
    */
   function TextMatch( $search ) {
-    return strstr( $this->content, $search );
+    if ( isset($this->content) ) return strstr( $this->content, $search );
+    return false;
   }
 
 
@@ -187,7 +188,7 @@ class iCalProp {
    * @return string The value of the parameter
    */
   function GetParameterValue( $name ) {
-    if ( $this->parameters[$name] ) return $this->parameters[$name];
+    if ( isset($this->parameters[$name]) ) return $this->parameters[$name];
   }
 
   /**

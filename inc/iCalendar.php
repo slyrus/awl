@@ -1226,20 +1226,20 @@ class iCalendar {
       $tag = $v->GetTag();
       $value_type = gettype($value);
       $value_defined = (isset($value) && $value_type == 'string') || ($value_type == 'array' && count($value) > 0 );
-      if ( $tag == 'URN:IETF:PARAMS:XML:NS:CALDAV:IS-NOT-DEFINED' && $value_defined ) {
+      if ( $tag == 'urn:ietf:params:xml:ns:caldav:is-not-defined' && $value_defined ) {
         dbg_error_log( "iCalendar", ":ApplyFilter: Value is set ('%s'), want unset, for filter %s", count($value), $tag );
         return false;
       }
-      elseif ( $tag == 'URN:IETF:PARAMS:XML:NS:CALDAV:IS-DEFINED' && !$value_defined ) {
+      elseif ( $tag == 'urn:ietf:params:xml:ns:caldav:is-defined' && !$value_defined ) {
         dbg_error_log( "iCalendar", ":ApplyFilter: Want value, but it is not set for filter %s", $tag );
         return false;
       }
       else {
         switch( $tag ) {
-          case 'URN:IETF:PARAMS:XML:NS:CALDAV:TIME-RANGE':
+          case 'urn:ietf:params:xml:ns:caldav:time-range':
             /** TODO: While this is unimplemented here at present, most time-range tests should occur at the SQL level. */
             break;
-          case 'URN:IETF:PARAMS:XML:NS:CALDAV:TEXT-MATCH':
+          case 'urn:ietf:params:xml:ns:caldav:text-match':
             $search = $v->GetContent();
             // In this case $value will either be a string, or an array of iCalProp objects
             // since TEXT-MATCH does not apply to COMPONENT level - only property/parameter
@@ -1259,23 +1259,23 @@ class iCalendar {
             else {
               $match = strstr( $value, $search[0] );
             }
-            $negate = $v->GetAttribute("NEGATE-CONDITION");
+            $negate = $v->GetAttribute("negate-condition");
             if ( isset($negate) && strtolower($negate) == "yes" && $match ) {
               dbg_error_log( "iCalendar", ":ApplyFilter: TEXT-MATCH of %s'%s' against '%s'", (isset($negate) && strtolower($negate) == "yes"?'!':''), $search, $value );
               return false;
             }
             break;
-          case 'URN:IETF:PARAMS:XML:NS:CALDAV:COMP-FILTER':
+          case 'urn:ietf:params:xml:ns:caldav:comp-filter':
             $subfilter = $v->GetContent();
-            $component = $this->ExtractSubComponent($value,$v->GetAttribute("NAME"));
+            $component = $this->ExtractSubComponent($value,$v->GetAttribute("name"));
             if ( ! $this->ApplyFilter($subfilter,$component) ) return false;
             break;
-          case 'URN:IETF:PARAMS:XML:NS:CALDAV:PROP-FILTER':
+          case 'urn:ietf:params:xml:ns:caldav:prop-filter':
             $subfilter = $v->GetContent();
-            $properties = $this->ExtractProperty($value,$v->GetAttribute("NAME"));
+            $properties = $this->ExtractProperty($value,$v->GetAttribute("name"));
             if ( ! $this->ApplyFilter($subfilter,$properties) ) return false;
             break;
-          case 'URN:IETF:PARAMS:XML:NS:CALDAV:PARAM-FILTER':
+          case 'urn:ietf:params:xml:ns:caldav:param-filter':
             $subfilter = $v->GetContent();
             $parameter = $this->ExtractParameter($value,$v->GetAttribute("NAME"));
             if ( ! $this->ApplyFilter($subfilter,$parameter) ) return false;
@@ -1299,13 +1299,13 @@ class iCalendar {
 
     foreach( $filters AS $k => $v ) {
       $tag = $v->GetTag();
-      $name = $v->GetAttribute("NAME");
+      $name = $v->GetAttribute("name");
       $filter = $v->GetContent();
-      if ( $tag == "URN:IETF:PARAMS:XML:NS:CALDAV:PROP-FILTER" ) {
+      if ( $tag == "urn:ietf:params:xml:ns:caldav:prop-filter" ) {
         $value = $this->ExtractProperty($this->lines,$name);
       }
       else {
-        $value = $this->ExtractSubComponent($this->lines,$v->GetAttribute("NAME"));
+        $value = $this->ExtractSubComponent($this->lines,$v->GetAttribute("name"));
       }
       if ( count($value) == 0 ) unset($value);
       if ( ! $this->ApplyFilter($filter,$value) ) return false;

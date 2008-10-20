@@ -281,4 +281,13 @@ if ( !function_exists("translate") ) {
   eval( 'function clone($object) { return $object; }' );
 }
 
-?>
+if ( !function_exists("quoted_printable_encode") ) {
+  /**
+  * Process a string to fit the requirements of RFC2045 section 6.7.  Note that
+  * this works, but replaces more characters than the minimum set. For readability
+  * the spaces aren't encoded as =20 though.
+  */
+  function quoted_printable_encode($string) {
+    return preg_replace('/[^\r\n]{73}[^=\r\n]{2}/', "$0=\r\n", str_replace("%","=",str_replace("%20"," ",rawurlencode($string))));
+  }
+}

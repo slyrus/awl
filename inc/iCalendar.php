@@ -41,8 +41,8 @@
 *
 * @package awl
 * @subpackage iCalendar
-* @author Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Catalyst IT Ltd
+* @author Andrew McMillan <andrew@mcmillan.net.nz>
+* @copyright Catalyst IT Ltd, Morphoss Ltd - http://www.morphoss.com/
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 *
 */
@@ -252,7 +252,7 @@ class iCalProp {
         $escaped = preg_replace( '/\r?\n/', '\\n', $escaped);
         $escaped = preg_replace( "/([,;:\"])/", '\\\\$1', $escaped);
     }
-    $this->rendered = wordwrap( sprintf( "%s%s:%s", $this->name, $this->RenderParameters(), $escaped), 73, " \r\n ", true );
+    $this->rendered = wordwrap( sprintf( "%s%s:%s", $this->name, $this->RenderParameters(), $escaped), 72, " \r\n ", true );
     return $this->rendered;
   }
 
@@ -695,7 +695,7 @@ class iCalendar {
     $this->component->SetType('VCALENDAR');
     $this->component->SetProperties(
         array(
-          new iCalProp('PRODID:-//Catalyst.Net.NZ//NONSGML AWL Calendar//EN'),
+          new iCalProp('PRODID:-//davical.org//NONSGML AWL Calendar//EN'),
           new iCalProp('VERSION:2.0')
         )
     );
@@ -1070,6 +1070,29 @@ class iCalendar {
     return $this->Get($key);
   }
 
+
+  /**
+  * Add a new property/value, regardless of whether it exists already
+  *
+  * @param string $key The property key
+  * @param string $value The property value
+  * @param string $parameters Any parameters to set for the property, as an array of key/value pairs
+  */
+  function Add( $key, $value, $parameters = null ) {
+    if ( $value == "" ) return;
+    $key = strtoupper($key);
+    $property = new iCalProp();
+    $property->Name($key);
+    $property->Value($value);
+    if ( isset($parameters) && is_array($parameters) ) {
+      $property->parameters = $parameters;
+    }
+    $component =& $this->component->FirstNonTimezone();
+    $component->AddProperty($property);
+    if (isset($this->component->rendered) ) unset( $this->component->rendered );
+  }
+
+
   /**
   * Because I screwed up with the name originally...
   * @DEPRECATED
@@ -1323,7 +1346,7 @@ class iCalendar {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'iCalHeader' );
     return <<<EOTXT
 BEGIN:VCALENDAR\r
-PRODID:-//Catalyst.Net.NZ//NONSGML AWL Calendar//EN\r
+PRODID:-//davical.org//NONSGML AWL Calendar//EN\r
 VERSION:2.0\r
 
 EOTXT;

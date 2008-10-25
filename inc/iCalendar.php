@@ -250,7 +250,7 @@ class iCalProp {
       default:
         $escaped = str_replace( '\\', '\\\\', $escaped);
         $escaped = preg_replace( '/\r?\n/', '\\n', $escaped);
-        $escaped = preg_replace( "/([,;:\"])/", '\\\\$1', $escaped);
+        $escaped = preg_replace( "/([,;\"])/", '\\\\$1', $escaped);
     }
     $this->rendered = wordwrap( sprintf( "%s%s:%s", $this->name, $this->RenderParameters(), $escaped), 72, " \r\n ", true );
     return $this->rendered;
@@ -696,7 +696,8 @@ class iCalendar {
     $this->component->SetProperties(
         array(
           new iCalProp('PRODID:-//davical.org//NONSGML AWL Calendar//EN'),
-          new iCalProp('VERSION:2.0')
+          new iCalProp('VERSION:2.0'),
+          new iCalProp('CALSCALE:GREGORIAN')
         )
     );
     $first = new iCalComponent();

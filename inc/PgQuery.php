@@ -55,11 +55,11 @@ EOERRMSG;
 require_once("AWLUtilities.php");
 
 /**
-* @global resource $dbconn
-* @name $dbconn
-* The database connection.
+* Connect to the database defined in the $c->dbconn[] array
 */
-if ( !isset($dbconn) ) {
+function connect_configured_database() {
+  global $c, $dbconn;
+
   /**
   * Attempt to connect to the configured connect strings
   */
@@ -83,8 +83,18 @@ EOERRMSG;
     exit;
   }
 
+  $result = pg_exec( $dbconn, "SELECT regexp_replace( version(), E'^PostgreSQL ([0-9]+\.[0-9]+)\..*$', E'\\1')" );
+  $row = pg_fetch_array($result, 0);
+  $c->found_dbversion = $row[0];
 }
 
+
+/**
+* @global resource $dbconn
+* @name $dbconn
+* The database connection.
+*/
+if ( !isset($dbconn) ) connect_configured_database();
 
 /**
 * A duration (in decimal seconds) between two times which are the result of calls to microtime()
@@ -122,6 +132,7 @@ function duration( $t1, $t2 ) {
 * @return string NULL, TRUE, FALSE, a plain number, or the original string quoted and with ' and \ characters escaped
 */
 function qpg($str = null) {
+  global $c;
 
   switch (strtolower(gettype($str))) {
     case 'null':
@@ -139,6 +150,7 @@ function qpg($str = null) {
       //PostgreSQL treats a backslash as an escape character.
       $str = str_replace('\\', '\\\\', $str);
       $rv = "'$str'";
+      if ( $c->found_dbversion > 8.0 ) $rv = 'E'.$rv;
   }
   return $rv;
 }

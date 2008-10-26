@@ -284,7 +284,12 @@ class MenuSet {
   * @return mixed A reference to the MenuOption that was added, or false if none were added.
   */
   function &AddOption( $label, $target, $title="", $active=false, $sortkey=1000 ) {
-    $new_option =& new MenuOption( $label, $target, $title, $this->main_class, $sortkey );
+    if ( version_compare(phpversion(), '5.0') < 0) {
+      $new_option =& new MenuOption( $label, $target, $title, $this->main_class, $sortkey );
+    }
+    else {
+      $new_option = new MenuOption( $label, $target, $title, $this->main_class, $sortkey );
+    }
     if ( ($old_option = $this->_OptionExists( $label )) === false ) {
       $this->options[] = &$new_option ;
     }
@@ -461,4 +466,3 @@ class MenuSet {
     return $r;
   }
 }
-?>

@@ -7,8 +7,8 @@
 *
 * @package   awl
 * @subpackage   DataUpdate
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Catalyst IT Ltd
+* @author Andrew McMillan <andrew@mcmillan.net.nz>
+* @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 require_once("AWLUtilities.php");
@@ -67,7 +67,7 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
   $vlst = "";
   foreach( $fields as $fn => $typ ) {
     // $prefixed_fn = $fprefix . $fn;
-    dbg_error_log( "DataUpdate", ":sql_from_object: $fn => $typ (".$obj->{$fn}.")");
+    dbg_error_log( "DataUpdate", ":sql_from_object: %s => %s (%s)", $fn, $typ, (isset($obj->{$fn})?$obj->{$fn}:"[undefined value]"));
     if ( !isset($obj->{$fn}) && isset($obj->{"xxxx$fn"}) ) {
       // Sometimes we will have prepended 'xxxx' to the field name so that the field
       // name differs from the column name in the database.

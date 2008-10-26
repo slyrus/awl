@@ -4,8 +4,8 @@
 *
 * @package   awl
 * @subpackage   DataEntry
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Catalyst IT Ltd
+* @author Andrew McMillan <andrew@mcmillan.net.nz>
+* @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 require_once("AWLUtilities.php");
@@ -164,6 +164,7 @@ class EntryField
 
     $r = "<";
     dbg_error_log( "EntryField", ":Render: Name: %s, Type: %s, Current: %s", $this->fname, $this->ftype, $this->current );
+    $size = "";
     switch ( $this->ftype ) {
 
       case "select":

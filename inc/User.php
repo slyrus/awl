@@ -4,8 +4,8 @@
 * usr records.
 *
 * @package   awl
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Catalyst IT Ltd
+* @author Andrew McMillan <andrew@mcmillan.net.nz>
+* @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 require_once("AWLUtilities.php");
@@ -276,7 +276,7 @@ class User extends DBRecord {
         $i=0;
         while( $row = $q->Fetch() ) {
           @dbg_error_log("User", ":RenderRoles: Is a member of '%s': %s", $row->role_name, $this->roles[$row->role_name] );
-          $ef->record->roles[$row->role_name] = $this->roles[$row->role_name];
+          $ef->record->roles[$row->role_name] = ( isset($this->roles[$row->role_name]) ? $this->roles[$row->role_name] : 'f');
           $html .= $ef->DataEntryField( "", "checkbox", "roles[$row->role_name]",
                           array("title" => translate("Does the user have the right to perform this role?"),
                                     "_label" => translate($row->role_name) ) );

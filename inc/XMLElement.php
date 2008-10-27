@@ -275,7 +275,7 @@ function BuildXMLTree( $xmltags, &$start_from ) {
 
   if ( !isset($start_from) ) $start_from = 0;
 
-  for( $i=0; $i < 50000; $i++ ) {
+  for( $i=0; $i < 50000 && isset($xmltags[$start_from]); $i++) {
     $tagdata = $xmltags[$start_from++];
     if ( !isset($tagdata) || !isset($tagdata['tag']) || !isset($tagdata['type']) ) break;
     if ( $tagdata['type'] == "close" ) break;

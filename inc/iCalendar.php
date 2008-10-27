@@ -42,7 +42,7 @@
 * @package awl
 * @subpackage iCalendar
 * @author Andrew McMillan <andrew@mcmillan.net.nz>
-* @copyright Catalyst IT Ltd, Morphoss Ltd - http://www.morphoss.com/
+* @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 *
 */
@@ -1037,7 +1037,7 @@ class iCalendar {
   function Get( $key ) {
     if ( strtoupper($key) == 'TZID' ) {
       // backward compatibility hack
-      dbg_error_log( "icalendar", " Get(TZID): TZID '%s', Location '%s'", $this->tzid, $this->tz_locn );
+      dbg_error_log( "icalendar", " Get(TZID): TZID '%s', Location '%s'", (isset($this->tzid)?$this->tzid:"[not set]"), $this->tz_locn );
       if ( isset($this->tzid) ) return $this->tzid;
       return $this->tz_locn;
     }

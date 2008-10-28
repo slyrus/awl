@@ -439,6 +439,10 @@ if (document.getElementById) {
 				fic.openIcon = 'media/images/Function.png';
 				fic.icon = 'media/images/Function.png';
 				subpackagetree_function.add(fic);
+							var fic = new WebFXTreeItem('connect_configured_database', 'awl/PgQuery/_PgQuery.php.html#functionconnect_configured_database');
+				fic.openIcon = 'media/images/Function.png';
+				fic.icon = 'media/images/Function.png';
+				subpackagetree_function.add(fic);
 							var fic = new WebFXTreeItem('duration', 'awl/PgQuery/_PgQuery.php.html#functionduration');
 				fic.openIcon = 'media/images/Function.png';
 				fic.icon = 'media/images/Function.png';
@@ -597,6 +601,10 @@ if (document.getElementById) {
 				fic.openIcon = 'media/images/Function.png';
 				fic.icon = 'media/images/Function.png';
 				subpackagetree_function.add(fic);
+							var fic = new WebFXTreeItem('quoted_printable_encode', 'awl/Utilities/_AWLUtilities.php.html#functionquoted_printable_encode');
+				fic.openIcon = 'media/images/Function.png';
+				fic.icon = 'media/images/Function.png';
+				subpackagetree_function.add(fic);
 							var fic = new WebFXTreeItem('replace_uri_params', 'awl/Utilities/_AWLUtilities.php.html#functionreplace_uri_params');
 				fic.openIcon = 'media/images/Function.png';
 				fic.icon = 'media/images/Function.png';
@@ -655,6 +663,36 @@ if (document.getElementById) {
 			subpackagetree_file.icon = 'media/images/folder.png';
 			
 							var file = new WebFXTreeItem('Validation.php', 'awl/Validation/_Validation.php.html');
+				file.openIcon = 'media/images/Page.png';
+				file.icon = 'media/images/Page.png';
+				subpackagetree_file.add(file);
+					
+			subpackagetree.add(subpackagetree_file);
+			
+	  tree.add(subpackagetree);
+							var subpackagetree = new WebFXTreeItem('<span class="sub-package">XMLDocument</span>', '');
+		
+		subpackagetree.openIcon = 'media/images/package.png';
+		subpackagetree.icon = 'media/images/package.png';
+
+			
+					var subpackagetree_classe = new WebFXTreeItem('Class(es)', '');
+			subpackagetree_classe.openIcon = 'media/images/class_folder.png';
+			subpackagetree_classe.icon = 'media/images/class_folder.png';
+			
+							var classe = new WebFXTreeItem('XMLDocument', 'awl/XMLDocument/XMLDocument.html');
+				classe.openIcon = 'media/images/Class.png';
+				classe.icon = 'media/images/Class.png';
+				subpackagetree_classe.add(classe);
+						
+			subpackagetree.add(subpackagetree_classe);
+		
+				
+					var subpackagetree_file = new WebFXTreeItem('File(s)', '');
+			subpackagetree_file.openIcon = 'media/images/folder.png';
+			subpackagetree_file.icon = 'media/images/folder.png';
+			
+							var file = new WebFXTreeItem('XMLDocument.php', 'awl/XMLDocument/_XMLDocument.php.html');
 				file.openIcon = 'media/images/Page.png';
 				file.icon = 'media/images/Page.png';
 				subpackagetree_file.add(file);

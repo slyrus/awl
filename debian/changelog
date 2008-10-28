@@ -1,3 +1,17 @@
+awl (0.33) unstable; urgency=low
+
+  * Remove a couple of uninitialised variable warnings.
+  * [AWLUtilties] Add a quoted_printable_encode function
+  * [XMLDocument] New object to assist with namespaced XML document creation.
+  * [iCalendar] Remove the expectation that XML will be case folded.
+  * [iCalendar] New iCalendar->Add method to add properties which occur multiply.
+  * [iCalendar] Fix word wrapping.
+  * [iCalendar] Add CALSCALE:GREGORIAN to response.
+  * [PgQuery] Escaping for newer Postgres versions should be preceded with an 'E'.
+  * [General] Remove lots of uninitialised variable warnings.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Tue, 28 Oct 2008 20:23:20 +1300
+
 awl (0.32) unstable; urgency=low
 
   * Include docs & don't compress classTree.js (closes: #493687)
@@ -5,7 +19,7 @@ awl (0.32) unstable; urgency=low
   * debian/compat should be in the source package.
   * Clean up minor lintian warnings.
 
- -- Andrew McMillan <debian@mcmillan.net.nz>  Tue, 16 Sep 2008 14:03:22 +1200
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Tue, 16 Sep 2008 14:04:02 +1200
 
 awl (0.31) unstable; urgency=low
 

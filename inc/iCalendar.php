@@ -717,7 +717,7 @@ class iCalendar {
     $this->properties['VCALENDAR'] = array('***ERROR*** This class is being referenced in an unsupported way!');
 
     /**
-    * TODO: Need to handle timezones!!!
+    * @todo: Need to handle timezones!!!
     */
     if ( $this->tz_locn == "" ) {
       $this->tz_locn = $this->Get("tzid");
@@ -801,7 +801,7 @@ class iCalendar {
   * An array of property names that we should always want when rendering an iCalendar
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @TODO Remove this function.
+  * @todo: Remove this function.
   */
   function DefaultPropertyList() {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'DefaultPropertyList' );
@@ -820,7 +820,7 @@ class iCalendar {
   * @return string A string from BEGIN:SOMETHING to END:SOMETHING, possibly multiple of these
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @TODO Remove this function.
+  * @todo: Remove this function.
   */
   function JustThisBitPlease( $type, $count=1 ) {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'JustThisBitPlease' );
@@ -854,7 +854,7 @@ class iCalendar {
   * @return arrayref An array of the things we found between (excluding) the BEGIN & END, some of which might be sub-arrays
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @TODO Remove this function.
+  * @todo: Remove this function.
   */
   function &ParseSomeLines( $type ) {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'ParseSomeLines' );
@@ -925,7 +925,7 @@ class iCalendar {
   * @var string The RFC2445 iCalendar resource to be parsed
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @TODO Remove this function.
+  * @todo: Remove this function.
   */
   function BuildFromText( $icalendar ) {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'BuildFromText' );
@@ -962,7 +962,7 @@ class iCalendar {
   * @return string The string with RFC2445 content escaping removed.
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @TODO Remove this function.
+  * @todo: Remove this function.
   */
   function RFC2445ContentUnescape( $escaped ) {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'RFC2445ContentUnescape' );
@@ -979,7 +979,7 @@ class iCalendar {
   * them into something that PostgreSQL can understand...
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @TODO Remove this function.
+  * @todo: Remove this function.
   */
   function DealWithTimeZones() {
     global $c;
@@ -1097,7 +1097,7 @@ class iCalendar {
   /**
   * Because I screwed up with the name originally...
   * @DEPRECATED
-  * TODO: Remove this function after June 2008.
+  * todo:: Remove this function after June 2008.
   */
   function Put( $key, $value ) {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'Put' );
@@ -1145,7 +1145,7 @@ class iCalendar {
   * @param string $value The incoming string to be escaped.
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @TODO Remove this function.
+  * @todo: Remove this function.
   */
   function RFC2445ContentEscape( $name, $value ) {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'RFC2445ContentEscape' );
@@ -1234,7 +1234,7 @@ class iCalendar {
    * Applies the filter conditions, possibly recursively, to the value which will be either
    * a single property, or an array of lines of the component under test.
    *
-   * @TODO Eventually we need to handle all of these possibilities, which will mean writing
+   * @todo: Eventually we need to handle all of these possibilities, which will mean writing
    * several routines:
    *  - Get Property from Component
    *  - Get Parameter from Property
@@ -1261,7 +1261,7 @@ class iCalendar {
       else {
         switch( $tag ) {
           case 'urn:ietf:params:xml:ns:caldav:time-range':
-            /** TODO: While this is unimplemented here at present, most time-range tests should occur at the SQL level. */
+            /** todo:: While this is unimplemented here at present, most time-range tests should occur at the SQL level. */
             break;
           case 'urn:ietf:params:xml:ns:caldav:text-match':
             $search = $v->GetContent();
@@ -1341,7 +1341,7 @@ class iCalendar {
   * Returns the header we always use at the start of our iCalendar resources
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @TODO Remove this function.
+  * @todo: Remove this function.
   */
   function iCalHeader() {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'iCalHeader' );
@@ -1359,7 +1359,7 @@ EOTXT;
   * Returns the footer we always use at the finish of our iCalendar resources
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @TODO Remove this function.
+  * @todo: Remove this function.
   */
   function iCalFooter() {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'iCalFooter' );

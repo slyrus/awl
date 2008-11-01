@@ -318,7 +318,7 @@ class Session
     if ( isset($usr) ) unset($usr);  /** In case someone is running with register_globals on */
 
     /**
-    * TODO In here we will need to put code to call the auth plugin, in order to
+    * @todo: In here we will need to put code to call the auth plugin, in order to
     * ensure the 'usr' table has current valid data.  At this stage we are just
     * thinking it through... like ...
     *

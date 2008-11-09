@@ -116,7 +116,7 @@ class iCalProp {
    * @param string $propstring The string from the iCalendar which contains this property.
    */
   function ParseFrom( $propstring ) {
-    $this->rendered = $propstring;
+    $this->rendered = (strlen($propstring) < 72 ? $propstring : null);  // Only pre-rendered if we didn't unescape it
     $pos = strpos( $propstring, ':');
     $start = substr( $propstring, 0, $pos);
 
@@ -133,6 +133,7 @@ class iCalProp {
       $value = substr( $v, $pos + 1);
       $this->parameters[$name] = $value;
     }
+    dbg_error_log("iCalendar", " iCalProp::ParseFrom found '%s' = '%s' with %d parameters", $this->name, $this->content, count($this->parameters) );
   }
 
 
@@ -147,6 +148,7 @@ class iCalProp {
     if ( $newname != null ) {
       $this->name = $newname;
       if ( isset($this->rendered) ) unset($this->rendered);
+      dbg_error_log("iCalendar", " iCalProp::Name(%s)", $this->name );
     }
     return $this->name;
   }
@@ -166,6 +168,23 @@ class iCalProp {
     }
     return $this->content;
   }
+
+
+  /**
+   * Get/Set parameters in their entirety
+   *
+   * @param array $newparams An array of new parameter key/value pairs
+   *
+   * @return array The current array of parameters for the property.
+   */
+  function Parameters( $newparams = null ) {
+    if ( $newparams != null ) {
+      $this->parameters = $newparams;
+      if ( isset($this->rendered) ) unset($this->rendered);
+    }
+    return $this->parameters;
+  }
+
 
   /**
    * Test if our value contains a string
@@ -252,7 +271,16 @@ class iCalProp {
         $escaped = preg_replace( '/\r?\n/', '\\n', $escaped);
         $escaped = preg_replace( "/([,;\"])/", '\\\\$1', $escaped);
     }
-    $this->rendered = wordwrap( sprintf( "%s%s:%s", $this->name, $this->RenderParameters(), $escaped), 72, " \r\n ", true );
+    $property = sprintf( "%s%s:", $this->name, $this->RenderParameters() );
+    if ( (strlen($property) + strlen($escaped)) <= 72 ) {
+      $this->rendered = $property . $escaped;
+    }
+    else if ( (strlen($property) + strlen($escaped)) > 72 && (strlen($property) < 72) && (strlen($escaped) < 72) ) {
+      $this->rendered = $property . " \r\n " . $escaped;
+    }
+    else {
+      $this->rendered = wordwrap( $property . $escaped, 72, " \r\n ", true );
+    }
     return $this->rendered;
   }
 
@@ -312,6 +340,22 @@ class iCalComponent {
     }
   }
 
+
+  /**
+  * Apply standard properties for a VCalendar
+  * @param array $extra_properties Key/value pairs of additional properties
+  */
+  function VCalendar( $extra_properties = null ) {
+    $this->SetType('VCALENDAR');
+    $this->AddProperty('PRODID', '-//davical.org//NONSGML AWL Calendar//EN');
+    $this->AddProperty('VERSION', '2.0');
+    $this->AddProperty('CALSCALE', 'GREGORIAN');
+    if ( is_array($extra_properties) ) {
+      foreach( $extra_properties AS $k => $v ) {
+        $this->AddProperty($k,$v);
+      }
+    }
+  }
 
   /**
   * Collect an array of all parameters of our properties which are the specified type
@@ -452,16 +496,44 @@ class iCalComponent {
   * Get all properties, or the properties matching a particular type
   */
   function GetProperties( $type = null ) {
-    $properties = $this->properties;
-    if ( $type != null ) {
-      foreach( $properties AS $k => $v ) {
-        if ( $v->Name() != $type ) {
-          unset($properties[$k]);
-        }
+    $properties = array();
+    foreach( $this->properties AS $k => $v ) {
+      if ( $type == null || $v->Name() == $type ) {
+        $properties[$k] = $v;
       }
-      $properties = array_values($properties);
     }
     return $properties;
+  }
+
+
+  /**
+  * Get the value of the first property matching the name. Obviously this isn't
+  * so useful for properties which may occur multiply, but most don't.
+  *
+  * @param string $type The type of property we are after.
+  * @return string The value of the property, or null if there was no such property.
+  */
+  function GetPValue( $type ) {
+    foreach( $this->properties AS $k => $v ) {
+      if ( $v->Name() == $type ) return $v->Value();
+    }
+    return null;
+  }
+
+
+  /**
+  * Get the value of the specified parameter for the first property matching the
+  * name. Obviously this isn't so useful for properties which may occur multiply, but most don't.
+  *
+  * @param string $type The type of property we are after.
+  * @param string $type The name of the parameter we are after.
+  * @return string The value of the parameter for the property, or null in the case that there was no such property, or no such parameter.
+  */
+  function GetPParamValue( $type, $parameter_name ) {
+    foreach( $this->properties AS $k => $v ) {
+      if ( $v->Name() == $type ) return $v->GetParameterValue($parameter_name);
+    }
+    return null;
   }
 
 
@@ -502,11 +574,23 @@ class iCalComponent {
   /**
   * Adds a new property
   *
-  * @param iCalProp $new_property The new property to append to the set
+  * @param iCalProp $new_property The new property to append to the set, or a string with the name
+  * @param string $value The value of the new property (default: param 1 is an iCalProp with everything
+  * @param array $parameters The key/value parameter pairs (default: none, or param 1 is an iCalProp with everything)
   */
-  function AddProperty( $new_property ) {
+  function AddProperty( $new_property, $value = null, $parameters = null ) {
     if ( isset($this->rendered) ) unset($this->rendered);
-    $this->properties[] = $new_property;
+    if ( isset($value) && gettype($new_property) == 'string' ) {
+      $new_prop = new iCalProp();
+      $new_prop->Name($new_property);
+      $new_prop->Value($value);
+      if ( $parameters != null ) $new_prop->Parameters($parameters);
+      dbg_error_log("iCalendar"," Adding new property '%s'", $new_prop->Render() );
+      $this->properties[] = $new_prop;
+    }
+    else if ( gettype($new_property) ) {
+      $this->properties[] = $new_property;
+    }
   }
 
 
@@ -518,19 +602,24 @@ class iCalComponent {
     foreach( $this->components AS $k => $v ) {
       if ( $v->GetType() != 'VTIMEZONE' ) return $this->components[$k];
     }
-    return false;
+    $result = false;
+    return $result;
   }
 
 
   /**
-  * Get all sub-components, or at least get those matching a type
+  * Get all sub-components, or at least get those matching a type, or failling to match,
+  * should the second parameter be set to false.
+  *
+  * @param string $type The type to match (default: All)
+  * @param boolean $normal_match Set to false to invert the match (default: true)
   * @return array an array of the sub-components
   */
-  function GetComponents( $type = null ) {
+  function GetComponents( $type = null, $normal_match = true ) {
     $components = $this->components;
     if ( $type != null ) {
       foreach( $components AS $k => $v ) {
-        if ( $v->GetType() != $type ) {
+        if ( ($v->GetType() != $type) === $normal_match ) {
           unset($components[$k]);
         }
       }
@@ -586,8 +675,16 @@ class iCalComponent {
   * @param iCalComponent $new_component The new component to append to the set
   */
   function AddComponent( $new_component ) {
+    if ( is_array($new_component) && count($new_component) == 0 ) return;
     if ( isset($this->rendered) ) unset($this->rendered);
-    $this->components[] = $new_component;
+    if ( is_array($new_component) ) {
+      foreach( $new_component AS $k => $v ) {
+        $this->components[] = $v;
+      }
+    }
+    else {
+      $this->components[] = $new_component;
+    }
   }
 
 
@@ -614,8 +711,63 @@ class iCalComponent {
     return $rendered;
   }
 
+  /**
+  * Return an array of properties matching the specified path
+  *
+  * @return array An array of iCalProp within the tree which match the path given, in the form
+  *  [/]COMPONENT[/...]/PROPERTY in a syntax kind of similar to our poor man's XML queries. We
+  *  also allow COMPONENT and PROPERTY to be !COMPONENT and !PROPERTY for ++fun.
+  */
+  function GetPropertiesByPath( $path ) {
+    $properties = array();
+    dbg_error_log( "iCalendar", "GetPropertiesByPath: Querying within '%s' for path '%s'", $this->type, $path );
+    if ( !preg_match( '#(/?)(!?)([^/]+)(/?.*)$#', $path, $matches ) ) return $properties;
+
+    $adrift = ($matches[1] == '');
+    $normal = ($matches[2] == '');
+    $ourtest = $matches[3];
+    $therest = $matches[4];
+    dbg_error_log( "iCalendar", "GetPropertiesByPath: Matches: %s -- %s -- %s -- %s\n", $matches[1], $matches[2], $matches[3], $matches[4] );
+    if ( $ourtest == '*' || (($ourtest == $this->type) === $normal) && $therest != '' ) {
+      if ( preg_match( '#^/(!?)([^/]+)$#', $therest, $matches ) ) {
+        $normmatch = ($matches[1] =='');
+        $proptest  = $matches[2];
+        foreach( $this->properties AS $k => $v ) {
+          if ( $proptest = '*' || (($v->Name() == $proptest) === $normmatch ) ) {
+            $properties[] = $v;
+          }
+        }
+      }
+      else {
+        /**
+        * There is more to the path, so we recurse into that sub-part
+        */
+        foreach( $this->components AS $k => $v ) {
+          $properties = array_merge( $properties, $v->GetPropertiesByPath($therest) );
+        }
+      }
+    }
+
+    if ( $adrift ) {
+      /**
+      * Our input $path was not rooted, so we recurse further
+      */
+      foreach( $this->components AS $k => $v ) {
+        $properties = array_merge( $properties, $v->GetPropertiesByPath($path) );
+      }
+    }
+    dbg_error_log("iCalendar", "GetPropertiesByPath: Found %d within '%s' for path '%s'\n", count($properties), $this->type, $path );
+    return $properties;
+  }
+
 }
 
+/**
+************************************************************************************
+* Pretty much everything below here is deprecated and should be avoided in favour
+* of using, improving and enhancing the more sensible structures above.
+************************************************************************************
+*/
 
 /**
 * A Class for handling Events on a calendar
@@ -679,8 +831,13 @@ class iCalendar {
       $this->lines = preg_split('/\r?\n/', $args['icalendar'] );
       $this->SaveTimeZones();
       $first =& $this->component->FirstNonTimezone();
-      $this->type = $first->GetType();
-      $this->properties = $first->GetProperties();
+      if ( $first ) {
+        $this->type = $first->GetType();
+        $this->properties = $first->GetProperties();
+      }
+      else {
+        $this->properties = array();
+      }
       $this->properties['VCALENDAR'] = array('***ERROR*** This class is being referenced in an unsupported way!');
       return;
     }
@@ -717,7 +874,7 @@ class iCalendar {
     $this->properties['VCALENDAR'] = array('***ERROR*** This class is being referenced in an unsupported way!');
 
     /**
-    * @todo: Need to handle timezones!!!
+    * @todo Need to handle timezones!!!
     */
     if ( $this->tz_locn == "" ) {
       $this->tz_locn = $this->Get("tzid");
@@ -747,13 +904,7 @@ class iCalendar {
     $tzid = $this->Get('TZID');
     if ( isset($c->save_time_zone_defs) && $c->save_time_zone_defs ) {
       foreach( $timezones AS $k => $tz ) {
-        $tzids = $tz->GetProperties('TZID');
-        $tznames = $tz->GetProperties('X-LIC-LOCATION');
-        if ( count($tzids) != 1 || count($tznames) > 1 ) {
-          dbg_error_log( "icalendar", "::SaveTimeZones: Timezone contains %d TZID properties!  Skipped.", count($tzids) );
-          continue;
-        }
-        $tzid = $tzids[0]->Value();
+        $tzid = $tz->GetPValue('TZID');
 
         $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
         if ( $qry->Exec('iCalendar') && $qry->rows == 1 ) {
@@ -764,10 +915,8 @@ class iCalendar {
 
         if ( $tzid != "" && $qry->rows == 0 ) {
 
-          if ( count($tznames) > 0 ) {
-            $tzname = $tznames[0]->Value();
-          }
-          else {
+          $tzname = $tz->GetPValue('X-LIC-LOCATION');
+          if ( !isset($tzname) ) {
             /**
             * Try and convert the TZID to a string like "Pacific/Auckland" if possible.
             */
@@ -801,7 +950,7 @@ class iCalendar {
   * An array of property names that we should always want when rendering an iCalendar
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @todo: Remove this function.
+  * @todo Remove this function.
   */
   function DefaultPropertyList() {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'DefaultPropertyList' );
@@ -820,7 +969,7 @@ class iCalendar {
   * @return string A string from BEGIN:SOMETHING to END:SOMETHING, possibly multiple of these
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @todo: Remove this function.
+  * @todo Remove this function.
   */
   function JustThisBitPlease( $type, $count=1 ) {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'JustThisBitPlease' );
@@ -854,7 +1003,7 @@ class iCalendar {
   * @return arrayref An array of the things we found between (excluding) the BEGIN & END, some of which might be sub-arrays
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @todo: Remove this function.
+  * @todo Remove this function.
   */
   function &ParseSomeLines( $type ) {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'ParseSomeLines' );
@@ -925,7 +1074,7 @@ class iCalendar {
   * @var string The RFC2445 iCalendar resource to be parsed
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @todo: Remove this function.
+  * @todo Remove this function.
   */
   function BuildFromText( $icalendar ) {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'BuildFromText' );
@@ -962,7 +1111,7 @@ class iCalendar {
   * @return string The string with RFC2445 content escaping removed.
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @todo: Remove this function.
+  * @todo Remove this function.
   */
   function RFC2445ContentUnescape( $escaped ) {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'RFC2445ContentUnescape' );
@@ -979,7 +1128,7 @@ class iCalendar {
   * them into something that PostgreSQL can understand...
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @todo: Remove this function.
+  * @todo Remove this function.
   */
   function DealWithTimeZones() {
     global $c;
@@ -1045,14 +1194,8 @@ class iCalendar {
     * The property we work on is the first non-VTIMEZONE we find.
     */
     $component =& $this->component->FirstNonTimezone();
-    $properties = $component->GetProperties(strtoupper($key));
-    if ( count($properties) == 1 ) {
-      return $properties[0]->Value();
-    }
-    else if ( count($properties) == 0 ) {
-      return null;
-    }
-    return $properties;
+    if ( $component === false ) return null;
+    return $component->GetPValue(strtoupper($key));
   }
 
 
@@ -1145,7 +1288,7 @@ class iCalendar {
   * @param string $value The incoming string to be escaped.
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @todo: Remove this function.
+  * @todo Remove this function.
   */
   function RFC2445ContentEscape( $name, $value ) {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'RFC2445ContentEscape' );
@@ -1234,7 +1377,7 @@ class iCalendar {
    * Applies the filter conditions, possibly recursively, to the value which will be either
    * a single property, or an array of lines of the component under test.
    *
-   * @todo: Eventually we need to handle all of these possibilities, which will mean writing
+   * @todo Eventually we need to handle all of these possibilities, which will mean writing
    * several routines:
    *  - Get Property from Component
    *  - Get Parameter from Property
@@ -1341,7 +1484,7 @@ class iCalendar {
   * Returns the header we always use at the start of our iCalendar resources
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @todo: Remove this function.
+  * @todo Remove this function.
   */
   function iCalHeader() {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'iCalHeader' );
@@ -1359,7 +1502,7 @@ EOTXT;
   * Returns the footer we always use at the finish of our iCalendar resources
   *
   * @deprecated This function is deprecated and will be removed eventually.
-  * @todo: Remove this function.
+  * @todo Remove this function.
   */
   function iCalFooter() {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'iCalFooter' );

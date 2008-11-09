@@ -547,7 +547,7 @@ class EntryForm
       $p2 = $parts[2];
       @dbg_error_log( "DataEntry", ":DataEntryField: fname=%s, p1=%s, p2=%s, POSTVAL=%s, \$this->record->{'%s'}['%s']=%s",
                                                   $fname, $p1, $p2, $_POST[$p1][$p2], $p1, $p2, $this->record->{"$p1"}["$p2"] );
-      // @todo: This could be changed to handle more dimensions on submitted variable names
+      // @todo This could be changed to handle more dimensions on submitted variable names
       if ( isset($_POST[$p1]) ) {
         if ( isset($_POST[$p1][$p2]) ) {
           $currval = $_POST[$p1][$p2];

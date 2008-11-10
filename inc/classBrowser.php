@@ -148,6 +148,7 @@ class BrowserColumn
       }
       $image = "<img class=\"order\" src=\"$c->images/$image.gif\" alt=\"$image\" />";
     }
+    if ( !isset($browser_array_key) || $browser_array_key == '' ) $browser_array_key = 0;
     $html .= '<a href="'.replace_uri_params( $_SERVER['REQUEST_URI'], array( "o[$browser_array_key]" => $this->Field, "d[$browser_array_key]" => $direction ) ).'" class="order">';
     $html .= ($this->Header == "" ? $this->Field : $this->Header);
     $html .= "$image</a></th>\n";
@@ -205,6 +206,7 @@ class Browser
 {
   var $Title;
   var $SubTitle;
+  var $FieldNames;
   var $Columns;
   var $HiddenColumns;
   var $Joins;
@@ -239,6 +241,9 @@ class Browser
     $this->CloseRow = "</tr>\n";
     $this->BeginRowArgs = array('#even');
     $this->Totals = array();
+    $this->Columns = array();
+    $this->HiddenColumns = array();
+    $this->FieldNames = array();
     dbg_error_log( "Browser", ":Browser: New browser called $title");
   }
 
@@ -269,6 +274,7 @@ class Browser
   */
   function AddColumn( $field, $header="", $align="", $format="", $sql="", $class="", $datatype="", $hook=null ) {
     $this->Columns[] = new BrowserColumn( $field, $header, $align, $format, $sql, $class, $datatype, $hook );
+    $this->FieldNames[$field] = count($this->Columns) - 1;
   }
 
   /**
@@ -283,6 +289,7 @@ class Browser
   */
   function AddHidden( $field, $sql="" ) {
     $this->HiddenColumns[] = new BrowserColumn( $field, "", "", "", $sql );
+    $this->FieldNames[$field] = count($this->Columns) - 1;
   }
 
   /**
@@ -406,6 +413,7 @@ class Browser
     $this->Grouping .= clean_string($field);
   }
 
+
   /**
   * Add an ordering to the browser widget.
   *
@@ -422,18 +430,21 @@ class Browser
   *               which shouldn't interfere with the default primary order.
   */
   function AddOrder( $field, $direction, $browser_array_key=0, $secondary=0 ) {
-    if ( $secondary == 0 && isset( $_GET['o'][$browser_array_key]) && isset($_GET['d'][$browser_array_key]) ) {
-      $field = $_GET['o'][$browser_array_key];
-      $direction = $_GET['d'][$browser_array_key];
+    if ( $secondary == 0 && ( is_array($field) || is_array($direction) ) ) {
+      if ( $browser_array_key >= count($field) || $browser_array_key >= count($direction) ) return;
+      $field = $field[$browser_array_key];
+      $direction = $direction[$browser_array_key];
     }
+    $field = clean_string($field);
+    if ( ! isset($this->FieldNames[$field]) ) return;
+
     if ( $this->Order == "" )
       $this->Order = "ORDER BY ";
     else
       $this->Order .= ", ";
 
-    $field = clean_string($field);
     if ( $secondary == 0 ) {
-      $this->OrderField = clean_string($field);
+      $this->OrderField = $field;
       $this->OrderBrowserKey = $browser_array_key;
     }
     $this->Order .= $field;
@@ -449,6 +460,7 @@ class Browser
         $this->OrderDirection = 'D';
     }
   }
+
 
   /**
   * Mark a column as something to be totalled.  You can also specify the name of

@@ -608,6 +608,39 @@ class iCalComponent {
 
 
   /**
+  * Return true if the person identified by the email address is down as an
+  * organizer for this meeting.
+  * @param string $email The e-mail address of the person we're seeking.
+  * @return boolean true if we found 'em, false if we didn't.
+  */
+  function IsOrganizer( $email ) {
+    if ( !preg_match( '#^mailto:#', $email ) ) $email = 'mailto:$email';
+    $props = $this->GetPropertiesByPath('!VTIMEZONE/ORGANIZER');
+    foreach( $props AS $k => $prop ) {
+      if ( $prop->Value() == $email ) return true;
+    }
+    return false;
+  }
+
+
+  /**
+  * Return true if the person identified by the email address is down as an
+  * attendee or organizer for this meeting.
+  * @param string $email The e-mail address of the person we're seeking.
+  * @return boolean true if we found 'em, false if we didn't.
+  */
+  function IsAttendee( $email ) {
+    if ( !preg_match( '#^mailto:#', $email ) ) $email = 'mailto:$email';
+    if ( $this->IsOrganizer($email) ) return true; /** an organizer is an attendee, as far as we're concerned */
+    $props = $this->GetPropertiesByPath('!VTIMEZONE/ATTENDEE');
+    foreach( $props AS $k => $prop ) {
+      if ( $prop->Value() == $email ) return true;
+    }
+    return false;
+  }
+
+
+  /**
   * Get all sub-components, or at least get those matching a type, or failling to match,
   * should the second parameter be set to false.
   *
@@ -699,17 +732,18 @@ class iCalComponent {
       return $this->rendered;
 
     $rendered = "BEGIN:$this->type\r\n";
-    foreach( $this->properties AS $v ) {
+    foreach( $this->properties AS $k => $v ) {
       if ( $unrestricted || isset($restricted_properties[$v]) ) $rendered .= $v->Render() . "\r\n";
     }
     foreach( $this->components AS $v ) {   $rendered .= $v->Render();  }
-    $rendered .= "END:$this->type";
-    $rendered = $this->WrapComponent($rendered);
+    $rendered .= "END:$this->type\r\n";
+//    $rendered = $this->WrapComponent($rendered);
 
     if ( $unrestricted ) $this->rendered = $rendered;
 
     return $rendered;
   }
+
 
   /**
   * Return an array of properties matching the specified path
@@ -717,6 +751,8 @@ class iCalComponent {
   * @return array An array of iCalProp within the tree which match the path given, in the form
   *  [/]COMPONENT[/...]/PROPERTY in a syntax kind of similar to our poor man's XML queries. We
   *  also allow COMPONENT and PROPERTY to be !COMPONENT and !PROPERTY for ++fun.
+  *
+  * @note At some point post PHP4 this could be re-done with an iterator, which should be more efficient for common use cases.
   */
   function GetPropertiesByPath( $path ) {
     $properties = array();

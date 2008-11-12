@@ -259,7 +259,7 @@ class XMLDocument {
     }
 
     /** And render... */
-    return $this->root->Render('<?xml version="1.0" encoding="utf-8" ?>');
+    return $this->root->Render(0,'<?xml version="1.0" encoding="utf-8" ?>');
   }
 
 }

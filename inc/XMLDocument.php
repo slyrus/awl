@@ -262,5 +262,16 @@ class XMLDocument {
     return $this->root->Render(0,'<?xml version="1.0" encoding="utf-8" ?>');
   }
 
+  /**
+  * Return a DAV::href XML element
+  * @param string $url The URL to be wrapped in DAV::href tags
+  *
+  * @return XMLElement The newly created XMLElement object.
+  */
+  function href($url) {
+    return $this->NewXMLElement('href', $url, false, 'DAV:');
+  }
+
 }
+
 

@@ -4,8 +4,8 @@
 *
 * @package   awl
 * @subpackage   XMLElement
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Catalyst .Net Ltd
+* @author    Andrew McMillan <andrew@mcmillan.net.nz>
+* @copyright Catalyst .Net Ltd, Morphoss Ltd <http://www.morphoss.com/>
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 require_once("AWLUtilities.php");
@@ -26,11 +26,12 @@ class XMLElement {
   /**
   * Constructor - nothing fancy as yet.
   *
-  * @param string The tag name of the new element
-  * @param mixed Either a string of content, or an array of sub-elements
-  * @param array An array of attribute name/value pairs
+  * @param string $tagname The tag name of the new element
+  * @param mixed $content Either a string of content, or an array of sub-elements
+  * @param array $attributes An array of attribute name/value pairs
+  * @param array $xmlns An XML namespace specifier
   */
-  function XMLElement( $tagname, $content=false, $attributes=false ) {
+  function XMLElement( $tagname, $content=false, $attributes=false, $xmlns=null ) {
     $this->tagname=$tagname;
     if ( gettype($content) == "object" ) {
       // Subtree to be parented here
@@ -41,10 +42,14 @@ class XMLElement {
       $this->content = $content;
     }
     $this->attributes = $attributes;
-    if ( isset($this->attributes['xmlns']) ) {
+    if ( isset($this->attributes['xmlns']) ) {  // Oversimplification to be removed
       $this->xmlns = $this->attributes['xmlns'];
     }
+    if ( isset($xmlns) ) {
+      $this->xmlns = $xmlns;
+    }
   }
+
 
   /**
   * Count the number of elements
@@ -87,6 +92,15 @@ class XMLElement {
   */
   function GetTag() {
     return $this->tagname;
+  }
+
+  /**
+  * Accessor for the full-namespaced tag name
+  *
+  * @return string The tag name of the element, prefixed by the namespace
+  */
+  function GetNSTag() {
+    return $this->xmlns . ':' . $this->tagname;
   }
 
   /**
@@ -194,10 +208,12 @@ class XMLElement {
   * @param string The tag name of the new element
   * @param mixed Either a string of content, or an array of sub-elements
   * @param array An array of attribute name/value pairs
+  *
+  * @return objectref A reference to the new XMLElement
   */
-  function &NewElement( $tagname, $content=false, $attributes=false ) {
+  function &NewElement( $tagname, $content=false, $attributes=false, $xmlns=null ) {
     if ( gettype($this->content) != "array" ) $this->content = array();
-    $element =& new XMLElement($tagname,$content,$attributes);
+    $element =& new XMLElement($tagname,$content,$attributes,$xmlns);
     $this->content[] =& $element;
     return $element;
   }
@@ -208,7 +224,7 @@ class XMLElement {
   *
   * @return string The content of this element, as a string without this element wrapping it.
   */
-  function RenderContent($indent=0,$xmldef="") {
+  function RenderContent($indent=0, $nslist=null ) {
     $r = "";
     if ( is_array($this->content) ) {
       /**
@@ -217,7 +233,7 @@ class XMLElement {
       $r .= "\n";
       foreach( $this->content AS $k => $v ) {
         if ( is_object($v) ) {
-          $r .= $v->Render($indent+1);
+          $r .= $v->Render($indent+1, "", $nslist);
         }
       }
       $r .= substr("                        ",0,$indent);
@@ -238,21 +254,36 @@ class XMLElement {
   *
   * @param int The indenting level for the pretty formatting of the element
   */
-  function Render($indent=0,$xmldef="") {
+  function Render($indent=0, $xmldef="", $nslist=null) {
     $r = ( $xmldef == "" ? "" : $xmldef."\n");
-    $r .= substr("                        ",0,$indent) . '<' . $this->tagname;
+
+    $attr = "";
+    $tagname = $this->tagname;
     if ( gettype($this->attributes) == "array" ) {
       /**
       * Render the element attribute values
       */
       foreach( $this->attributes AS $k => $v ) {
-        $r .= sprintf( ' %s="%s"', $k, htmlspecialchars($v) );
+        if ( preg_match('#^xmlns(:?(.+))?$#', $k, $matches ) ) {
+          if ( !isset($nslist) ) $nslist = array();
+          $prefix = (isset($matches[2]) ? $matches[2] : '');
+          if ( isset($nslist[$v]) && $nslist[$v] == $prefix ) continue; // No need to include in list as it's in a wrapping element
+          $nslist[$v] = $prefix;
+          if ( !isset($this->xmlns) ) $this->xmlns = $v;
+        }
+        $attr .= sprintf( ' %s="%s"', $k, htmlspecialchars($v) );
       }
     }
+    if ( isset($this->xmlns) && isset($nslist[$this->xmlns]) && $nslist[$this->xmlns] != '' ) {
+      $tagname = $nslist[$this->xmlns] . ':' . $tagname;
+    }
+
+    $r .= substr("                        ",0,$indent) . '<' . $tagname . $attr;
+
     if ( (is_array($this->content) && count($this->content) > 0) || (!is_array($this->content) && strlen($this->content) > 0) ) {
       $r .= ">";
-      $r .= $this->RenderContent($indent,$xmldef);
-      $r .= '</' . $this->tagname.">\n";
+      $r .= $this->RenderContent($indent,$nslist);
+      $r .= '</' . $tagname.">\n";
     }
     else {
       $r .= "/>\n";
@@ -300,4 +331,3 @@ function BuildXMLTree( $xmltags, &$start_from ) {
   return $content;
 }
 
-?>

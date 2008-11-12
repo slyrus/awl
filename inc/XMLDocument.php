@@ -30,9 +30,15 @@ class XMLDocument {
 
   /**
   * holds the prefixes which are shorthand for the namespaces.
-  * @var namespaces
+  * @var prefixes
   */
   var $prefixes;
+
+  /**
+  * Holds the root document for the tree
+  * @var root
+  */
+  var $root;
 
   /**
   * Simple XMLDocument constructor
@@ -89,10 +95,12 @@ class XMLDocument {
       $this->namespaces[$namespace] = $prefix;
     }
     else {
-      if ( $prefix != null && $this->namespaces[$namespace] != $prefix ) {
+      if ( isset($this->namespaces[$namespace]) && $this->namespaces[$namespace] != $prefix ) {
         dbg_error_log("ERROR", "Cannot use the same namespace with two different prefixes");
         exit;
       }
+      $this->prefixes[$prefix] = $prefix;
+      $this->namespaces[$namespace] = $prefix;
     }
   }
 
@@ -148,26 +156,111 @@ class XMLDocument {
 
 
   /**
-  * Special helper for tags in the Apple Calendarserver namespace.
+  * Special helper for namespaced tags.
   *
-  * @param string $in_tag The tag we want a namespace prefix on.
+  * @param object $element The tag are adding a new namespaced element to
+  * @param string $tag the tag name, possibly prefixed with the namespace
+  * @param mixed  $content The content of the tag
+  * @param array  $attributes An array of key/value pairs of attributes.
+  * @param string $namespace The namespace for the tag
   *
-  * @return string The tag with a namespace prefix consistent with previous tags in this namespace.
   */
-  function Calendarserver( $tag ) {
-    return $this->Tag( $tag, 'http://calendarserver.org/ns/', "A" );
+  function NSElement( &$element, $in_tag, $content=false, $attributes=false, $namespace=null ) {
+    if ( $namespace == null && preg_match('/^(.*):([^:]+)$/', $in_tag, $matches) ) {
+      $namespace = $matches[1];
+      $tag = $matches[2];
+    }
+    else {
+      $tag = $in_tag;
+    }
+
+    if ( !isset($this->namespaces[$namespace]) ) $this->AddNamespace( $namespace );
+    $element->NewElement( $tag, $content, $attributes, $namespace );
   }
 
 
   /**
-  * Special helper for tags in the CalDAV namespace.
+  * Special helper for tags in the DAV: namespace.
   *
-  * @param string $in_tag The tag we want a namespace prefix on.
-  *
-  * @return string The tag with a namespace prefix consistent with previous tags in this namespace.
+  * @param object $element The tag are adding a new namespaced element to
+  * @param string $tag the tag name
+  * @param mixed  $content The content of the tag
+  * @param array  $attributes An array of key/value pairs of attributes.
   */
-  function Caldav( $tag ) {
-    return $this->Tag( $tag, 'urn:ietf:params:xml:ns:caldav', "C" );
+  function DAVElement( &$element, $tag, $content=false, $attributes=false ) {
+    $this->NSElement( $element, $tag, $content, $attributes, 'DAV:' );
+  }
+
+
+  /**
+  * Special helper for tags in the urn:ietf:params:xml:ns:caldav namespace.
+  *
+  * @param object $element The tag are adding a new namespaced element to
+  * @param string $tag the tag name
+  * @param mixed  $content The content of the tag
+  * @param array  $attributes An array of key/value pairs of attributes.
+  */
+  function CalDAVElement( &$element, $tag, $content=false, $attributes=false ) {
+    if ( !isset($this->namespaces['urn:ietf:params:xml:ns:caldav']) ) $this->AddNamespace( 'urn:ietf:params:xml:ns:caldav', 'C' );
+    $this->NSElement( $element, $tag, $content, $attributes, 'urn:ietf:params:xml:ns:caldav' );
+  }
+
+
+  /**
+  * Special helper for tags in the urn:ietf:params:xml:ns:caldav namespace.
+  *
+  * @param object $element The tag are adding a new namespaced element to
+  * @param string $tag the tag name
+  * @param mixed  $content The content of the tag
+  * @param array  $attributes An array of key/value pairs of attributes.
+  */
+  function CalendarserverElement( &$element, $tag, $content=false, $attributes=false ) {
+    if ( !isset($this->namespaces['http://calendarserver.org/ns/']) ) $this->AddNamespace( 'http://calendarserver.org/ns/', 'A' );
+    $this->NSElement( $element, $tag, $content, $attributes, 'http://calendarserver.org/ns/' );
+  }
+
+
+  /**
+  * @param string $tagname The tag name of the new element
+  * @param mixed $content Either a string of content, or an array of sub-elements
+  * @param array $attributes An array of attribute name/value pairs
+  * @param array $xmlns An XML namespace specifier
+  */
+  function NewXMLElement( $tagname, $content=false, $attributes=false, $xmlns=null ) {
+    if ( isset($xmlns) && !isset($this->namespaces[$xmlns]) ) $this->AddNamespace( $xmlns );
+    return new XMLElement($tagname, $content, $attributes, $xmlns );
+  }
+
+  /**
+  * Render the document tree into (nicely formatted) XML
+  *
+  * @param mixed $root A root XMLElement or a tagname to create one with the remaining parameters.
+  * @param mixed $content Either a string of content, or an array of sub-elements
+  * @param array $attributes An array of attribute name/value pairs
+  * @param array $xmlns An XML namespace specifier
+  *
+  * @return A rendered namespaced XML document.
+  */
+  function Render( $root, $content=false, $attributes=false, $xmlns=null ) {
+    if ( is_object($root) ) {
+      /** They handed us a pre-existing object.  We'll just use it... */
+      $this->root = $root;
+    }
+    else {
+      /** We got a tag name, so we need to create the root element */
+      $this->root = $this->NewXMLElement( $root, $content, $attributes, $xmlns );
+    }
+
+    /**
+    * Add our namespace attributes here.
+    */
+    foreach( $this->namespaces AS $n => $p ) {
+      $this->root->SetAttribute( 'xmlns'.($p == '' ? '' : ':') . $p, $n);
+    }
+
+    /** And render... */
+    return $this->root->Render('<?xml version="1.0" encoding="utf-8" ?>');
   }
 
 }
+

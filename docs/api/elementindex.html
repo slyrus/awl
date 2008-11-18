@@ -881,6 +881,13 @@
 					</dd>
 			<dt class="field">
 						<img src="media/images/Variable.png" alt="Variable" title="Variable" /></title>
+			<span class="var-title">$FieldNames</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/Browser/Browser.html#var$FieldNames">Browser::$FieldNames</a> in classBrowser.php</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Variable.png" alt="Variable" title="Variable" /></title>
 			<span class="var-title">$Format</span>
 					</dt>
 		<dd class="index-item-body">
@@ -987,7 +994,7 @@
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodGetComponents">iCalComponent::GetComponents()</a> in iCalendar.php</div>
-							<div class="index-item-description">Get all sub-components, or at least get those matching a type</div>
+							<div class="index-item-description">Get all sub-components, or at least get those matching a type, or failling to match,  should the second parameter be set to false.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
@@ -1007,6 +1014,14 @@
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
+			<span class="method-title">GetNSTag</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/XMLElement/XMLElement.html#methodGetNSTag">XMLElement::GetNSTag()</a> in XMLElement.php</div>
+							<div class="index-item-description">Accessor for the full-namespaced tag name</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
 			<span class="method-title">GetParameterValue</span>
 					</dt>
 		<dd class="index-item-body">
@@ -1023,11 +1038,35 @@
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
+			<span class="method-title">GetPParamValue</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodGetPParamValue">iCalComponent::GetPParamValue()</a> in iCalendar.php</div>
+							<div class="index-item-description">Get the value of the specified parameter for the first property matching the  name. Obviously this isn't so useful for properties which may occur multiply, but most don't.</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
 			<span class="method-title">GetProperties</span>
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodGetProperties">iCalComponent::GetProperties()</a> in iCalendar.php</div>
 							<div class="index-item-description">Get all properties, or the properties matching a particular type</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
+			<span class="method-title">GetPropertiesByPath</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodGetPropertiesByPath">iCalComponent::GetPropertiesByPath()</a> in iCalendar.php</div>
+							<div class="index-item-description">Return an array of properties matching the specified path</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
+			<span class="method-title">GetPValue</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodGetPValue">iCalComponent::GetPValue()</a> in iCalendar.php</div>
+							<div class="index-item-description">Get the value of the first property matching the name. Obviously this isn't  so useful for properties which may occur multiply, but most don't.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
@@ -1171,20 +1210,20 @@
 							<div class="index-item-description">A Class for representing components within an iCalendar</div>
 					</dd>
 			<dt class="field">
-						<img src="media/images/Constructor.png" alt="Method" title="Method" /></title>
-			<span class="method-title">iCalendar</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/iCalendar/iCalendar.html#methodiCalendar">iCalendar::iCalendar()</a> in iCalendar.php</div>
-							<div class="index-item-description">The constructor takes an array of args.  If there is an element called 'icalendar'  then that will be parsed into the iCalendar object.  Otherwise the array elements  are converted into properties of the iCalendar object directly.</div>
-					</dd>
-			<dt class="field">
 						<img src="media/images/Class.png" alt="Class" title="Class" /></title>
 			iCalendar
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/iCalendar/iCalendar.html">iCalendar</a> in iCalendar.php</div>
 							<div class="index-item-description">A Class for handling Events on a calendar</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Constructor.png" alt="Method" title="Method" /></title>
+			<span class="method-title">iCalendar</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/iCalendar/iCalendar.html#methodiCalendar">iCalendar::iCalendar()</a> in iCalendar.php</div>
+							<div class="index-item-description">The constructor takes an array of args.  If there is an element called 'icalendar'  then that will be parsed into the iCalendar object.  Otherwise the array elements  are converted into properties of the iCalendar object directly.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Page.png" alt="Page" title="Page" /></title>
@@ -1210,20 +1249,20 @@
 							<div class="index-item-description">Returns the header we always use at the start of our iCalendar resources</div>
 					</dd>
 			<dt class="field">
-						<img src="media/images/Constructor.png" alt="Method" title="Method" /></title>
-			<span class="method-title">iCalProp</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodiCalProp">iCalProp::iCalProp()</a> in iCalendar.php</div>
-							<div class="index-item-description">The constructor parses the incoming string, which is formatted as per RFC2445 as a    propname[;param1=pval1[; ... ]]:propvalue  however we allow ourselves to assume that the RFC2445 content unescaping has already  happened when iCalComponent::ParseFrom() called iCalComponent::UnwrapComponent().</div>
-					</dd>
-			<dt class="field">
 						<img src="media/images/Class.png" alt="Class" title="Class" /></title>
 			iCalProp
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html">iCalProp</a> in iCalendar.php</div>
 							<div class="index-item-description">A Class for representing properties within an iCalendar</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Constructor.png" alt="Method" title="Method" /></title>
+			<span class="method-title">iCalProp</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodiCalProp">iCalProp::iCalProp()</a> in iCalendar.php</div>
+							<div class="index-item-description">The constructor parses the incoming string, which is formatted as per RFC2445 as a    propname[;param1=pval1[; ... ]]:propvalue  however we allow ourselves to assume that the RFC2445 content unescaping has already  happened when iCalComponent::ParseFrom() called iCalComponent::UnwrapComponent().</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
@@ -1248,6 +1287,22 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/MenuSet/MenuOption.html#methodIsActive">MenuOption::IsActive()</a> in MenuSet.php</div>
 							<div class="index-item-description">Whether this option is currently active.</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
+			<span class="method-title">IsAttendee</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodIsAttendee">iCalComponent::IsAttendee()</a> in iCalendar.php</div>
+							<div class="index-item-description">Return true if the person identified by the email address is down as an  attendee or organizer for this meeting.</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
+			<span class="method-title">IsOrganizer</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodIsOrganizer">iCalComponent::IsOrganizer()</a> in iCalendar.php</div>
+							<div class="index-item-description">Return true if the person identified by the email address is down as an  organizer for this meeting.</div>
 					</dd>
 		</dl>
 	<a name="j"></a>
@@ -1368,12 +1423,41 @@
 	</div>
 	<dl>
 			<dt class="field">
+						<img src="media/images/Variable.png" alt="Variable" title="Variable" /></title>
+			<span class="var-title">$match_column</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/Browser/Browser.html#var$match_column">Browser::$match_column</a> in classBrowser.php</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Variable.png" alt="Variable" title="Variable" /></title>
+			<span class="var-title">$match_function</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/Browser/Browser.html#var$match_function">Browser::$match_function</a> in classBrowser.php</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Variable.png" alt="Variable" title="Variable" /></title>
+			<span class="var-title">$match_value</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/Browser/Browser.html#var$match_value">Browser::$match_value</a> in classBrowser.php</div>
+					</dd>
+			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
 			<span class="method-title">MakeSomethingActive</span>
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/MenuSet/MenuSet.html#methodMakeSomethingActive">MenuSet::MakeSomethingActive()</a> in MenuSet.php</div>
 							<div class="index-item-description">Mark each MenuOption as active that has an active sub-menu entry.</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
+			<span class="method-title">MatchedRow</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/Browser/Browser.html#methodMatchedRow">Browser::MatchedRow()</a> in classBrowser.php</div>
+							<div class="index-item-description">Replace a row where $column = $value with an extra arbitrary row, returned from calling $function</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
@@ -1384,14 +1468,6 @@
 							<div class="index-item-description">Whether this option is currently active.</div>
 					</dd>
 			<dt class="field">
-						<img src="media/images/Class.png" alt="Class" title="Class" /></title>
-			MenuOption
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/MenuSet/MenuOption.html">MenuOption</a> in MenuSet.php</div>
-							<div class="index-item-description">Each menu option is an object.</div>
-					</dd>
-			<dt class="field">
 						<img src="media/images/Constructor.png" alt="Method" title="Method" /></title>
 			<span class="method-title">MenuOption</span>
 					</dt>
@@ -1400,12 +1476,12 @@
 							<div class="index-item-description">The thing we click</div>
 					</dd>
 			<dt class="field">
-						<img src="media/images/Constructor.png" alt="Method" title="Method" /></title>
-			<span class="method-title">MenuSet</span>
+						<img src="media/images/Class.png" alt="Class" title="Class" /></title>
+			MenuOption
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/MenuSet/MenuSet.html#methodMenuSet">MenuSet::MenuSet()</a> in MenuSet.php</div>
-							<div class="index-item-description">Start a new MenuSet with no options.</div>
+			<div class="index-item-details"><a href="awl/MenuSet/MenuOption.html">MenuOption</a> in MenuSet.php</div>
+							<div class="index-item-description">Each menu option is an object.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Class.png" alt="Class" title="Class" /></title>
@@ -1414,6 +1490,14 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/MenuSet/MenuSet.html">MenuSet</a> in MenuSet.php</div>
 							<div class="index-item-description">A MenuSet is a hierarchy of MenuOptions, some of which might be  MenuSet objects themselves.</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Constructor.png" alt="Method" title="Method" /></title>
+			<span class="method-title">MenuSet</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/MenuSet/MenuSet.html#methodMenuSet">MenuSet::MenuSet()</a> in MenuSet.php</div>
+							<div class="index-item-description">Start a new MenuSet with no options.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Page.png" alt="Page" title="Page" /></title>
@@ -1540,11 +1624,11 @@
 	<dl>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
-			<span class="method-title">ParseFrom</span>
+			<span class="method-title">Parameters</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodParseFrom">iCalProp::ParseFrom()</a> in iCalendar.php</div>
-							<div class="index-item-description">The constructor parses the incoming string, which is formatted as per RFC2445 as a    propname[;param1=pval1[; ... ]]:propvalue  however we allow ourselves to assume that the RFC2445 content unescaping has already  happened when iCalComponent::ParseFrom() called iCalComponent::UnwrapComponent().</div>
+			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodParameters">iCalProp::Parameters()</a> in iCalendar.php</div>
+							<div class="index-item-description">Get/Set parameters in their entirety</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
@@ -1556,19 +1640,19 @@
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
+			<span class="method-title">ParseFrom</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodParseFrom">iCalProp::ParseFrom()</a> in iCalendar.php</div>
+							<div class="index-item-description">The constructor parses the incoming string, which is formatted as per RFC2445 as a    propname[;param1=pval1[; ... ]]:propvalue  however we allow ourselves to assume that the RFC2445 content unescaping has already  happened when iCalComponent::ParseFrom() called iCalComponent::UnwrapComponent().</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
 			<span class="method-title">ParseSomeLines</span>
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/iCalendar/iCalendar.html#methodParseSomeLines">iCalendar::ParseSomeLines()</a> in iCalendar.php</div>
 							<div class="index-item-description">Function to parse lines from BEGIN:SOMETHING to END:SOMETHING into a nested array structure</div>
-					</dd>
-			<dt class="field">
-						<img src="media/images/Class.png" alt="Class" title="Class" /></title>
-			PgQuery
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/PgQuery/PgQuery.html">PgQuery</a> in PgQuery.php</div>
-							<div class="index-item-description">The PgQuery Class.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Constructor.png" alt="Method" title="Method" /></title>
@@ -1577,6 +1661,14 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/PgQuery/PgQuery.html#methodPgQuery">PgQuery::PgQuery()</a> in PgQuery.php</div>
 							<div class="index-item-description">Constructor</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Class.png" alt="Class" title="Class" /></title>
+			PgQuery
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/PgQuery/PgQuery.html">PgQuery</a> in PgQuery.php</div>
+							<div class="index-item-description">The PgQuery Class.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Page.png" alt="Page" title="Page" /></title>
@@ -2509,20 +2601,20 @@
 							<div class="index-item-description">Validates the form according to it's rules.</div>
 					</dd>
 			<dt class="field">
-						<img src="media/images/Constructor.png" alt="Method" title="Method" /></title>
-			<span class="method-title">Validation</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/Validation/Validation.html#methodValidation">Validation::Validation()</a> in Validation.php</div>
-							<div class="index-item-description">Initialise a new validation.</div>
-					</dd>
-			<dt class="field">
 						<img src="media/images/Class.png" alt="Class" title="Class" /></title>
 			Validation
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/Validation/Validation.html">Validation</a> in Validation.php</div>
 							<div class="index-item-description">Rules used for validation of form fields.</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Constructor.png" alt="Method" title="Method" /></title>
+			<span class="method-title">Validation</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/Validation/Validation.html#methodValidation">Validation::Validation()</a> in Validation.php</div>
+							<div class="index-item-description">Initialise a new validation.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Page.png" alt="Page" title="Page" /></title>
@@ -2554,6 +2646,14 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodValue">iCalProp::Value()</a> in iCalendar.php</div>
 							<div class="index-item-description">Get/Set the content of the property</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" /></title>
+			<span class="method-title">VCalendar</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodVCalendar">iCalComponent::VCalendar()</a> in iCalendar.php</div>
+							<div class="index-item-description">Apply standard properties for a VCalendar</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Class.png" alt="Class" title="Class" /></title>

@@ -1,3 +1,13 @@
+awl (0.34) unstable; urgency=low
+
+  * [General] Use @todo: everywhere for phpdocumentor.
+  * [iCalendar] Make iCalComponent usable in preference to iCalendar.
+  * [classBrowser] A hook can display the row if it matches a pattern.
+  * Better namespace handlin in XML processing.
+  * [iCalendar] Add functions for attendee/organizer checking.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Tue, 18 Nov 2008 18:05:38 +1300
+
 awl (0.33) unstable; urgency=low
 
   * Remove a couple of uninitialised variable warnings.

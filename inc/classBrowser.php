@@ -633,7 +633,7 @@ class Browser
       else {
         // Each column
         foreach( $this->Columns AS $k => $column ) {
-          $html .= $column->RenderValue($BrowserCurrentRow->{$column->Field});
+          $html .= $column->RenderValue( (isset($BrowserCurrentRow->{$column->Field})?$BrowserCurrentRow->{$column->Field}:'') );
           if ( isset($this->Totals[$column->Field]) ) {
             if ( isset($this->TotalFuncs[$column->Field]) && function_exists($this->TotalFuncs[$column->Field]) ) {
               // Run the amount through the callback function  $floatval = my_function( $row, $fieldval );

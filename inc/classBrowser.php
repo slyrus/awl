@@ -225,6 +225,9 @@ class Browser
   var $Totals;
   var $TotalFuncs;
   var $ExtraRows;
+  var $match_column;
+  var $match_value;
+  var $match_function;
 
   /**
   * The Browser class constructor
@@ -547,6 +550,7 @@ class Browser
     return $this->Query->Exec("Browse:$this->Title:DoQuery");
   }
 
+
   /**
   * Add an extra arbitrary row onto the end of the browser.
   *
@@ -557,6 +561,19 @@ class Browser
     $this->ExtraRows[] = &$column_values;
   }
 
+
+  /**
+  * Replace a row where $column = $value with an extra arbitrary row, returned from calling $function
+  *
+  * @param string $column The name of a column to match
+  * @param string $value  The value to match in the column
+  * @param string $function The name of the function to call for the matched row
+  */
+  function MatchedRow( $column, $value, $function ) {
+    $this->match_column = $column;
+    $this->match_value  = $value;
+    $this->match_function = $function;
+  }
 
 
   /**
@@ -610,17 +627,22 @@ class Browser
       // Start the row
       $html .= vsprintf( $this->BeginRow, $rowanswers);
 
-      // Each column
-      foreach( $this->Columns AS $k => $column ) {
-        $html .= $column->RenderValue($BrowserCurrentRow->{$column->Field});
-        if ( isset($this->Totals[$column->Field]) ) {
-          if ( isset($this->TotalFuncs[$column->Field]) && function_exists($this->TotalFuncs[$column->Field]) ) {
-            // Run the amount through the callback function  $floatval = my_function( $row, $fieldval );
-            $this->Totals[$column->Field] += $this->TotalFuncs[$column->Field]( $BrowserCurrentRow, $BrowserCurrentRow->{$column->Field} );
-          }
-          else {
-            // Just add the amount
-            $this->Totals[$column->Field] += $BrowserCurrentRow->{$column->Field};
+      if ( isset($this->match_column) && isset($this->match_value) && $BrowserCurrentRow->{$this->match_column} == $this->match_value ) {
+        $html .= call_user_func( $this->match_function, $BrowserCurrentRow );
+      }
+      else {
+        // Each column
+        foreach( $this->Columns AS $k => $column ) {
+          $html .= $column->RenderValue($BrowserCurrentRow->{$column->Field});
+          if ( isset($this->Totals[$column->Field]) ) {
+            if ( isset($this->TotalFuncs[$column->Field]) && function_exists($this->TotalFuncs[$column->Field]) ) {
+              // Run the amount through the callback function  $floatval = my_function( $row, $fieldval );
+              $this->Totals[$column->Field] += $this->TotalFuncs[$column->Field]( $BrowserCurrentRow, $BrowserCurrentRow->{$column->Field} );
+            }
+            else {
+              // Just add the amount
+              $this->Totals[$column->Field] += $BrowserCurrentRow->{$column->Field};
+            }
           }
         }
       }
@@ -666,9 +688,14 @@ class Browser
         // Start the row
         $html .= vsprintf( $this->BeginRow, $rowanswers);
 
-        // Each column
-        foreach( $this->Columns AS $k => $column ) {
-          $html .= $column->RenderValue( (isset($BrowserCurrentRow->{$column->Field}) ? $BrowserCurrentRow->{$column->Field} : '') );
+        if ( isset($this->match_column) && isset($this->match_value) && $BrowserCurrentRow->{$this->match_column} == $this->match_value ) {
+          $html .= call_user_func( $this->match_function, $BrowserCurrentRow );
+        }
+        else {
+          // Each column
+          foreach( $this->Columns AS $k => $column ) {
+            $html .= $column->RenderValue( (isset($BrowserCurrentRow->{$column->Field}) ? $BrowserCurrentRow->{$column->Field} : '') );
+          }
         }
 
         // Finish the row

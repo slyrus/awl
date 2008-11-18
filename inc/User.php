@@ -124,6 +124,8 @@ class User extends DBRecord {
                 || ("insert" == $this->WriteType) );
         break;
 
+      case 'changeusername':  // Administrator only
+      case 'changeactive':    // Administrator only
       case 'admin':
 
       case 'create':
@@ -135,7 +137,7 @@ class User extends DBRecord {
       default:
         $rc = ( isset($session->roles[$whatever]) && $session->roles[$whatever] );
     }
-    dbg_error_log("User",":AllowedTo: %s is%s allowed to %s", $this->username, ($rc?"":" not"), $whatever );
+    dbg_error_log("User",":AllowedTo: %s is%s allowed to %s", (isset($this->username)?$this->username:null), ($rc?"":" not"), $whatever );
     return $rc;
   }
 
@@ -198,8 +200,13 @@ class User extends DBRecord {
     if ( $title == null ) $title = i18n("User Details");
     $html = ( $title == "" ? "" : $ef->BreakLine(translate($title)) );
 
-    $html .= $ef->DataEntryLine( translate("User Name"), "%s", "text", "username",
+    if ( $this->AllowedTo('ChangeUsername') ) {
+      $html .= $ef->DataEntryLine( translate("User Name"), "%s", "text", "username",
               array( "size" => 20, "title" => translate("The name this user can log into the system with.")), $this->prefix );
+    }
+    else {
+      $html .= $ef->DataEntryLine( translate("User Name"), $this->Get('username') );
+    }
     if ( $ef->EditMode && $this->AllowedTo('ChangePassword') ) {
       $this->Set('new_password','******');
       unset($_POST['new_password']);
@@ -217,9 +224,14 @@ class User extends DBRecord {
     $html .= $ef->DataEntryLine( translate("EMail"), "%s", "text", "email",
               array( "size" => 50, "title" => translate("The user's e-mail address.")), $this->prefix );
 
-    $html .= $ef->DataEntryLine( translate("Active"), ($this->Get('active') == 't'? 'Yes' : 'No'), "checkbox", "active",
-              array( "_label" => translate("User is active"),
-                     "title" => translate("Is this user active?")), $this->prefix );
+    if ( $this->AllowedTo('ChangeActive') ) {
+      $html .= $ef->DataEntryLine( translate("Active"), ($this->Get('active') == 't'? 'Yes' : 'No'), "checkbox", "active",
+                array( "_label" => translate("User is active"),
+                      "title" => translate("Is this user active?")), $this->prefix );
+    }
+    else {
+      $html .= $ef->DataEntryLine( translate("Active"), ($this->Get('active') == 't'? 'Yes' : 'No') );
+    }
 
     $html .= $ef->DataEntryLine( translate("Date Style"), ($this->Get('date_format_type') == 'E' ? 'European' : ($this->Get('date_format_type') == 'U' ? 'US of A' : 'ISO 8861')),
                      "select", "date_format_type",

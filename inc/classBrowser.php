@@ -228,6 +228,8 @@ class Browser
   var $match_column;
   var $match_value;
   var $match_function;
+  var $DivOpen;
+  var $DivClose;
 
   /**
   * The Browser class constructor
@@ -247,6 +249,8 @@ class Browser
     $this->Columns = array();
     $this->HiddenColumns = array();
     $this->FieldNames = array();
+    $this->DivOpen = '<div id="browser">';
+    $this->DivClose = '</div>';
     dbg_error_log( "Browser", ":Browser: New browser called $title");
   }
 
@@ -333,6 +337,17 @@ class Browser
   */
   function SetSubTitle( $sub_title ) {
     $this->SubTitle = $sub_title;
+  }
+
+  /**
+  * Set a div for wrapping the browse.
+  *
+  * @param string $open_div The HTML to open the div
+  * @param string $close_div The HTML to open the div
+  */
+  function SetDiv( $open_div, $close_div ) {
+    $this->DivOpen = $open_div;
+    $this->DivClose = $close_div;
   }
 
   /**
@@ -592,7 +607,7 @@ class Browser
     if ( !isset($this->Query) ) $this->DoQuery();  // Ensure the query gets run before we render!
 
     dbg_error_log( "Browser", ":Render: browser $this->Title");
-    $html = '<div id="browser">';
+    $html = $this->DivOpen;
     if ( $this->Title != "" ) {
       $html .= "<$title_tag>$this->Title</$title_tag>\n";
     }
@@ -704,7 +719,7 @@ class Browser
     }
 
     $html .= "</tbody>\n</table>\n";
-    $html .= '</div>';
+    $html .= $this->DivClose;
 
     return $html;
   }

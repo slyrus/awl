@@ -457,9 +457,6 @@ class PgQuery
       $this->_log_error( $this->location, 'DBGQ', $this->querystring, $line, $file );
     }
 
-    if ( ! (isset($c->dbg['ALL']) || isset($c->dbg['querystring']) || ini_get('display_errors') == 0 ) ) {
-      ini_set('display_errors',0);
-    }
     $t1 = microtime(); // get start time
     $this->result = pg_exec( $this->connection, $this->querystring ); // execute the query
     $this->rows = ($this->result ? pg_numrows($this->result) : -1); // number of rows returned

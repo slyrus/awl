@@ -167,17 +167,18 @@ class MenuOption {
   }
 }
 
-  /**
-  * _CompareMenuSequence is used in sorting the menu options into the sequence order
-  *
-  * @param objectref $a The first menu option
-  * @param objectref $b The second menu option
-  * @return int ( $a == b ? 0 ( $a > b ? 1 : -1 ))
-  */
-  function _CompareMenuSequence( $a, $b ) {
-    dbg_error_log("MenuSet", ":_CompareMenuSequence: Comparing %d with %d", $a->sortkey, $b->sortkey);
-    return ($a->sortkey - $b->sortkey);
-  }
+
+/**
+* _CompareMenuSequence is used in sorting the menu options into the sequence order
+*
+* @param objectref $a The first menu option
+* @param objectref $b The second menu option
+* @return int ( $a == b ? 0 ( $a > b ? 1 : -1 ))
+*/
+function _CompareMenuSequence( $a, $b ) {
+  dbg_error_log("MenuSet", ":_CompareMenuSequence: Comparing %d with %d", $a->sortkey, $b->sortkey);
+  return ($a->sortkey - $b->sortkey);
+}
 
 
 
@@ -456,13 +457,45 @@ class MenuSet {
       if ( $v->IsActive() && isset($v->submenu_set) && $v->submenu_set->Size() > 0 ) {
         $render_sub_menus = $v->submenu_set;
         if ( $submenus_inline )
-          $render_sub_menus->Render();
+          $r .= $render_sub_menus->Render();
       }
     }
     $r .="</div>\n";
     if ( !$submenus_inline && $render_sub_menus != false ) {
       $r .= $render_sub_menus->Render();
     }
+    return $r;
+  }
+
+
+  /**
+  * Render the menu tree to an HTML fragment.
+  *
+  * @param boolean $submenus_inline Indicate whether to render the sub-menus within
+  *   the menus, or render them entirely separately after we finish rendering the
+  *   top level ones.
+  * @return string The HTML fragment.
+  */
+  function RenderAsCSS( $depth = 0 ) {
+    $this->LinkActiveSubMenus();
+
+    if ( $depth > 0 )
+      $class = "submenu" . $depth;
+    else
+      $class = "menu";
+
+    $options = $this->options;
+    usort($options,"_CompareMenuSequence");
+
+    $r = "<div id=\"$this->div_id\" class=\"$class\">\n<ul>\n";
+    foreach( $options AS $k => $v ) {
+      $r .= "<li>".$v->Render();
+      if ( isset($v->submenu_set) && $v->submenu_set->Size() > 0 ) {
+        $r .= $v->submenu_set->RenderAsCSS($depth+1);
+      }
+      $r .= "</li>\n";
+    }
+    $r .="</ul></div>\n";
     return $r;
   }
 }

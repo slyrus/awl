@@ -323,6 +323,7 @@ class User extends DBRecord {
     }
 
     // Password changing is a little special...
+    unset($_POST['password']);
     if ( $_POST['new_password'] != "******" && $_POST['new_password'] != ""  ) {
       if ( $_POST['new_password'] == $_POST['confirm_password'] ) {
         $this->Set('password',$_POST['new_password']);

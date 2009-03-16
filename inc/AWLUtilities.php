@@ -291,3 +291,113 @@ if ( !function_exists("quoted_printable_encode") ) {
     return preg_replace('/[^\r\n]{73}[^=\r\n]{2}/', "$0=\r\n", str_replace("%","=",str_replace("%20"," ",rawurlencode($string))));
   }
 }
+
+
+if ( !function_exists("clean_by_regex") ) {
+  /**
+  * Clean a value by applying a regex to it.  If it is an array apply it to
+  * each element in the array recursively.  If it is an object we don't mess
+  * with it.
+  */
+  function clean_by_regex( $val, $regex ) {
+    if ( is_null($val) ) return null;
+    switch( $regex ) {
+      case 'int':     $regex = '#^\d+$#';     break;
+    }
+    if ( is_array($val) ) {
+      foreach( $val AS $k => $v ) {
+        $val[$k] = clean_by_regex($v,$regex);
+      }
+    }
+    else if ( ! is_object($val) ) {
+      if ( preg_match( $regex, $val, $matches) ) {
+        $val = $matches[0];
+      }
+      else {
+        $val = '';
+      }
+    }
+    return $val;
+  }
+}
+
+
+if ( !function_exists("param_to_global") ) {
+  /**
+  * Convert a parameter to a global.  We first look in _POST and then in _GET,
+  * and if they passed in a bunch of valid characters, we will make sure the
+  * incoming is cleaned to only match that set.
+  *
+  * @param string $varname The name of the global variable to put the answer in
+  * @param string $match_regex The part of the parameter matching this regex will be returned
+  * @param string $alias1  An alias for the name that we should look for first.
+  * @param    "    ...     More aliases, in the order which they should be examined.  $varname will be appended to the end.
+  */
+  function param_to_global( ) {
+    $args = func_get_args();
+
+    $varname = array_shift($args);
+    $GLOBALS[$varname] = null;
+
+    $match_regex = null;
+    $argc = func_num_args();
+    if ( $argc > 1 ) {
+      $match_regex = array_shift($args);
+    }
+
+    $args[] = $varname;
+    foreach( $args AS $k => $name ) {
+      if ( isset($_POST[$name]) ) {
+        $result = $_POST[$name];
+        break;
+      }
+      else if ( isset($_GET[$name]) ) {
+        $result = $_GET[$name];
+        break;
+      }
+    }
+    if ( !isset($result) ) return null;
+
+    if ( isset($match_regex) ) {
+      $result = clean_by_regex( $result, $match_regex );
+    }
+
+    $GLOBALS[$varname] = $result;
+    return $result;
+  }
+}
+
+
+if ( !function_exists("get_fields") ) {
+  /**
+  * @var array $_AWL_field_cache is a cache of the field names for a table
+  */
+  $_AWL_field_cache = array();
+
+
+  /**
+  * Get the names of the fields for a particular table
+  * @param string $tablename The name of the table.
+  * @return array of string The public fields in the table.
+  */
+  function get_fields( $tablename ) {
+    global $_AWL_field_cache;
+
+    if ( !isset($_AWL_field_cache[$tablename]) ) {
+      dbg_error_log( "DataUpdate", ":get_fields: Loaded fields for table '$tablename'" );
+      $sql = "SELECT f.attname, t.typname FROM pg_attribute f ";
+      $sql .= "JOIN pg_class c ON ( f.attrelid = c.oid ) ";
+      $sql .= "JOIN pg_type t ON ( f.atttypid = t.oid ) ";
+      $sql .= "WHERE relname = ? AND attnum >= 0 order by f.attnum;";
+      $qry = new PgQuery( $sql, $tablename );
+      $qry->Exec("DataUpdate");
+      $fields = array();
+      while( $row = $qry->Fetch() ) {
+        $fields["$row->attname"] = $row->typname;
+      }
+      $_AWL_field_cache[$tablename] = $fields;
+    }
+    return $_AWL_field_cache[$tablename];
+  }
+}
+

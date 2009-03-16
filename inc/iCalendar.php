@@ -722,6 +722,68 @@ class iCalComponent {
 
 
   /**
+  * Mask components, removing any that are not of the types in the list
+  * @param array $keep An array of component types to be kept
+  */
+  function MaskComponents( $keep ) {
+    foreach( $this->components AS $k => $v ) {
+      if ( ! in_array( $v->GetType(), $keep ) ) {
+        unset($this->components[$k]);
+        if ( isset($this->rendered) ) unset($this->rendered);
+      }
+      else {
+        $v->MaskComponents($keep);
+      }
+    }
+  }
+
+
+  /**
+  * Mask properties, removing any that are not in the list
+  * @param array $keep An array of property names to be kept
+  * @param array $component_list An array of component types to check within
+  */
+  function MaskProperties( $keep, $component_list=null ) {
+    foreach( $this->components AS $k => $v ) {
+      $v->MaskProperties($keep, $component_list);
+    }
+
+    if ( !isset($component_list) || in_array($this->GetType(),$component_list) ) {
+      foreach( $this->components AS $k => $v ) {
+        if ( ! in_array( $v->GetType(), $keep ) ) {
+          unset($this->components[$k]);
+          if ( isset($this->rendered) ) unset($this->rendered);
+        }
+      }
+    }
+  }
+
+
+  /**
+  * Clone this component (and subcomponents) into a confidential version of it.  A confidential
+  * event will be scrubbed of any identifying characteristics other than time/date, repeat, uid
+  * and a summary which is just a translated 'Busy'.
+  */
+  function CloneConfidential() {
+    $confidential = clone($this);
+    $keep_properties = array( 'DTSTAMP', 'DTSTART', 'RRULE', 'DURATION', 'DTEND', 'UID', 'CLASS', 'TRANSP' );
+    $resource_components = array( 'VEVENT', 'VTODO', 'VJOURNAL' );
+    $confidential->MaskComponents(array( 'VTIMEZONE', 'VEVENT', 'VTODO', 'VJOURNAL' ));
+    $confidential->MaskProperties($keep_properties, $resource_components );
+    if ( in_array( $confidential->GetType(), $resource_components ) ) {
+      $confidential->AddProperty( 'SUMMARY', translate('Busy') );
+    }
+    foreach( $confidential->components AS $k => $v ) {
+      if ( in_array( $v->GetType(), $resource_components ) ) {
+        $v->AddProperty( 'SUMMARY', translate('Busy') );
+      }
+    }
+
+    return $confidential;
+  }
+
+
+  /**
   *  Renders the component, possibly restricted to only the listed properties
   */
   function Render( $restricted_properties = null) {

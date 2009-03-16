@@ -7,8 +7,8 @@
 *
 * @package awl
 * @subpackage   MenuSet
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Catalyst IT Ltd
+* @author    Andrew McMillan <andrew@mcmillan.net.nz>
+* @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 require_once("AWLUtilities.php");
@@ -119,7 +119,7 @@ class MenuOption {
     $r = str_replace( '%%attributes%%', $attribute_values, $r );
 
     $this->rendered = $r;
-    return "$r\n";
+    return "$r";
   }
 
   /**
@@ -253,6 +253,12 @@ class MenuSet {
   var $parent;
 
   /**
+  * The sortkey used by any previous option
+  * @var last_sortkey
+  */
+  var $last_sortkey;
+
+  /**
   * Will be set to true or false when we link active sub-menus, but will be
   * unset until we do that.
   * @var reference
@@ -284,7 +290,11 @@ class MenuSet {
   * @param int $sortkey An (optional) value to allow option ordering.
   * @return mixed A reference to the MenuOption that was added, or false if none were added.
   */
-  function &AddOption( $label, $target, $title="", $active=false, $sortkey=1000 ) {
+  function &AddOption( $label, $target, $title="", $active=false, $sortkey=null ) {
+    if ( !isset($sortkey) ) {
+      $sortkey = (isset($this->last_sortkey) ? $this->last_sortkey + 100 : 1000);
+    }
+    $this->last_sortkey = $sortkey;
     if ( version_compare(phpversion(), '5.0') < 0) {
       $new_option =& new MenuOption( $label, $target, $title, $this->main_class, $sortkey );
     }

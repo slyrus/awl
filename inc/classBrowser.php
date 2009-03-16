@@ -9,8 +9,8 @@
 *
 * @package   awl
 * @subpackage   Browser
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Catalyst IT Ltd
+* @author    Andrew McMillan <andrew@mcmillan.net.nz>
+* @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
 require_once("AWLUtilities.php");
@@ -20,38 +20,6 @@ require_once("AWLUtilities.php");
 */
 $BrowserCurrentRow = (object) array();
 
-/**
-* Return values from the current row for replacing into a template.
-*
-* This is used to return values from the current row, so they can
-* be inserted into a row template.  It is used as a callback
-* function for preg_replace_callback.
-*
-* @param array of string $matches An array containing a field name as offset 1
-*/
-function BrowserColumnValueReplacement($matches)
-{
-/**
-* @global object $BrowserCurrentRow  The row most recently read from the database.
-*/
-  global $BrowserCurrentRow;
-  // as usual: $matches[0] is the complete match
-  // $matches[1] the match for the first subpattern
-  // enclosed in '##...##' and so on
-  // Use like: $s = preg_replace_callback("/##([^#]+)##/", "BrowserColumnValueReplacement", $s);
-  // $BrowserCurrentRow needs to be assigned something relevant first...
-
-  $field_name = $matches[1];
-  if ( !isset($BrowserCurrentRow->{$field_name}) && substr($field_name,0,4) == "URL:" ) {
-    $field_name = substr($field_name,4);
-    $replacement = urlencode($BrowserCurrentRow->{$field_name});
-  }
-  else {
-    $replacement = $BrowserCurrentRow->{$field_name};
-  }
-  dbg_error_log( "Browser", ":BrowserColumnValueReplacement: Replacing %s with %s", $field_name, $replacement);
-  return $replacement;
-}
 
 
 /**
@@ -161,7 +129,6 @@ class BrowserColumn
 
   function RenderValue( $value, $extraclass = "" ) {
     global $session;
-    global $BrowserCurrentRow;
 
     if ( $this->Type == 'date' || $this->Type == 'timestamp') {
       $value = $session->FormattedDate( $value, $this->Type );
@@ -169,7 +136,7 @@ class BrowserColumn
 
     if ( $this->Hook && function_exists($this->Hook) ) {
       dbg_error_log( "Browser", ":Browser: Hook for $this->Hook on column $this->Field");
-      $value = call_user_func( $this->Hook, $value, $this->Field, $BrowserCurrentRow );
+      $value = call_user_func( $this->Hook, $value, $this->Field, $this->current_row );
     }
 
     if ( $this->Translatable ) {
@@ -189,7 +156,6 @@ class BrowserColumn
       $html .= ($this->Format == "" ? $value : sprintf($this->Format,$value,$value));
       $html .= "</td>\n";
     }
-    $html = preg_replace_callback("/##([^#]+)##/", "BrowserColumnValueReplacement", $html );
     return $html;
   }
 }
@@ -448,11 +414,6 @@ class Browser
   *               which shouldn't interfere with the default primary order.
   */
   function AddOrder( $field, $direction, $browser_array_key=0, $secondary=0 ) {
-    if ( $secondary == 0 && ( is_array($field) || is_array($direction) ) ) {
-      if ( $browser_array_key >= count($field) || $browser_array_key >= count($direction) ) return;
-      $field = $field[$browser_array_key];
-      $direction = $direction[$browser_array_key];
-    }
     $field = clean_string($field);
     if ( ! isset($this->FieldNames[$field]) ) return;
 
@@ -476,6 +437,22 @@ class Browser
       $this->Order .= " DESC";
       if ( $secondary == 0)
         $this->OrderDirection = 'D';
+    }
+  }
+
+
+  /**
+  * Set up the ordering for the browser.  Generally you should call this with
+  * the first parameter set as a field to order by default.  Call with the second
+  * parameter set to 'D' or 'DESCEND' if you want to reverse the default order.
+  */
+  function SetOrdering( $default_fld=null, $default_dir='A' , $browser_array_key=0 ) {
+    if ( isset( $_GET['o'][$browser_array_key] ) && isset($_GET['d'][$browser_array_key] ) ) {
+      $this->AddOrder( $_GET['o'][$browser_array_key], $_GET['d'][$browser_array_key], $browser_array_key );
+    }
+    else {
+      if ( ! isset($default_fld) ) $default_fld = $this->Columns[0];
+      $this->AddOrder( $default_fld, $default_dir, $browser_array_key );
     }
   }
 
@@ -592,6 +569,34 @@ class Browser
 
 
   /**
+  * Return values from the current row for replacing into a template.
+  *
+  * This is used to return values from the current row, so they can
+  * be inserted into a row template.  It is used as a callback
+  * function for preg_replace_callback.
+  *
+  * @param array of string $matches An array containing a field name as offset 1
+  */
+  function ValueReplacement($matches)
+  {
+    // as usual: $matches[0] is the complete match
+    // $matches[1] the match for the first subpattern
+    // enclosed in '##...##' and so on
+
+    $field_name = $matches[1];
+    if ( !isset($this->current_row->{$field_name}) && substr($field_name,0,4) == "URL:" ) {
+      $field_name = substr($field_name,4);
+      $replacement = urlencode($this->current_row->{$field_name});
+    }
+    else {
+      $replacement = (isset($this->current_row->{$field_name}) ? $this->current_row->{$field_name} : '');
+    }
+    dbg_error_log( "Browser", ":ValueReplacement: Replacing %s with %s", $field_name, $replacement);
+    return $replacement;
+  }
+
+
+  /**
   * This method is used to render the browser as HTML.  If the query has
   * not yet been executed then this will call DoQuery to do so.
   *
@@ -601,17 +606,19 @@ class Browser
   * @param string $title_tag The tag to use around the browser title (default 'h1')
   * @return string The rendered HTML fragment to display to the user.
   */
-  function Render( $title_tag = 'h1', $subtitle_tag = 'h2' ) {
-    global $c, $BrowserCurrentRow;
+  function Render( $title_tag = null, $subtitle_tag = null ) {
+    global $c;
 
     if ( !isset($this->Query) ) $this->DoQuery();  // Ensure the query gets run before we render!
 
     dbg_error_log( "Browser", ":Render: browser $this->Title");
     $html = $this->DivOpen;
     if ( $this->Title != "" ) {
+      if ( !isset($title_tag) ) $title_tag = 'h1';
       $html .= "<$title_tag>$this->Title</$title_tag>\n";
     }
     if ( $this->SubTitle != "" ) {
+      if ( !isset($subtitle_tag) ) $subtitle_tag = 'h2';
       $html .= "<$subtitle_tag>$this->SubTitle</$subtitle_tag>\n";
     }
 
@@ -640,15 +647,15 @@ class Browser
         }
       }
       // Start the row
-      $html .= vsprintf( $this->BeginRow, $rowanswers);
+      $row_html = vsprintf( $this->BeginRow, $rowanswers);
 
       if ( isset($this->match_column) && isset($this->match_value) && $BrowserCurrentRow->{$this->match_column} == $this->match_value ) {
-        $html .= call_user_func( $this->match_function, $BrowserCurrentRow );
+        $row_html .= call_user_func( $this->match_function, $BrowserCurrentRow );
       }
       else {
         // Each column
         foreach( $this->Columns AS $k => $column ) {
-          $html .= $column->RenderValue( (isset($BrowserCurrentRow->{$column->Field})?$BrowserCurrentRow->{$column->Field}:'') );
+          $row_html .= $column->RenderValue( (isset($BrowserCurrentRow->{$column->Field})?$BrowserCurrentRow->{$column->Field}:'') );
           if ( isset($this->Totals[$column->Field]) ) {
             if ( isset($this->TotalFuncs[$column->Field]) && function_exists($this->TotalFuncs[$column->Field]) ) {
               // Run the amount through the callback function  $floatval = my_function( $row, $fieldval );
@@ -663,21 +670,25 @@ class Browser
       }
 
       // Finish the row
-      $html .= $this->CloseRow;
+      $row_html .= $this->CloseRow;
+      $this->current_row = $BrowserCurrentRow;
+      $html .= preg_replace_callback("/##([^#]+)##/", array( &$this, "ValueReplacement"), $row_html );
     }
 
     if ( count($this->Totals) > 0 ) {
       $BrowserCurrentRow = (object) "";
-      $html .= "<tr class=\"totals\">\n";
+      $row_html = "<tr class=\"totals\">\n";
       foreach( $this->Columns AS $k => $column ) {
         if ( isset($this->Totals[$column->Field]) ) {
-          $html .= $column->RenderValue( $this->Totals[$column->Field], "totals" );
+          $row_html .= $column->RenderValue( $this->Totals[$column->Field], "totals" );
         }
         else {
-          $html .= $column->RenderValue( "" );
+          $row_html .= $column->RenderValue( "" );
         }
       }
-      $html .= "</tr>\n";
+      $row_html .= "</tr>\n";
+      $this->current_row = $BrowserCurrentRow;
+      $html .= preg_replace_callback("/##([^#]+)##/", array( &$this, "ValueReplacement"), $row_html );
     }
 
 
@@ -701,20 +712,22 @@ class Browser
         }
 
         // Start the row
-        $html .= vsprintf( $this->BeginRow, $rowanswers);
+        $row_html = vsprintf( $this->BeginRow, $rowanswers);
 
         if ( isset($this->match_column) && isset($this->match_value) && $BrowserCurrentRow->{$this->match_column} == $this->match_value ) {
-          $html .= call_user_func( $this->match_function, $BrowserCurrentRow );
+          $row_html .= call_user_func( $this->match_function, $BrowserCurrentRow );
         }
         else {
           // Each column
           foreach( $this->Columns AS $k => $column ) {
-            $html .= $column->RenderValue( (isset($BrowserCurrentRow->{$column->Field}) ? $BrowserCurrentRow->{$column->Field} : '') );
+            $row_html .= $column->RenderValue( (isset($BrowserCurrentRow->{$column->Field}) ? $BrowserCurrentRow->{$column->Field} : '') );
           }
         }
 
         // Finish the row
-        $html .= $this->CloseRow;
+        $row_html .= $this->CloseRow;
+        $this->current_row = $BrowserCurrentRow;
+        $html .= preg_replace_callback("/##([^#]+)##/", array( &$this, "ValueReplacement"), $row_html );
       }
     }
 

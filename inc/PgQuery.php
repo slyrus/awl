@@ -150,7 +150,7 @@ function qpg($str = null) {
       //PostgreSQL treats a backslash as an escape character.
       $str = str_replace('\\', '\\\\', $str);
       $rv = "'$str'";
-      if ( $c->found_dbversion > 8.0 ) $rv = 'E'.$rv;
+      if ( !isset($c->found_dbversion) || $c->found_dbversion > 8.0 ) $rv = 'E'.$rv;
   }
   return $rv;
 }
@@ -458,7 +458,7 @@ class PgQuery
     }
 
     $t1 = microtime(); // get start time
-    $this->result = pg_exec( $this->connection, $this->querystring ); // execute the query
+    $this->result = @pg_exec( $this->connection, $this->querystring ); // execute the query
     $this->rows = ($this->result ? pg_numrows($this->result) : -1); // number of rows returned
     $t2 = microtime(); // get end time
     $i_took = duration( $t1, $t2 );   // calculate difference

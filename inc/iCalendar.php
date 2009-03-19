@@ -698,7 +698,9 @@ class iCalComponent {
   function SetComponents( $new_components, $type = null ) {
     if ( isset($this->rendered) ) unset($this->rendered);
     if ( count($new_components) > 0 ) $this->ClearComponents($type);
-    $this->components = $this->components + $new_components;
+    foreach( $new_component AS $k => $v ) {
+      $this->components[] = $v;
+    }
   }
 
 

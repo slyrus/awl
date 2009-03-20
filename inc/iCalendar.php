@@ -695,9 +695,9 @@ class iCalComponent {
   * @param array of iCalComponent $new_components The new components to replace the existing ones
   * @param string $type The type of components to be replaced.  Defaults to null, which means all components will be replaced.
   */
-  function SetComponents( $new_components, $type = null ) {
+  function SetComponents( $new_component, $type = null ) {
     if ( isset($this->rendered) ) unset($this->rendered);
-    if ( count($new_components) > 0 ) $this->ClearComponents($type);
+    if ( count($new_component) > 0 ) $this->ClearComponents($type);
     foreach( $new_component AS $k => $v ) {
       $this->components[] = $v;
     }

@@ -123,7 +123,13 @@ function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
     if ( $fn == "password" ) {
       if ( $value == "******" || $value == "" ) continue;
       if ( !preg_match('/\*[0-9a-z]+\*[0-9a-z]+/', $value ) )
-        $value = (function_exists('session_salted_md5') ? session_salted_md5($value) : md5($value) );
+        $value = (function_exists("session_salted_sha1")
+                   ? session_salted_sha1($value)
+                   : (function_exists('session_salted_md5')
+                       ? session_salted_md5($value)
+                       : md5($value)
+                     )
+                 );
     }
     if ( eregi("(time|date)", $typ ) && $value == "" ) {
       $value = "NULL";

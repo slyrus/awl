@@ -367,7 +367,7 @@ class Session
             $this->Session($sid);
             dbg_error_log( "Login", " Login: New session $session_id started for $username ($usr->user_no)" );
             if ( isset($_POST['remember']) && intval($_POST['remember']) > 0 ) {
-              $cookie .= md5( $usr->user_no ) . ";";
+              $cookie = md5( $usr->user_no ) . ";";
               $cookie .= session_salted_md5($usr->user_no . $usr->username . $usr->password);
               $GLOBALS['lsid'] = $cookie;
               setcookie( "lsid", $cookie, time() + (86400 * 3600), "/" );   // will expire in ten or so years
@@ -587,14 +587,15 @@ EOTEXT;
     if ( $this->logged_in && $groups == "" ) return;
     if ( ! $this->logged_in ) {
       $c->messages[] = i18n("You must log in to use this system.");
-      include_once("page-header.php");
       if ( function_exists("local_index_not_logged_in") ) {
         local_index_not_logged_in();
       }
       else {
+        include("page-header.php");
         $login_html = translate( "<h1>Log On Please</h1><p>For access to the %s you should log on withthe username and password that have been issued to you.</p><p>If you would like to request access, please e-mail %s.</p>");
         printf( $login_html, $c->system_name, $c->admin_email );
         echo $this->RenderLoginPanel();
+        include("page-footer.php");
       }
     }
     else {
@@ -603,10 +604,10 @@ EOTEXT;
         if ( $this->AllowedTo($v) ) return;
       }
       $c->messages[] = i18n("You are not authorised to use this function.");
-      include_once("page-header.php");
+      include("page-header.php");
+      include("page-footer.php");
     }
 
-    include("page-footer.php");
     exit;
   }
 

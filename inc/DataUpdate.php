@@ -54,13 +54,16 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
                      )
                  );
     }
-    if ( eregi("(time|date)", $typ ) && $value == "" ) {
+    if ( eregi("(time|date|interval)", $typ ) && $value == "" ) {
       $value = "NULL";
     }
     else if ( eregi("bool", $typ) )  {
       $value = ( $value == false || $value == "f" || $value == "off" || $value == "no" ? "FALSE"
                   : ( $value == true || $value == "t" || $value == "on" || $value == "yes" ? "TRUE"
                       : "NULL" ));
+    }
+    else if ( eregi("interval", $typ) )  {
+      $value = "'$value'::$typ";
     }
     else if ( eregi("int", $typ) )  {
       $value = intval( $value );
@@ -131,11 +134,14 @@ function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
                      )
                  );
     }
-    if ( eregi("(time|date)", $typ ) && $value == "" ) {
+    if ( eregi("(time|date|interval)", $typ ) && $value == "" ) {
       $value = "NULL";
     }
     else if ( eregi("bool", $typ) )  {
       $value = ( $value == "f" || $value == "off" ? "FALSE" : "TRUE" );
+    }
+    else if ( eregi("interval", $typ) )  {
+      $value = "'$value'::$typ";
     }
     else if ( eregi("int", $typ) )  {
       $value = intval( $value );

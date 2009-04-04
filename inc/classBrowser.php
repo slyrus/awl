@@ -184,6 +184,7 @@ class Browser
   var $OrderBrowserKey;
   var $Grouping;
   var $Limit;
+  var $Offset;
   var $Query;
   var $BeginRow;
   var $CloseRow;
@@ -208,6 +209,7 @@ class Browser
     $this->SubTitle = "";
     $this->Order = "";
     $this->Limit = "";
+    $this->Offset = "";
     $this->BeginRow = "<tr class=\"row%d\">\n";
     $this->CloseRow = "</tr>\n";
     $this->BeginRowArgs = array('#even');
@@ -351,6 +353,28 @@ class Browser
   */
   function SetWhere( $where_clause ) {
     $this->Where = $where_clause;
+  }
+
+  /**
+  * Set the SQL LIMIT clause to a specific value.
+  *
+  * Only the limit number should be supplied.
+  *
+  * @param int $limit_n A number of rows to limit the SQL selection to
+  */
+  function SetLimit( $limit_n ) {
+    $this->Limit = "LIMIT ".intval($limit_n);
+  }
+
+  /**
+  * Set the SQL OFFSET clause to a specific value.
+  *
+  * Only the offset number
+  *
+  * @param int $offset_n A number of rows to offset the SQL selection to, based from the start of the results.
+  */
+  function SetOffset( $offset_n ) {
+    $this->Offset = "OFFSET ".intval($offset_n);
   }
 
   /**
@@ -537,7 +561,7 @@ class Browser
     if ( "$this->Union" != "" ) {
       $sql .= "UNION $this->Union ";
     }
-    $sql .= $this->Order . ' ' . $this->Limit;
+    $sql .= $this->Order . ' ' . $this->Limit . ' ' . $this->Offset;
     $this->Query = new PgQuery( $sql );
     return $this->Query->Exec("Browse:$this->Title:DoQuery");
   }

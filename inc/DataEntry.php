@@ -532,8 +532,10 @@ class EntryForm
 
     dbg_error_log( "DataEntry", ":DataEntryField: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, (isset($this->record->{$fname})?$this->record->{$fname}:'value not set') );
     if ( !$this->EditMode ) {
-      // Displaying editable values when we are not editing
-      // If it is a date, then format it according to the current user's date format type
+      /** For some forms we prefix the field name with xxxx so it doesn't collide with the real DB field name. */
+      if ( !isset($this->record->{$fname}) && substr($fname,0,4) == 'xxxx' && isset($this->record->{substr($fname,4)}) )
+        $fname = substr($fname,4);
+      /** If it is a date, then format it according to the current user's date format type */
       if ($ftype == "date" || $ftype == "timestamp")
         return sprintf($format, $session->FormattedDate($this->record->{$fname}) );
       dbg_error_log( "DataEntry", ":DataEntryField: fmt='%s', fname='%s', fvalue='%s'", $format, $fname, (isset($this->record->{$fname})?$this->record->{$fname}:'value not set') );

@@ -394,7 +394,7 @@ class DBRecord
   */
   function Get($fname) {
     @dbg_error_log( "DBRecord", ":Get: %s => %s", $fname, $this->Values->{$fname} );
-    return $this->Values->{$fname};
+    return (isset($this->Values->{$fname}) ? $this->Values->{$fname} : null);
   }
 
   /**

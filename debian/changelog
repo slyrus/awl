@@ -17,7 +17,7 @@ awl (0.36) unstable; urgency=low
   * [DataUpdate] Explicitly return a null value for fields which are not set.
   * Various general bugfixes and warning removals.
 
- -- Andrew McMillan <debian@mcmillan.net.nz>  Fri, 10 Apr 2009 21:31:02 +1200
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Fri, 10 Apr 2009 21:53:28 +1200
 
 awl (0.34) unstable; urgency=low
 

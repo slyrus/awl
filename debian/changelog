@@ -1,3 +1,24 @@
+awl (0.36) unstable; urgency=low
+
+  * [User] Add new changeusername/changeactive restrictions.
+  * [MenuSet] Allow presentation as CSS styled menus.
+  * [PgQuery] Get rid of ini_set/ini_get calls.
+  * [classBrowser] Allow the enclosing div to be customised.
+  * [AWMUtilities] New parameter cleaning function.
+  * [MenuSet] Improve default sorting of menu options.
+  * [iCalendar] Mask components and clone confidential events.
+  * [classBrowser] Move column value replacement into the object.
+  * [iCalendar] Correct an error appending components.
+  * [DataUpdate] Use SSHA1 by preference on password updates.
+  * [Session] local_index_not_logged_in is no longer preceded/followed by calls
+    to page-header.php/page-footer.php.
+  * [classBrowser] Add methods to SetLimit() and SetOffset() in the query.
+  * [DataUpdate] Add a field type for 'interval'.
+  * [DataUpdate] Explicitly return a null value for fields which are not set.
+  * Various general bugfixes and warning removals.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Fri, 10 Apr 2009 21:31:02 +1200
+
 awl (0.34) unstable; urgency=low
 
   * [General] Use @todo: everywhere for phpdocumentor.

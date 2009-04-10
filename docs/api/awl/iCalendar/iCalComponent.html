@@ -123,7 +123,7 @@
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																																																																																																																																																							
+																																																																																																																																																																																																																															
 				<div class="method-definition">
 					<img src="../../media/images/Constructor.png" alt=" "/>
 											<span class="method-result">iCalComponent</span>
@@ -157,6 +157,13 @@
 											<span class="method-result">void</span>
 										<a href="#ClearProperties" title="details" class="method-name">ClearProperties</a>
 											([<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>])
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#CloneConfidential" title="details" class="method-name">CloneConfidential</a>
+										()
 									</div>
 															
 				<div class="method-definition">
@@ -232,6 +239,20 @@
 				<div class="method-definition">
 					<img src="../../media/images/Method.png" alt=" "/>
 											<span class="method-result">void</span>
+										<a href="#MaskComponents" title="details" class="method-name">MaskComponents</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$keep</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#MaskProperties" title="details" class="method-name">MaskProperties</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$keep</span>, [<span class="var-type">array</span>&nbsp;<span class="var-name">$component_list</span> = <span class="var-default">null</span>])
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
 										<a href="#ParseFrom" title="details" class="method-name">ParseFrom</a>
 											(<span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
 									</div>
@@ -247,7 +268,7 @@
 					<img src="../../media/images/Method.png" alt=" "/>
 											<span class="method-result">void</span>
 										<a href="#SetComponents" title="details" class="method-name">SetComponents</a>
-											(<span class="var-type">array</span>&nbsp;<span class="var-name">$new_components</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>])
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$new_component</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>])
 									</div>
 															
 				<div class="method-definition">
@@ -300,7 +321,7 @@
 		<div class="info-box-body">
 			<A NAME='method_detail'></A>
 <a name="methodiCalComponent" id="iCalComponent"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Constructor.png" />
@@ -327,11 +348,11 @@
 			
 	</div>
 <a name="methodAddComponent" id="AddComponent"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AddComponent</span> (line <span class="line-number">710</span>)
+		<span class="method-title">AddComponent</span> (line <span class="line-number">712</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -354,7 +375,7 @@
 			
 	</div>
 <a name="methodAddProperty" id="AddProperty"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
@@ -387,7 +408,7 @@
 			
 	</div>
 <a name="methodClearComponents" id="ClearComponents"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
@@ -414,7 +435,7 @@
 			
 	</div>
 <a name="methodClearProperties" id="ClearProperties"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
@@ -437,6 +458,28 @@
 				<span class="var-type">string</span>
 				<span class="var-name">$type</span><span class="var-description">: The type of property - omit for all properties</span>			</li>
 				</ul>
+		
+			
+	</div>
+<a name="methodCloneConfidential" id="CloneConfidential"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">CloneConfidential</span> (line <span class="line-number">769</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Clone this component (and subcomponents) into a confidential version of it.  A confidential  event will be scrubbed of any identifying characteristics other than time/date, repeat, uid  and a summary which is just a translated 'Busy'.</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			CloneConfidential
+		</span>
+				()
+			</div>
+	
 		
 			
 	</div>
@@ -596,7 +639,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">GetPropertiesByPath</span> (line <span class="line-number">757</span>)
+		<span class="method-title">GetPropertiesByPath</span> (line <span class="line-number">821</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -733,6 +776,63 @@
 		
 			
 	</div>
+<a name="methodMaskComponents" id="MaskComponents"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">MaskComponents</span> (line <span class="line-number">730</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Mask components, removing any that are not of the types in the list</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			MaskComponents
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$keep</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$keep</span><span class="var-description">: An array of component types to be kept</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodMaskProperties" id="MaskProperties"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">MaskProperties</span> (line <span class="line-number">748</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Mask properties, removing any that are not in the list</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			MaskProperties
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$keep</span>, [<span class="var-type">array</span>&nbsp;<span class="var-name">$component_list</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$keep</span><span class="var-description">: An array of property names to be kept</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$component_list</span><span class="var-description">: An array of component types to check within</span>			</li>
+				</ul>
+		
+			
+	</div>
 <a name="methodParseFrom" id="ParseFrom"><!-- --></a>
 <div class="evenrow">
 	
@@ -765,7 +865,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">Render</span> (line <span class="line-number">727</span>)
+		<span class="method-title">Render</span> (line <span class="line-number">791</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -803,7 +903,7 @@
 		<span class="method-name">
 			SetComponents
 		</span>
-					(<span class="var-type">array</span>&nbsp;<span class="var-name">$new_components</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>])
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$new_component</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>])
 			</div>
 	
 			<ul class="parameters">
@@ -812,7 +912,7 @@
 				<span class="var-name">$type</span><span class="var-description">: The type of components to be replaced.  Defaults to null, which means all components will be replaced.</span>			</li>
 					<li>
 				<span class="var-type">array</span>
-				<span class="var-name">$new_components</span><span class="var-description">: of iCalComponent $new_components The new components to replace the existing ones</span>			</li>
+				<span class="var-name">$new_component</span><span class="var-description">: of iCalComponent $new_components The new components to replace the existing ones</span>			</li>
 				</ul>
 		
 			
@@ -962,7 +1062,7 @@
 
 	
 	<p class="notes" id="credit">
-		Documentation generated on Tue, 18 Nov 2008 18:08:56 +1300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
+		Documentation generated on Fri, 10 Apr 2009 21:35:07 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
 	</p>
 	</div></body>
 </html>

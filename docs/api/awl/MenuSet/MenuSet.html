@@ -119,7 +119,7 @@
 <li><div class="src-line"><span class="src-sym">}</span></div></li>
 </ol></div>  In a hierarchical menu tree, like the example above, only one sub-menu will be  shown, which will be the first one that is found to have active menu options.</p><p>The menu display will generally recognise the current URL and mark as active the  menu option that matches it, but in some cases it might be desirable to force one  or another option to be marked as active using the appropriate parameter to the  AddOption or AddSubMenu call.</p></p>
 		<p class="notes">
-			Located in <a class="field" href="_MenuSet.php.html">/MenuSet.php</a> (line <span class="field">220</span>)
+			Located in <a class="field" href="_MenuSet.php.html">/MenuSet.php</a> (line <span class="field">221</span>)
 		</p>
 		
 				
@@ -140,7 +140,7 @@
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																																															
+																																																																																																							
 				<div class="method-definition">
 					<img src="../../media/images/Constructor.png" alt=" "/>
 											<span class="method-result">MenuSet</span>
@@ -152,7 +152,7 @@
 					<img src="../../media/images/Method.png" alt=" "/>
 											<span class="method-result">mixed</span>
 										<a href="#AddOption" title="details" class="method-name">&amp;AddOption</a>
-											(<span class="var-type">string</span>&nbsp;<span class="var-name">$label</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$target</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$title</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$active</span> = <span class="var-default">false</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$sortkey</span> = <span class="var-default">1000</span>])
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$label</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$target</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$title</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$active</span> = <span class="var-default">false</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$sortkey</span> = <span class="var-default">null</span>])
 									</div>
 															
 				<div class="method-definition">
@@ -181,6 +181,13 @@
 											<span class="method-result">string</span>
 										<a href="#Render" title="details" class="method-name">Render</a>
 											([<span class="var-type">boolean</span>&nbsp;<span class="var-name">$submenus_inline</span> = <span class="var-default">false</span>])
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">string</span>
+										<a href="#RenderAsCSS" title="details" class="method-name">RenderAsCSS</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">$depth</span> = <span class="var-default">0</span>], <span class="var-type">boolean</span>&nbsp;<span class="var-name">$submenus_inline</span>)
 									</div>
 															
 				<div class="method-definition">
@@ -230,7 +237,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Constructor.png" />
-		<span class="method-title">Constructor MenuSet</span> (line <span class="line-number">268</span>)
+		<span class="method-title">Constructor MenuSet</span> (line <span class="line-number">275</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -263,7 +270,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AddOption</span> (line <span class="line-number">286</span>)
+		<span class="method-title">AddOption</span> (line <span class="line-number">293</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -278,7 +285,7 @@
 		<span class="method-name">
 			&amp;AddOption
 		</span>
-					(<span class="var-type">string</span>&nbsp;<span class="var-name">$label</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$target</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$title</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$active</span> = <span class="var-default">false</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$sortkey</span> = <span class="var-default">1000</span>])
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$label</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$target</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$title</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$active</span> = <span class="var-default">false</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$sortkey</span> = <span class="var-default">null</span>])
 			</div>
 	
 			<ul class="parameters">
@@ -306,7 +313,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AddSubMenu</span> (line <span class="line-number">325</span>)
+		<span class="method-title">AddSubMenu</span> (line <span class="line-number">336</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -351,7 +358,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">LinkActiveSubMenus</span> (line <span class="line-number">379</span>)
+		<span class="method-title">LinkActiveSubMenus</span> (line <span class="line-number">390</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -374,7 +381,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">MakeSomethingActive</span> (line <span class="line-number">397</span>)
+		<span class="method-title">MakeSomethingActive</span> (line <span class="line-number">408</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -402,7 +409,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">Render</span> (line <span class="line-number">446</span>)
+		<span class="method-title">Render</span> (line <span class="line-number">457</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -427,12 +434,45 @@
 		
 			
 	</div>
-<a name="methodSize" id="Size"><!-- --></a>
+<a name="methodRenderAsCSS" id="RenderAsCSS"><!-- --></a>
 <div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">Size</span> (line <span class="line-number">356</span>)
+		<span class="method-title">RenderAsCSS</span> (line <span class="line-number">489</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Render the menu tree to an HTML fragment.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The HTML fragment.</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			RenderAsCSS
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$depth</span> = <span class="var-default">0</span>], <span class="var-type">boolean</span>&nbsp;<span class="var-name">$submenus_inline</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$submenus_inline</span><span class="var-description">: Indicate whether to render the sub-menus within    the menus, or render them entirely separately after we finish rendering the    top level ones.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$depth</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSize" id="Size"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">Size</span> (line <span class="line-number">367</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -453,11 +493,11 @@
 			
 	</div>
 <a name="method_CompareSequence" id="_CompareSequence"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">_CompareSequence</span> (line <span class="line-number">432</span>)
+		<span class="method-title">_CompareSequence</span> (line <span class="line-number">443</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -486,11 +526,11 @@
 			
 	</div>
 <a name="method_HasActive" id="_HasActive"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">_HasActive</span> (line <span class="line-number">338</span>)
+		<span class="method-title">_HasActive</span> (line <span class="line-number">349</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -517,11 +557,11 @@
 			
 	</div>
 <a name="method_OptionExists" id="_OptionExists"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">_OptionExists</span> (line <span class="line-number">364</span>)
+		<span class="method-title">_OptionExists</span> (line <span class="line-number">375</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -552,7 +592,7 @@
 
 	
 	<p class="notes" id="credit">
-		Documentation generated on Tue, 18 Nov 2008 18:08:58 +1300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
+		Documentation generated on Fri, 10 Apr 2009 21:35:08 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
 	</p>
 	</div></body>
 </html>

@@ -650,7 +650,7 @@ EOTEXT;
         $usernames = "";
         if ( isset($c->debug_email) ) {
           $debug_to = "This e-mail would normally be sent to:\n ";
-          $mail->AddTo( "WRMS Tester <$c->debug_email>" );
+          $mail->AddTo( "Tester <$c->debug_email>" );
         }
         while ( $row = $qry->Fetch() ) {
           $sql .= "INSERT INTO tmp_password ( user_no, password) VALUES( $row->user_no, '$tmp_passwd');";

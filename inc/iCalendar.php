@@ -133,7 +133,7 @@ class iCalProp {
       $value = substr( $v, $pos + 1);
       $this->parameters[$name] = $value;
     }
-    dbg_error_log("iCalendar", " iCalProp::ParseFrom found '%s' = '%s' with %d parameters", $this->name, $this->content, count($this->parameters) );
+    dbg_error_log("iCalendar", " iCalProp::ParseFrom found '%s' = '%s' with %d parameters", $this->name, substr($this->content,0,200), count($this->parameters) );
   }
 
 
@@ -335,7 +335,7 @@ class iCalComponent {
     $this->properties = array();
     $this->components = array();
     $this->rendered = "";
-    if ( $content != null && gettype($content) == 'string' ) {
+    if ( $content != null && (gettype($content) == 'string' || gettype($content) == 'array') ) {
       $this->ParseFrom($content);
     }
   }
@@ -386,17 +386,32 @@ class iCalComponent {
     $this->rendered = $content;
     $content = $this->UnwrapComponent($content);
 
-    $lines = preg_split('/\r?\n/', $content );
-
     $type = false;
     $subtype = false;
     $finish = null;
     $subfinish = null;
-    foreach( $lines AS $k => $v ) {
-      if ( preg_match('/^\s*$/', $v ) ) continue;
-      dbg_error_log( "iCalendar",  "::ParseFrom: Parsing line: $v");
+
+    $length = strlen($content);
+    $linefrom = 0;
+    while( $linefrom < $length ) {
+      $lineto = strpos( $content, "\n", $linefrom );
+      if ( $lineto === false ) {
+        $lineto = strpos( $content, "\r", $linefrom );
+      }
+      if ( $lineto > 0 ) {
+        $line = substr( $content, $linefrom, $lineto - $linefrom);
+        $linefrom = $lineto + 1;
+      }
+      else {
+        $line = substr( $content, $linefrom );
+        $linefrom = $length;
+      }
+      if ( preg_match('/^\s*$/', $line ) ) continue;
+      $line = rtrim( $line, "\r\n" );
+      dbg_error_log( "iCalendar",  "::ParseFrom: Parsing line: $line");
+
       if ( $type === false ) {
-        if ( preg_match( '/^BEGIN:(.+)$/', $v, $matches ) ) {
+        if ( preg_match( '/^BEGIN:(.+)$/', $line, $matches ) ) {
           // We have found the start of the main component
           $type = $matches[1];
           $finish = "END:$type";
@@ -404,32 +419,32 @@ class iCalComponent {
           dbg_error_log( "iCalendar", "::ParseFrom: Start component of type '%s'", $type);
         }
         else {
-          dbg_error_log( "iCalendar", "::ParseFrom: Ignoring crap before start of component");
-          unset($lines[$k]);  // The content has crap before the start
-          if ( $v != "" ) $this->rendered = null;
+          dbg_error_log( "iCalendar", "::ParseFrom: Ignoring crap before start of component: $line");
+          // unset($lines[$k]);  // The content has crap before the start
+          if ( $line != "" ) $this->rendered = null;
         }
       }
       else if ( $type == null ) {
         dbg_error_log( "iCalendar", "::ParseFrom: Ignoring crap after end of component");
         unset($lines[$k]);  // The content has crap after the end
-        if ( $v != "" ) $this->rendered = null;
+        if ( $line != "" ) $this->rendered = null;
       }
-      else if ( $v == $finish ) {
+      else if ( $line == $finish ) {
         dbg_error_log( "iCalendar", "::ParseFrom: End of component");
         $type = null;  // We have reached the end of our component
       }
       else {
-        if ( $subtype === false && preg_match( '/^BEGIN:(.+)$/', $v, $matches ) ) {
+        if ( $subtype === false && preg_match( '/^BEGIN:(.+)$/', $line, $matches ) ) {
           // We have found the start of a sub-component
           $subtype = $matches[1];
           $subfinish = "END:$subtype";
-          $subcomponent = "$v\r\n";
+          $subcomponent = $line . "\r\n";
           dbg_error_log( "iCalendar", "::ParseFrom: Found a subcomponent '%s'", $subtype);
         }
         else if ( $subtype ) {
           // We are inside a sub-component
-          $subcomponent .= $this->WrapComponent($v);
-          if ( $v == $subfinish ) {
+          $subcomponent .= $this->WrapComponent($line);
+          if ( $line == $subfinish ) {
             dbg_error_log( "iCalendar", "::ParseFrom: End of subcomponent '%s'", $subtype);
             // We have found the end of a sub-component
             $this->components[] = new iCalComponent($subcomponent);
@@ -441,7 +456,7 @@ class iCalComponent {
         else {
           dbg_error_log( "iCalendar", "::ParseFrom: Parse property of component");
           // It must be a normal property line within a component.
-          $this->properties[] = new iCalProp($v);
+          $this->properties[] = new iCalProp($line);
         }
       }
     }

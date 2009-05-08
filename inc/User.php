@@ -84,6 +84,7 @@ class User extends DBRecord {
       dbg_error_log("User", "Initialising new user values");
 
       // Initialise to standard default values
+      $this->active = true;
 
     }
   }
@@ -249,7 +250,7 @@ class User extends DBRecord {
                       $this->prefix );
     }
 
-    $html .= $ef->DataEntryLine( translate("EMail OK"), $session->FormattedDate($this->Values->email_ok,'timestamp'), "timestamp", "email_ok",
+    $html .= $ef->DataEntryLine( translate("EMail OK"), $session->FormattedDate($this->Get('email_ok'),'timestamp'), "timestamp", "email_ok",
               array( "title" => translate("When the user's e-mail account was validated.")), $this->prefix );
 
     $html .= $ef->DataEntryLine( translate("Joined"), $session->FormattedDate($this->Get('joined'),'timestamp') );

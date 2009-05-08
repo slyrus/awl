@@ -83,9 +83,9 @@ EOERRMSG;
     exit;
   }
 
-  $result = pg_exec( $dbconn, "SELECT regexp_replace( version(), E'^PostgreSQL ([0-9]+\.[0-9]+)\..*$', E'\\1')" );
+  $result = pg_exec( $dbconn, "SELECT version()" );
   $row = pg_fetch_array($result, 0);
-  $c->found_dbversion = $row[0];
+  $c->found_dbversion = preg_replace( '/^PostgreSQL (\d+\.\d+)\..*$/i', '$1', $row[0]);
 }
 
 

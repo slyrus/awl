@@ -110,6 +110,7 @@ class XMLElement {
   */
   function GetAttribute( $attr ) {
     if ( isset($this->attributes[$attr]) ) return $this->attributes[$attr];
+    return null;
   }
 
   /**

@@ -177,6 +177,7 @@ class Browser
   var $HiddenColumns;
   var $Joins;
   var $Where;
+  var $Distinct;
   var $Union;
   var $Order;
   var $OrderField;
@@ -207,6 +208,7 @@ class Browser
     global $c;
     $this->Title = $title;
     $this->SubTitle = "";
+    $this->Distinct = "";
     $this->Order = "";
     $this->Limit = "";
     $this->Offset = "";
@@ -353,6 +355,17 @@ class Browser
   */
   function SetWhere( $where_clause ) {
     $this->Where = $where_clause;
+  }
+
+  /**
+  * Set the SQL DISTINCT clause to a specific value.
+  *
+  * The whole clause (except the keyword) needs to be supplied
+  *
+  * @param string $distinct The whole clause, after 'DISTINCT'
+  */
+  function SetDistinct( $distinct ) {
+    $this->Distinct = "DISTINCT ".$distinct;
   }
 
   /**
@@ -556,7 +569,7 @@ class Browser
       }
     }
     $where_clause = ((isset($this->Where) && $this->Where != "") ? "WHERE $this->Where" : "" );
-    $sql = sprintf( "SELECT %s FROM %s %s %s ", $target_fields,
+    $sql = sprintf( "SELECT %s %s FROM %s %s %s ", $this->Distinct, $target_fields,
                  $this->Joins, $where_clause, $this->Grouping );
     if ( "$this->Union" != "" ) {
       $sql .= "UNION $this->Union ";

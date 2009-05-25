@@ -486,7 +486,7 @@ class MenuSet {
   *   top level ones.
   * @return string The HTML fragment.
   */
-  function RenderAsCSS( $depth = 0 ) {
+  function RenderAsCSS( $depth = 0, $skip_empty = true ) {
     $this->LinkActiveSubMenus();
 
     if ( $depth > 0 )
@@ -499,6 +499,7 @@ class MenuSet {
 
     $r = "<div id=\"$this->div_id\" class=\"$class\">\n<ul>\n";
     foreach( $options AS $k => $v ) {
+      if ( $skip_empty && isset($v->submenu_set) && $v->submenu_set->Size() < 1 ) continue;
       $r .= "<li>".$v->Render();
       if ( isset($v->submenu_set) && $v->submenu_set->Size() > 0 ) {
         $r .= $v->submenu_set->RenderAsCSS($depth+1);

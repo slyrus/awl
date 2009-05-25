@@ -707,9 +707,9 @@ EOTEXT;
 *
 */
   function SendTemporaryPassword( ) {
-    global $c;
+    global $c, $page_elements;
 
-    $password_sent = $this->EmailTemporaryPassword( $_POST['username'], $_POST['email_address'] );
+    $password_sent = $this->EmailTemporaryPassword( (isset($_POST['username'])?$_POST['username']:null), (isset($_POST['email_address'])?$_POST['email_address']:null) );
 
     if ( ! $password_sent && ((isset($_POST['username']) && $_POST['username'] != "" )
                               || (isset($_POST['email_address']) && $_POST['email_address'] != "" )) ) {
@@ -766,9 +766,14 @@ on will have the existing password invalidated.</p>
 </div>
 EOTEXT;
     }
-    include_once("page-header.php");
+    if ( isset($page_elements) && gettype($page_elements) == 'array' ) {
+      $page_elements[] = $page_content;
+      @include("page-renderer.php");
+      exit(0);
+    }
+    @include("page-header.php");
     echo $page_content;
-    include_once("page-footer.php");
+    @include("page-footer.php");
     exit(0);
   }
 

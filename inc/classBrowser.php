@@ -514,6 +514,16 @@ class Browser
 
 
   /**
+  * Retrieve the total from a totalled column
+  *
+  * @param string $column_name The name of the column to be totalled.
+  */
+  function GetTotal( $column_name ) {
+    return $this->Totals[$column_name];
+  }
+
+
+  /**
   * Set the format for an output row.
   *
   * The row format is set as an sprintf format string for the start of the row,

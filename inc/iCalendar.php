@@ -812,11 +812,12 @@ class iCalComponent {
 
     $rendered = "BEGIN:$this->type\r\n";
     foreach( $this->properties AS $k => $v ) {
-      if ( $unrestricted || isset($restricted_properties[$v]) ) $rendered .= $v->Render() . "\r\n";
+      if ( method_exists($v, 'Render') ) {
+        if ( $unrestricted || isset($restricted_properties[$v]) ) $rendered .= $v->Render() . "\r\n";
+      }
     }
     foreach( $this->components AS $v ) {   $rendered .= $v->Render();  }
     $rendered .= "END:$this->type\r\n";
-//    $rendered = $this->WrapComponent($rendered);
 
     if ( $unrestricted ) $this->rendered = $rendered;
 

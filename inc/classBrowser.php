@@ -98,15 +98,16 @@ class BrowserColumn
   * @param string order_direction Whether the sort is Ascending or Descending.
   * @param int browser_array_key Used this to help handle separate ordering of
   *                              multiple browsers on the same page.
+  * @param string forced_order If true, then we don't allow order to be changed.
   */
-  function RenderHeader( $order_field, $order_direction, $browser_array_key=0 ) {
+  function RenderHeader( $order_field, $order_direction, $browser_array_key=0, $forced_order=false ) {
     global $c;
     if ( $this->Align == "" ) $this->Align = "left";
     $html = '<th class="'.$this->Align.'" '. ($this->Class == "" ? "" : "class=\"$this->Class\"") . '>';
 
     $direction = 'A';
     $image = "";
-    if ( $order_field == $this->Field ) {
+    if ( !$forced_order && $order_field == $this->Field ) {
       if ( strtoupper( substr( $order_direction, 0, 1) ) == 'A' ) {
         $image = 'down';
         $direction = 'D';
@@ -117,9 +118,10 @@ class BrowserColumn
       $image = "<img class=\"order\" src=\"$c->images/$image.gif\" alt=\"$image\" />";
     }
     if ( !isset($browser_array_key) || $browser_array_key == '' ) $browser_array_key = 0;
-    $html .= '<a href="'.replace_uri_params( $_SERVER['REQUEST_URI'], array( "o[$browser_array_key]" => $this->Field, "d[$browser_array_key]" => $direction ) ).'" class="order">';
+    if ( !$forced_order ) $html .= '<a href="'.replace_uri_params( $_SERVER['REQUEST_URI'], array( "o[$browser_array_key]" => $this->Field, "d[$browser_array_key]" => $direction ) ).'" class="order">';
     $html .= ($this->Header == "" ? $this->Field : $this->Header);
-    $html .= "$image</a></th>\n";
+    if ( !$forced_order ) $html .= "$image</a>";
+    $html .= "</th>\n";
     return $html;
   }
 
@@ -183,6 +185,7 @@ class Browser
   var $OrderField;
   var $OrderDirection;
   var $OrderBrowserKey;
+  var $ForcedOrder;
   var $Grouping;
   var $Limit;
   var $Offset;
@@ -221,6 +224,7 @@ class Browser
     $this->FieldNames = array();
     $this->DivOpen = '<div id="browser">';
     $this->DivClose = '</div>';
+    $this->ForcedOrder = false;
     dbg_error_log( "Browser", ":Browser: New browser called $title");
   }
 
@@ -479,6 +483,34 @@ class Browser
 
 
   /**
+  * Force a particular ordering onto the browser widget.
+  *
+  * @param string $field The name of the field to be ordered by.
+  * @param string $direction A for Ascending, otherwise it will be descending order.
+  */
+  function ForceOrder( $field, $direction ) {
+    $field = clean_string($field);
+    if ( ! isset($this->FieldNames[$field]) ) return;
+
+    if ( $this->Order == "" )
+      $this->Order = "ORDER BY ";
+    else
+      $this->Order .= ", ";
+
+    $this->Order .= $field;
+
+    if ( preg_match( '/^A/i', $direction) ) {
+      $this->Order .= " ASC";
+    }
+    else {
+      $this->Order .= " DESC";
+    }
+
+    $this->ForcedOrder = true;
+  }
+
+
+  /**
   * Set up the ordering for the browser.  Generally you should call this with
   * the first parameter set as a field to order by default.  Call with the second
   * parameter set to 'D' or 'DESCEND' if you want to reverse the default order.
@@ -672,7 +704,7 @@ class Browser
     $html .= "<table id=\"browse_table\">\n";
     $html .= "<thead><tr class=\"header\">\n";
     foreach( $this->Columns AS $k => $column ) {
-      $html .= $column->RenderHeader( $this->OrderField, $this->OrderDirection, $this->OrderBrowserKey );
+      $html .= $column->RenderHeader( $this->OrderField, $this->OrderDirection, $this->OrderBrowserKey, $this->ForcedOrder );
     }
     $html .= "</tr></thead>\n<tbody>";
 
@@ -710,7 +742,7 @@ class Browser
             }
             else {
               // Just add the amount
-              $this->Totals[$column->Field] += $BrowserCurrentRow->{$column->Field};
+              $this->Totals[$column->Field] += doubleval( preg_replace( '/[^0-9.-]/', '', $BrowserCurrentRow->{$column->Field} ));
             }
           }
         }

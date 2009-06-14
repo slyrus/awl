@@ -263,12 +263,19 @@ class XMLDocument {
   }
 
   /**
-  * Return a DAV::href XML element
-  * @param string $url The URL to be wrapped in DAV::href tags
+  * Return a DAV::href XML element, or an array of them
+  * @param mixed $url The URL (or array of URLs) to be wrapped in DAV::href tags
   *
   * @return XMLElement The newly created XMLElement object.
   */
   function href($url) {
+    if ( is_array($url) ) {
+      $set = array();
+      foreach( $url AS $href ) {
+        $set[] = $this->href( $href );
+      }
+      return $set;
+    }
     return $this->NewXMLElement('href', $url, false, 'DAV:');
   }
 

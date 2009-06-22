@@ -104,7 +104,7 @@
 <p class="short-description">Start a new Browser, add columns, set a join and Render it to create a basic  list of records in a table.</p>
 <p class="description"><p>You can, of course, get a lot fancier with setting ordering, where clauses  totalled columns and so forth.</p></p>
 		<p class="notes">
-			Located in <a class="field" href="_classBrowser.php.html">/classBrowser.php</a> (line <span class="field">171</span>)
+			Located in <a class="field" href="_classBrowser.php.html">/classBrowser.php</a> (line <span class="field">173</span>)
 		</p>
 		
 				
@@ -127,7 +127,7 @@
 								</div>
 		<div class="info-box-body">
 			<div class="var-summary">
-																																																																																																																																																																																																																																								<div class="var-title">
+																																																																																																																																																																																																																																																								<div class="var-title">
 					<img src="../../media/images/Variable.png" alt=" " />
 					<span class="var-type">mixed</span>
 					<a href="#$BeginRow" title="details" class="var-name">$BeginRow</a>
@@ -150,6 +150,11 @@
 																<div class="var-title">
 					<img src="../../media/images/Variable.png" alt=" " />
 					<span class="var-type">mixed</span>
+					<a href="#$Distinct" title="details" class="var-name">$Distinct</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
 					<a href="#$DivClose" title="details" class="var-name">$DivClose</a>
 				</div>
 																<div class="var-title">
@@ -166,6 +171,11 @@
 					<img src="../../media/images/Variable.png" alt=" " />
 					<span class="var-type">mixed</span>
 					<a href="#$FieldNames" title="details" class="var-name">$FieldNames</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">mixed</span>
+					<a href="#$ForcedOrder" title="details" class="var-name">$ForcedOrder</a>
 				</div>
 																<div class="var-title">
 					<img src="../../media/images/Variable.png" alt=" " />
@@ -278,7 +288,7 @@
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																																																																																																																																																																							
+																																																																																																																																																																																																																																															
 				<div class="method-definition">
 					<img src="../../media/images/Constructor.png" alt=" "/>
 											<span class="method-result">Browser</span>
@@ -345,6 +355,20 @@
 				<div class="method-definition">
 					<img src="../../media/images/Method.png" alt=" "/>
 											<span class="method-result">void</span>
+										<a href="#ForceOrder" title="details" class="method-name">ForceOrder</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$direction</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#GetTotal" title="details" class="method-name">GetTotal</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$column_name</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
 										<a href="#MatchedRow" title="details" class="method-name">MatchedRow</a>
 											(<span class="var-type">string</span>&nbsp;<span class="var-name">$column</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$function</span>)
 									</div>
@@ -375,6 +399,13 @@
 											<span class="method-result">void</span>
 										<a href="#RowFormat" title="details" class="method-name">RowFormat</a>
 											(<span class="var-type">string</span>&nbsp;<span class="var-name">$beginrow</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$closerow</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$rowargs</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#SetDistinct" title="details" class="method-name">SetDistinct</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$distinct</span>)
 									</div>
 															
 				<div class="method-definition">
@@ -479,7 +510,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$BeginRow</span>
-						(line <span class="line-number">189</span>)
+						(line <span class="line-number">193</span>)
 		</span>
 	</div>
 
@@ -498,7 +529,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$BeginRowArgs</span>
-						(line <span class="line-number">191</span>)
+						(line <span class="line-number">195</span>)
 		</span>
 	</div>
 
@@ -517,7 +548,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$CloseRow</span>
-						(line <span class="line-number">190</span>)
+						(line <span class="line-number">194</span>)
 		</span>
 	</div>
 
@@ -536,7 +567,26 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$Columns</span>
-						(line <span class="line-number">176</span>)
+						(line <span class="line-number">178</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$Distinct" id="$Distinct"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Distinct</span>
+						(line <span class="line-number">182</span>)
 		</span>
 	</div>
 
@@ -548,14 +598,14 @@
 
 </div>
 <a name="var$DivClose" id="$DivClose"><!-- --></A>
-<div class="evenrow">
+<div class="oddrow">
 
 	<div class="var-header">
 		<img src="../../media/images/Variable.png" />
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$DivClose</span>
-						(line <span class="line-number">199</span>)
+						(line <span class="line-number">203</span>)
 		</span>
 	</div>
 
@@ -567,14 +617,14 @@
 
 </div>
 <a name="var$DivOpen" id="$DivOpen"><!-- --></A>
-<div class="oddrow">
+<div class="evenrow">
 
 	<div class="var-header">
 		<img src="../../media/images/Variable.png" />
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$DivOpen</span>
-						(line <span class="line-number">198</span>)
+						(line <span class="line-number">202</span>)
 		</span>
 	</div>
 
@@ -586,14 +636,14 @@
 
 </div>
 <a name="var$ExtraRows" id="$ExtraRows"><!-- --></A>
-<div class="evenrow">
+<div class="oddrow">
 
 	<div class="var-header">
 		<img src="../../media/images/Variable.png" />
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$ExtraRows</span>
-						(line <span class="line-number">194</span>)
+						(line <span class="line-number">198</span>)
 		</span>
 	</div>
 
@@ -605,14 +655,33 @@
 
 </div>
 <a name="var$FieldNames" id="$FieldNames"><!-- --></A>
-<div class="oddrow">
+<div class="evenrow">
 
 	<div class="var-header">
 		<img src="../../media/images/Variable.png" />
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$FieldNames</span>
-						(line <span class="line-number">175</span>)
+						(line <span class="line-number">177</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+		
+		
+
+</div>
+<a name="var$ForcedOrder" id="$ForcedOrder"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$ForcedOrder</span>
+						(line <span class="line-number">188</span>)
 		</span>
 	</div>
 
@@ -631,7 +700,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$Grouping</span>
-						(line <span class="line-number">185</span>)
+						(line <span class="line-number">189</span>)
 		</span>
 	</div>
 
@@ -650,7 +719,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$HiddenColumns</span>
-						(line <span class="line-number">177</span>)
+						(line <span class="line-number">179</span>)
 		</span>
 	</div>
 
@@ -669,7 +738,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$Joins</span>
-						(line <span class="line-number">178</span>)
+						(line <span class="line-number">180</span>)
 		</span>
 	</div>
 
@@ -688,7 +757,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$Limit</span>
-						(line <span class="line-number">186</span>)
+						(line <span class="line-number">190</span>)
 		</span>
 	</div>
 
@@ -707,7 +776,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$match_column</span>
-						(line <span class="line-number">195</span>)
+						(line <span class="line-number">199</span>)
 		</span>
 	</div>
 
@@ -726,7 +795,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$match_function</span>
-						(line <span class="line-number">197</span>)
+						(line <span class="line-number">201</span>)
 		</span>
 	</div>
 
@@ -745,7 +814,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$match_value</span>
-						(line <span class="line-number">196</span>)
+						(line <span class="line-number">200</span>)
 		</span>
 	</div>
 
@@ -764,7 +833,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$Offset</span>
-						(line <span class="line-number">187</span>)
+						(line <span class="line-number">191</span>)
 		</span>
 	</div>
 
@@ -783,7 +852,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$Order</span>
-						(line <span class="line-number">181</span>)
+						(line <span class="line-number">184</span>)
 		</span>
 	</div>
 
@@ -802,7 +871,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$OrderBrowserKey</span>
-						(line <span class="line-number">184</span>)
+						(line <span class="line-number">187</span>)
 		</span>
 	</div>
 
@@ -821,7 +890,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$OrderDirection</span>
-						(line <span class="line-number">183</span>)
+						(line <span class="line-number">186</span>)
 		</span>
 	</div>
 
@@ -840,7 +909,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$OrderField</span>
-						(line <span class="line-number">182</span>)
+						(line <span class="line-number">185</span>)
 		</span>
 	</div>
 
@@ -859,7 +928,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$Query</span>
-						(line <span class="line-number">188</span>)
+						(line <span class="line-number">192</span>)
 		</span>
 	</div>
 
@@ -878,7 +947,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$SubTitle</span>
-						(line <span class="line-number">174</span>)
+						(line <span class="line-number">176</span>)
 		</span>
 	</div>
 
@@ -897,7 +966,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$Title</span>
-						(line <span class="line-number">173</span>)
+						(line <span class="line-number">175</span>)
 		</span>
 	</div>
 
@@ -916,7 +985,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$TotalFuncs</span>
-						(line <span class="line-number">193</span>)
+						(line <span class="line-number">197</span>)
 		</span>
 	</div>
 
@@ -935,7 +1004,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$Totals</span>
-						(line <span class="line-number">192</span>)
+						(line <span class="line-number">196</span>)
 		</span>
 	</div>
 
@@ -954,7 +1023,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$Union</span>
-						(line <span class="line-number">180</span>)
+						(line <span class="line-number">183</span>)
 		</span>
 	</div>
 
@@ -973,7 +1042,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$Where</span>
-						(line <span class="line-number">179</span>)
+						(line <span class="line-number">181</span>)
 		</span>
 	</div>
 
@@ -1004,7 +1073,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Constructor.png" />
-		<span class="method-title">Constructor Browser</span> (line <span class="line-number">206</span>)
+		<span class="method-title">Constructor Browser</span> (line <span class="line-number">210</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1031,7 +1100,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AddColumn</span> (line <span class="line-number">250</span>)
+		<span class="method-title">AddColumn</span> (line <span class="line-number">256</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1083,7 +1152,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AddGrouping</span> (line <span class="line-number">415</span>)
+		<span class="method-title">AddGrouping</span> (line <span class="line-number">432</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1112,7 +1181,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AddHidden</span> (line <span class="line-number">265</span>)
+		<span class="method-title">AddHidden</span> (line <span class="line-number">271</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1143,7 +1212,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AddOrder</span> (line <span class="line-number">440</span>)
+		<span class="method-title">AddOrder</span> (line <span class="line-number">457</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1180,7 +1249,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AddRow</span> (line <span class="line-number">575</span>)
+		<span class="method-title">AddRow</span> (line <span class="line-number">630</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1210,7 +1279,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AddTotal</span> (line <span class="line-number">495</span>)
+		<span class="method-title">AddTotal</span> (line <span class="line-number">540</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1241,7 +1310,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AndWhere</span> (line <span class="line-number">402</span>)
+		<span class="method-title">AndWhere</span> (line <span class="line-number">419</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1268,7 +1337,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">DoQuery</span> (line <span class="line-number">546</span>)
+		<span class="method-title">DoQuery</span> (line <span class="line-number">601</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1289,12 +1358,69 @@
 		
 			
 	</div>
+<a name="methodForceOrder" id="ForceOrder"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">ForceOrder</span> (line <span class="line-number">491</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Force a particular ordering onto the browser widget.</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			ForceOrder
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$direction</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span><span class="var-description">: The name of the field to be ordered by.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$direction</span><span class="var-description">: A for Ascending, otherwise it will be descending order.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodGetTotal" id="GetTotal"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">GetTotal</span> (line <span class="line-number">553</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Retrieve the total from a totalled column</p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			GetTotal
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$column_name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$column_name</span><span class="var-description">: The name of the column to be totalled.</span>			</li>
+				</ul>
+		
+			
+	</div>
 <a name="methodMatchedRow" id="MatchedRow"><!-- --></a>
 <div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">MatchedRow</span> (line <span class="line-number">588</span>)
+		<span class="method-title">MatchedRow</span> (line <span class="line-number">643</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1327,7 +1453,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">MoreWhere</span> (line <span class="line-number">389</span>)
+		<span class="method-title">MoreWhere</span> (line <span class="line-number">406</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1358,7 +1484,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">OrWhere</span> (line <span class="line-number">411</span>)
+		<span class="method-title">OrWhere</span> (line <span class="line-number">428</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1385,7 +1511,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">Render</span> (line <span class="line-number">633</span>)
+		<span class="method-title">Render</span> (line <span class="line-number">688</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1419,7 +1545,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">RowFormat</span> (line <span class="line-number">525</span>)
+		<span class="method-title">RowFormat</span> (line <span class="line-number">580</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1448,12 +1574,40 @@
 		
 			
 	</div>
-<a name="methodSetDiv" id="SetDiv"><!-- --></a>
+<a name="methodSetDistinct" id="SetDistinct"><!-- --></a>
 <div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetDiv</span> (line <span class="line-number">316</span>)
+		<span class="method-title">SetDistinct</span> (line <span class="line-number">371</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set the SQL DISTINCT clause to a specific value.</p>
+<p class="description"><p>The whole clause (except the keyword) needs to be supplied</p></p>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			SetDistinct
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$distinct</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$distinct</span><span class="var-description">: The whole clause, after 'DISTINCT'</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodSetDiv" id="SetDiv"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">SetDiv</span> (line <span class="line-number">322</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1479,11 +1633,11 @@
 			
 	</div>
 <a name="methodSetJoins" id="SetJoins"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetJoins</span> (line <span class="line-number">330</span>)
+		<span class="method-title">SetJoins</span> (line <span class="line-number">336</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1507,11 +1661,11 @@
 			
 	</div>
 <a name="methodSetLimit" id="SetLimit"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetLimit</span> (line <span class="line-number">365</span>)
+		<span class="method-title">SetLimit</span> (line <span class="line-number">382</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1535,11 +1689,11 @@
 			
 	</div>
 <a name="methodSetOffset" id="SetOffset"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetOffset</span> (line <span class="line-number">376</span>)
+		<span class="method-title">SetOffset</span> (line <span class="line-number">393</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1563,11 +1717,11 @@
 			
 	</div>
 <a name="methodSetOrdering" id="SetOrdering"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetOrdering</span> (line <span class="line-number">473</span>)
+		<span class="method-title">SetOrdering</span> (line <span class="line-number">518</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1596,11 +1750,11 @@
 			
 	</div>
 <a name="methodSetSubTitle" id="SetSubTitle"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetSubTitle</span> (line <span class="line-number">306</span>)
+		<span class="method-title">SetSubTitle</span> (line <span class="line-number">312</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1623,11 +1777,11 @@
 			
 	</div>
 <a name="methodSetTitle" id="SetTitle"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetTitle</span> (line <span class="line-number">279</span>)
+		<span class="method-title">SetTitle</span> (line <span class="line-number">285</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1651,11 +1805,11 @@
 			
 	</div>
 <a name="methodSetTranslatable" id="SetTranslatable"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetTranslatable</span> (line <span class="line-number">288</span>)
+		<span class="method-title">SetTranslatable</span> (line <span class="line-number">294</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1678,11 +1832,11 @@
 			
 	</div>
 <a name="methodSetUnion" id="SetUnion"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetUnion</span> (line <span class="line-number">343</span>)
+		<span class="method-title">SetUnion</span> (line <span class="line-number">349</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1706,11 +1860,11 @@
 			
 	</div>
 <a name="methodSetWhere" id="SetWhere"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetWhere</span> (line <span class="line-number">354</span>)
+		<span class="method-title">SetWhere</span> (line <span class="line-number">360</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1734,11 +1888,11 @@
 			
 	</div>
 <a name="methodValueReplacement" id="ValueReplacement"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">ValueReplacement</span> (line <span class="line-number">604</span>)
+		<span class="method-title">ValueReplacement</span> (line <span class="line-number">659</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1767,7 +1921,7 @@
 
 	
 	<p class="notes" id="credit">
-		Documentation generated on Fri, 10 Apr 2009 21:35:05 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
+		Documentation generated on Mon, 22 Jun 2009 14:16:06 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
 	</p>
 	</div></body>
 </html>

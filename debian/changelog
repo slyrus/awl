@@ -1,3 +1,19 @@
+awl (0.37) unstable; urgency=low
+
+    * [XMLDocument] href method now returns an array of hrefs.
+    * [Browser] Allow forced result ordering.
+    * [Browser] Add a method to retrieve total for a column.
+    * [Browser] Add facility for DISTINCT to browser clauses.
+    * [Session] Fix unset variables in temporary password requests.
+    * [MenuSet] Default to not displaying empty menus.
+    * [XMLElement] Return null on no value, rather than returning without a value.
+    * [User] Display current record better.
+    * [iCalendar] More efficient use of memory.
+    * [Session] This isn't just a WRMS library any longer...
+    * [PgQuery] Move DB version detection out of the DB.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Mon, 22 Jun 2009 14:00:17 +1200
+
 awl (0.36) unstable; urgency=low
 
   * [User] Add new changeusername/changeactive restrictions.

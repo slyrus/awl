@@ -66,7 +66,9 @@ function connect_configured_database() {
   $dbconn = false;
   if ( isset($c->pg_connect) && is_array($c->pg_connect) ) {
     foreach( $c->pg_connect AS $k => $v ) {
-      if ( !$dbconn ) $dbconn = ((isset($c->use_persistent) && $c->use_persistent) ? pg_pConnect($v) : pg_Connect($v) );
+      if ( !$dbconn ) {
+        if ( $dbconn = ((isset($c->use_persistent) && $c->use_persistent) ? pg_pConnect($v) : pg_Connect($v) ) ) break;
+      }
     }
   }
   if ( ! $dbconn ) {
@@ -81,6 +83,11 @@ EOERRMSG;
       dbg_log_array("ERROR", "Connection failed", $c->pg_connect );
     }
     exit;
+  }
+
+  if ( isset($c->db_schema) && $c->db_schema != '' ) {
+    $result = pg_exec( $dbconn, "SET Search_path TO ".$c->db_schema.",public;" );
+    $row = pg_fetch_array($result, 0);
   }
 
   $result = pg_exec( $dbconn, "SELECT version()" );

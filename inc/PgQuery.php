@@ -174,6 +174,14 @@ function qpg($str = null) {
 * @return string The pristine uncontaminated string we can safely use for Just About Anything(tm).
 */
 function clean_string( $unclean, $type = 'full' ) {
+  if ( ! isset($unclean) ) return null;
+  if ( is_array($unclean) ) {
+    $result = array();
+    foreach( $unclean AS $k => $v ) {
+      $result[$k] = clean_string( $v, $type );
+    }
+    return $result;
+  }
   if ( $type != 'basic' ) $cleaned = strtolower($unclean); else $cleaned = &$unclean;
   $cleaned = preg_replace( "/['\"!\\\\()\[\]|*\/{}&%@~;:?<>]/", '', $cleaned ); //"// Stupid Bluefish Syntax highlighting...
   dbg_error_log( "PgQuery", "clean_string: Cleaned string from <<%s>> to <<%s>>", $unclean, $cleaned );

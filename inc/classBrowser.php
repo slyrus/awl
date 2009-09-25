@@ -708,9 +708,11 @@ class Browser
     }
     $html .= "</tr></thead>\n<tbody>";
 
+    $rowanswers = array();
     while( $BrowserCurrentRow = $this->Query->Fetch() ) {
 
       // Work out the answers to any stuff that may be being substituted into the row start
+      /** @TODO: We should deprecate this approach in favour of simply doing the ValueReplacement on field names */
       foreach( $this->BeginRowArgs AS $k => $fld ) {
         if ( isset($BrowserCurrentRow->{$fld}) ) {
           $rowanswers[$k] = $BrowserCurrentRow->{$fld};
@@ -726,7 +728,7 @@ class Browser
         }
       }
       // Start the row
-      $row_html = vsprintf( $this->BeginRow, $rowanswers);
+      $row_html = vsprintf( preg_replace("/#@even@#/", ($this->Query->rownum % 2), $this->BeginRow), $rowanswers);
 
       if ( isset($this->match_column) && isset($this->match_value) && $BrowserCurrentRow->{$this->match_column} == $this->match_value ) {
         $row_html .= call_user_func( $this->match_function, $BrowserCurrentRow );
@@ -749,7 +751,7 @@ class Browser
       }
 
       // Finish the row
-      $row_html .= $this->CloseRow;
+      $row_html .= preg_replace("/#@even@#/", ($this->Query->rownum % 2), $this->CloseRow);
       $this->current_row = $BrowserCurrentRow;
       $html .= preg_replace_callback("/##([^#]+)##/", array( &$this, "ValueReplacement"), $row_html );
     }
@@ -791,7 +793,7 @@ class Browser
         }
 
         // Start the row
-        $row_html = vsprintf( $this->BeginRow, $rowanswers);
+        $row_html = vsprintf( preg_replace("/#@even@#/", ($this->Query->rownum % 2), $this->BeginRow), $rowanswers);
 
         if ( isset($this->match_column) && isset($this->match_value) && $BrowserCurrentRow->{$this->match_column} == $this->match_value ) {
           $row_html .= call_user_func( $this->match_function, $BrowserCurrentRow );
@@ -804,7 +806,7 @@ class Browser
         }
 
         // Finish the row
-        $row_html .= $this->CloseRow;
+        $row_html .= preg_replace("/#@even@#/", ($this->Query->rownum % 2), $this->CloseRow);
         $this->current_row = $BrowserCurrentRow;
         $html .= preg_replace_callback("/##([^#]+)##/", array( &$this, "ValueReplacement"), $row_html );
       }

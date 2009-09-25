@@ -1354,14 +1354,56 @@ class iCalendar {
 
 
   /**
-  * Because I screwed up with the name originally...
-  * @DEPRECATED
-  * todo:: Remove this function after June 2008.
+  * Get all sub-components, or at least get those matching a type, or failling to match,
+  * should the second parameter be set to false.
+  *
+  * @param string $type The type to match (default: All)
+  * @param boolean $normal_match Set to false to invert the match (default: true)
+  * @return array an array of the sub-components
   */
-  function Put( $key, $value ) {
-    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'Put' );
-    $this->Set($key,$value);
+  function GetComponents( $type = null, $normal_match = true ) {
+    return $this->component->GetComponents($type,$normal_match);
   }
+
+
+  /**
+  * Clear all components, or the components matching a particular type
+  * @param string $type The type of component - omit for all components
+  */
+  function ClearComponents( $type = null ) {
+    $this->component->ClearComponents($type);
+  }
+
+
+  /**
+  * Sets some or all sub-components of the component to the supplied new components
+  *
+  * @param array of iCalComponent $new_components The new components to replace the existing ones
+  * @param string $type The type of components to be replaced.  Defaults to null, which means all components will be replaced.
+  */
+  function SetComponents( $new_component, $type = null ) {
+    $this->component->SetComponents( $new_component, $type );
+  }
+
+
+  /**
+  * Adds a new subcomponent
+  *
+  * @param iCalComponent $new_component The new component to append to the set
+  */
+  function AddComponent( $new_component ) {
+    $this->component->AddComponent($new_component);
+  }
+
+
+  /**
+  * Mask components, removing any that are not of the types in the list
+  * @param array $keep An array of component types to be kept
+  */
+  function MaskComponents( $keep ) {
+    $this->component->MaskComponents($keep);
+  }
+
 
   /**
   * Returns a PostgreSQL Date Format string suitable for returning HTTP (RFC2068) dates

@@ -174,7 +174,7 @@ class XMLDocument {
       $tag = $in_tag;
     }
 
-    if ( !isset($this->namespaces[$namespace]) ) $this->AddNamespace( $namespace );
+    if ( isset($namespace) && !isset($this->namespaces[$namespace]) ) $this->AddNamespace( $namespace );
     $element->NewElement( $tag, $content, $attributes, $namespace );
   }
 

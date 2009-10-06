@@ -1,3 +1,10 @@
+awl (0.38-0) unstable; urgency=low
+
+  * New upstream release.
+  * Exhaustive changelog moved from Debian changelog.
+
+ -- Andrew McMillan <debian@mcmillan.net.nz>  Tue, 06 Oct 2009 09:41:20 -0700
+
 awl (0.37) unstable; urgency=low
 
     * [XMLDocument] href method now returns an array of hrefs.

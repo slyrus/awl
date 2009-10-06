@@ -1,0 +1,21 @@
+2009-09-25  Andrew McMillan <andrew@morphoss.com>
+	* [DataEntry] Remove uninitialised warning possibility.
+	* [XMLDocument] Remove uninitialised warning possibilty.
+	* [iCalendar] Remove deprecated function.  Add some convenience methods.
+        * [classBrowser] Add new replaceable variable for row even/odd ness.
+
+2009-09-07  Andrew McMillan <andrew@morphoss.com>
+	* [AWLUtilities] Add a fix_latin() function to convert mixed charset into UTF-8.
+
+2008-08-25 Andrew McMillan <andrew@morphoss.com>
+
+	* [PgQuery] Extend clean_string to recurse through an array.
+	* [DataUpdate] When value for an integer is null or empty string, use db NULL.
+
+2009-06-25  Andrew McMillan <andrew@morphoss.com>
+	* [PgQuery] Add the ability for PgQuery to search a non-default schema.
+
+2009-06-22  Andrew McMillan <andrew@morphoss.com>
+
+	* Release 0.37
+

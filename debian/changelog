@@ -1,7 +1,7 @@
 awl (0.38-0) unstable; urgency=low
 
   * New upstream release.
-  * Exhaustive changelog moved from Debian changelog.
+  * Full change history no longer kept in Debian changelog.
 
  -- Andrew McMillan <debian@mcmillan.net.nz>  Tue, 06 Oct 2009 09:41:20 -0700
 

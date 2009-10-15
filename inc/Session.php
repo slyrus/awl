@@ -627,10 +627,10 @@ EOTEXT;
     $password_sent = false;
     $where = "";
     if ( isset($username) && $username != "" ) {
-      $where = "WHERE active AND usr.username = ". qpg($username );
+      $where = "WHERE active AND lower(usr.username) = ". qpg(strtolower($username));
     }
     else if ( isset($email_address) && $email_address != "" ) {
-      $where = "WHERE active AND usr.email = ". qpg($email_address );
+      $where = "WHERE active AND lower(usr.email) = ". qpg(strtolower($email_address));
     }
 
     if ( $where != "" ) {

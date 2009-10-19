@@ -99,6 +99,8 @@ class MenuOption {
 
     $this->rendered = "";
     $this->self  =& $this;
+
+    $this->external = "";
   }
 
   /**
@@ -106,9 +108,9 @@ class MenuOption {
   * @return string The HTML fragment for the menu option.
   */
   function Render( ) {
-    $r = sprintf('<a href="%s" class="%s" title="%s"%s>%s</a>',
+    $r = sprintf('<a href="%s" class="%s" title="%s"%s%s>%s</a>',
             $this->target, $this->style, htmlspecialchars($this->title), "%%attributes%%",
-            htmlspecialchars($this->label), $this->style );
+            htmlspecialchars($this->label), $this->style, $this->external );
 
     // Now process the generic attributes
     $attribute_values = "";
@@ -288,9 +290,10 @@ class MenuSet {
   * @param string $title Some tooltip help for the title tag.
   * @param string $active Whether this option should be marked as Active.
   * @param int $sortkey An (optional) value to allow option ordering.
+  * @param external open this link in a new window/tab.
   * @return mixed A reference to the MenuOption that was added, or false if none were added.
   */
-  function &AddOption( $label, $target, $title="", $active=false, $sortkey=null ) {
+  function &AddOption( $label, $target, $title="", $active=false, $sortkey=null, $external=false ) {
     if ( !isset($sortkey) ) {
       $sortkey = (isset($this->last_sortkey) ? $this->last_sortkey + 100 : 1000);
     }
@@ -320,6 +323,11 @@ class MenuSet {
       // If $active is a string, then we match the current URL to that as a Perl regex
       $new_option->Active( $this->active_class );
     }
+
+    if ($external == true) {
+      $this->external = " target=\"_blank\"";
+    }
+
     return $new_option ;
   }
 

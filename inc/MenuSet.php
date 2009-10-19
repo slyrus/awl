@@ -99,8 +99,6 @@ class MenuOption {
 
     $this->rendered = "";
     $this->self  =& $this;
-
-    $this->external = "";
   }
 
   /**
@@ -108,15 +106,15 @@ class MenuOption {
   * @return string The HTML fragment for the menu option.
   */
   function Render( ) {
-    $r = sprintf('<a href="%s" class="%s" title="%s"%s%s>%s</a>',
+    $r = sprintf('<a href="%s" class="%s" title="%s"%s>%s</a>',
             $this->target, $this->style, htmlspecialchars($this->title), "%%attributes%%",
-            htmlspecialchars($this->label), $this->style, $this->external );
+            htmlspecialchars($this->label), $this->style );
 
     // Now process the generic attributes
     $attribute_values = "";
     foreach( $this->attributes AS $k => $v ) {
       if ( substr($k, 0, 1) == '_' ) continue;
-      $attribute_values .= " $k=\"".htmlspecialchars($v)."\"";
+      $attribute_values .= ' '.$k.'="'.htmlspecialchars($v).'"';
     }
     $r = str_replace( '%%attributes%%', $attribute_values, $r );
 
@@ -324,9 +322,7 @@ class MenuSet {
       $new_option->Active( $this->active_class );
     }
 
-    if ($external == true) {
-      $this->external = " target=\"_blank\"";
-    }
+    if ( $external == true ) $new_option->Set('target', '_blank');
 
     return $new_option ;
   }

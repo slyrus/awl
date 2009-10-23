@@ -5,10 +5,13 @@
 *
 * @package   awl
 * @subpackage   Utilities
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Catalyst IT Ltd
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @author    Andrew McMillan <andrew@mcmillan.net.nz>
+* @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
+
+if ( isset($_AWL_AWLUtilities_included) ) return(true);
+$_AWL_AWLUtilities_included = true;
 
 if ( !function_exists('dbg_error_log') ) {
   /**
@@ -269,7 +272,7 @@ if ( !function_exists("uuid") ) {
 }
 
 if ( !function_exists("translate") ) {
-  require_once("Translation.php");
+  require("Translation.php");
 }
 
  if ( !function_exists("clone") && version_compare(phpversion(), '5.0') < 0) {
@@ -402,7 +405,7 @@ if ( !function_exists("get_fields") ) {
 }
 
 
-if ( !function_exists("force_utf8") && isset($need_force_utf8) && $need_force_utf8 ) {
+if ( !function_exists("force_utf8") ) {
   function define_byte_mappings() {
     global $byte_map, $nibble_good_chars;
 

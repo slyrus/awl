@@ -11,9 +11,12 @@
 * @subpackage   Browser
 * @author    Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-require_once("AWLUtilities.php");
+
+if ( class_exists('Browser') ) return true;
+
+if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
 
 /**
 * Ensure that this is not set elsewhere.

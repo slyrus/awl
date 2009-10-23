@@ -10,10 +10,12 @@
 *
 * @package   awl
 * @subpackage   AuthPlugin
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
+* @author    Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst IT Ltd
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
+
+if ( class_exists('AuthPlugin') ) return true;
 
 /**
 * A class for authenticating and retrieving user information
@@ -67,4 +69,3 @@ class AuthPlugin
 * usr data.  So I'll look at doing that first.
 */
 
-?>

@@ -10,7 +10,8 @@
 *
 */
 
-require_once("XMLElement.php");
+if ( class_exists('XMLDocument') ) return true;
+if ( !class_exists('XMLElement') ) require("XMLElement.php");
 
 /**
 * A class for XML Documents which will contain namespaced XML elements

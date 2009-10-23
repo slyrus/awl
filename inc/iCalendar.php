@@ -46,7 +46,8 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 *
 */
-require_once("XMLElement.php");
+if ( class_exists('iCalProp') ) return true;
+if ( !class_exists('XMLElement') ) require("XMLElement.php");
 
 /**
 * A Class for representing properties within an iCalendar

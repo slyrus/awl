@@ -3,11 +3,14 @@
 * Lightweight class for sending an e-mail.
 * @package awl
 * @subpackage   EMail
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
+* @author    Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst IT Ltd
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-require_once("AWLUtilities.php");
+
+if ( class_exists('EMail') ) return true;
+
+if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
 /**
 * Lightweight class for sending an e-mail.
 * @package awl
@@ -211,4 +214,3 @@ class EMail
     mail( $this->To, $this->Subject, $this->Body, $additional_headers, $additional_parameters );
   }
 }
-?>

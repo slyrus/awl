@@ -9,9 +9,11 @@
 * @subpackage   DataUpdate
 * @author Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-require_once("AWLUtilities.php");
+if ( class_exists('DbRecord') ) return true;
+
+if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
 
 
 /**
@@ -175,7 +177,7 @@ function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
 /**
 * Since we are going to actually read/write from the database.
 */
-require_once("PgQuery.php");
+if ( !class_exists('PgQuery') ) require("PgQuery.php");
 
 /**
 * A Base class to use for records which will be read/written from the database.
@@ -403,8 +405,9 @@ class DBRecord
   * @return mixed The current value of the field.
   */
   function Undefine($fname) {
+    if ( !isset($this->Values->{$fname}) ) return null;
     $current = $this->Values->{$fname};
-    dbg_error_log( "DBRecord", ":Unset: %s =was> %s", $fname, $this->Values->{$fname} );
+    dbg_error_log( 'DBRecord', ': Unset: %s =was> %s', $fname, $current );
     unset($this->Values->{$fname});
     return $current;
   }
@@ -450,4 +453,3 @@ class DBRecord
   }
 }
 
-?>

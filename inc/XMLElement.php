@@ -6,9 +6,10 @@
 * @subpackage   XMLElement
 * @author    Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst .Net Ltd, Morphoss Ltd <http://www.morphoss.com/>
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-require_once("AWLUtilities.php");
+if ( class_exists('XMLElement') ) return true;
+if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
 
 /**
 * A class for XML elements which may have attributes, or contain

@@ -27,10 +27,12 @@
 *
 * @package   awl
 * @subpackage   PgQuery
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Catalyst IT Ltd
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @author    Andrew McMillan <andrew@mcmillan.net.nz>
+* @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
+
+if ( class_exists('PgQuery') ) return true;
 
 if ( ! function_exists('pg_Connect') ) {
   echo <<<EOERRMSG
@@ -52,7 +54,7 @@ EOERRMSG;
   exit;
 }
 
-require_once("AWLUtilities.php");
+if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
 
 /**
 * Connect to the database defined in the $c->dbconn[] array
@@ -60,10 +62,12 @@ require_once("AWLUtilities.php");
 function connect_configured_database() {
   global $c, $dbconn;
 
+  if ( isset($dbconn) ) return;
   /**
   * Attempt to connect to the configured connect strings
   */
   $dbconn = false;
+  dbg_error_log('pgquery', 'Attempting to connect to database');
   if ( isset($c->pg_connect) && is_array($c->pg_connect) ) {
     foreach( $c->pg_connect AS $k => $v ) {
       if ( !$dbconn ) {
@@ -101,7 +105,7 @@ EOERRMSG;
 * @name $dbconn
 * The database connection.
 */
-if ( !isset($dbconn) ) connect_configured_database();
+$dbconn = null;
 
 /**
 * A duration (in decimal seconds) between two times which are the result of calls to microtime()
@@ -358,7 +362,7 @@ class PgQuery
   * @param mixed The values to replace into the SQL string.
   * @return The PgQuery object
   */
-  function PgQuery() {
+  function __construct() {
     global $dbconn;
     $this->result = 0;
     $this->rows = 0;
@@ -464,7 +468,13 @@ class PgQuery
   * @return resource The actual result of the query (FWIW)
   */
   function Exec( $location = '', $line = 0, $file = '' ) {
-    global $debuggroups, $c;
+    global $debuggroups, $c, $dbconn;
+    if ( !isset($this->connection) ) {
+      if ( !isset($dbconn) ) {
+        connect_configured_database();
+      }
+      $this->connection = $dbconn;
+    }
     $this->location = trim($location);
     if ( $this->location == "" ) $this->location = substr($_SERVER['PHP_SELF'],1);
 
@@ -482,7 +492,7 @@ class PgQuery
 
     if ( !$this->result ) {
      // query simply failed
-      $this->errorstring = pg_errormessage(); // returns database error message
+      $this->errorstring = @pg_errormessage(); // returns database error message
       $this->_log_error( $this->location, 'QF', $this->querystring, $line, $file );
       $this->_log_error( $this->location, 'QF', $this->errorstring, $line, $file );
     }

@@ -20,14 +20,15 @@
 * @subpackage   Session
 * @author Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-require_once("AWLUtilities.php");
+if ( class_exists('Session') ) return true;
+if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
 
 /**
 * All session data is held in the database.
 */
-require_once('PgQuery.php');
+if ( !class_exists('PgQuery') ) require('PgQuery.php');
 
 
 /**
@@ -591,11 +592,17 @@ EOTEXT;
         local_index_not_logged_in();
       }
       else {
-        include("page-header.php");
         $login_html = translate( "<h1>Log On Please</h1><p>For access to the %s you should log on withthe username and password that have been issued to you.</p><p>If you would like to request access, please e-mail %s.</p>");
-        printf( $login_html, $c->system_name, $c->admin_email );
-        echo $this->RenderLoginPanel();
-        include("page-footer.php");
+        $page_content = sprintf( $login_html, $c->system_name, $c->admin_email );
+        $page_content .= $this->RenderLoginPanel();
+        if ( isset($page_elements) && gettype($page_elements) == 'array' ) {
+          $page_elements[] = $page_content;
+          @include("page-renderer.php");
+          exit(0);
+        }
+        @include("page-header.php");
+        echo $page_content;
+        @include("page-footer.php");
       }
     }
     else {
@@ -604,8 +611,12 @@ EOTEXT;
         if ( $this->AllowedTo($v) ) return;
       }
       $c->messages[] = i18n("You are not authorised to use this function.");
-      include("page-header.php");
-      include("page-footer.php");
+      if ( isset($page_elements) && gettype($page_elements) == 'array' ) {
+        @include("page-renderer.php");
+        exit(0);
+      }
+      @include("page-header.php");
+      @include("page-footer.php");
     }
 
     exit;
@@ -644,7 +655,7 @@ EOTEXT;
       if ( $qry->rows > 0 ) {
         $sql = "BEGIN;";
 
-        include_once("EMail.php");
+        if ( !class_exists('EMail') ) require("EMail.php");
         $mail = new EMail( "Access to $c->system_name" );
         $mail->SetFrom($c->admin_email );
         $usernames = "";
@@ -922,4 +933,3 @@ if ( !isset($session) ) {
   $session->_CheckLogin();
 }
 
-?>

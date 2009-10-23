@@ -4,11 +4,12 @@
 *
 * @package awl
 * @subpackage iCalendar
-* @author Andrew McMillan <andrew@catalyst.net.nz>
+* @author Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst IT Ltd
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
 
+if ( class_defined('vEvent') ) return true;
 
 /**
 * A Class for handling Events on a calendar
@@ -323,4 +324,3 @@ EOTXT;
 
 }
 
-?>

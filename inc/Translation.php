@@ -3,11 +3,15 @@
 * Functions involved in translating with gettext
 * @package awl
 * @subpackage   Translation
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
+* @author    Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst IT Ltd
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-if ( !function_exists("i18n") ) {
+
+if ( isset($_AWL_Translation_included) ) return(true);
+$_AWL_Translation_included = true;
+
+if ( !function_exists('i18n') ) {
   /**
   * Mark a string as being internationalized.  This is a semaphore method; it
   * does nothing but it allows us to easily identify strings that require
@@ -56,32 +60,32 @@ if ( !function_exists("i18n") ) {
 }
 
 
-if ( !function_exists("translate") ) {
+if ( !function_exists('translate') ) {
   /**
   * Convert a string in English to whatever this user's locale is
   */
   function translate( $en ) {
     $xl = gettext($en);
-    dbg_error_log("I18N","Translated =%s= into =%s=", $en, $xl );
+    dbg_error_log('I18N','Translated =%s= into =%s=', $en, $xl );
     return $xl;
   }
 }
 
 
-if ( !function_exists("init_gettext") ) {
+if ( !function_exists('init_gettext') ) {
   /**
   * Initialise our use of Gettext
   */
   function init_gettext( $domain, $location ) {
     bindtextdomain( $domain, $location );
-    $codeset = bind_textdomain_codeset( $domain, "UTF-8" );
+    $codeset = bind_textdomain_codeset( $domain, 'UTF-8' );
     textdomain( $domain );
-    dbg_error_log("I18N","Bound domain =%s= to location =%s= using character set =%s=", $domain, $location, $codeset );
+    dbg_error_log('I18N','Bound domain =%s= to location =%s= using character set =%s=', $domain, $location, $codeset );
   }
 }
 
 
-if ( !function_exists("awl_set_locale") ) {
+if ( !function_exists('awl_set_locale') ) {
   /**
   * Set the translation to the user's locale.  At this stage all we do is
   * call the gettext function.
@@ -90,16 +94,15 @@ if ( !function_exists("awl_set_locale") ) {
     global $c;
 
     if ( !is_array($locale) && ! preg_match('/^[a-z]{2}(_[A-Z]{2})?\./', $locale ) ) {
-      $locale = array( $locale, $locale.".UTF-8");
+      $locale = array( $locale, $locale.'.UTF-8');
     }
     if ( $newlocale = setlocale( LC_ALL, $locale) ) {
-      dbg_error_log("I18N","Set locale to =%s=", $newlocale );
+      dbg_error_log('I18N','Set locale to =%s=', $newlocale );
       $c->current_locale = $newlocale;
     }
     else {
-      dbg_log_array("I18N","Unsupported locale: ", $locale, false );
+      dbg_log_array('I18N','Unsupported locale: ', $locale, false );
     }
   }
 }
 
-?>

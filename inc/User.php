@@ -6,24 +6,24 @@
 * @package   awl
 * @author Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-require_once("AWLUtilities.php");
+if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
 
 /**
 * We need to access some session information.
 */
-require_once("Session.php");
+if ( !class_exists('Session') ) require("Session.php");
 
 /**
 * We use the DataEntry class for data display and updating
 */
-require_once("DataEntry.php");
+if ( !class_exists('EntryField') ) require("DataEntry.php");
 
 /**
 * We use the DataUpdate class and inherit from DBRecord
 */
-require_once("DataUpdate.php");
+if ( !class_exists('DbRecord') ) require("DataUpdate.php");
 
 /**
 * A class to handle reading, writing, viewing, editing and validating
@@ -409,4 +409,3 @@ class User extends DBRecord {
     return true;
   }
 }
-?>

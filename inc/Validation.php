@@ -4,11 +4,11 @@
 *
 * @package   awl
 * @subpackage   Validation
-* @author    Emily Mossman <emily@catalyst.net.nz>
+* @author    Emily Mossman <emily@mcmillan.net.nz>
 * @copyright Catalyst IT Ltd
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-require_once("AWLUtilities.php");
+if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
 
 /**
 * Rules used for validation of form fields.
@@ -224,4 +224,3 @@ EOHTML;
   }
 }
 
-?>

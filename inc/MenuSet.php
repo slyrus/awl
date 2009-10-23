@@ -9,9 +9,12 @@
 * @subpackage   MenuSet
 * @author    Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-require_once("AWLUtilities.php");
+
+if ( class_exists('MenuSet') ) return(true);
+
+if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
 
 /**
 * Each menu option is an object.
@@ -192,7 +195,7 @@ function _CompareMenuSequence( $a, $b ) {
 *
 * A non-trivial example would look something like this:
 *<code>
-*require_once("MenuSet.php");
+*require("MenuSet.php");
 *$main_menu = new MenuSet('menu', 'menu', 'menu_active');
 *  ...
 *$other_menu = new MenuSet('submenu', 'submenu', 'submenu_active');

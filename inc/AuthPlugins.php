@@ -20,12 +20,14 @@
 *
 * @package   awl
 * @subpackage   AuthPlugin
-* @author    Andrew McMillan <andrew@catalyst.net.nz>
-* @copyright Catalyst IT Ltd
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
+* @author    Andrew McMillan <andrew@mcmillan.net.nz>
+* @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
+* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
 
-require_once("AWLUtilities.php");
+if ( function_exists('auth_other_awl') ) return true;
+
+if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
 
 /**
 * Authenticate against a different PostgreSQL database which contains a usr table in
@@ -70,7 +72,7 @@ EOERRMSG;
       else
         $type = "INSERT";
 
-      include_once("DataUpdate.php");
+      if ( ! function_exists('sql_from_object') ) require("DataUpdate.php");
       $qry = new PgQuery( sql_from_object( $usr, $type, 'usr', "WHERE user_no=$usr->user_no" ) );
       $qry->Exec('Login',__LINE,__FILE__);
 

@@ -319,7 +319,7 @@ class User extends DBRecord {
     $valid = true;
 
     if ( $this->Get('fullname') == "" ) {
-      $c->messages[] = "ERROR: The full name may not be blank.";
+      $c->messages[] = i18n('ERROR: The full name may not be blank.');
       $valid = false;
     }
 
@@ -330,7 +330,7 @@ class User extends DBRecord {
         $this->Set('password',$_POST['new_password']);
       }
       else {
-        $c->messages[] = "ERROR: The new password must match the confirmed password.";
+        $c->messages[] = i18n('ERROR: The new password must match the confirmed password.');
         $valid = false;
       }
     }
@@ -349,7 +349,7 @@ class User extends DBRecord {
   function Write() {
     global $c, $session;
     if ( parent::Write() ) {
-      $c->messages[] = translate("User record written.");
+      $c->messages[] = i18n('User record written.');
       if ( $this->WriteType == 'insert' ) {
         $qry = new PgQuery( "SELECT currval('usr_user_no_seq');" );
         $qry->Exec("User::Write");
@@ -397,11 +397,11 @@ class User extends DBRecord {
       $qry = new PgQuery($sql);
       if ( !$qry->Exec("Sys::Write") ) {
         if ( $session->AllowedTo("Admin") ) {
-          $client_messages[] = sprintf( translate("ERROR: %s"), $qry->errorstring);
+          $c->messages[] = sprintf( translate("ERROR: %s"), $qry->errorstring);
         }
         else {
-          $client_messages[] = translate("ERROR: There was a database error writing the roles information!");
-          $client_messages[] = translate("Please note the time and advise the administrator of your system.");
+          $c->messages[] = i18n('ERROR: There was a database error writing the roles information!');
+          $c->messages[] = i18n('Please note the time and advise the administrator of your system.');
         }
         return false;
       }

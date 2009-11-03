@@ -22,13 +22,9 @@
 * @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-if ( class_exists('Session') ) return true;
-if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
-
-/**
-* All session data is held in the database.
-*/
-if ( !class_exists('PgQuery') ) require('PgQuery.php');
+require_once('AWLUtilities.php');
+require_once('PgQuery.php');
+require_once('EMail.php');
 
 
 /**
@@ -655,7 +651,6 @@ EOTEXT;
       if ( $qry->rows > 0 ) {
         $sql = "BEGIN;";
 
-        if ( !class_exists('EMail') ) require("EMail.php");
         $mail = new EMail( "Access to $c->system_name" );
         $mail->SetFrom($c->admin_email );
         $usernames = "";

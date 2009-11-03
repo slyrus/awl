@@ -8,9 +8,7 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
 
-if ( class_exists('EMail') ) return true;
-
-if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
+require_once("AWLUtilities.php");
 /**
 * Lightweight class for sending an e-mail.
 * @package awl

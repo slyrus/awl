@@ -8,7 +8,7 @@
 * @copyright Catalyst IT Ltd
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
+require_once("AWLUtilities.php");
 
 /**
 * Rules used for validation of form fields.

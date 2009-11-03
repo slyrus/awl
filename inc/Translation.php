@@ -8,9 +8,6 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
 
-if ( isset($_AWL_Translation_included) ) return(true);
-$_AWL_Translation_included = true;
-
 if ( !function_exists('i18n') ) {
   /**
   * Mark a string as being internationalized.  This is a semaphore method; it

@@ -32,7 +32,6 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
 
-if ( class_exists('PgQuery') ) return true;
 
 if ( ! function_exists('pg_Connect') ) {
   echo <<<EOERRMSG
@@ -54,7 +53,7 @@ EOERRMSG;
   exit;
 }
 
-if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
+require_once("AWLUtilities.php");
 
 /**
 * Connect to the database defined in the $c->dbconn[] array

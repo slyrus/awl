@@ -8,8 +8,7 @@
 * @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2
 */
-if ( class_exists('EntryField') ) return true;
-if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
+require_once("AWLUtilities.php");
 
 /**
 * Individual fields used for data entry / viewing.

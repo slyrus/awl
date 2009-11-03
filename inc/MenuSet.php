@@ -12,9 +12,7 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
 
-if ( class_exists('MenuSet') ) return(true);
-
-if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
+require_once("AWLUtilities.php");
 
 /**
 * Each menu option is an object.

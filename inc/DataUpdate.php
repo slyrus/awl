@@ -11,9 +11,9 @@
 * @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-if ( class_exists('DbRecord') ) return true;
 
-if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
+require_once('AWLUtilities.php');
+require_once('PgQuery.php');
 
 
 /**
@@ -173,11 +173,6 @@ function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
  return $sql;
 }
 
-
-/**
-* Since we are going to actually read/write from the database.
-*/
-if ( !class_exists('PgQuery') ) require("PgQuery.php");
 
 /**
 * A Base class to use for records which will be read/written from the database.

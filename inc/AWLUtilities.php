@@ -10,9 +10,6 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
 
-if ( isset($_AWL_AWLUtilities_included) ) return(true);
-$_AWL_AWLUtilities_included = true;
-
 if ( !function_exists('dbg_error_log') ) {
   /**
   * Writes a debug message into the error log using printf syntax.  If the first
@@ -115,7 +112,7 @@ if ( !function_exists("session_salted_md5") ) {
 
 
 
-if ( !function_exists("session_salted_sha1") && version_compare(phpversion(), "4.9.9") > 0 ) {
+if ( !function_exists("session_salted_sha1") ) {
   /**
   * Make a salted SHA1 string, given a string and (possibly) a salt.  PHP5 only (although it
   * could be made to work on PHP4 (@see http://www.openldap.org/faq/data/cache/347.html). The

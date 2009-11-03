@@ -25,9 +25,8 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
 
-if ( function_exists('auth_other_awl') ) return true;
-
-if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
+require_once('AWLUtilities.php');
+require_once('DataUpdate.php');
 
 /**
 * Authenticate against a different PostgreSQL database which contains a usr table in
@@ -72,7 +71,6 @@ EOERRMSG;
       else
         $type = "INSERT";
 
-      if ( ! function_exists('sql_from_object') ) require("DataUpdate.php");
       $qry = new PgQuery( sql_from_object( $usr, $type, 'usr', "WHERE user_no=$usr->user_no" ) );
       $qry->Exec('Login',__LINE,__FILE__);
 

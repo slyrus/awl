@@ -8,22 +8,22 @@
 * @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
-if ( ! isset($_AWL_AWLUtilities_included) ) require("AWLUtilities.php");
+require_once("AWLUtilities.php");
 
 /**
 * We need to access some session information.
 */
-if ( !class_exists('Session') ) require("Session.php");
+require_once("Session.php");
 
 /**
 * We use the DataEntry class for data display and updating
 */
-if ( !class_exists('EntryField') ) require("DataEntry.php");
+require_once("DataEntry.php");
 
 /**
 * We use the DataUpdate class and inherit from DBRecord
 */
-if ( !class_exists('DbRecord') ) require("DataUpdate.php");
+require_once("DataUpdate.php");
 
 /**
 * A class to handle reading, writing, viewing, editing and validating

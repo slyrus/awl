@@ -46,8 +46,7 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 *
 */
-if ( class_exists('iCalProp') ) return true;
-if ( !class_exists('XMLElement') ) require("XMLElement.php");
+require_once("XMLElement.php");
 
 /**
 * A Class for representing properties within an iCalendar
@@ -134,7 +133,7 @@ class iCalProp {
       $value = substr( $v, $pos + 1);
       $this->parameters[$name] = $value;
     }
-    dbg_error_log("iCalendar", " iCalProp::ParseFrom found '%s' = '%s' with %d parameters", $this->name, substr($this->content,0,200), count($this->parameters) );
+//    dbg_error_log('iCalendar', " iCalProp::ParseFrom found '%s' = '%s' with %d parameters", $this->name, substr($this->content,0,200), count($this->parameters) );
   }
 
 
@@ -149,7 +148,7 @@ class iCalProp {
     if ( $newname != null ) {
       $this->name = $newname;
       if ( isset($this->rendered) ) unset($this->rendered);
-      dbg_error_log("iCalendar", " iCalProp::Name(%s)", $this->name );
+//      dbg_error_log('iCalendar', " iCalProp::Name(%s)", $this->name );
     }
     return $this->name;
   }
@@ -371,7 +370,7 @@ class iCalComponent {
     foreach( $this->properties AS $k => $v ) {
       $also = $v->GetParameterValue($parameter_name);
       if ( isset($also) && $also != "" ) {
-        dbg_error_log( "iCalendar", "::CollectParameterValues(%s) : Found '%s'", $parameter_name, $also);
+//        dbg_error_log( 'iCalendar', "::CollectParameterValues(%s) : Found '%s'", $parameter_name, $also);
         $values[$also] = 1;
       }
     }
@@ -409,7 +408,7 @@ class iCalComponent {
       }
       if ( preg_match('/^\s*$/', $line ) ) continue;
       $line = rtrim( $line, "\r\n" );
-      dbg_error_log( "iCalendar",  "::ParseFrom: Parsing line: $line");
+//      dbg_error_log( 'iCalendar',  "::ParseFrom: Parsing line: $line");
 
       if ( $type === false ) {
         if ( preg_match( '/^BEGIN:(.+)$/', $line, $matches ) ) {
@@ -417,21 +416,21 @@ class iCalComponent {
           $type = $matches[1];
           $finish = "END:$type";
           $this->type = $type;
-          dbg_error_log( "iCalendar", "::ParseFrom: Start component of type '%s'", $type);
+          dbg_error_log( 'iCalendar', "::ParseFrom: Start component of type '%s'", $type);
         }
         else {
-          dbg_error_log( "iCalendar", "::ParseFrom: Ignoring crap before start of component: $line");
+          dbg_error_log( 'iCalendar', "::ParseFrom: Ignoring crap before start of component: $line");
           // unset($lines[$k]);  // The content has crap before the start
           if ( $line != "" ) $this->rendered = null;
         }
       }
       else if ( $type == null ) {
-        dbg_error_log( "iCalendar", "::ParseFrom: Ignoring crap after end of component");
+        dbg_error_log( 'iCalendar', "::ParseFrom: Ignoring crap after end of component");
         unset($lines[$k]);  // The content has crap after the end
         if ( $line != "" ) $this->rendered = null;
       }
       else if ( $line == $finish ) {
-        dbg_error_log( "iCalendar", "::ParseFrom: End of component");
+        dbg_error_log( 'iCalendar', "::ParseFrom: End of component");
         $type = null;  // We have reached the end of our component
       }
       else {
@@ -440,22 +439,22 @@ class iCalComponent {
           $subtype = $matches[1];
           $subfinish = "END:$subtype";
           $subcomponent = $line . "\r\n";
-          dbg_error_log( "iCalendar", "::ParseFrom: Found a subcomponent '%s'", $subtype);
+          dbg_error_log( 'iCalendar', "::ParseFrom: Found a subcomponent '%s'", $subtype);
         }
         else if ( $subtype ) {
           // We are inside a sub-component
           $subcomponent .= $this->WrapComponent($line);
           if ( $line == $subfinish ) {
-            dbg_error_log( "iCalendar", "::ParseFrom: End of subcomponent '%s'", $subtype);
+            dbg_error_log( 'iCalendar', "::ParseFrom: End of subcomponent '%s'", $subtype);
             // We have found the end of a sub-component
             $this->components[] = new iCalComponent($subcomponent);
             $subtype = false;
           }
-          else
-            dbg_error_log( "iCalendar", "::ParseFrom: Inside a subcomponent '%s'", $subtype );
+//          else
+//            dbg_error_log( 'iCalendar', "::ParseFrom: Inside a subcomponent '%s'", $subtype );
         }
         else {
-          dbg_error_log( "iCalendar", "::ParseFrom: Parse property of component");
+//          dbg_error_log( 'iCalendar', "::ParseFrom: Parse property of component");
           // It must be a normal property line within a component.
           $this->properties[] = new iCalProp($line);
         }
@@ -601,7 +600,7 @@ class iCalComponent {
       $new_prop->Name($new_property);
       $new_prop->Value($value);
       if ( $parameters != null ) $new_prop->Parameters($parameters);
-      dbg_error_log("iCalendar"," Adding new property '%s'", $new_prop->Render() );
+      dbg_error_log('iCalendar'," Adding new property '%s'", $new_prop->Render() );
       $this->properties[] = $new_prop;
     }
     else if ( gettype($new_property) ) {
@@ -837,14 +836,14 @@ class iCalComponent {
   */
   function GetPropertiesByPath( $path ) {
     $properties = array();
-    dbg_error_log( "iCalendar", "GetPropertiesByPath: Querying within '%s' for path '%s'", $this->type, $path );
+    dbg_error_log( 'iCalendar', "GetPropertiesByPath: Querying within '%s' for path '%s'", $this->type, $path );
     if ( !preg_match( '#(/?)(!?)([^/]+)(/?.*)$#', $path, $matches ) ) return $properties;
 
     $adrift = ($matches[1] == '');
     $normal = ($matches[2] == '');
     $ourtest = $matches[3];
     $therest = $matches[4];
-    dbg_error_log( "iCalendar", "GetPropertiesByPath: Matches: %s -- %s -- %s -- %s\n", $matches[1], $matches[2], $matches[3], $matches[4] );
+    dbg_error_log( 'iCalendar', "GetPropertiesByPath: Matches: %s -- %s -- %s -- %s\n", $matches[1], $matches[2], $matches[3], $matches[4] );
     if ( $ourtest == '*' || (($ourtest == $this->type) === $normal) && $therest != '' ) {
       if ( preg_match( '#^/(!?)([^/]+)$#', $therest, $matches ) ) {
         $normmatch = ($matches[1] =='');
@@ -873,7 +872,7 @@ class iCalComponent {
         $properties = array_merge( $properties, $v->GetPropertiesByPath($path) );
       }
     }
-    dbg_error_log("iCalendar", "GetPropertiesByPath: Found %d within '%s' for path '%s'\n", count($properties), $this->type, $path );
+    dbg_error_log('iCalendar', "GetPropertiesByPath: Found %d within '%s' for path '%s'\n", count($properties), $this->type, $path );
     return $properties;
   }
 
@@ -979,7 +978,7 @@ class iCalendar {
     $this->properties = array();
 
     foreach( $args AS $k => $v ) {
-      dbg_error_log( "iCalendar", ":Initialise: %s to >>>%s<<<", $k, $v );
+      dbg_error_log( 'iCalendar', ":Initialise: %s to >>>%s<<<", $k, $v );
       $property = new iCalProp();
       $property->Name($k);
       $property->Value($v);
@@ -1010,7 +1009,7 @@ class iCalendar {
 
     $this->tzid_list = array_keys($this->component->CollectParameterValues('TZID'));
     if ( ! isset($this->tzid) && count($this->tzid_list) > 0 ) {
-      dbg_error_log( "icalendar", "::TZID_List[0] = '%s', count=%d", $this->tzid_list[0], count($this->tzid_list) );
+      dbg_error_log( 'iCalendar', "::TZID_List[0] = '%s', count=%d", $this->tzid_list[0], count($this->tzid_list) );
       $this->tzid = $this->tzid_list[0];
     }
 
@@ -1042,7 +1041,7 @@ class iCalendar {
 
           $qry2 = new PgQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
                                       $tzid, $tzname, $tz->Render() );
-          $qry2->Exec("iCalendar");
+          $qry2->Exec('iCalendar');
         }
       }
     }
@@ -1053,7 +1052,7 @@ class iCalendar {
       if ( preg_match( '#\S+/\S+#', $tzname) ) {
         $this->tz_locn = $tzname;
       }
-      dbg_error_log( "icalendar", " TZCrap1: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
+      dbg_error_log( 'iCalendar', " TZCrap1: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
     }
 
     if ( (!isset($this->tz_locn) || $this->tz_locn == "") && isset($c->local_tzid) ) {
@@ -1094,7 +1093,7 @@ class iCalendar {
     $intags = false;
     $start = "BEGIN:$type";
     $finish = "END:$type";
-    dbg_error_log( "iCalendar", ":JTBP: Looking for %d subsets of type %s", $count, $type );
+    dbg_error_log( 'iCalendar', ":JTBP: Looking for %d subsets of type %s", $count, $type );
     reset($this->lines);
     foreach( $this->lines AS $k => $v ) {
       if ( !$intags && $v == $start ) {
@@ -1129,7 +1128,7 @@ class iCalendar {
     while( isset($this->lines[$this->_current_parse_line]) ) {
       $i = $this->_current_parse_line++;
       $line =& $this->lines[$i];
-      dbg_error_log( "iCalendar", ":Parse:%s LINE %03d: >>>%s<<<", $type, $i, $line );
+      dbg_error_log( 'iCalendar', ":Parse:%s LINE %03d: >>>%s<<<", $type, $i, $line );
       if ( $this->parsing_vtimezone ) {
         $this->vtimezone .= $line."\n";
       }
@@ -1170,7 +1169,7 @@ class iCalendar {
               switch( $matches[1] ) {
                 case 'TZID': $properties['TZID'] = $matches[2];  break;
                 default:
-                  dbg_error_log( "icalendar", " FYI: Ignoring Resource '%s', Property '%s', Parameter '%s', Value '%s'", $type, $property, $matches[1], $matches[2] );
+                  dbg_error_log( 'iCalendar', " FYI: Ignoring Resource '%s', Property '%s', Parameter '%s', Value '%s'", $type, $property, $matches[1], $matches[2] );
               }
             }
           }
@@ -1258,7 +1257,7 @@ class iCalendar {
         $row = $qry->Fetch();
         $this->tz_locn = $row->tz_locn;
       }
-      dbg_error_log( "icalendar", " TZCrap2: TZID '%s', DB Rows=%d, Location '%s'", $tzid, $qry->rows, $this->tz_locn );
+      dbg_error_log( 'iCalendar', " TZCrap2: TZID '%s', DB Rows=%d, Location '%s'", $tzid, $qry->rows, $this->tz_locn );
     }
 
     if ( (!isset($this->tz_locn) || $this->tz_locn == '') && $tzid != '' ) {
@@ -1282,13 +1281,13 @@ class iCalendar {
       if ( preg_match( '#\S+/\S+#', $tzname) ) {
         $this->tz_locn = $tzname;
       }
-      dbg_error_log( "icalendar", " TZCrap3: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
+      dbg_error_log( 'iCalendar', " TZCrap3: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
     }
 
     if ( $tzid != '' && isset($c->save_time_zone_defs) && $c->save_time_zone_defs && $qry->rows != 1 && isset($this->vtimezone) && $this->vtimezone != "" ) {
       $qry2 = new PgQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
                                    $tzid, $this->tz_locn, $this->vtimezone );
-      $qry2->Exec("iCalendar");
+      $qry2->Exec('iCalendar');
     }
 
     if ( (!isset($this->tz_locn) || $this->tz_locn == "") && isset($c->local_tzid) ) {
@@ -1303,7 +1302,7 @@ class iCalendar {
   function Get( $key ) {
     if ( strtoupper($key) == 'TZID' ) {
       // backward compatibility hack
-      dbg_error_log( "icalendar", " Get(TZID): TZID '%s', Location '%s'", (isset($this->tzid)?$this->tzid:"[not set]"), $this->tz_locn );
+      dbg_error_log( 'iCalendar', " Get(TZID): TZID '%s', Location '%s'", (isset($this->tzid)?$this->tzid:"[not set]"), $this->tz_locn );
       if ( isset($this->tzid) ) return $this->tzid;
       return $this->tz_locn;
     }
@@ -1488,7 +1487,7 @@ class iCalendar {
     $intags = false;
     $start = "BEGIN:$type";
     $finish = "END:$type";
-    dbg_error_log( "iCalendar", ":ExtractSubComponent: Looking for %d subsets of type %s", $count, $type );
+    dbg_error_log( 'iCalendar', ":ExtractSubComponent: Looking for %d subsets of type %s", $count, $type );
     reset($component);
     foreach( $component AS $k => $v ) {
       if ( !$intags && $v == $start ) {
@@ -1519,12 +1518,12 @@ class iCalendar {
    */
   function ExtractProperty( $component, $type, $count=9999 ) {
     $answer = array();
-    dbg_error_log( "iCalendar", ":ExtractProperty: Looking for %d properties of type %s", $count, $type );
+    dbg_error_log( 'iCalendar', ":ExtractProperty: Looking for %d properties of type %s", $count, $type );
     reset($component);
     foreach( $component AS $k => $v ) {
       if ( preg_match( "/$type"."[;:]/i", $v ) ) {
         $answer[] = new iCalProp($v);
-        dbg_error_log( "iCalendar", ":ExtractProperty: Found property %s", $type );
+        dbg_error_log( 'iCalendar', ":ExtractProperty: Found property %s", $type );
         if ( --$count < 1 ) return $answer;
       }
     }
@@ -1553,11 +1552,11 @@ class iCalendar {
       $value_type = gettype($value);
       $value_defined = (isset($value) && $value_type == 'string') || ($value_type == 'array' && count($value) > 0 );
       if ( $tag == 'urn:ietf:params:xml:ns:caldav:is-not-defined' && $value_defined ) {
-        dbg_error_log( "iCalendar", ":ApplyFilter: Value is set ('%s'), want unset, for filter %s", count($value), $tag );
+        dbg_error_log( 'iCalendar', ":ApplyFilter: Value is set ('%s'), want unset, for filter %s", count($value), $tag );
         return false;
       }
       elseif ( $tag == 'urn:ietf:params:xml:ns:caldav:is-defined' && !$value_defined ) {
-        dbg_error_log( "iCalendar", ":ApplyFilter: Want value, but it is not set for filter %s", $tag );
+        dbg_error_log( 'iCalendar', ":ApplyFilter: Want value, but it is not set for filter %s", $tag );
         return false;
       }
       else {
@@ -1578,7 +1577,7 @@ class iCalendar {
                 }
               }
               else {
-                dbg_error_log( "iCalendar", ":ApplyFilter: TEXT-MATCH will only work on strings or arrays of iCalProp.  %s unsupported", gettype($value) );
+                dbg_error_log( 'iCalendar', ":ApplyFilter: TEXT-MATCH will only work on strings or arrays of iCalProp.  %s unsupported", gettype($value) );
                 return true;  // We return _true_ in this case, so the client sees the item
               }
             }
@@ -1587,7 +1586,7 @@ class iCalendar {
             }
             $negate = $v->GetAttribute("negate-condition");
             if ( isset($negate) && strtolower($negate) == "yes" && $match ) {
-              dbg_error_log( "iCalendar", ":ApplyFilter: TEXT-MATCH of %s'%s' against '%s'", (isset($negate) && strtolower($negate) == "yes"?'!':''), $search, $value );
+              dbg_error_log( 'iCalendar', ":ApplyFilter: TEXT-MATCH of %s'%s' against '%s'", (isset($negate) && strtolower($negate) == "yes"?'!':''), $search, $value );
               return false;
             }
             break;

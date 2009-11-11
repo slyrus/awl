@@ -26,7 +26,6 @@ if ( !function_exists('dbg_error_log') ) {
   */
   function dbg_error_log() {
     global $c;
-    $argc = func_num_args();
     $args = func_get_args();
     $type = "DBG";
     $component = array_shift($args);
@@ -43,6 +42,7 @@ if ( !function_exists('dbg_error_log') ) {
     }
     else if ( !isset($c->dbg[strtolower($component)]) ) return;
 
+    $argc = func_num_args();
     if ( 2 <= $argc ) {
       $format = array_shift($args);
     }
@@ -57,11 +57,21 @@ if ( !function_exists('dbg_error_log') ) {
 
 if ( !function_exists('apache_request_headers') ) {
   /**
-  * Forward compatibility so we can use the non-deprecated name in PHP4
+  * Compatibility so we can use the apache function name and still work with CGI
   * @package awl
   */
   function apache_request_headers() {
-    return getallheaders();
+    eval('
+        function apache_request_headers() {
+            foreach($_SERVER as $key=>$value) {
+                if (substr($key,0,5)=="HTTP_") {
+                    $key=str_replace(" ","-",ucwords(strtolower(str_replace("_"," ",substr($key,5)))));
+                    $out[$key]=$value;
+                }
+            }
+            return $out;
+        }
+    ');
   }
 }
 

@@ -150,7 +150,7 @@ class XMLElement {
         }
       }
     }
-    else if ( !isset($tag) || $this->content->tagname == $tag ) {
+    else if ( !isset($tag) || (isset($v->content->tagname) && $this->content->tagname == $tag) ) {
       $elements[] = $this->content;
     }
     return $elements;

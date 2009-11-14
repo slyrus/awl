@@ -133,21 +133,25 @@ class XMLElement {
   }
 
   /**
-  * Return an array of elements matching the specified tag
+  * Return an array of elements matching the specified tag, or all elements if no tag is supplied.
+  * Unlike GetContent() this will always return an array.
   *
   * @return array The XMLElements within the tree which match this tag
   */
-  function GetElements( $tag, $recursive=false ) {
+  function GetElements( $tag=null, $recursive=false ) {
     $elements = array();
     if ( gettype($this->content) == "array" ) {
       foreach( $this->content AS $k => $v ) {
-        if ( $v->tagname == $tag ) {
+        if ( !isset($tag) || (isset($v->tagname) && $v->tagname == $tag) ) {
           $elements[] = $v;
         }
         if ( $recursive ) {
           $elements = $elements + $v->GetElements($tag,true);
         }
       }
+    }
+    else if ( !isset($tag) || $this->content->tagname == $tag ) {
+      $elements[] = $this->content;
     }
     return $elements;
   }

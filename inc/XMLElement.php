@@ -110,6 +110,7 @@ class XMLElement {
   * @return string The value of that attribute of the element
   */
   function GetAttribute( $attr ) {
+    if ( $attr == 'xmlns' ) return $this->xmlns;
     if ( isset($this->attributes[$attr]) ) return $this->attributes[$attr];
     return null;
   }

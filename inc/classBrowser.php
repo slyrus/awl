@@ -287,6 +287,19 @@ class Browser
     $this->Title = $new_title;
   }
 
+
+  /**
+  * Accessor for the Title for the browse, which could set the title also.
+  *
+  * @param string $new_title The new title for the browser
+  * @return string The current title for the browser
+  */
+  function Title( $new_title = null ) {
+    if ( isset($new_title) ) $this->Title = $new_title;
+    return $this->Title;
+  }
+
+
   /**
   * Set the named columns to be translatable
   *

@@ -395,7 +395,7 @@ if ( !function_exists("get_fields") ) {
 
     if ( !isset($_AWL_field_cache[$tablename]) ) {
       dbg_error_log( "DataUpdate", ":get_fields: Loaded fields for table '$tablename'" );
-      $sql = "SELECT f.attname, t.typname FROM pg_attribute f ";
+      $sql = "SELECT f.attname, t.typname, f.atttypmod FROM pg_attribute f ";
       $sql .= "JOIN pg_class c ON ( f.attrelid = c.oid ) ";
       $sql .= "JOIN pg_type t ON ( f.atttypid = t.oid ) ";
       $sql .= "WHERE relname = ? AND attnum >= 0 order by f.attnum;";
@@ -403,7 +403,7 @@ if ( !function_exists("get_fields") ) {
       $qry->Exec("DataUpdate");
       $fields = array();
       while( $row = $qry->Fetch() ) {
-        $fields["$row->attname"] = $row->typname;
+        $fields["$row->attname"] = $row->typname . ($row->atttypmod != -1 ? sprintf('(%d)',$row->atttypmod) : '');
       }
       $_AWL_field_cache[$tablename] = $fields;
     }

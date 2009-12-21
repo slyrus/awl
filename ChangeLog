@@ -1,8 +1,35 @@
+2009-11-22  Andrew McMillan  <andrew@morphoss.com>
+	* [classBrowser] Add a Title() get/set method.
+	* [AWLUtilties] Support precision in type names.
+
+2009-11-17  Andrew McMillan  <andrew@morphoss.com>
+	* [XMLElement] Looking for the xmlns attribute should return it.
+
+2009-11-14  Andrew McMillan  <andrew@morphoss.com>
+	* Remove opportunity for unassigned value warning.
+	* [XMLElement] Allow the GetElements() method to be called with no tag.
+
+2009-11-11  Andrew McMillan  <andrew@morphoss.com>
+	* [AWLUtilities] More generic implementation of request_headers.
+
+2009-11-03  Andrew McMillan  <andrew@morphoss.com>
+	* [iCalendar] Comment a bunch of debugging messages.
+
+2009-10-30  Matthias Mohr  <Matthias@Mohrenclan.de>
+	* Add translation features.
+
+2009-10-20  Andrew McMillan  <andrew@morphoss.com>
+	* Restructure the external link handling.
+	* Add an option for links to open in a new tab/page.
+
+2009-10-16  Andrew McMillan  <andrew@morphoss.com>
+	* [Session] Allow username/e-mail for forgotten password to be case-insensitive.
+
 2009-09-25  Andrew McMillan <andrew@morphoss.com>
 	* [DataEntry] Remove uninitialised warning possibility.
 	* [XMLDocument] Remove uninitialised warning possibilty.
 	* [iCalendar] Remove deprecated function.  Add some convenience methods.
-        * [classBrowser] Add new replaceable variable for row even/odd ness.
+	* [classBrowser] Add new replaceable variable for row even/odd ness.
 
 2009-09-07  Andrew McMillan <andrew@morphoss.com>
 	* [AWLUtilities] Add a fix_latin() function to convert mixed charset into UTF-8.

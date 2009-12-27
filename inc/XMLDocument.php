@@ -65,6 +65,7 @@ class XMLDocument {
   */
   function AddNamespace( $namespace, $prefix = null ) {
     if ( !isset($this->namespaces[$namespace]) ) {
+      if ( isset($prefix) && ($prefix == "" || isset($this->prefixes[$prefix])) ) $prefix = null;
       if ( $prefix == null ) {
         //  Try and build a prefix based on the first alphabetic character of the last element of the namespace
         if ( preg_match('/^(.*):([^:]+)$/', $namespace, $matches) ) {

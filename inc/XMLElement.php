@@ -18,11 +18,11 @@ require_once('AWLUtilities.php');
 * @package   awl
 */
 class XMLElement {
-  var $tagname;
-  var $xmlns;
-  var $attributes;
-  var $content;
-  var $_parent;
+  protected $tagname;
+  protected $xmlns;
+  protected $attributes;
+  protected $content;
+  protected $_parent;
 
   /**
   * Constructor - nothing fancy as yet.
@@ -32,7 +32,7 @@ class XMLElement {
   * @param array $attributes An array of attribute name/value pairs
   * @param array $xmlns An XML namespace specifier
   */
-  function XMLElement( $tagname, $content=false, $attributes=false, $xmlns=null ) {
+  function __construct( $tagname, $content=false, $attributes=false, $xmlns=null ) {
     $this->tagname=$tagname;
     if ( gettype($content) == "object" ) {
       // Subtree to be parented here
@@ -296,6 +296,11 @@ class XMLElement {
       $r .= "/>\n";
     }
     return $r;
+  }
+
+
+  function __tostring() {
+    return $this->Render();
   }
 }
 

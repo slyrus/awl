@@ -1409,7 +1409,7 @@ class iCalendar {
   * Returns a PostgreSQL Date Format string suitable for returning HTTP (RFC2068) dates
   * Preferred is "Sun, 06 Nov 1994 08:49:37 GMT" so we do that.
   */
-  function HttpDateFormat() {
+  static function HttpDateFormat() {
     return "'Dy, DD Mon IYYY HH24:MI:SS \"GMT\"'";
   }
 
@@ -1417,7 +1417,7 @@ class iCalendar {
   /**
   * Returns a PostgreSQL Date Format string suitable for returning iCal dates
   */
-  function SqlDateFormat() {
+  static function SqlDateFormat() {
     return "'YYYYMMDD\"T\"HH24MISS'";
   }
 
@@ -1426,7 +1426,7 @@ class iCalendar {
   * Returns a PostgreSQL Date Format string suitable for returning dates which
   * have been cast to UTC
   */
-  function SqlUTCFormat() {
+  static function SqlUTCFormat() {
     return "'YYYYMMDD\"T\"HH24MISS\"Z\"'";
   }
 
@@ -1435,7 +1435,7 @@ class iCalendar {
   * Returns a PostgreSQL Date Format string suitable for returning iCal durations
   *  - this doesn't work for negative intervals, but events should not have such!
   */
-  function SqlDurationFormat() {
+  static function SqlDurationFormat() {
     return "'\"PT\"HH24\"H\"MI\"M\"'";
   }
 
@@ -1644,7 +1644,7 @@ class iCalendar {
   * @deprecated This function is deprecated and will be removed eventually.
   * @todo Remove this function.
   */
-  function iCalHeader() {
+  static function iCalHeader() {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'iCalHeader' );
     return <<<EOTXT
 BEGIN:VCALENDAR\r
@@ -1662,7 +1662,7 @@ EOTXT;
   * @deprecated This function is deprecated and will be removed eventually.
   * @todo Remove this function.
   */
-  function iCalFooter() {
+  static function iCalFooter() {
     dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'iCalFooter' );
     return "END:VCALENDAR\r\n";
   }

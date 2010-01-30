@@ -220,7 +220,7 @@ class XMLElement {
   */
   function &NewElement( $tagname, $content=false, $attributes=false, $xmlns=null ) {
     if ( gettype($this->content) != "array" ) $this->content = array();
-    $element =& new XMLElement($tagname,$content,$attributes,$xmlns);
+    $element = new XMLElement($tagname,$content,$attributes,$xmlns);
     $this->content[] =& $element;
     return $element;
   }

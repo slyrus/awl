@@ -298,7 +298,7 @@ class MenuSet {
     }
     $this->last_sortkey = $sortkey;
     if ( version_compare(phpversion(), '5.0') < 0) {
-      $new_option =& new MenuOption( $label, $target, $title, $this->main_class, $sortkey );
+      $new_option = new MenuOption( $label, $target, $title, $this->main_class, $sortkey );
     }
     else {
       $new_option = new MenuOption( $label, $target, $title, $this->main_class, $sortkey );

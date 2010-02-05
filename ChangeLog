@@ -1,3 +1,17 @@
+2010-02-01  Andrew McMillan  <andrew@morphoss.com>
+	* Move editor widget class into standard libraries.
+
+2010-01-30  Andrew McMillan  <andrew@morphoss.com>
+	* [MenuSet] Remove deprecated backward compatibility with PHP4.
+	* Comply with E_STRICT and friends.
+	* [PgQuery] Make duration() conditional in case it is defined elsewhere.
+
+2009-12-28  Andrew McMillan  <andrew@morphoss.com>
+	* [XMLElement] Make all properties protected, provide __tostring()
+
+2009-12-27  Andrew McMillan  <andrew@morphoss.com>
+	* [XMLDocument] Fix for NS helpers assigning used NS alias.
+
 2009-11-22  Andrew McMillan  <andrew@morphoss.com>
 	* [classBrowser] Add a Title() get/set method.
 	* [AWLUtilties] Support precision in type names.

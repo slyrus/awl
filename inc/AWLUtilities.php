@@ -103,6 +103,21 @@ if ( !function_exists('dbg_log_array') ) {
 
 
 
+if ( !function_exists("session_simple_md5") ) {
+  /**
+  * Make a plain MD5 hash of a string, identifying the type of hash it is
+  *
+  * @param string $instr The string to be salted and MD5'd
+  * @return string The *MD5* and the MD5 of the string
+  */
+  function session_simple_md5( $instr ) {
+    dbg_error_log( "Login", "Making plain MD5: instr=$instr, md5($instr)=".md5($instr) );
+    return ( '*MD5*'. md5($instr) );
+  }
+}
+
+
+
 if ( !function_exists("session_salted_md5") ) {
   /**
   * Make a salted MD5 string, given a string and (possibly) a salt.
@@ -185,7 +200,12 @@ EOERRMSG;
       }
     }
 
-    if ( preg_match('/^\*(.+)\*.+$/', $we_have, $regs ) ) {
+    if ( preg_match('/^\*MD5\*.+$/', $we_have, $regs ) ) {
+      // A crappy unsalted md5sum like "*MD5*<md5>"
+      $md5_sent = session_simple_md5( $they_sent ) ;
+      return ( $md5_sent == $we_have );
+    }
+    else if ( preg_match('/^\*(.+)\*.+$/', $we_have, $regs ) ) {
       // A nicely salted md5sum like "*<salt>*<salted_md5>"
       $salt = $regs[1];
       $md5_sent = session_salted_md5( $they_sent, $salt ) ;

@@ -67,8 +67,11 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
     else if ( eregi("interval", $typ) )  {
       $value = "'$value'::$typ";
     }
-    else if ( eregi("int", $typ) )  {
+    else if ( eregi("^int", $typ) )  {
       $value = ($value == '' || $value === null ? 'NULL' : intval( $value ));
+    }
+    else if ( eregi("^bit", $typ) )  {
+      $value = ($value == '' || $value === null ? 'NULL' : "'$value'");
     }
     else if ( eregi("(text|varchar)", $typ) )  {
       $value = "'$value'";
@@ -145,8 +148,11 @@ function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
     else if ( eregi("interval", $typ) )  {
       $value = "'$value'::$typ";
     }
-    else if ( eregi("int", $typ) )  {
+    else if ( eregi("^int", $typ) )  {
       $value = ($value == '' || $value === null ? 'NULL' : intval( $value ));
+    }
+    else if ( eregi("^bit", $typ) )  {
+      $value = ($value == '' || $value === null ? 'NULL' : "'$value'");
     }
     else if ( eregi("(text|varchar)", $typ) )  {
       $value = "'$value'";

@@ -83,7 +83,7 @@ function connect_configured_database() {
   </html>
 EOERRMSG;
     if ( isset($c->pg_connect) && is_array($c->pg_connect) ) {
-      dbg_log_array("ERROR", "Connection failed", $c->pg_connect );
+      dbg_error_log("ERROR", "Failed to connect to database" );
     }
     exit;
   }

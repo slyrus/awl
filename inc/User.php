@@ -226,12 +226,12 @@ class User extends DBRecord {
               array( "size" => 50, "title" => translate("The user's e-mail address.")), $this->prefix );
 
     if ( $this->AllowedTo('ChangeActive') ) {
-      $html .= $ef->DataEntryLine( translate("Active"), ($this->Get('active') == 't'? 'Yes' : 'No'), "checkbox", "active",
+      $html .= $ef->DataEntryLine( translate("Active"), ($this->Get('active') == 't'? translate('Yes') : translate('No')), "checkbox", "active",
                 array( "_label" => translate("User is active"),
                       "title" => translate("Is this user active?")), $this->prefix );
     }
     else {
-      $html .= $ef->DataEntryLine( translate("Active"), ($this->Get('active') == 't'? 'Yes' : 'No') );
+      $html .= $ef->DataEntryLine( translate("Active"), ($this->Get('active') == 't'? translate('Yes') : translate('No')) );
     }
 
     $html .= $ef->DataEntryLine( translate("Date Style"), ($this->Get('date_format_type') == 'E' ? 'European' : ($this->Get('date_format_type') == 'U' ? 'US of A' : 'ISO 8861')),

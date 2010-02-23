@@ -2,7 +2,7 @@
 /**
 * Class for editing a record using a templated form.
 *
-* @package   apms
+* @package   awl
 * @subpackage   classEditor
 * @author    Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst IT Ltd, Morphoss Ltd <http://www.morphoss.com/>
@@ -14,7 +14,7 @@ require_once("DataEntry.php");
 
 /**
 * A class for the fields in the editor
-* @package   apms
+* @package   awl
 */
 class EditorField
 {
@@ -95,7 +95,7 @@ class EditorField
 
 /**
 * The class for the Editor form in full
-* @package apms
+* @package awl
 */
 class Editor
 {
@@ -321,7 +321,7 @@ class Editor
         return sprintf('<form method="POST" enctype="multipart/form-data" class="editor" id="%s">', $this->Id);
       case "##submit##":
         $action =  ( $this->RecordAvailable ? 'update' : 'insert' );
-        $submittype = ($this->RecordAvailable ? 'Apply Changes' : 'Create');
+        $submittype = ($this->RecordAvailable ? translate('Apply Changes') : translate('Create'));
         return sprintf('<input type="hidden" name="_editor_action[%s]" value="%s"><input type="submit" class="submit" name="%s" value="%s">',
                                                               $this->Id, $action,                           $this->SubmitName, $submittype );
     }

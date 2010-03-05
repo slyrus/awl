@@ -283,6 +283,20 @@ class Editor
   }
 
 
+  /**
+  * This will assign $_POST values to the internal Values object for each
+  * field that exists in the Fields array.
+  */
+  function PostToValues( $prefix = '' ) {
+    foreach ( $this->Fields AS $fname => $fld ) {
+      @dbg_error_log( 'classEditor', ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
+      if ( isset($_POST[$prefix.$fname]) ) {
+        $this->Record->{$fname} = $_POST[$prefix.$fname];
+        @dbg_error_log( 'classEditor', ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
+      }
+    }
+  }
+
   function GetRecord( $where = "" ) {
     global $session;
     $target_fields = "";

@@ -1,4 +1,13 @@
+2010-03-08  Andrew McMillan  <andrew@morphoss.com>
+	* Release 0.42
+	* Note that the iCalendar class is DEPRECATED.
+	* Don't try to translate null/empty strings.
+
+2010-03-05  Andrew McMillan  <andrew@morphoss.com>
+	* Add a PostToValues() method to update form data from POST.
+
 2010-02-23  Andrew McMillan  <andrew@morphoss.com>
+	* Release 0.41
 	* [classEditor] Make Create/Apply form translatable.
 	* [User] Yes/No should be translatable.
 

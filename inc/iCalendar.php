@@ -886,7 +886,7 @@ class iCalComponent {
 */
 
 /**
-* A Class for handling Events on a calendar
+* A Class for handling Events on a calendar (DEPRECATED)
 *
 * @package awl
 */

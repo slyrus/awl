@@ -62,6 +62,7 @@ if ( !function_exists('translate') ) {
   * Convert a string in English to whatever this user's locale is
   */
   function translate( $en ) {
+    if ( ! isset($en) || $en == '' ) return $en;
     $xl = gettext($en);
     dbg_error_log('I18N','Translated =%s= into =%s=', $en, $xl );
     return $xl;

@@ -1,5 +1,13 @@
 2010-03-08  Andrew McMillan  <andrew@morphoss.com>
 	* Release 0.42
+	* [XMLDocument] Return any created node. Also parse namespace in tag.
+	  These functions are much more useful if we can actually use any
+	  returned reference as another location within a document, so we
+	  can have a hold of the root, and then add within each new tag
+	  we add, supporting outer -> inner construction approaches along
+	  with the existing inner -> outer approach used currently.
+
+2010-03-07  Andrew McMillan  <andrew@morphoss.com>
 	* Note that the iCalendar class is DEPRECATED.
 	* Don't try to translate null/empty strings.
 

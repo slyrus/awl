@@ -176,7 +176,7 @@ class XMLDocument {
     }
 
     if ( isset($namespace) && !isset($this->namespaces[$namespace]) ) $this->AddNamespace( $namespace );
-    $element->NewElement( $tag, $content, $attributes, $namespace );
+    return $element->NewElement( $tag, $content, $attributes, $namespace );
   }
 
 
@@ -189,7 +189,7 @@ class XMLDocument {
   * @param array  $attributes An array of key/value pairs of attributes.
   */
   function DAVElement( &$element, $tag, $content=false, $attributes=false ) {
-    $this->NSElement( $element, $tag, $content, $attributes, 'DAV:' );
+    return $this->NSElement( $element, $tag, $content, $attributes, 'DAV:' );
   }
 
 
@@ -203,7 +203,7 @@ class XMLDocument {
   */
   function CalDAVElement( &$element, $tag, $content=false, $attributes=false ) {
     if ( !isset($this->namespaces['urn:ietf:params:xml:ns:caldav']) ) $this->AddNamespace( 'urn:ietf:params:xml:ns:caldav', 'C' );
-    $this->NSElement( $element, $tag, $content, $attributes, 'urn:ietf:params:xml:ns:caldav' );
+    return $this->NSElement( $element, $tag, $content, $attributes, 'urn:ietf:params:xml:ns:caldav' );
   }
 
 
@@ -217,17 +217,25 @@ class XMLDocument {
   */
   function CalendarserverElement( &$element, $tag, $content=false, $attributes=false ) {
     if ( !isset($this->namespaces['http://calendarserver.org/ns/']) ) $this->AddNamespace( 'http://calendarserver.org/ns/', 'A' );
-    $this->NSElement( $element, $tag, $content, $attributes, 'http://calendarserver.org/ns/' );
+    return $this->NSElement( $element, $tag, $content, $attributes, 'http://calendarserver.org/ns/' );
   }
 
 
   /**
-  * @param string $tagname The tag name of the new element
+  * @param string $in_tag The tag name of the new element, possibly namespaced
   * @param mixed $content Either a string of content, or an array of sub-elements
   * @param array $attributes An array of attribute name/value pairs
   * @param array $xmlns An XML namespace specifier
   */
-  function NewXMLElement( $tagname, $content=false, $attributes=false, $xmlns=null ) {
+  function NewXMLElement( $in_tag, $content=false, $attributes=false, $xmlns=null ) {
+    if ( $xmlns == null && preg_match('/^(.*):([^:]+)$/', $in_tag, $matches) ) {
+      $xmlns = $matches[1];
+      $tagname = $matches[2];
+    }
+    else {
+      $tagname = $in_tag;
+    }
+
     if ( isset($xmlns) && !isset($this->namespaces[$xmlns]) ) $this->AddNamespace( $xmlns );
     return new XMLElement($tagname, $content, $attributes, $xmlns );
   }

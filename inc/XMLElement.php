@@ -6,7 +6,7 @@
 * @subpackage   XMLElement
 * @author    Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Catalyst .Net Ltd, Morphoss Ltd <http://www.morphoss.com/>
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
+* @license   http://www.gnu.org/licenses/lgpl-3.0.txt  GNU LGPL version 3 or later
 */
 
 require_once('AWLUtilities.php');

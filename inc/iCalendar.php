@@ -46,7 +46,8 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 *
 */
-require_once("XMLElement.php");
+require_once('XMLElement.php');
+require_once('PgQuery.php');
 
 /**
 * A Class for representing properties within an iCalendar
@@ -880,7 +881,7 @@ class iCalComponent {
 
 /**
 ************************************************************************************
-* Pretty much everything below here is deprecated and should be avoided in favour
+* Everything below here is deprecated and should be avoided in favour
 * of using, improving and enhancing the more sensible structures above.
 ************************************************************************************
 */
@@ -890,7 +891,7 @@ class iCalComponent {
 *
 * @package awl
 */
-class iCalendar {
+class iCalendar {  // DEPRECATED
   /**#@+
   * @access private
   */
@@ -928,6 +929,7 @@ class iCalendar {
   /**#@-*/
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * The constructor takes an array of args.  If there is an element called 'icalendar'
   * then that will be parsed into the iCalendar object.  Otherwise the array elements
   * are converted into properties of the iCalendar object directly.
@@ -935,6 +937,7 @@ class iCalendar {
   function iCalendar( $args ) {
     global $c;
 
+    dbg_error_log( "LOG", " iCalendar: Constructing instance of deprecated class '%s'", 'iCalendar' );
     $this->tz_locn = "";
     if ( !isset($args) || !(is_array($args) || is_object($args)) ) return;
     if ( is_object($args) ) {
@@ -1002,11 +1005,13 @@ class iCalendar {
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Save any timezones by TZID in the PostgreSQL database for future re-use.
   */
   function SaveTimeZones() {
     global $c;
 
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'SaveTimeZones' );
     $this->tzid_list = array_keys($this->component->CollectParameterValues('TZID'));
     if ( ! isset($this->tzid) && count($this->tzid_list) > 0 ) {
       dbg_error_log( 'iCalendar', "::TZID_List[0] = '%s', count=%d", $this->tzid_list[0], count($this->tzid_list) );
@@ -1065,7 +1070,7 @@ class iCalendar {
   /**
   * An array of property names that we should always want when rendering an iCalendar
   *
-  * @deprecated This function is deprecated and will be removed eventually.
+  * @DEPRECATED: This class will be removed soon.
   * @todo Remove this function.
   */
   function DefaultPropertyList() {
@@ -1084,7 +1089,7 @@ class iCalendar {
   *
   * @return string A string from BEGIN:SOMETHING to END:SOMETHING, possibly multiple of these
   *
-  * @deprecated This function is deprecated and will be removed eventually.
+  * @DEPRECATED: This class will be removed soon.
   * @todo Remove this function.
   */
   function JustThisBitPlease( $type, $count=1 ) {
@@ -1118,7 +1123,7 @@ class iCalendar {
   * @var string The "SOMETHING" from the BEGIN:SOMETHING line we just met
   * @return arrayref An array of the things we found between (excluding) the BEGIN & END, some of which might be sub-arrays
   *
-  * @deprecated This function is deprecated and will be removed eventually.
+  * @DEPRECATED: This class will be removed soon.
   * @todo Remove this function.
   */
   function &ParseSomeLines( $type ) {
@@ -1189,7 +1194,7 @@ class iCalendar {
   *
   * @var string The RFC2445 iCalendar resource to be parsed
   *
-  * @deprecated This function is deprecated and will be removed eventually.
+  * @DEPRECATED: This class will be removed soon.
   * @todo Remove this function.
   */
   function BuildFromText( $icalendar ) {
@@ -1226,7 +1231,7 @@ class iCalendar {
   * @param string $escaped The incoming string to be escaped.
   * @return string The string with RFC2445 content escaping removed.
   *
-  * @deprecated This function is deprecated and will be removed eventually.
+  * @DEPRECATED: This class will be removed soon.
   * @todo Remove this function.
   */
   function RFC2445ContentUnescape( $escaped ) {
@@ -1243,7 +1248,7 @@ class iCalendar {
   * Do what must be done with time zones from on file.  Attempt to turn
   * them into something that PostgreSQL can understand...
   *
-  * @deprecated This function is deprecated and will be removed eventually.
+  * @DEPRECATED: This class will be removed soon.
   * @todo Remove this function.
   */
   function DealWithTimeZones() {
@@ -1298,8 +1303,10 @@ class iCalendar {
 
   /**
   * Get the value of a property in the first non-VTIMEZONE
+  * @DEPRECATED: This class will be removed soon.
   */
   function Get( $key ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'Get' );
     if ( strtoupper($key) == 'TZID' ) {
       // backward compatibility hack
       dbg_error_log( 'iCalendar', " Get(TZID): TZID '%s', Location '%s'", (isset($this->tzid)?$this->tzid:"[not set]"), $this->tz_locn );
@@ -1317,8 +1324,10 @@ class iCalendar {
 
   /**
   * Set the value of a property
+  * @DEPRECATED: This class will be removed soon.
   */
   function Set( $key, $value ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'Set' );
     if ( $value == "" ) return;
     $key = strtoupper($key);
     $property = new iCalProp();
@@ -1332,6 +1341,7 @@ class iCalendar {
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Add a new property/value, regardless of whether it exists already
   *
   * @param string $key The property key
@@ -1339,6 +1349,7 @@ class iCalendar {
   * @param string $parameters Any parameters to set for the property, as an array of key/value pairs
   */
   function Add( $key, $value, $parameters = null ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'Add' );
     if ( $value == "" ) return;
     $key = strtoupper($key);
     $property = new iCalProp();
@@ -1354,6 +1365,7 @@ class iCalendar {
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Get all sub-components, or at least get those matching a type, or failling to match,
   * should the second parameter be set to false.
   *
@@ -1362,84 +1374,102 @@ class iCalendar {
   * @return array an array of the sub-components
   */
   function GetComponents( $type = null, $normal_match = true ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'GetComponents' );
     return $this->component->GetComponents($type,$normal_match);
   }
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Clear all components, or the components matching a particular type
   * @param string $type The type of component - omit for all components
   */
   function ClearComponents( $type = null ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'ClearComponents' );
     $this->component->ClearComponents($type);
   }
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Sets some or all sub-components of the component to the supplied new components
   *
   * @param array of iCalComponent $new_components The new components to replace the existing ones
   * @param string $type The type of components to be replaced.  Defaults to null, which means all components will be replaced.
   */
   function SetComponents( $new_component, $type = null ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'SetComponents' );
     $this->component->SetComponents( $new_component, $type );
   }
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Adds a new subcomponent
   *
   * @param iCalComponent $new_component The new component to append to the set
   */
   function AddComponent( $new_component ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'AddComponent' );
     $this->component->AddComponent($new_component);
   }
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Mask components, removing any that are not of the types in the list
   * @param array $keep An array of component types to be kept
   */
   function MaskComponents( $keep ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'MaskComponents' );
     $this->component->MaskComponents($keep);
   }
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Returns a PostgreSQL Date Format string suitable for returning HTTP (RFC2068) dates
   * Preferred is "Sun, 06 Nov 1994 08:49:37 GMT" so we do that.
   */
   static function HttpDateFormat() {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'HttpDateFormat' );
     return "'Dy, DD Mon IYYY HH24:MI:SS \"GMT\"'";
   }
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Returns a PostgreSQL Date Format string suitable for returning iCal dates
   */
   static function SqlDateFormat() {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'SqlDateFormat' );
     return "'YYYYMMDD\"T\"HH24MISS'";
   }
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Returns a PostgreSQL Date Format string suitable for returning dates which
   * have been cast to UTC
   */
   static function SqlUTCFormat() {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'SqlUTCFormat' );
     return "'YYYYMMDD\"T\"HH24MISS\"Z\"'";
   }
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Returns a PostgreSQL Date Format string suitable for returning iCal durations
   *  - this doesn't work for negative intervals, but events should not have such!
   */
   static function SqlDurationFormat() {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'SqlDurationFormat' );
     return "'\"PT\"HH24\"H\"MI\"M\"'";
   }
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Returns a suitably escaped RFC2445 content string.
   *
   * @param string $name The incoming name[;param] prefixing the string.
@@ -1473,6 +1503,7 @@ class iCalendar {
   }
 
   /**
+  * @DEPRECATED: This class will be removed soon.
    * Return all sub-components of the given type, which are part of the
    * component we pass in as an array of lines.
    *
@@ -1483,6 +1514,7 @@ class iCalendar {
    * @return array The sub-component lines
    */
   function ExtractSubComponent( $component, $type, $count=9999 ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'ExtractSubComponent' );
     $answer = array();
     $intags = false;
     $start = "BEGIN:$type";
@@ -1507,6 +1539,7 @@ class iCalendar {
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
    * Extract a particular property from the provided component.  In doing so we
    * assume that the content was unescaped when iCalComponent::ParseFrom()
    * called iCalComponent::UnwrapComponent().
@@ -1517,6 +1550,7 @@ class iCalendar {
    * @return array An array of iCalProperty objects
    */
   function ExtractProperty( $component, $type, $count=9999 ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'ExtractProperty' );
     $answer = array();
     dbg_error_log( 'iCalendar', ":ExtractProperty: Looking for %d properties of type %s", $count, $type );
     reset($component);
@@ -1532,6 +1566,7 @@ class iCalendar {
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
    * Applies the filter conditions, possibly recursively, to the value which will be either
    * a single property, or an array of lines of the component under test.
    *
@@ -1547,6 +1582,7 @@ class iCalendar {
    * @return boolean Whether the filter passed / failed.
    */
   function ApplyFilter( $filter, $value ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'ApplyFilter' );
     foreach( $filter AS $k => $v ) {
       $tag = $v->GetTag();
       $value_type = gettype($value);
@@ -1612,6 +1648,7 @@ class iCalendar {
   }
 
   /**
+  * @DEPRECATED: This class will be removed soon.
    * Test a PROP-FILTER or COMP-FILTER and return a true/false
    * COMP-FILTER (is-defined | is-not-defined | (time-range?, prop-filter*, comp-filter*))
    * PROP-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))
@@ -1621,6 +1658,7 @@ class iCalendar {
    * @return boolean Whether or not this iCalendar passes the test
    */
   function TestFilter( $filters ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'TestFilter' );
 
     foreach( $filters AS $k => $v ) {
       $tag = $v->GetTag();
@@ -1639,9 +1677,9 @@ class iCalendar {
   }
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Returns the header we always use at the start of our iCalendar resources
   *
-  * @deprecated This function is deprecated and will be removed eventually.
   * @todo Remove this function.
   */
   static function iCalHeader() {
@@ -1657,9 +1695,9 @@ EOTXT;
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Returns the footer we always use at the finish of our iCalendar resources
   *
-  * @deprecated This function is deprecated and will be removed eventually.
   * @todo Remove this function.
   */
   static function iCalFooter() {
@@ -1669,6 +1707,7 @@ EOTXT;
 
 
   /**
+  * @DEPRECATED: This class will be removed soon.
   * Render the iCalendar object as a text string which is a single VEVENT (or other)
   *
   * @param boolean $as_calendar Whether or not to wrap the event in a VCALENDAR
@@ -1676,6 +1715,7 @@ EOTXT;
   * @param array $restrict_properties The names of the properties we want in our rendered result.
   */
   function Render( $as_calendar = true, $type = null, $restrict_properties = null ) {
+    dbg_error_log( "LOG", " iCalendar: Call to deprecated method '%s'", 'Render' );
     if ( $as_calendar ) {
       return $this->component->Render();
     }

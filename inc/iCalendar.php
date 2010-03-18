@@ -850,7 +850,7 @@ class iCalComponent {
         $normmatch = ($matches[1] =='');
         $proptest  = $matches[2];
         foreach( $this->properties AS $k => $v ) {
-          if ( $proptest = '*' || (($v->Name() == $proptest) === $normmatch ) ) {
+          if ( $proptest == '*' || (($v->Name() == $proptest) === $normmatch ) ) {
             $properties[] = $v;
           }
         }

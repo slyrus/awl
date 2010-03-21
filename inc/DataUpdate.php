@@ -440,7 +440,7 @@ class DBRecord
   //    $join = $this->_BuildJoinClause(true);
       $sql = "SELECT $fieldlist FROM $this->Table $where";
       $qry = new PgQuery($sql);
-      if ( $qry->Exec( "DBRecord", __LINE__, __FILE__ ) && $qry->rows > 0 ) {
+      if ( $qry->Exec( "DBRecord", __LINE__, __FILE__ ) && $qry->rows() > 0 ) {
         $i_read_the_record = true;
         $values = $qry->Fetch();
         $this->EditMode = false;  // Default to not editing if we read the record.

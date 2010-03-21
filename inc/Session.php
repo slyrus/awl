@@ -37,7 +37,7 @@ function check_temporary_passwords( $they_sent, $user_no ) {
   $sql = 'SELECT 1 AS ok FROM tmp_password WHERE user_no = ? AND password = ? AND valid_until > current_timestamp';
   $qry = new PgQuery( $sql, $user_no, $they_sent );
   if ( $qry->Exec('Session::check_temporary_passwords') ) {
-    dbg_error_log( "Login", " check_temporary_passwords: Rows = $qry->rows");
+    dbg_error_log( "Login", " check_temporary_passwords: Rows = $qry->rows()");
     if ( $row = $qry->Fetch() ) {
       dbg_error_log( "Login", " check_temporary_passwords: OK = $row->ok");
       // Remove all the temporary passwords for that user...
@@ -176,7 +176,7 @@ class Session
     $sql .= " WHERE session.session_id = ? AND (md5(session.session_start::text) = ? OR session.session_key = ?) ORDER BY session.session_start DESC LIMIT 2";
 
     $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
-    if ( $qry->Exec('Session') && 1 == $qry->rows ) {
+    if ( $qry->Exec('Session') && 1 == $qry->rows() ) {
       $this->AssignSessionDetails( $qry->Fetch() );
       $qry = new PgQuery('UPDATE session SET session_end = current_timestamp WHERE session_id=?', $session_id);
       $qry->Exec('Session');
@@ -184,7 +184,7 @@ class Session
     else {
       //  Kill the existing cookie, which appears to be bogus
       setcookie('sid', '', 0,'/');
-      $this->cause = 'ERR: Other than one session record matches. ' . $qry->rows;
+      $this->cause = 'ERR: Other than one session record matches. ' . $qry->rows();
       $this->Log( "WARN: Login $this->cause" );
     }
   }
@@ -268,7 +268,7 @@ class Session
   function GetRoles () {
     $this->roles = array();
     $qry = new PgQuery( 'SELECT role_name FROM role_member m join roles r ON r.role_no = m.role_no WHERE user_no = ? ', $this->user_no );
-    if ( $qry->Exec('Session::GetRoles') && $qry->rows > 0 ) {
+    if ( $qry->Exec('Session::GetRoles') && $qry->rows() > 0 ) {
       while( $role = $qry->Fetch() ) {
         $this->roles[$role->role_name] = true;
       }
@@ -337,11 +337,11 @@ class Session
 
     $sql = "SELECT * FROM usr WHERE lower(username) = ? AND active";
     $qry = new PgQuery( $sql, strtolower($username) );
-    if ( isset($usr) || ($qry->Exec('Login',__LINE__,__FILE__) && $qry->rows == 1 && $usr = $qry->Fetch() ) ) {
+    if ( isset($usr) || ($qry->Exec('Login',__LINE__,__FILE__) && $qry->rows() == 1 && $usr = $qry->Fetch() ) ) {
       if ( $authenticated || session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {
         // Now get the next session ID to create one from...
         $qry = new PgQuery( "SELECT nextval('session_session_id_seq')" );
-        if ( $qry->Exec('Login') && $qry->rows == 1 ) {
+        if ( $qry->Exec('Login') && $qry->rows() == 1 ) {
           $seq = $qry->Fetch();
           $session_id = $seq->nextval;
           $session_key = md5( rand(1010101,1999999999) . microtime() );  // just some random shite
@@ -387,7 +387,7 @@ class Session
             $sql .= " WHERE session.session_id = ? AND (md5(session.session_start::text) = ? OR session.session_key = ?) ORDER BY session.session_start DESC LIMIT 2";
 
             $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
-            if ( $qry->Exec('Session') && 1 == $qry->rows ) {
+            if ( $qry->Exec('Session') && 1 == $qry->rows() ) {
               $this->AssignSessionDetails( $qry->Fetch() );
             }
 
@@ -439,14 +439,14 @@ class Session
 
     list($md5_user_no,$validation_string) = split( ';', $lsid );
     $qry = new PgQuery( "SELECT * FROM usr WHERE md5(user_no::text)=?;", $md5_user_no );
-    if ( $qry->Exec('Login') && $qry->rows == 1 ) {
+    if ( $qry->Exec('Login') && $qry->rows() == 1 ) {
       $usr = $qry->Fetch();
       list( $x, $salt, $y) = split('\*', $validation_string);
       $my_validation = session_salted_md5($usr->user_no . $usr->username . $usr->password, $salt);
       if ( $validation_string == $my_validation ) {
         // Now get the next session ID to create one from...
         $qry = new PgQuery( "SELECT nextval('session_session_id_seq')" );
-        if ( $qry->Exec('Login') && $qry->rows == 1 ) {
+        if ( $qry->Exec('Login') && $qry->rows() == 1 ) {
           $seq = $qry->Fetch();
           $session_id = $seq->nextval;
           $session_key = md5( rand(1010101,1999999999) . microtime() );  // just some random shite
@@ -483,7 +483,7 @@ class Session
             $sql .= " WHERE session.session_id = ? AND (md5(session.session_start::text) = ? OR session.session_key = ?) ORDER BY session.session_start DESC LIMIT 2";
 
             $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
-            if ( $qry->Exec('Session') && 1 == $qry->rows ) {
+            if ( $qry->Exec('Session') && 1 == $qry->rows() ) {
               $this->AssignSessionDetails( $qry->Fetch() );
             }
 
@@ -648,7 +648,7 @@ EOTEXT;
       $sql = "SELECT * FROM usr $where";
       $qry = new PgQuery( $sql );
       $qry->Exec("Session::EmailTemporaryPassword");
-      if ( $qry->rows > 0 ) {
+      if ( $qry->rows() > 0 ) {
         $sql = "BEGIN;";
 
         $mail = new EMail( "Access to $c->system_name" );

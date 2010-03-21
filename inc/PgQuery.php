@@ -264,7 +264,7 @@ function awl_replace_sql_args() {
 * $sql = "SELECT * FROM mytable WHERE mytype = ?";
 * $qry = new PgQuery( $sql, $myunsanitisedtype );
 * if ( $qry->Exec("typeselect", __line__, __file__ )
-*      && $qry->rows > 0 )
+*      && $qry->rows() > 0 )
 * {
 *   while( $row = $qry->Fetch() ) {
 *     do_something_with($row);
@@ -423,6 +423,12 @@ class PgQuery
     }
   }
 
+  /**
+  * Provide a rows() method for forward compatibility with AwlQuery.
+  */
+  function rows() {
+    return $this->rows;
+  }
 
   /**
   * Quote the given string so it can be safely used within string delimiters

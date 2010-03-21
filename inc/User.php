@@ -149,7 +149,7 @@ class User extends DBRecord {
   function GetRoles () {
     $this->roles = array();
     $qry = new PgQuery( 'SELECT role_name FROM role_member JOIN roles USING (role_no) WHERE user_no = ? ', $this->user_no );
-    if ( $qry->Exec("User") && $qry->rows > 0 ) {
+    if ( $qry->Exec("User") && $qry->rows() > 0 ) {
       while( $role = $qry->Fetch() ) {
         $this->roles[$role->role_name] = 't';
       }
@@ -285,7 +285,7 @@ class User extends DBRecord {
 
       // Select the records
       $q = new PgQuery($sql);
-      if ( $q && $q->Exec("User") && $q->rows ) {
+      if ( $q && $q->Exec("User") && $q->rows() ) {
         $i=0;
         while( $row = $q->Fetch() ) {
           @dbg_error_log("User", ":RenderRoles: Is a member of '%s': %s", $row->role_name, $this->roles[$row->role_name] );

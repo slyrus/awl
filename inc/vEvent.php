@@ -163,7 +163,7 @@ class vEvent {
   function DealWithTimeZones() {
     if ( isset($c->save_time_zone_defs) ) {
       $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $this->properties['TZID'] );
-      if ( $qry->Exec('vEvent') && $qry->rows == 1 ) {
+      if ( $qry->Exec('vEvent') && $qry->rows() == 1 ) {
         $row = $qry->Fetch();
         $this->tz_locn = $row->tz_locn;
       }
@@ -174,7 +174,7 @@ class vEvent {
       $this->tz_locn = preg_replace('/^.*([a-z]+\/[a-z]+)$/i','$1',$this->properties['TZID'] );
     }
 
-    if ( isset($c->save_time_zone_defs) && $qry->rows != 1 ) {
+    if ( isset($c->save_time_zone_defs) && $qry->rows() != 1 ) {
       $qry2 = new PgQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
                                    $this->properties['TZID'], $this->tz_locn, $this->properties['VTIMEZONE'] );
       $qry2->Exec("vEvent");

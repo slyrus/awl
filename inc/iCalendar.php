@@ -1041,13 +1041,13 @@ class iCalendar {  // DEPRECATED
         $tzid = $tz->GetPValue('TZID');
 
         $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
-        if ( $qry->Exec('iCalendar') && $qry->rows == 1 ) {
+        if ( $qry->Exec('iCalendar') && $qry->rows() == 1 ) {
           $row = $qry->Fetch();
           if ( !isset($first_tzid) ) $first_tzid = $row->tz_locn;
           continue;
         }
 
-        if ( $tzid != "" && $qry->rows == 0 ) {
+        if ( $tzid != "" && $qry->rows() == 0 ) {
 
           $tzname = $tz->GetPValue('X-LIC-LOCATION');
           if ( !isset($tzname) ) {
@@ -1271,11 +1271,11 @@ class iCalendar {  // DEPRECATED
     $tzid = $this->Get('TZID');
     if ( isset($c->save_time_zone_defs) && $c->save_time_zone_defs ) {
       $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
-      if ( $qry->Exec('iCalendar') && $qry->rows == 1 ) {
+      if ( $qry->Exec('iCalendar') && $qry->rows() == 1 ) {
         $row = $qry->Fetch();
         $this->tz_locn = $row->tz_locn;
       }
-      dbg_error_log( 'iCalendar', " TZCrap2: TZID '%s', DB Rows=%d, Location '%s'", $tzid, $qry->rows, $this->tz_locn );
+      dbg_error_log( 'iCalendar', " TZCrap2: TZID '%s', DB Rows=%d, Location '%s'", $tzid, $qry->rows(), $this->tz_locn );
     }
 
     if ( (!isset($this->tz_locn) || $this->tz_locn == '') && $tzid != '' ) {
@@ -1302,7 +1302,7 @@ class iCalendar {  // DEPRECATED
       dbg_error_log( 'iCalendar', " TZCrap3: TZID '%s', Location '%s', Perhaps: %s", $tzid, $this->tz_locn, $tzname );
     }
 
-    if ( $tzid != '' && isset($c->save_time_zone_defs) && $c->save_time_zone_defs && $qry->rows != 1 && isset($this->vtimezone) && $this->vtimezone != "" ) {
+    if ( $tzid != '' && isset($c->save_time_zone_defs) && $c->save_time_zone_defs && $qry->rows() != 1 && isset($this->vtimezone) && $this->vtimezone != "" ) {
       $qry2 = new PgQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
                                    $tzid, $this->tz_locn, $this->vtimezone );
       $qry2->Exec('iCalendar');

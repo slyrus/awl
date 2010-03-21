@@ -61,12 +61,12 @@ EOERRMSG;
 
   $qry = new PgQuery("SELECT $cols FROM usr WHERE lower(username) = ? $andwhere", strtolower($username) );
   $qry->SetConnection($authconn);
-  if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows == 1 ) {
+  if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows() == 1 ) {
     $usr = $qry->Fetch();
     if ( session_validate_password( $password, $usr->password ) ) {
 
       $qry = new PgQuery("SELECT * FROM usr WHERE user_no = $usr->user_no;" );
-      if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows == 1 )
+      if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows() == 1 )
         $type = "UPDATE";
       else
         $type = "INSERT";
@@ -98,7 +98,7 @@ function auth_external( $username, $password ) {
   global $c;
 
   $qry = new PgQuery("SELECT * FROM usr WHERE active AND lower(username) = ? ", strtolower($username) );
-  if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows == 1 ) {
+  if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows() == 1 ) {
     $usr = $qry->Fetch();
     return $usr;
   }

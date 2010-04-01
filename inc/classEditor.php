@@ -31,7 +31,6 @@ class EditorField
     $this->Sql        = $sql;
     $this->LookupSql  = $lookup_sql;
     $this->Attributes = array();
-    $session->Log("DBG: New field '%s' SQL='%s', Lookup='%s'", $field, $sql, $lookup_sql );
   }
 
   function Set($value) {
@@ -142,7 +141,7 @@ class Editor
         }
       }
     }
-    dbg_error_log("classEditor", "DBG: New editor called $title");
+    @dbg_error_log( 'editor', 'DBG: New editor called %s', $title);
   }
 
   function &AddField( $field, $sql="", $lookup_sql="" ) {
@@ -217,7 +216,7 @@ class Editor
     $is_update = $this->Available();
     if ( isset( $_POST['_editor_action']) && isset( $_POST['_editor_action'][$this->Id]) ) {
       $is_update = ( $_POST['_editor_action'][$this->Id] == 'update' );
-      dbg_error_log("ERROR", "Checking update: %s => %d", $_POST['_editor_action'][$this->Id], $is_update );
+      @dbg_error_log( 'editor', 'Checking update: %s => %d', $_POST['_editor_action'][$this->Id], $is_update );
     }
     return $is_update;
   }
@@ -289,10 +288,10 @@ class Editor
   */
   function PostToValues( $prefix = '' ) {
     foreach ( $this->Fields AS $fname => $fld ) {
-      @dbg_error_log( 'classEditor', ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
+      @dbg_error_log( 'editor', ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
       if ( isset($_POST[$prefix.$fname]) ) {
         $this->Record->{$fname} = $_POST[$prefix.$fname];
-        @dbg_error_log( 'classEditor', ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
+        @dbg_error_log( 'editor', ":PostToValues: %s => %s", $fname, $_POST["$prefix$fname"] );
       }
     }
   }
@@ -308,7 +307,7 @@ class Editor
     $sql = sprintf( "SELECT %s FROM %s %s WHERE %s %s %s",
              $target_fields, $this->BaseTable, $this->Joins, $where, $this->Order, $this->Limit);
     $this->Query = new PgQuery( $sql );
-    $session->Log("DBG: EditorGetQry: %s", $sql );
+    @dbg_error_log( 'editor', "DBG: EditorGetQry: %s", $sql );
     if ( $this->Query->Exec("Browse:$this->Title:DoQuery") ) {
       $this->Record = $this->Query->Fetch();
       $this->RecordAvailable = is_object($this->Record);
@@ -370,7 +369,7 @@ class Editor
           $option_list = $field->OptionList;
         }
         else {
-          $session->Log("DBG: Current=%s, OptionQuery: %s", $currval, $field->LookupSql );
+          @dbg_error_log( 'editor', "DBG: Current=%s, OptionQuery: %s", $currval, $field->LookupSql );
           $opt_qry = new PgQuery( $field->LookupSql );
           $option_list = $opt_qry->BuildOptionList($currval, "FieldOptions: $field_name" );
           $field->OptionList = $option_list;
@@ -384,7 +383,7 @@ class Editor
           $option_list = $field->OptionList;
         }
         else {
-          $session->Log("DBG: Current=%s, OptionQuery: %s", $currval, $field->LookupSql );
+          @dbg_error_log( 'editor', "DBG: Current=%s, OptionQuery: %s", $currval, $field->LookupSql );
           $opt_qry = new PgQuery( $field->LookupSql );
           $option_list = $opt_qry->BuildOptionList($currval, "FieldOptions: $field_name" );
           $field->OptionList = $option_list;
@@ -439,7 +438,7 @@ class Editor
   * Render the templated component.  The heavy lifting is done by the callback...
   */
   function Render( $title_tag = null ) {
-    dbg_error_log("classEditor", "Rendering editor $this->Title" );
+    @dbg_error_log( 'editor', "classEditor", "Rendering editor $this->Title" );
     if ( $this->Template == "" ) $this->DefaultTemplate();
 
     $html = sprintf('<div class="editor" id="%s">', $this->Id);
@@ -464,7 +463,7 @@ class Editor
   function Write( $is_update = null ) {
     global $c, $component;
 
-    dbg_error_log("classEditor", "DBG: Writing editor $this->Title");
+    @dbg_error_log( 'editor', 'DBG: Writing editor %s', $this->Title);
 
     if ( !isset($is_update) ) {
       if ( isset( $_POST['_editor_action']) && isset( $_POST['_editor_action'][$this->Id]) ) {
@@ -477,7 +476,7 @@ class Editor
         */
         // Then we dvine the action by looking at the submit button value...
         $is_update = preg_match( '/(save|update|apply)/i', $_POST[$this->SubmitName] );
-        dbg_error_log("ERROR", $_SERVER['REQUEST_URI']. " is using a deprecated method for controlling insert/update" );
+        dbg_error_log('WARN', $_SERVER['REQUEST_URI']. " is using a deprecated method for controlling insert/update" );
       }
     }
     $this->Action = ( $is_update ? "update" : "create" );

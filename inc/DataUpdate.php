@@ -56,24 +56,24 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
                      )
                  );
     }
-    if ( eregi("(time|date|interval)", $typ ) && $value == "" ) {
+    if ( preg_match('{^(time|date|interval)}i', $typ ) && $value == "" ) {
       $value = "NULL";
     }
-    else if ( eregi("bool", $typ) )  {
+    else if ( preg_match('{^bool}i', $typ) )  {
       $value = ( $value == false || $value == "f" || $value == "off" || $value == "no" ? "FALSE"
                   : ( $value == true || $value == "t" || $value == "on" || $value == "yes" ? "TRUE"
                       : "NULL" ));
     }
-    else if ( eregi("interval", $typ) )  {
+    else if ( preg_match('{^interval}i', $typ) )  {
       $value = "'$value'::$typ";
     }
-    else if ( eregi("^int", $typ) )  {
+    else if ( preg_match('{^int}i', $typ) )  {
       $value = ($value == '' || $value === null ? 'NULL' : intval( $value ));
     }
-    else if ( eregi("^bit", $typ) )  {
+    else if ( preg_match('{^bit}i', $typ) )  {
       $value = ($value == '' || $value === null ? 'NULL' : "'$value'");
     }
-    else if ( eregi("(text|varchar)", $typ) )  {
+    else if ( preg_match('{^(text|varchar)}i', $typ) )  {
       $value = "'$value'";
     }
     else
@@ -108,75 +108,8 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
 * @return string An SQL Update or Insert statement with all fields/values from the array.
 */
 function sql_from_post( $type, $tablename, $where, $fprefix = "" ) {
-  $fields = get_fields($tablename);
-  $update = strtolower($type) == "update";
-  if ( $update )
-    $sql = "UPDATE $tablename SET ";
-  else
-    $sql = "INSERT INTO $tablename (";
-
-  $flst = "";
-  $vlst = "";
-  foreach( $fields as $fn => $typ ) {
-    $fn = $fprefix . $fn;
-    dbg_error_log( "DataUpdate", ":sql_from_post: $fn => $typ (".(isset($_POST[$fn])?$_POST[$fn]:'##null##').")");
-    if ( !isset($_POST[$fn]) && isset($_POST["xxxx$fn"]) ) {
-      // Sometimes we will have prepended 'xxxx' to the field name so that the field
-      // name differs from the column name in the database.
-      $_POST[$fn] = $_POST["xxxx$fn"];
-      dbg_error_log( "DataUpdate", ":sql_from_post: xxxx$fn => $typ (".$_POST[$fn].")");
-    }
-    if ( !isset($_POST[$fn]) ) continue;
-    $value = str_replace( "'", "''", str_replace("\\", "\\\\", $_POST[$fn]));
-    if ( $fn == "password" ) {
-      if ( $value == "******" || $value == "" ) continue;
-      if ( !preg_match('/\*[0-9a-z]+\*[0-9a-z{}]+/i', $value ) )
-        $value = (function_exists("session_salted_sha1")
-                   ? session_salted_sha1($value)
-                   : (function_exists('session_salted_md5')
-                       ? session_salted_md5($value)
-                       : md5($value)
-                     )
-                 );
-    }
-    if ( eregi("(time|date|interval)", $typ ) && $value == "" ) {
-      $value = "NULL";
-    }
-    else if ( eregi("bool", $typ) )  {
-      $value = ( $value == "f" || $value == "off" ? "FALSE" : "TRUE" );
-    }
-    else if ( eregi("interval", $typ) )  {
-      $value = "'$value'::$typ";
-    }
-    else if ( eregi("^int", $typ) )  {
-      $value = ($value == '' || $value === null ? 'NULL' : intval( $value ));
-    }
-    else if ( eregi("^bit", $typ) )  {
-      $value = ($value == '' || $value === null ? 'NULL' : "'$value'");
-    }
-    else if ( eregi("(text|varchar)", $typ) )  {
-      $value = "'$value'";
-    }
-    else
-      $value = "'$value'::$typ";
-
-    if ( $update )
-      $flst .= ", $fn = $value";
-    else {
-      $flst .= ", $fn";
-      $vlst .= ", $value";
-    }
-  }
-  $flst = substr($flst,2);
-  $vlst = substr($vlst,2);
-  $sql .= $flst;
-  if ( $update ) {
-    $sql .= " $where; ";
-  }
-  else {
-    $sql .= ") VALUES( $vlst ); ";
-  }
- return $sql;
+  $fakeobject = (object) $_POST;
+  return sql_from_object( $fakeobject, $type, $tablename, $where, $fprefix );
 }
 
 

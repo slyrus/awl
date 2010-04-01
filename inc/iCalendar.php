@@ -427,7 +427,6 @@ class iCalComponent {
       }
       else if ( $type == null ) {
         dbg_error_log( 'iCalendar', "::ParseFrom: Ignoring crap after end of component");
-        unset($lines[$k]);  // The content has crap after the end
         if ( $line != "" ) $this->rendered = null;
       }
       else if ( $line == $finish ) {

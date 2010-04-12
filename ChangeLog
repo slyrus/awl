@@ -1,3 +1,20 @@
+2010-04-12  Andrew McMillan  <andrew@morphoss.com>
+	* [AwlQuery] Move new database libraries into AWL
+
+2010-04-01  Andrew McMillan  <andrew@morphoss.com>
+	* [classEditor] Tidy up logging.
+	* [DataUpdate] Merge sql_from_post() and sql_from_object().
+
+2010-03-21  Andrew McMillan  <andrew@morphoss.com>
+	* [PgQuery] Add forward compatibility rows() method.
+
+2010-03-18  Andrew McMillan  <andrew@morphoss.com>
+	* [iCalendar] Provide a better deprecation indication.
+	* [iCalendar] Add explicit need for PgQuery and mark stuff deprecated.
+
+2010-03-10  Andrew McMillan  <andrew@morphoss.com>
+	* Switch to LGPL v3 license.
+
 2010-03-08  Andrew McMillan  <andrew@morphoss.com>
 	* Release 0.42
 	* [XMLDocument] Return any created node. Also parse namespace in tag.

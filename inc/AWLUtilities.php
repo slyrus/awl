@@ -60,19 +60,17 @@ if ( !function_exists('apache_request_headers') ) {
   * Compatibility so we can use the apache function name and still work with CGI
   * @package awl
   */
-  function apache_request_headers() {
-    eval('
-        function apache_request_headers() {
-            foreach($_SERVER as $key=>$value) {
-                if (substr($key,0,5)=="HTTP_") {
-                    $key=str_replace(" ","-",ucwords(strtolower(str_replace("_"," ",substr($key,5)))));
-                    $out[$key]=$value;
-                }
+  eval('
+    function apache_request_headers() {
+        foreach($_SERVER as $key=>$value) {
+            if (substr($key,0,5)=="HTTP_") {
+                $key=str_replace(" ","-",ucwords(strtolower(str_replace("_"," ",substr($key,5)))));
+                $out[$key]=$value;
             }
-            return $out;
         }
-    ');
-  }
+        return $out;
+    }
+  ');
 }
 
 

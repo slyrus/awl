@@ -1049,12 +1049,7 @@ class iCalendar {  // DEPRECATED
         if ( $tzid != "" && $qry->rows() == 0 ) {
 
           $tzname = $tz->GetPValue('X-LIC-LOCATION');
-          if ( !isset($tzname) ) {
-            /**
-            * Try and convert the TZID to a string like "Pacific/Auckland" if possible.
-            */
-            $tzname = preg_replace('#^(.*[^a-z])?([a-z]+/[a-z]+)$#i','$2',$tzid );
-          }
+          if ( !isset($tzname) ) $tzname = olson_from_tzstring($tzid);
 
           $qry2 = new PgQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
                                       $tzid, $tzname, $tz->Render() );

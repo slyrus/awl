@@ -3,7 +3,7 @@
   <html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
 			<!-- template designed by Marco Von Ballmoos  -->
-			<title>Docs for page EMail.php</title>
+			<title>Docs for page AwlDatabase.php</title>
 			<link rel="stylesheet" href="../../media/stylesheet.css" />
 						<script src="../../media/lib/classTree.js"></script>
 												<script language="javascript" type="text/javascript">
@@ -85,7 +85,7 @@
 					</head>
 		<body>
 			<div class="page-body">			
-<h2 class="file-name"><img src="../../media/images/Page_logo.png" alt="File" style="vertical-align: middle">/EMail.php</h2>
+<h2 class="file-name"><img src="../../media/images/Page_logo.png" alt="File" style="vertical-align: middle">/AwlDatabase.php</h2>
 
 <a name="sec-description"></a>
 <div class="info-box">
@@ -97,11 +97,15 @@
 												</div>
 	<div class="info-box-body">	
 		<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Lightweight class for sending an e-mail.</p>
+<p class="short-description">AwlDatabase query/statement class and associated functions</p>
+<p class="description"><p>This subpackage provides some functions that are useful around database  activity and a AwlDBDialect, AwlDatabase and AwlStatement classes to simplify  handling of database queries and provide some access for a limited  ability to handle varying database dialects.</p><p>The class is intended to be a very lightweight wrapper with some features  that have proved useful in developing and debugging web-based applications: <ul><li>All queries are timed, and an expected time can be provided.</li><li>Parameters replaced into the SQL will be escaped correctly in order to
+    minimise the chances of SQL injection errors.</li><li>Queries which fail, or which exceed their expected execution time, will
+    be logged for potential further analysis.</li><li>Debug logging of queries may be enabled globally, or restricted to
+    particular sets of queries.</li><li>Simple syntax for iterating through a result set.</li></ul>  See http://wiki.davical.org/w/AwlDatabase for design and usage information.</p><p>If not already connected, AwlDatabase will attempt to connect to the database,  successively applying connection parameters from the array in $c-&gt;pdo_connect.</p><p>We will die if the database is not currently connected and we fail to find  a working connection.</p></p>
 	<ul class="tags">
-				<li><span class="field">author:</span> Andrew McMillan &lt;<a href="mailto:andrew@mcmillan.net.nz">andrew@mcmillan.net.nz</a>&gt;</li>
-				<li><span class="field">copyright:</span> Catalyst IT Ltd</li>
-				<li><span class="field">license:</span> <a href="http://gnu.org/copyleft/gpl.html">GNU GPL v2 or later</a></li>
+				<li><span class="field">author:</span> Andrew McMillan &lt;<a href="mailto:andrew@morphoss.com">andrew@morphoss.com</a>&gt;</li>
+				<li><span class="field">copyright:</span> Morphoss Ltd</li>
+				<li><span class="field">license:</span> <a href="http://gnu.org/copyleft/gpl.html">GNU GPL v3 or later</a></li>
 			</ul>
 		
 			</div>
@@ -126,10 +130,10 @@
 						<img src="../../media/images/Class.png"
 								 alt=" class"
 								 title=" class"/>
-						<a href="../../awl/EMail/EMail.html">EMail</a>
+						<a href="../../awl/AwlDatabase/AwlDatabase.html">AwlDatabase</a>
 					</td>
 					<td>
-											Lightweight class for sending an e-mail.
+											Typically there will only be a single instance of the database level class in an application.
 										</td>
 				</tr>
 							</table>
@@ -145,15 +149,15 @@
 				|						<span class="disabled">Includes</span>
 														</div>
 		<div class="info-box-body">	
-			<a name="_AWLUtilities_php"><!-- --></a>
-<div class="evenrow">
+			<a name="_AwlDBDialect_php"><!-- --></a>
+<div class="oddrow">
 	
 	<div>
 		<img src="../../media/images/Page.png" alt=" " />
 		<span class="include-title">
-			<span class="include-type">require_once</span>
-			(<span class="include-name"><a href="../../awl/Utilities/_AWLUtilities.php.html">"AWLUtilities.php"</a></span>)
-			(line <span class="line-number">11</span>)
+			<span class="include-type">require</span>
+			(<span class="include-name"><a href="../../awl/AwlDatabase/_AwlDBDialect.php.html">'AwlDBDialect.php'</a></span>)
+			(line <span class="line-number">37</span>)
 		</span>
 	</div>
 
@@ -167,7 +171,7 @@
 	
 	
 	<p class="notes" id="credit">
-		Documentation generated on Thu, 15 Apr 2010 20:23:04 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
+		Documentation generated on Thu, 15 Apr 2010 20:23:01 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
 	</p>
 	</div></body>
 </html>

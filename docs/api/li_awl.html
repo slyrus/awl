@@ -164,6 +164,70 @@ if (document.getElementById) {
 			subpackagetree.add(subpackagetree_file);
 			
 	  tree.add(subpackagetree);
+							var subpackagetree = new WebFXTreeItem('<span class="sub-package">AwlDatabase</span>', '');
+		
+		subpackagetree.openIcon = 'media/images/package.png';
+		subpackagetree.icon = 'media/images/package.png';
+
+			
+					var subpackagetree_classe = new WebFXTreeItem('Class(es)', '');
+			subpackagetree_classe.openIcon = 'media/images/class_folder.png';
+			subpackagetree_classe.icon = 'media/images/class_folder.png';
+			
+							var classe = new WebFXTreeItem('AwlDatabase', 'awl/AwlDatabase/AwlDatabase.html');
+				classe.openIcon = 'media/images/Class.png';
+				classe.icon = 'media/images/Class.png';
+				subpackagetree_classe.add(classe);
+							var classe = new WebFXTreeItem('AwlDBDialect', 'awl/AwlDatabase/AwlDBDialect.html');
+				classe.openIcon = 'media/images/Class.png';
+				classe.icon = 'media/images/Class.png';
+				subpackagetree_classe.add(classe);
+							var classe = new WebFXTreeItem('AwlQuery', 'awl/AwlDatabase/AwlQuery.html');
+				classe.openIcon = 'media/images/Class.png';
+				classe.icon = 'media/images/Class.png';
+				subpackagetree_classe.add(classe);
+							var classe = new WebFXTreeItem('AwlUpgrader', 'awl/AwlDatabase/AwlUpgrader.html');
+				classe.openIcon = 'media/images/Class.png';
+				classe.icon = 'media/images/Class.png';
+				subpackagetree_classe.add(classe);
+						
+			subpackagetree.add(subpackagetree_classe);
+		
+					var subpackagetree_function = new WebFXTreeItem('Function(s)', '');
+			subpackagetree_function.openIcon = 'media/images/function_folder.png';
+			subpackagetree_function.icon = 'media/images/function_folder.png';
+			
+							var fic = new WebFXTreeItem('_awl_connect_configured_database', 'awl/AwlDatabase/_AwlQuery.php.html#function_awl_connect_configured_database');
+				fic.openIcon = 'media/images/Function.png';
+				fic.icon = 'media/images/Function.png';
+				subpackagetree_function.add(fic);
+						
+			subpackagetree.add(subpackagetree_function);
+				
+					var subpackagetree_file = new WebFXTreeItem('File(s)', '');
+			subpackagetree_file.openIcon = 'media/images/folder.png';
+			subpackagetree_file.icon = 'media/images/folder.png';
+			
+							var file = new WebFXTreeItem('AwlDatabase.php', 'awl/AwlDatabase/_AwlDatabase.php.html');
+				file.openIcon = 'media/images/Page.png';
+				file.icon = 'media/images/Page.png';
+				subpackagetree_file.add(file);
+							var file = new WebFXTreeItem('AwlDBDialect.php', 'awl/AwlDatabase/_AwlDBDialect.php.html');
+				file.openIcon = 'media/images/Page.png';
+				file.icon = 'media/images/Page.png';
+				subpackagetree_file.add(file);
+							var file = new WebFXTreeItem('AwlQuery.php', 'awl/AwlDatabase/_AwlQuery.php.html');
+				file.openIcon = 'media/images/Page.png';
+				file.icon = 'media/images/Page.png';
+				subpackagetree_file.add(file);
+							var file = new WebFXTreeItem('AwlUpgrader.php', 'awl/AwlDatabase/_AwlUpgrader.php.html');
+				file.openIcon = 'media/images/Page.png';
+				file.icon = 'media/images/Page.png';
+				subpackagetree_file.add(file);
+					
+			subpackagetree.add(subpackagetree_file);
+			
+	  tree.add(subpackagetree);
 							var subpackagetree = new WebFXTreeItem('<span class="sub-package">Browser</span>', '');
 		
 		subpackagetree.openIcon = 'media/images/package.png';
@@ -369,6 +433,16 @@ if (document.getElementById) {
 						
 			subpackagetree.add(subpackagetree_classe);
 		
+					var subpackagetree_function = new WebFXTreeItem('Function(s)', '');
+			subpackagetree_function.openIcon = 'media/images/function_folder.png';
+			subpackagetree_function.icon = 'media/images/function_folder.png';
+			
+							var fic = new WebFXTreeItem('deprecated', 'awl/iCalendar/_iCalendar.php.html#functiondeprecated');
+				fic.openIcon = 'media/images/Function.png';
+				fic.icon = 'media/images/Function.png';
+				subpackagetree_function.add(fic);
+						
+			subpackagetree.add(subpackagetree_function);
 				
 					var subpackagetree_file = new WebFXTreeItem('File(s)', '');
 			subpackagetree_file.openIcon = 'media/images/folder.png';
@@ -609,10 +683,6 @@ if (document.getElementById) {
 			subpackagetree_function.openIcon = 'media/images/function_folder.png';
 			subpackagetree_function.icon = 'media/images/function_folder.png';
 			
-							var fic = new WebFXTreeItem('apache_request_headers', 'awl/Utilities/_AWLUtilities.php.html#functionapache_request_headers');
-				fic.openIcon = 'media/images/Function.png';
-				fic.icon = 'media/images/Function.png';
-				subpackagetree_function.add(fic);
 							var fic = new WebFXTreeItem('clean_by_regex', 'awl/Utilities/_AWLUtilities.php.html#functionclean_by_regex');
 				fic.openIcon = 'media/images/Function.png';
 				fic.icon = 'media/images/Function.png';
@@ -634,6 +704,10 @@ if (document.getElementById) {
 				fic.icon = 'media/images/Function.png';
 				subpackagetree_function.add(fic);
 							var fic = new WebFXTreeItem('get_fields', 'awl/Utilities/_AWLUtilities.php.html#functionget_fields');
+				fic.openIcon = 'media/images/Function.png';
+				fic.icon = 'media/images/Function.png';
+				subpackagetree_function.add(fic);
+							var fic = new WebFXTreeItem('olson_from_tzstring', 'awl/Utilities/_AWLUtilities.php.html#functionolson_from_tzstring');
 				fic.openIcon = 'media/images/Function.png';
 				fic.icon = 'media/images/Function.png';
 				subpackagetree_function.add(fic);

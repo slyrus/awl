@@ -8,6 +8,10 @@
 											</head>
 		<body>
 						<a href="#Post-parsing">Post-parsing</a><br>
+<a href="#AwlDatabase.php">AwlDatabase.php</a><br>
+<a href="#AwlDBDialect.php">AwlDBDialect.php</a><br>
+<a href="#AwlQuery.php">AwlQuery.php</a><br>
+<a href="#AwlUpgrader.php">AwlUpgrader.php</a><br>
 <a href="#AWLUtilities.php">AWLUtilities.php</a><br>
 <a href="#classBrowser.php">classBrowser.php</a><br>
 <a href="#classEditor.php">classEditor.php</a><br>
@@ -22,6 +26,12 @@
 <a href="#Validation.php">Validation.php</a><br>
 <a href="#XMLDocument.php">XMLDocument.php</a><br>
 <a href="#XMLElement.php">XMLElement.php</a><br>
+<a name="Post-parsing"></a>
+<h1>Post-parsing</h1>
+<h2>Warnings:</h2><br>
+<b>Warning</b> - 
+duplicate define element "E_USER_ERROR" in file /home/andrew/projects/awl/inc/AwlDatabase.php will be ignored.
+Use an @ignore tag on the original if you want this case to be documented.<br>
 <a name="AuthPlugins.php"></a>
 <h1>AuthPlugins.php</h1>
 <h2>Warnings:</h2><br>
@@ -29,6 +39,26 @@
 <h2>Errors:</h2><br>
 <b>Error on line 86</b> - DocBlock has multiple @package tags, illegal. ignoring additional tag "@package awl"<br>
 <b>Error on line 106</b> - DocBlock has multiple @package tags, illegal. ignoring additional tag "@package awl"<br>
+<a name="AwlDatabase.php"></a>
+<h1>AwlDatabase.php</h1>
+<h2>Warnings:</h2><br>
+<b>Warning on line 36</b> - Unknown tag "@compatibility" used<br>
+<b>Warning on line 36</b> - Page-level DocBlock precedes "require 'AwlDBDialect.php'", use another DocBlock to document the source element<br>
+<a name="AwlDBDialect.php"></a>
+<h1>AwlDBDialect.php</h1>
+<h2>Warnings:</h2><br>
+<b>Warning on line 17</b> - Page-level DocBlock precedes "define E_USER_ERROR", use another DocBlock to document the source element<br>
+<b>Warning on line 17</b> - Unknown tag "@compatibility" used<br>
+<a name="AwlQuery.php"></a>
+<h1>AwlQuery.php</h1>
+<h2>Warnings:</h2><br>
+<b>Warning on line 10</b> - Unknown tag "@compatibility" used<br>
+<b>Warning on line 10</b> - Page-level DocBlock precedes "require_once 'AwlDatabase.php'", use another DocBlock to document the source element<br>
+<a name="AwlUpgrader.php"></a>
+<h1>AwlUpgrader.php</h1>
+<h2>Warnings:</h2><br>
+<b>Warning on line 10</b> - Page-level DocBlock precedes "require_once 'AwlQuery.php'", use another DocBlock to document the source element<br>
+<b>Warning on line 10</b> - Unknown tag "@compatibility" used<br>
 <a name="classBrowser.php"></a>
 <h1>classBrowser.php</h1>
 <h2>Warnings:</h2><br>
@@ -52,22 +82,50 @@
 <a name="iCalendar.php"></a>
 <h1>iCalendar.php</h1>
 <h2>Warnings:</h2><br>
-<b>Warning on line 48</b> - example file "To parse an existing iCalendar string for manipulation:
-   $ical = new iCalendar( array('icalendar' => $icalendar_text ) );" does not exist<br>
+<b>Warning on line 48</b> - Page-level DocBlock precedes "require_once 'XMLElement.php'", use another DocBlock to document the source element<br>
 <b>Warning on line 48</b> - example file "To replace any 'RRULE' property in an iCalendar object
    $ical->component->SetProperties( 'RRULE', $rrule_definition );" does not exist<br>
-<b>Warning on line 48</b> - Page-level DocBlock precedes "require_once "XMLElement.php"", use another DocBlock to document the source element<br>
 <b>Warning on line 48</b> - example file "To render just the VEVENTs in the iCalendar with a restricted list of properties:
    echo $ical->Render( false, 'VEVENT', array( 'DTSTART', 'DURATION', 'DTEND', 'RRULE', 'SUMMARY') );" does not exist<br>
-<b>Warning on line 48</b> - example file "To clear any 'VALARM' components in an iCalendar object
-   $ical->component->ClearComponents('VALARM');" does not exist<br>
 <b>Warning on line 48</b> - example file "To render it as an iCalendar string:
    echo $ical->Render();" does not exist<br>
+<b>Warning on line 48</b> - example file "To clear any 'VALARM' components in an iCalendar object
+   $ical->component->ClearComponents('VALARM');" does not exist<br>
+<b>Warning on line 48</b> - example file "To parse an existing iCalendar string for manipulation:
+   $ical = new iCalendar( array('icalendar' => $icalendar_text ) );" does not exist<br>
 <b>Warning on line 48</b> - example file "To create a new iCalendar from several data values:
    $ical = new iCalendar( array('DTSTART' => $dtstart, 'SUMMARY' => $summary, 'DURATION' => $duration ) );" does not exist<br>
 <b>Warning on line 836</b> - Unknown tag "@note" used<br>
+<b>Warning on line 948</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1022</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1082</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1101</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1135</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1206</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1243</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1260</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1314</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1335</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1357</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1382</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1393</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1406</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1418</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1429</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1440</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1449</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1459</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1469</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1483</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1518</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1554</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1586</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1662</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1687</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1704</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1718</b> - Unknown tag "@DEPRECATED:" used<br>
 <h2>Errors:</h2><br>
-<b>Error on line 1089</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var integer The number of SOMETHINGS we want to get."<br>
+<b>Error on line 1101</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var integer The number of SOMETHINGS we want to get."<br>
 <a name="MenuSet.php"></a>
 <h1>MenuSet.php</h1>
 <h2>Warnings:</h2><br>
@@ -102,12 +160,11 @@
 <h2>Errors:</h2><br>
 <b>Error on line 26</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var [string ...] Parameters for the format string."<br>
 <b>Error on line 26</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var string A format string for the log message"<br>
-<b>Error on line 74</b> - DocBlock has multiple @package tags, illegal. ignoring additional tag "@package awl"<br>
-<b>Error on line 88</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var boolean Should the dump recurse into arrays/objects in the array"<br>
-<b>Error on line 88</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var string What name should this array dump identify itself as"<br>
-<b>Error on line 88</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var array The array to be dumped."<br>
+<b>Error on line 86</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var boolean Should the dump recurse into arrays/objects in the array"<br>
+<b>Error on line 86</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var string What name should this array dump identify itself as"<br>
+<b>Error on line 86</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var array The array to be dumped."<br>
 	<p class="notes" id="credit">
-		Documentation generated on Mon, 08 Mar 2010 18:19:52 +1300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
+		Documentation generated on Thu, 15 Apr 2010 20:23:08 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
 	</p>
 	</body>
 </html>

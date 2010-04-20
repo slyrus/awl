@@ -416,7 +416,7 @@ class Editor
         $size = (isset($part3) ? $part3 : 10);
         return "<input class=\"date\" value=\"".htmlspecialchars($field_value)."\" name=\"$field_name\" size=\"$size\"$attributes>";
       case "textarea":
-        list( $cols, $rows ) = split( 'x', $part3);
+        list( $cols, $rows ) = explode( 'x', $part3);
         return "<textarea class=\"entry\" name=\"$field_name\" rows=\"$rows\" cols=\"$cols\"$attributes>".htmlspecialchars($field_value)."</textarea>";
       case "hidden":
         return sprintf( "<input type=\"hidden\" value=\"%s\" name=\"$field_name\">", htmlspecialchars($field_value) );

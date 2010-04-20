@@ -437,11 +437,11 @@ class Session
     global $c;
     dbg_error_log( "Login", " LSIDLogin: Attempting login for $lsid" );
 
-    list($md5_user_no,$validation_string) = split( ';', $lsid );
+    list($md5_user_no,$validation_string) = explode( ';', $lsid );
     $qry = new PgQuery( "SELECT * FROM usr WHERE md5(user_no::text)=?;", $md5_user_no );
     if ( $qry->Exec('Login') && $qry->rows() == 1 ) {
       $usr = $qry->Fetch();
-      list( $x, $salt, $y) = split('\*', $validation_string);
+      list( $x, $salt, $y) = explode('*', $validation_string);
       $my_validation = session_salted_md5($usr->user_no . $usr->username . $usr->password, $salt);
       if ( $validation_string == $my_validation ) {
         // Now get the next session ID to create one from...
@@ -602,7 +602,7 @@ EOTEXT;
       }
     }
     else {
-      $valid_groups = split(",", $groups);
+      $valid_groups = explode(",", $groups);
       foreach( $valid_groups AS $k => $v ) {
         if ( $this->AllowedTo($v) ) return;
       }
@@ -654,6 +654,7 @@ EOTEXT;
         $mail = new EMail( "Access to $c->system_name" );
         $mail->SetFrom($c->admin_email );
         $usernames = "";
+        $debug_to = "";
         if ( isset($c->debug_email) ) {
           $debug_to = "This e-mail would normally be sent to:\n ";
           $mail->AddTo( "Tester <$c->debug_email>" );
@@ -817,7 +818,7 @@ EOTEXT;
       * Perhaps this 'split' is not a good idea though.  People may want to use the
       * full ID as the username.  A further option may be desirable.
       */
-      list($username) = split('@', $_SERVER['REMOTE_USER']);
+      list($username) = explode('@', $_SERVER['REMOTE_USER']);
       $this->Login($username, "", true);  // Password will not be checked.
     }
   }

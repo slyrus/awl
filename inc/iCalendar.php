@@ -1169,9 +1169,9 @@ class iCalendar {  // DEPRECATED
       }
       else {
         // Parse the property
-        @list( $property, $value ) = preg_split('/:/', $line, 2 );
+        @list( $property, $value ) = explode(':', $line, 2 );
         if ( strpos( $property, ';' ) > 0 ) {
-          $parameterlist = preg_split('/;/', $property );
+          $parameterlist = explode(';', $property );
           $property = array_shift($parameterlist);
           foreach( $parameterlist AS $pk => $pv ) {
             if ( $pv == "VALUE=DATE" ) {

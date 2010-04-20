@@ -124,9 +124,9 @@ class vEvent {
       }
 
       if ( ($state == 'BEGIN:VEVENT' || $state == 'BEGIN:VTODO') && $state != $v ) {
-        list( $property, $value ) = preg_split('/:/', $v, 2 );
+        list( $property, $value ) = explode(':', $v, 2 );
         if ( strpos( $property, ';' ) > 0 ) {
-          $parameterlist = preg_split('/;/', $v );
+          $parameterlist = explode(';', $v );
           $property = array_shift($parameterlist);
           foreach( $parameterlist AS $pk => $pv ) {
             if ( preg_match('/^TZID=(.*)$/', $pv, $matches) ) {
@@ -141,7 +141,7 @@ class vEvent {
       }
       if ( $state == 'BEGIN:VTIMEZONE' ) {
         $vtimezone .= $v . "\n";
-        @list( $parameter, $value ) = preg_split('/:/', $v );
+        @list( $parameter, $value ) = explode(':', $v );
         if ( !isset($this->tz_locn) && $parameter == 'X-LIC-LOCATION' ) {
           $this->tz_locn = $value;
         }

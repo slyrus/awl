@@ -233,12 +233,22 @@ class AwlDBDialect {
         break;
       case PDO::PARAM_STR:
       default:
-        $rv = "'".str_replace("'", "''", str_replace('\\', '\\x5c', $value))."'";
+        /**
+        * PDO handling of \ seems unreliable.  We can't use $$string$$ syntax because it also doesn't
+        * work.  We need to replace ':' so no other named parameters accidentally rewrite the content
+        * inside this string(!), and since we're using ' to delimit the string we need SQL92-compliant
+        * '' to replace it.
+        */
+        $rv = "'".str_replace("'", "''", str_replace(':', '\\x3a', str_replace('\\', '\\x5c', $value)))."'";
 
         if ( $this->dialect == 'pgsql' && strpos( $rv, '\\' ) !== false ) {
-          /** PostgreSQL wants to know when a string might contain escapes */
-          $rv = 'E'.$rv;
+          /**
+          * PostgreSQL wants to know when a string might contain escapes, and if this
+          * happens old versions of PHP::PDO need the ? escaped as well...
+          */
+          $rv = 'E'.str_replace('?', '\\x3f', $rv);
         }
+
     }
 
     return $rv;

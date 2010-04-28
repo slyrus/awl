@@ -798,6 +798,7 @@ EOTEXT;
   }
 
   function _CheckLogin() {
+    global $c;
     if ( isset($_POST['lostpass']) ) {
       dbg_error_log( "Login", ":_CheckLogin: User '$_POST[username]' has lost the password." );
       $this->SendTemporaryPassword();

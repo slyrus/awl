@@ -18,18 +18,18 @@ CREATE or REPLACE FUNCTION check_db_revision( INT, INT, INT ) RETURNS BOOLEAN AS
       matching INT;
    BEGIN
       SELECT COUNT(*) INTO matching FROM awl_db_revision
-                      WHERE schema_major = major AND schema_minor = minor AND schema_patch = patch;
-      IF matching != 1 THEN
-        RAISE EXCEPTION ''Database has not been upgraded to %.%.%'', major, minor, patch;
-        RETURN FALSE;
-      END IF;
-      SELECT COUNT(*) INTO matching FROM awl_db_revision
              WHERE (schema_major = major AND schema_minor = minor AND schema_patch > patch)
                 OR (schema_major = major AND schema_minor > minor)
                 OR (schema_major > major)
              ;
       IF matching >= 1 THEN
         RAISE EXCEPTION ''Database revisions after %.%.% have already been applied.'', major, minor, patch;
+        RETURN FALSE;
+      END IF;
+      SELECT COUNT(*) INTO matching FROM awl_db_revision
+                      WHERE schema_major = major AND schema_minor = minor AND schema_patch = patch;
+      IF matching >= 1 THEN
+        RAISE EXCEPTION ''Database has not been upgraded to %.%.%'', major, minor, patch;
         RETURN FALSE;
       END IF;
       RETURN TRUE;

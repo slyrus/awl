@@ -516,7 +516,7 @@ if ( !function_exists("force_utf8") ) {
 * Try and extract something like "Pacific/Auckland" or "America/Indiana/Indianapolis" if possible.
 */
 function olson_from_tzstring( $tzstring ) {
-  if ( preg_match( '{((Antarctica|America|Africa|Atlantic|Asia|Indian|Europe|Pacific)/(([^/]+)/)?[^/]+)$}', $tzstring, $matches ) ) {
+  if ( preg_match( '{((Antarctica|America|Africa|Atlantic|Asia|Australia|Indian|Europe|Pacific)/(([^/]+)/)?[^/]+)$}', $tzstring, $matches ) ) {
 //    dbg_error_log( 'INFO', 'Found timezone "%s" from string "%s"', $matches[1], $tzstring );
     return $matches[1];
   }

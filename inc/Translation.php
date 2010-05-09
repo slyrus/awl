@@ -61,11 +61,18 @@ if ( !function_exists('translate') ) {
   /**
   * Convert a string in English to whatever this user's locale is
   */
-  function translate( $en ) {
-    if ( ! isset($en) || $en == '' ) return $en;
-    $xl = gettext($en);
-    dbg_error_log('I18N','Translated =%s= into =%s=', $en, $xl );
-    return $xl;
+  if ( function_exists('gettext') ) {
+    function translate( $en ) {
+      if ( ! isset($en) || $en == '' ) return $en;
+      $xl = gettext($en);
+      dbg_error_log('I18N','Translated =%s= into =%s=', $en, $xl );
+      return $xl;
+    }
+  }
+  else {
+    function translate( $en ) {
+      return $en;
+    }
   }
 }
 
@@ -75,6 +82,7 @@ if ( !function_exists('init_gettext') ) {
   * Initialise our use of Gettext
   */
   function init_gettext( $domain, $location ) {
+    if ( !function_exists('bindtextdomain') ) return;
     bindtextdomain( $domain, $location );
     $codeset = bind_textdomain_codeset( $domain, 'UTF-8' );
     textdomain( $domain );
@@ -93,6 +101,10 @@ if ( !function_exists('awl_set_locale') ) {
 
     if ( !is_array($locale) && ! preg_match('/^[a-z]{2}(_[A-Z]{2})?\./', $locale ) ) {
       $locale = array( $locale, $locale.'.UTF-8');
+    }
+    if ( !function_exists('setlocale') ) {
+      dbg_log_array('WARN','No "setlocale()" function?  PHP gettext support missing?' );
+      return;
     }
     if ( $newlocale = setlocale( LC_ALL, $locale) ) {
       dbg_error_log('I18N','Set locale to =%s=', $newlocale );

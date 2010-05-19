@@ -38,7 +38,7 @@ CREATE or REPLACE FUNCTION check_db_revision( INT, INT, INT ) RETURNS BOOLEAN AS
 
 -- The schema_id should always be incremented.  The major / minor / patch level should
 -- be incremented as seems appropriate...
-CREATE or REPLACE FUNCTION new_db_revision( INT, INT, INT, TEXT ) RETURNS BOOLEAN AS '
+CREATE or REPLACE FUNCTION new_db_revision( INT, INT, INT, TEXT ) RETURNS VOID AS '
    DECLARE
       major ALIAS FOR $1;
       minor ALIAS FOR $2;
@@ -52,7 +52,7 @@ CREATE or REPLACE FUNCTION new_db_revision( INT, INT, INT, TEXT ) RETURNS BOOLEA
       END IF;
       INSERT INTO awl_db_revision (schema_id, schema_major, schema_minor, schema_patch, schema_name)
                     VALUES( new_id, major, minor, patch, blurb );
-      RETURN TRUE;
+      RETURN;
    END;
 ' LANGUAGE 'plpgsql';
 SELECT new_db_revision(1,1,0, 'Dawn' );

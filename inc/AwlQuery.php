@@ -434,6 +434,20 @@ class AwlQuery
 
 
   /**
+  * Returns the current state of a transaction, indicating if we have begun a transaction, whether the transaction
+  * has failed, or if we are not in a transaction.
+  */
+  function TransactionState() {
+    global $_awl_dbconn;
+    if ( !isset($this->connection) ) {
+      if ( !isset($_awl_dbconn) ) _awl_connect_configured_database();
+      $this->connection = $_awl_dbconn;
+    }
+    return $this->connection->TransactionState();
+  }
+
+
+  /**
   * Wrap the parent DB class Begin() so we can $qry->Begin() sometime before we $qry->Exec()
   */
   public function Begin() {

@@ -280,7 +280,7 @@ class iCalProp {
       $this->rendered = $property . " \r\n " . $escaped;
     }
     else {
-      $this->rendered = wordwrap( $property . $escaped, 72, " \r\n ", true );
+      $this->rendered = wordwrap( $property . $escaped, 72, "\r\n ", true );
     }
     return $this->rendered;
   }

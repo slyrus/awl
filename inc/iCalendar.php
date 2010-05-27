@@ -277,10 +277,10 @@ class iCalProp {
       $this->rendered = $property . $escaped;
     }
     else if ( (strlen($property) + strlen($escaped)) > 72 && (strlen($property) < 72) && (strlen($escaped) < 72) ) {
-      $this->rendered = $property . " \r\n " . $escaped;
+      $this->rendered = $property . "\r\n " . $escaped;
     }
     else {
-      $this->rendered = wordwrap( $property . $escaped, 72, "\r\n ", true );
+      $this->rendered = preg_replace( '/(.{72})/', '$1'."\r\n ", $property . $escaped );
     }
     return $this->rendered;
   }

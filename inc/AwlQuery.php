@@ -227,6 +227,7 @@ class AwlQuery
         $this->bound_parameters = $args[0];
       else
         $this->bound_parameters = $args;
+//      print_r( $this->bound_parameters );
     }
 
     return $this;
@@ -371,18 +372,26 @@ class AwlQuery
       $this->connection = $GLOBALS['_awl_dbconn'];
     }
 
-    $this->bound_querystring = $this->querystring;
-    if ( isset($c->expand_pdo_parameters) && $c->expand_pdo_parameters
-          && isset($this->bound_parameters) ) {
-      $this->bound_querystring = $this->connection->ReplaceParameters($this->querystring,$this->bound_parameters);
+    if ( isset($c->expand_pdo_parameters) && $c->expand_pdo_parameters ) {
+      $this->bound_querystring = $this->querystring;
+      if ( isset($this->bound_parameters) ) {
+        $this->bound_querystring = $this->connection->ReplaceParameters($this->querystring,$this->bound_parameters);
+//        printf( "\n=============================================================== OQ\n%s\n", $this->querystring);
+//        printf( "\n=============================================================== QQ\n%s\n", $this->bound_querystring);
+//        print_r( $this->bound_parameters );
+      }
+      $t1 = microtime(true); // get start time
+      $this->sth = $this->connection->query($this->bound_querystring);
+    }
+    else {
+      $t1 = microtime(true); // get start time
+      $this->sth = $this->connection->prepare($this->querystring);
+      if ( $this->sth ) $this->sth->execute($this->bound_parameters);
 //      printf( "\n=============================================================== OQ\n%s\n", $this->querystring);
-//      printf( "\n=============================================================== QQ\n%s\n", $this->bound_querystring);
 //      print_r( $this->bound_parameters );
     }
-
-    $t1 = microtime(true); // get start time
-    $this->sth = $this->connection->query($this->bound_querystring);
     $this->bound_querystring = null;
+
     if ( ! $this->sth ) {
       $this->error_info = $this->connection->errorInfo();
       return false;

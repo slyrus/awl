@@ -371,35 +371,24 @@ class AwlQuery
       $this->connection = $GLOBALS['_awl_dbconn'];
     }
 
-    if ( isset($c->expand_pdo_parameters) && $c->expand_pdo_parameters ) {
-      if ( isset($this->bound_parameters) ) {
-        $this->bound_querystring = $this->connection->ReplaceParameters($this->querystring,$this->bound_parameters);
-//        printf( "\n=============================================================== OQ\n%s\n", $this->querystring);
-//        printf( "\n=============================================================== QQ\n%s\n", $this->bound_querystring);
-//        print_r( $this->bound_parameters );
-      }
-      else {
-        $this->bound_querystring = $this->querystring;
-      }
+    $this->bound_querystring = $this->querystring;
+    if ( isset($c->expand_pdo_parameters) && $c->expand_pdo_parameters
+          && isset($this->bound_parameters) ) {
+      $this->bound_querystring = $this->connection->ReplaceParameters($this->querystring,$this->bound_parameters);
+//      printf( "\n=============================================================== OQ\n%s\n", $this->querystring);
+//      printf( "\n=============================================================== QQ\n%s\n", $this->bound_querystring);
+//      print_r( $this->bound_parameters );
     }
 
     $t1 = microtime(true); // get start time
-    if ( isset($this->bound_querystring) ) {
-      $this->sth = $this->connection->query($this->bound_querystring);
-      $this->bound_querystring = null;
-      if ( ! $this->sth ) {
-        $this->error_info = $this->connection->errorInfo();
-        return false;
-      }
+    $this->sth = $this->connection->query($this->bound_querystring);
+    $this->bound_querystring = null;
+    if ( ! $this->sth ) {
+      $this->error_info = $this->connection->errorInfo();
+      return false;
     }
-    else {
-      if ( ! $this->sth->execute( $this->bound_parameters ) ) {
-        $this->error_info = $this->sth->errorInfo();
-        return false;
-      }
-    }
-
     $this->rows = $this->sth->rowCount();
+
     $i_took = microtime(true) - $t1;
     $c->total_query_time += $i_took;
     $this->execution_time = sprintf( "%2.06lf", $i_took);

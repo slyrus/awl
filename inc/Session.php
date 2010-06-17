@@ -768,7 +768,8 @@ EOTEXT;
 <p>Note: If you have multiple accounts with the same e-mail address, they will <em>all</em>
 be assigned a new temporary password, but only the one(s) that you use that temporary password
 on will have the existing password invalidated.</p>
-<p>Any temporary password will only be valid for 24 hours.</p>
+<h2>The temporary password will only be valid for 24 hours.</h2>
+<p>You will need to log on and change your password during this time.</p>
 </form>
 </div>
 EOTEXT;

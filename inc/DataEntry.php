@@ -436,7 +436,8 @@ class EntryForm
     }
     $extra_attributes['action']  = $this->action;
     if ( !isset($extra_attributes['method']) )  $extra_attributes['method']  = 'post';
-    if ( !isset($extra_attributes['enctype']) ) $extra_attributes['enctype'] = 'multipart/form-data';
+    if ( strtolower($extra_attributes['method']) != 'get' )
+      if ( !isset($extra_attributes['enctype']) ) $extra_attributes['enctype'] = 'multipart/form-data';
     if ( !isset($extra_attributes['name']) )    $extra_attributes['name']    = 'form';
     if ( !isset($extra_attributes['class']) )   $extra_attributes['class']   = 'formdata';
     if ( !isset($extra_attributes['id']) )      $extra_attributes['id']      = $extra_attributes['name'];
@@ -474,8 +475,9 @@ class EntryForm
   * @param string $fvalue The value of the field.
   * @return string The HTML fragment for the hidden field.
   */
-  function HiddenField($fname,$fvalue) {
-    return sprintf( '<input type="hidden" name="%s" value="%s" />%s', $fname, htmlspecialchars($fvalue), "\n" );
+  function HiddenField($fname,$fvaluei,$fid = null) {
+    return sprintf( '<input type="hidden" name="%s" value="%s" %s/>%s', $fname,
+                               htmlspecialchars($fvalue), (isset($id) ? 'id="$id" ' : ''), "\n" );
   }
 
   /**

@@ -208,6 +208,20 @@ class XMLDocument {
 
 
   /**
+  * Special helper for tags in the urn:ietf:params:xml:ns:carddav namespace.
+  *
+  * @param object $element The tag are adding a new namespaced element to
+  * @param string $tag the tag name
+  * @param mixed  $content The content of the tag
+  * @param array  $attributes An array of key/value pairs of attributes.
+  */
+  function CardDAVElement( &$element, $tag, $content=false, $attributes=false ) {
+    if ( !isset($this->namespaces['urn:ietf:params:xml:ns:carddav']) ) $this->AddNamespace( 'urn:ietf:params:xml:ns:carddav', 'VC' );
+    return $this->NSElement( $element, $tag, $content, $attributes, 'urn:ietf:params:xml:ns:carddav' );
+  }
+
+
+  /**
   * Special helper for tags in the urn:ietf:params:xml:ns:caldav namespace.
   *
   * @param object $element The tag are adding a new namespaced element to

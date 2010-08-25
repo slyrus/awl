@@ -244,6 +244,96 @@ class vProperty {
     return $this->rendered;
   }
 
+
+  /**
+   * Test a PROP-FILTER or PARAM-FILTER and return a true/false
+   * PROP-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))
+   * PARAM-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))
+   *
+   * @param array $filter An array of XMLElement defining the filter
+   *
+   * @return boolean Whether or not this vProperty passes the test
+   */
+  function TestFilter( $filters ) {
+    foreach( $filters AS $k => $v ) {
+      $tag = $v->GetTag();
+      switch( $tag ) {
+        case 'urn:ietf:params:xml:ns:caldav:is-defined':
+        case 'urn:ietf:params:xml:ns:carddav:is-defined':
+          break;
+
+        case 'urn:ietf:params:xml:ns:caldav:is-not-defined':
+        case 'urn:ietf:params:xml:ns:carddav:is-not-defined':
+          return false;
+          break;
+
+        case 'urn:ietf:params:xml:ns:caldav:time-range':
+          /** @todo: While this is unimplemented here at present, most time-range tests should occur at the SQL level. */
+          break;
+
+        case 'urn:ietf:params:xml:ns:carddav:text-match':
+        case 'urn:ietf:params:xml:ns:caldav:text-match':
+          $search = $v->GetContent();
+          $match = $this->TextMatch($search);
+          $negate = $v->GetAttribute("negate-condition");
+          if ( isset($negate) && strtolower($negate) == "yes" && $match ) {
+            return false;
+          }
+          if ( ! $match ) return false;
+          break;
+
+        case 'urn:ietf:params:xml:ns:carddav:param-filter':
+        case 'urn:ietf:params:xml:ns:caldav:param-filter':
+          $subfilter = $v->GetContent();
+          $parameter = $this->GetParameterValue($v->GetAttribute("name"));
+          if ( ! $this->TestParamFilter($subfilter,$parameter) ) return false;
+          break;
+
+        default:
+          dbg_error_log( 'vComponent', ' vProperty::TestFilter: unhandled tag "%s"', $tag );
+          break;
+      }
+    }
+    return true;
+  }
+
+
+  function TestParamFilter( $filters, $parameter_value ) {
+    foreach( $filters AS $k => $v ) {
+      $subtag = $v->GetTag();
+      switch( $subtag ) {
+        case 'urn:ietf:params:xml:ns:caldav:is-defined':
+        case 'urn:ietf:params:xml:ns:carddav:is-defined':
+          break;
+
+        case 'urn:ietf:params:xml:ns:caldav:is-not-defined':
+        case 'urn:ietf:params:xml:ns:carddav:is-not-defined':
+          return false;
+          break;
+
+        case 'urn:ietf:params:xml:ns:caldav:time-range':
+          /** @todo: While this is unimplemented here at present, most time-range tests should occur at the SQL level. */
+          break;
+
+        case 'urn:ietf:params:xml:ns:carddav:text-match':
+        case 'urn:ietf:params:xml:ns:caldav:text-match':
+          $search = $v->GetContent();
+          $match = false;
+          if ( isset($parameter_value) ) $match = strstr( $this->content, $search );
+          $negate = $v->GetAttribute("negate-condition");
+          if ( isset($negate) && strtolower($negate) == "yes" && $match ) {
+            return false;
+          }
+          if ( ! $match ) return false;
+          break;
+
+        default:
+          dbg_error_log( 'vComponent', ' vProperty::TestParamFilter: unhandled tag "%s"', $tag );
+          break;
+      }
+    }
+    return true;
+  }
 }
 
 
@@ -747,6 +837,67 @@ class vComponent {
     }
     dbg_error_log('vComponent', "GetPropertiesByPath: Found %d within '%s' for path '%s'\n", count($properties), $this->type, $path );
     return $properties;
+  }
+
+
+
+  /**
+   * Test a PROP-FILTER or COMP-FILTER and return a true/false
+   * COMP-FILTER (is-defined | is-not-defined | (time-range?, prop-filter*, comp-filter*))
+   * PROP-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))
+   *
+   * @param array $filter An array of XMLElement defining the filter
+   *
+   * @return boolean Whether or not this vComponent passes the test
+   */
+  function TestFilter( $filters ) {
+    foreach( $filters AS $k => $v ) {
+      $tag = $v->GetTag();
+      switch( $tag ) {
+        case 'urn:ietf:params:xml:ns:caldav:is-defined':
+        case 'urn:ietf:params:xml:ns:carddav:is-defined':
+          break;
+
+        case 'urn:ietf:params:xml:ns:caldav:is-not-defined':
+        case 'urn:ietf:params:xml:ns:carddav:is-not-defined':
+          return false;
+          break;
+
+        case 'urn:ietf:params:xml:ns:caldav:comp-filter':
+          $subfilter = $v->GetContent();
+          $subcomponents = $this->GetComponents($v->GetAttribute("name"));
+          if ( count($subcomponents) > 0 ) {
+            foreach( $subcomponents AS $kk => $subcomponent ) {
+              if ( ! $subcomponent->TestFilter($subfilter) ) return false;
+            }
+          }
+          else {
+            if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-defined'
+                 || $subfilter[0] == 'urn:ietf:params:xml:ns:carddav:is-defined' ) {
+              return false;
+            }
+          }
+          break;
+
+        case 'urn:ietf:params:xml:ns:carddav:prop-filter':
+        case 'urn:ietf:params:xml:ns:caldav:prop-filter':
+          $subfilter = $v->GetContent();
+          $properties = $this->GetProperties($v->GetAttribute("name"));
+          if ( count($properties) > 0 ) {
+            foreach( $properties AS $kk => $property ) {
+              if ( !$property->TestFilter($subfilter) ) return false;
+            }
+          }
+          else {
+            if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-defined'
+                 || $subfilter[0] == 'urn:ietf:params:xml:ns:carddav:is-defined' ) {
+              return false;
+            }
+          }
+          break;
+      }
+    }
+    return true;
   }
 
 }

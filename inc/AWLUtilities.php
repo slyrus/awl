@@ -109,7 +109,8 @@ if ( !function_exists("session_simple_md5") ) {
   * @return string The *MD5* and the MD5 of the string
   */
   function session_simple_md5( $instr ) {
-    dbg_error_log( "Login", "Making plain MD5: instr=$instr, md5($instr)=".md5($instr) );
+    global $c;
+    if ( isset($c->dbg['password']) ) dbg_error_log( "Login", "Making plain MD5: instr=$instr, md5($instr)=".md5($instr) );
     return ( '*MD5*'. md5($instr) );
   }
 }
@@ -128,7 +129,8 @@ if ( !function_exists("session_salted_md5") ) {
   */
   function session_salted_md5( $instr, $salt = "" ) {
     if ( $salt == "" ) $salt = substr( md5(rand(100000,999999)), 2, 8);
-    dbg_error_log( "Login", "Making salted MD5: salt=$salt, instr=$instr, md5($salt$instr)=".md5($salt . $instr) );
+    global $c;
+    if ( isset($c->dbg['password']) ) dbg_error_log( "Login", "Making salted MD5: salt=$salt, instr=$instr, md5($salt$instr)=".md5($salt . $instr) );
     return ( sprintf("*%s*%s", $salt, md5($salt . $instr) ) );
   }
 }
@@ -151,7 +153,8 @@ if ( !function_exists("session_salted_sha1") ) {
   */
   function session_salted_sha1( $instr, $salt = "" ) {
     if ( $salt == "" ) $salt = substr( str_replace('*','',base64_encode(sha1(rand(100000,9999999),true))), 2, 9);
-    dbg_error_log( "Login", "Making salted SHA1: salt=$salt, instr=$instr, encoded($instr$salt)=".base64_encode(sha1($instr . $salt, true).$salt) );
+    global $c;
+    if ( isset($c->dbg['password']) ) dbg_error_log( "Login", "Making salted SHA1: salt=$salt, instr=$instr, encoded($instr$salt)=".base64_encode(sha1($instr . $salt, true).$salt) );
     return ( sprintf("*%s*{SSHA}%s", $salt, base64_encode(sha1($instr.$salt, true) . $salt ) ) );
   }
 }

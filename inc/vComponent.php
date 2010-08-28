@@ -146,7 +146,10 @@ class vProperty {
    */
   function Parameters( $newparams = null ) {
     if ( $newparams != null ) {
-      $this->parameters = $newparams;
+      $this->parameters = array();
+      foreach( $newparams AS $k => $v ) {
+        $this->parameters[strtoupper($k)] = $v;
+      }
       if ( isset($this->rendered) ) unset($this->rendered);
     }
     return $this->parameters;
@@ -176,6 +179,7 @@ class vProperty {
   function GetParameterValue( $name ) {
     $name = strtoupper($name);
     if ( isset($this->parameters[$name]) ) return $this->parameters[$name];
+    return null;
   }
 
   /**
@@ -448,7 +452,7 @@ class vComponent {
         if ( preg_match( '/^BEGIN:(.+)$/i', $line, $matches ) ) {
           // We have found the start of the main component
           $type = strtoupper($matches[1]);
-          $finish = "END:$type";
+          $finish = 'END:'.$type;
           $this->type = $type;
           dbg_error_log( 'vComponent', "::ParseFrom: Start component of type '%s'", $type);
         }
@@ -535,18 +539,20 @@ class vComponent {
   */
   function SetType( $type ) {
     if ( isset($this->rendered) ) unset($this->rendered);
-    $this->type = $type;
+    $this->type = strtoupper($type);
     return $this->type;
   }
 
 
   /**
-  * Get all properties, or the properties matching a particular type
+  * Get all properties, or the properties matching a particular type, or matching an
+  * array associating property names with true values: array( 'PROPERTY' => true, 'PROPERTY2' => true )
   */
   function GetProperties( $type = null ) {
     $properties = array();
+    $testtypes = (gettype($type) == 'string' ? array( $type => true ) : $type );
     foreach( $this->properties AS $k => $v ) {
-      if ( $type == null || $v->Name() == $type ) {
+      if ( $type == null || (isset($testtypes[$v->Name()]) && $testtypes[$v->Name()]) ) {
         $properties[$k] = $v;
       }
     }
@@ -555,45 +561,16 @@ class vComponent {
 
 
   /**
-  * Get the value of the first property matching the name. Obviously this isn't
-  * so useful for properties which may occur multiply, but most don't.
-  *
-  * @param string $type The type of property we are after.
-  * @return string The value of the property, or null if there was no such property.
-  */
-  function GetPValue( $type ) {
-    foreach( $this->properties AS $k => $v ) {
-      if ( $v->Name() == $type ) return $v->Value();
-    }
-    return null;
-  }
-
-
-  /**
-  * Get the value of the specified parameter for the first property matching the
-  * name. Obviously this isn't so useful for properties which may occur multiply, but most don't.
-  *
-  * @param string $type The type of property we are after.
-  * @param string $type The name of the parameter we are after.
-  * @return string The value of the parameter for the property, or null in the case that there was no such property, or no such parameter.
-  */
-  function GetPParamValue( $type, $parameter_name ) {
-    foreach( $this->properties AS $k => $v ) {
-      if ( $v->Name() == $type ) return $v->GetParameterValue($parameter_name);
-    }
-    return null;
-  }
-
-
-  /**
   * Clear all properties, or the properties matching a particular type
-  * @param string $type The type of property - omit for all properties
+  * @param string|array $type The type of property - omit for all properties - or an
+  * array associating property names with true values: array( 'PROPERTY' => true, 'PROPERTY2' => true )
   */
   function ClearProperties( $type = null ) {
     if ( $type != null ) {
+      $testtypes = (gettype($type) == 'string' ? array( $type => true ) : $type );
       // First remove all the existing ones of that type
       foreach( $this->properties AS $k => $v ) {
-        if ( $v->Name() == $type ) {
+        if ( isset($testtypes[$v->Name()]) && $testtypes[$v->Name()] ) {
           unset($this->properties[$k]);
           if ( isset($this->rendered) ) unset($this->rendered);
         }
@@ -644,17 +621,20 @@ class vComponent {
 
   /**
   * Get all sub-components, or at least get those matching a type, or failling to match,
-  * should the second parameter be set to false.
+  * should the second parameter be set to false. Component types may be a string or an array
+  * associating property names with true values: array( 'TYPE' => true, 'TYPE2' => true )
   *
-  * @param string $type The type to match (default: All)
+  * @param mixed $type The type(s) to match (default: All)
   * @param boolean $normal_match Set to false to invert the match (default: true)
   * @return array an array of the sub-components
   */
   function GetComponents( $type = null, $normal_match = true ) {
     $components = $this->components;
     if ( $type != null ) {
+      $testtypes = (gettype($type) == 'string' ? array( $type => true ) : $type );
       foreach( $components AS $k => $v ) {
-        if ( ($v->GetType() != $type) === $normal_match ) {
+        if ( ($normal_match && isset($testtypes[$v->GetType()]) && $testtypes[$v->GetType()] )
+            || ( !$normal_match && (!isset($testtypes[$v->GetType()]) || !$testtypes[$v->GetType()])) ) {
           unset($components[$k]);
         }
       }
@@ -670,14 +650,15 @@ class vComponent {
   */
   function ClearComponents( $type = null ) {
     if ( $type != null ) {
+      $testtypes = (gettype($type) == 'string' ? array( $type => true ) : $type );
       // First remove all the existing ones of that type
       foreach( $this->components AS $k => $v ) {
-        if ( $v->GetType() == $type ) {
+        if ( isset($testtypes[$v->GetType()]) && $testtypes[$v->GetType()] ) {
           unset($this->components[$k]);
           if ( isset($this->rendered) ) unset($this->rendered);
         }
         else {
-          if ( ! $this->components[$k]->ClearComponents($type) ) {
+          if ( ! $this->components[$k]->ClearComponents($testtypes) ) {
             if ( isset($this->rendered) ) unset($this->rendered);
           }
         }
@@ -731,7 +712,7 @@ class vComponent {
   */
   function MaskComponents( $keep ) {
     foreach( $this->components AS $k => $v ) {
-      if ( ! in_array( $v->GetType(), $keep ) ) {
+      if ( !isset($keep[$v->GetType()]) || !$keep[$v->GetType()] ) {
         unset($this->components[$k]);
         if ( isset($this->rendered) ) unset($this->rendered);
       }
@@ -748,17 +729,16 @@ class vComponent {
   * @param array $component_list An array of component types to check within
   */
   function MaskProperties( $keep, $component_list=null ) {
-    foreach( $this->components AS $k => $v ) {
-      $v->MaskProperties($keep, $component_list);
-    }
-
-    if ( !isset($component_list) || in_array($this->GetType(),$component_list) ) {
-      foreach( $this->components AS $k => $v ) {
-        if ( ! in_array( $v->GetType(), $keep ) ) {
-          unset($this->components[$k]);
+    if ( !isset($component_list) || $component_list[$this->GetType()] ) {
+      foreach( $this->properties AS $k => $v ) {
+        if ( !isset($keep[$v->Name()]) || !$keep[$v->Name()] ) {
+          unset($this->properties[$k]);
           if ( isset($this->rendered) ) unset($this->rendered);
         }
       }
+    }
+    foreach( $this->components AS $k => $v ) {
+      $v->MaskProperties($keep, $component_list);
     }
   }
 

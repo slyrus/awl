@@ -235,6 +235,7 @@ class vProperty {
         $escaped = preg_replace( '/\r?\n/', '\\n', $escaped);
         $escaped = preg_replace( "/([,;\"])/", '\\\\$1', $escaped);
     }
+
     $property = sprintf( "%s%s:", $this->name, $this->RenderParameters() );
     if ( (strlen($property) + strlen($escaped)) <= 72 ) {
       $this->rendered = $property . $escaped;
@@ -545,6 +546,19 @@ class vComponent {
 
 
   /**
+  * Return the first instance of a property of this name
+  */
+  function GetProperty( $type ) {
+    foreach( $this->properties AS $k => $v ) {
+      if ( $v->Name() == $type ) {
+        return $v;
+      }
+    }
+    return null;
+  }
+
+
+  /**
   * Get all properties, or the properties matching a particular type, or matching an
   * array associating property names with true values: array( 'PROPERTY' => true, 'PROPERTY2' => true )
   */
@@ -553,7 +567,7 @@ class vComponent {
     $testtypes = (gettype($type) == 'string' ? array( $type => true ) : $type );
     foreach( $this->properties AS $k => $v ) {
       if ( $type == null || (isset($testtypes[$v->Name()]) && $testtypes[$v->Name()]) ) {
-        $properties[$k] = $v;
+        $properties[] = $v;
       }
     }
     return $properties;
@@ -633,13 +647,18 @@ class vComponent {
     if ( $type != null ) {
       $testtypes = (gettype($type) == 'string' ? array( $type => true ) : $type );
       foreach( $components AS $k => $v ) {
-        if ( ($normal_match && isset($testtypes[$v->GetType()]) && $testtypes[$v->GetType()] )
-            || ( !$normal_match && (!isset($testtypes[$v->GetType()]) || !$testtypes[$v->GetType()])) ) {
+//        printf( "Type: %s, %s, %s\n", $v->GetType(),
+//                 ($normal_match && isset($testtypes[$v->GetType()]) && $testtypes[$v->GetType()] ? 'true':'false'),
+//                 ( !$normal_match && (!isset($testtypes[$v->GetType()]) || !$testtypes[$v->GetType()]) ? 'true':'false')
+//               );
+        if ( !($normal_match && isset($testtypes[$v->GetType()]) && $testtypes[$v->GetType()] )
+            && !( !$normal_match && (!isset($testtypes[$v->GetType()]) || !$testtypes[$v->GetType()])) ) {
           unset($components[$k]);
         }
       }
       $components = array_values($components);
     }
+//    print_r($components);
     return $components;
   }
 

@@ -554,6 +554,7 @@ class vComponent {
         return $v;
       }
     }
+    /** So we can call methods on the result of this, make sure we always return a vProperty of some kind */
     return null;
   }
 

@@ -280,7 +280,7 @@ class iCalProp {
       $this->rendered = $property . "\r\n " . $escaped;
     }
     else {
-      $this->rendered = preg_replace( '/(.{72})/', '$1'."\r\n ", $property . $escaped );
+      $this->rendered = preg_replace( '/(.{72})/u', '$1'."\r\n ", $property . $escaped );
     }
     return $this->rendered;
   }
@@ -484,7 +484,7 @@ class iCalComponent {
     $strs = preg_split( "/\r?\n/", $content );
     $wrapped = "";
     foreach ($strs as $str) {
-      $wrapped .= preg_replace( '/(.{72})/', '$1'."\r\n ", $str ) ."\r\n";
+      $wrapped .= preg_replace( '/(.{72})/u', '$1'."\r\n ", $str ) ."\r\n";
     }
     return $wrapped;
   }
@@ -1501,7 +1501,7 @@ class iCalendar {  // DEPRECATED
         $value = preg_replace( '/\r?\n/', '\\n', $value);
         $value = preg_replace( "/([,;:\"])/", '\\\\$1', $value);
     }
-    $result = preg_replace( '/(.{72})/', '$1'."\r\n ", $name.':'.$value ) ."\r\n";
+    $result = preg_replace( '/(.{72})/u', '$1'."\r\n ", $name.':'.$value ) ."\r\n";
     return $result;
   }
 

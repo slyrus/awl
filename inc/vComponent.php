@@ -244,7 +244,7 @@ class vProperty {
       $this->rendered = $property . "\r\n " . $escaped;
     }
     else {
-      $this->rendered = preg_replace( '/(.{72})/', '$1'."\r\n ", $property.$escaped ) ."\r\n";
+      $this->rendered = preg_replace( '/(.{72})/u', '$1'."\r\n ", $property.$escaped ) ."\r\n";
     }
     return $this->rendered;
   }
@@ -522,7 +522,7 @@ class vComponent {
     $strs = preg_split( "/\r?\n/", $content );
     $wrapped = "";
     foreach ($strs as $str) {
-      $wrapped .= preg_replace( '/(.{72})/', '$1'."\r\n ", $str ) ."\r\n";
+      $wrapped .= preg_replace( '/(.{72})/u', '$1'."\r\n ", $str ) ."\r\n";
     }
     return $wrapped;
   }

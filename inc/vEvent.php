@@ -235,7 +235,7 @@ class vEvent {
     $value = str_replace( "\r", '\\r', $value);
 //    $value = preg_replace( "\n", '\\n', $value);
     $value = preg_replace( "/([,;:\"\'])/", '\\\\$1', $value);
-    $result = preg_replace( '/(.{72})/', '$1'."\r\n ", $name.':'.$value ) ."\r\n";
+    $result = preg_replace( '/(.{72})/u', '$1'."\r\n ", $name.':'.$value ) ."\r\n";
     return $result;
   }
 

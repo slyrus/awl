@@ -487,6 +487,8 @@ if ( !function_exists("force_utf8") ) {
   define_byte_mappings();
 
   function force_utf8( $input ) {
+    global $byte_map, $nibble_good_chars;
+
     $output = '';
     $char   = '';
     $rest   = '';

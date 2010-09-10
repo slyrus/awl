@@ -6,3 +6,6 @@ build-stamp
 *~
 .*.swp
 *.webprj
+.buildpath
+.project
+.settings

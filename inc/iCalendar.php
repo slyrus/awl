@@ -484,7 +484,7 @@ class iCalComponent {
     $strs = preg_split( "/\r?\n/", $content );
     $wrapped = "";
     foreach ($strs as $str) {
-      $wrapped .= wordwrap($str, 73, " \r\n ") . "\r\n";
+      $wrapped .= preg_replace( '/(.{72})/', '$1'."\r\n ", $str ) ."\r\n";
     }
     return $wrapped;
   }
@@ -1501,7 +1501,7 @@ class iCalendar {  // DEPRECATED
         $value = preg_replace( '/\r?\n/', '\\n', $value);
         $value = preg_replace( "/([,;:\"])/", '\\\\$1', $value);
     }
-    $result = wordwrap("$name:$value", 73, " \r\n ", true ) . "\r\n";
+    $result = preg_replace( '/(.{72})/', '$1'."\r\n ", $name.':'.$value ) ."\r\n";
     return $result;
   }
 

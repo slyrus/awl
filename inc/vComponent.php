@@ -241,10 +241,10 @@ class vProperty {
       $this->rendered = $property . $escaped;
     }
     else if ( (strlen($property) + strlen($escaped)) > 72 && (strlen($property) < 72) && (strlen($escaped) < 72) ) {
-      $this->rendered = $property . " \r\n " . $escaped;
+      $this->rendered = $property . "\r\n " . $escaped;
     }
     else {
-      $this->rendered = wordwrap( $property . $escaped, 72, " \r\n ", true );
+      $this->rendered = preg_replace( '/(.{72})/', '$1'."\r\n ", $property.$escaped ) ."\r\n";
     }
     return $this->rendered;
   }
@@ -522,7 +522,7 @@ class vComponent {
     $strs = preg_split( "/\r?\n/", $content );
     $wrapped = "";
     foreach ($strs as $str) {
-      $wrapped .= wordwrap($str, 73, " \r\n ") . "\r\n";
+      $wrapped .= preg_replace( '/(.{72})/', '$1'."\r\n ", $str ) ."\r\n";
     }
     return $wrapped;
   }

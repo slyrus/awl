@@ -83,7 +83,7 @@ class vProperty {
    * @param string $propstring The string from the vComponent which contains this property.
    */
   function ParseFrom( $propstring ) {
-    $this->rendered = (strlen($propstring) < 72 ? $propstring : null);  // Only pre-rendered if we didn't unescape it
+    $this->rendered = (strlen($propstring) < 73 ? $propstring : null);  // Only pre-rendered if we didn't unescape it
     $pos = strpos( $propstring, ':');
     $start = substr( $propstring, 0, $pos);
 
@@ -240,11 +240,11 @@ class vProperty {
     if ( (strlen($property) + strlen($escaped)) <= 72 ) {
       $this->rendered = $property . $escaped;
     }
-    else if ( (strlen($property) + strlen($escaped)) > 72 && (strlen($property) < 72) && (strlen($escaped) < 72) ) {
+    else if ( (strlen($property) + strlen($escaped)) > 72 && (strlen($property) <= 72) && (strlen($escaped) <= 72) ) {
       $this->rendered = $property . "\r\n " . $escaped;
     }
     else {
-      $this->rendered = preg_replace( '/(.{72})/u', '$1'."\r\n ", $property.$escaped ) ."\r\n";
+      $this->rendered = preg_replace( '/(.{72})/u', '$1'."\r\n ", $property.$escaped );
     }
     return $this->rendered;
   }

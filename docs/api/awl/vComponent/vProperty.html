@@ -3,7 +3,7 @@
   <html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
 			<!-- template designed by Marco Von Ballmoos  -->
-			<title>Docs For Class iCalProp</title>
+			<title>Docs For Class vProperty</title>
 			<link rel="stylesheet" href="../../media/stylesheet.css" />
 						<script src="../../media/lib/classTree.js"></script>
 												<script language="javascript" type="text/javascript">
@@ -88,21 +88,22 @@
 <h2 class="class-name"><img src="../../media/images/Class_logo.png"
 														alt=" Class"
 														title=" Class"
-														style="vertical-align: middle"> iCalProp</h2>
+														style="vertical-align: middle"> vProperty</h2>
 
 <a name="sec-description"></a>
 <div class="info-box">
 	<div class="info-box-title">Description</div>
 	<div class="nav-bar">
 					<span class="disabled">Description</span> |
-															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
 						
 					</div>
 	<div class="info-box-body">
         		<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">A Class for representing properties within an iCalendar</p>
+<p class="short-description">A Class for representing properties within a vComponent (VCALENDAR or VCARD)</p>
 		<p class="notes">
-			Located in <a class="field" href="_iCalendar.php.html">/iCalendar.php</a> (line <span class="field">57</span>)
+			Located in <a class="field" href="_vComponent.php.html">/vComponent.php</a> (line <span class="field">23</span>)
 		</p>
 		
 				
@@ -113,21 +114,59 @@
 
 
 
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">string</span>
+					<a href="#$content" title="details" class="var-name">$content</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">string</span>
+					<a href="#$name" title="details" class="var-name">$name</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">array</span>
+					<a href="#$parameters" title="details" class="var-name">$parameters</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">string</span>
+					<a href="#$rendered" title="details" class="var-name">$rendered</a>
+				</div>
+											</div>
+		</div>
+	</div>
 
 	<a name="sec-method-summary"></a>
 	<div class="info-box">
 		<div class="info-box-title">Method Summary</span></div>
 		<div class="nav-bar">
 			<a href="#sec-description">Description</a> |
-												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																																															
+																																																																																																															
 				<div class="method-definition">
 					<img src="../../media/images/Constructor.png" alt=" "/>
-											<span class="method-result">iCalProp</span>
-										<a href="#iCalProp" title="details" class="method-name">iCalProp</a>
+											<span class="method-result">vProperty</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
 											([<span class="var-type">string</span>&nbsp;<span class="var-name">$propstring</span> = <span class="var-default">null</span>])
 									</div>
 															
@@ -182,6 +221,20 @@
 															
 				<div class="method-definition">
 					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">boolean</span>
+										<a href="#TestFilter" title="details" class="method-name">TestFilter</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$filters</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$filter</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
+											<span class="method-result">void</span>
+										<a href="#TestParamFilter" title="details" class="method-name">TestParamFilter</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$filters</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$parameter_value</span>)
+									</div>
+															
+				<div class="method-definition">
+					<img src="../../media/images/Method.png" alt=" "/>
 											<span class="method-result">string</span>
 										<a href="#TextMatch" title="details" class="method-name">TextMatch</a>
 											(<span class="var-type">string</span>&nbsp;<span class="var-name">$search</span>)
@@ -197,32 +250,142 @@
 		</div>
 	</div>		
 
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			
+<a name="var$content" id="$content"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$content</span>
+						(line <span class="line-number">47</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The value of this property.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$name" id="$name"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$name</span>
+						(line <span class="line-number">33</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The name of this property</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$parameters" id="$parameters"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$parameters</span>
+						(line <span class="line-number">40</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of parameters to this property, represented as key/value pairs.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$rendered" id="$rendered"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$rendered</span>
+						(line <span class="line-number">54</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The original value that this was parsed from, if that's the way it happened.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
 	
 	<a name="sec-methods"></a>
 	<div class="info-box">
 		<div class="info-box-title">Methods</div>
 		<div class="nav-bar">
 			<a href="#sec-description">Description</a> |
-																<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
 						
 		</div>
 		<div class="info-box-body">
 			<A NAME='method_detail'></A>
-<a name="methodiCalProp" id="iCalProp"><!-- --></a>
-<div class="evenrow">
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Constructor.png" />
-		<span class="method-title">Constructor iCalProp</span> (line <span class="line-number">100</span>)
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">66</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">The constructor parses the incoming string, which is formatted as per RFC2445 as a    propname[;param1=pval1[; ... ]]:propvalue  however we allow ourselves to assume that the RFC2445 content unescaping has already  happened when iCalComponent::ParseFrom() called iCalComponent::UnwrapComponent().</p>
+<p class="short-description">The constructor parses the incoming string, which is formatted as per RFC2445 as a    propname[;param1=pval1[; ... ]]:propvalue  however we allow ourselves to assume that the RFC2445 content unescaping has already  happened when vComponent::ParseFrom() called vComponent::UnwrapComponent().</p>
 	
 	<div class="method-signature">
-		<span class="method-result">iCalProp</span>
+		<span class="method-result">vProperty</span>
 		<span class="method-name">
-			iCalProp
+			__construct
 		</span>
 					([<span class="var-type">string</span>&nbsp;<span class="var-name">$propstring</span> = <span class="var-default">null</span>])
 			</div>
@@ -230,17 +393,17 @@
 			<ul class="parameters">
 					<li>
 				<span class="var-type">string</span>
-				<span class="var-name">$propstring</span><span class="var-description">: The string from the iCalendar which contains this property.</span>			</li>
+				<span class="var-name">$propstring</span><span class="var-description">: The string from the vComponent which contains this property.</span>			</li>
 				</ul>
 		
 			
 	</div>
 <a name="methodGetParameterValue" id="GetParameterValue"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">GetParameterValue</span> (line <span class="line-number">210</span>)
+		<span class="method-title">GetParameterValue</span> (line <span class="line-number">179</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -266,11 +429,11 @@
 			
 	</div>
 <a name="methodName" id="Name"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">Name</span> (line <span class="line-number">148</span>)
+		<span class="method-title">Name</span> (line <span class="line-number">114</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -296,11 +459,11 @@
 			
 	</div>
 <a name="methodParameters" id="Parameters"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">Parameters</span> (line <span class="line-number">181</span>)
+		<span class="method-title">Parameters</span> (line <span class="line-number">147</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -326,15 +489,15 @@
 			
 	</div>
 <a name="methodParseFrom" id="ParseFrom"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">ParseFrom</span> (line <span class="line-number">119</span>)
+		<span class="method-title">ParseFrom</span> (line <span class="line-number">85</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">The constructor parses the incoming string, which is formatted as per RFC2445 as a    propname[;param1=pval1[; ... ]]:propvalue  however we allow ourselves to assume that the RFC2445 content unescaping has already  happened when iCalComponent::ParseFrom() called iCalComponent::UnwrapComponent().</p>
+<p class="short-description">The constructor parses the incoming string, which is formatted as per RFC2445 as a    propname[;param1=pval1[; ... ]]:propvalue  however we allow ourselves to assume that the RFC2445 content unescaping has already  happened when vComponent::ParseFrom() called vComponent::UnwrapComponent().</p>
 	
 	<div class="method-signature">
 		<span class="method-result">void</span>
@@ -347,17 +510,17 @@
 			<ul class="parameters">
 					<li>
 				<span class="var-type">string</span>
-				<span class="var-name">$propstring</span><span class="var-description">: The string from the iCalendar which contains this property.</span>			</li>
+				<span class="var-name">$propstring</span><span class="var-description">: The string from the vComponent which contains this property.</span>			</li>
 				</ul>
 		
 			
 	</div>
 <a name="methodRender" id="Render"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">Render</span> (line <span class="line-number">243</span>)
+		<span class="method-title">Render</span> (line <span class="line-number">214</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -375,11 +538,11 @@
 			
 	</div>
 <a name="methodRenderParameters" id="RenderParameters"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">RenderParameters</span> (line <span class="line-number">230</span>)
+		<span class="method-title">RenderParameters</span> (line <span class="line-number">201</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -397,11 +560,11 @@
 			
 	</div>
 <a name="methodSetParameterValue" id="SetParameterValue"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetParameterValue</span> (line <span class="line-number">221</span>)
+		<span class="method-title">SetParameterValue</span> (line <span class="line-number">192</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -426,12 +589,74 @@
 		
 			
 	</div>
-<a name="methodTextMatch" id="TextMatch"><!-- --></a>
+<a name="methodTestFilter" id="TestFilter"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">TestFilter</span> (line <span class="line-number">262</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Test a PROP-FILTER or PARAM-FILTER and return a true/false  PROP-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))  PARAM-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Whether or not this vProperty passes the test</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			TestFilter
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$filters</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$filter</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$filter</span><span class="var-description">: An array of XMLElement defining the filter</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$filters</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodTestParamFilter" id="TestParamFilter"><!-- --></a>
 <div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">TextMatch</span> (line <span class="line-number">197</span>)
+		<span class="method-title">TestParamFilter</span> (line <span class="line-number">306</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			TestParamFilter
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$filters</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$parameter_value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$filters</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$parameter_value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodTextMatch" id="TextMatch"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">TextMatch</span> (line <span class="line-number">166</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -457,11 +682,11 @@
 			
 	</div>
 <a name="methodValue" id="Value"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">Value</span> (line <span class="line-number">165</span>)
+		<span class="method-title">Value</span> (line <span class="line-number">131</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -492,7 +717,7 @@
 
 	
 	<p class="notes" id="credit">
-		Documentation generated on Mon, 13 Sep 2010 01:02:06 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Mon, 13 Sep 2010 01:02:08 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>

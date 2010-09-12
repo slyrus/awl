@@ -3,7 +3,7 @@
   <html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
 			<!-- template designed by Marco Von Ballmoos  -->
-			<title>Docs For Class iCalComponent</title>
+			<title>Docs For Class vComponent</title>
 			<link rel="stylesheet" href="../../media/stylesheet.css" />
 						<script src="../../media/lib/classTree.js"></script>
 												<script language="javascript" type="text/javascript">
@@ -88,21 +88,22 @@
 <h2 class="class-name"><img src="../../media/images/Class_logo.png"
 														alt=" Class"
 														title=" Class"
-														style="vertical-align: middle"> iCalComponent</h2>
+														style="vertical-align: middle"> vComponent</h2>
 
 <a name="sec-description"></a>
 <div class="info-box">
 	<div class="info-box-title">Description</div>
 	<div class="nav-bar">
 					<span class="disabled">Description</span> |
-															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
 						
 					</div>
 	<div class="info-box-body">
         		<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">A Class for representing components within an iCalendar</p>
+<p class="short-description">A Class for representing components within an vComponent</p>
 		<p class="notes">
-			Located in <a class="field" href="_iCalendar.php.html">/iCalendar.php</a> (line <span class="field">296</span>)
+			Located in <a class="field" href="_vComponent.php.html">/vComponent.php</a> (line <span class="field">350</span>)
 		</p>
 		
 				
@@ -113,21 +114,59 @@
 
 
 
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">array</span>
+					<a href="#$components" title="details" class="var-name">$components</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">array</span>
+					<a href="#$properties" title="details" class="var-name">$properties</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">array</span>
+					<a href="#$rendered" title="details" class="var-name">$rendered</a>
+				</div>
+																<div class="var-title">
+					<img src="../../media/images/Variable.png" alt=" " />
+					<span class="var-type">string</span>
+					<a href="#$type" title="details" class="var-name">$type</a>
+				</div>
+											</div>
+		</div>
+	</div>
 
 	<a name="sec-method-summary"></a>
 	<div class="info-box">
 		<div class="info-box-title">Method Summary</span></div>
 		<div class="nav-bar">
 			<a href="#sec-description">Description</a> |
-												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																																																																																																																																																																															
+																																																																																																																																																																																							
 				<div class="method-definition">
 					<img src="../../media/images/Constructor.png" alt=" "/>
-											<span class="method-result">iCalComponent</span>
-										<a href="#iCalComponent" title="details" class="method-name">iCalComponent</a>
+											<span class="method-result">vComponent</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
 											([<span class="var-type"></span>&nbsp;<span class="var-name">$content</span> = <span class="var-default">null</span>])
 									</div>
 															
@@ -135,14 +174,14 @@
 					<img src="../../media/images/Method.png" alt=" "/>
 											<span class="method-result">void</span>
 										<a href="#AddComponent" title="details" class="method-name">AddComponent</a>
-											(<span class="var-type"><a href="../../awl/iCalendar/iCalComponent.html">iCalComponent</a></span>&nbsp;<span class="var-name">$new_component</span>)
+											(<span class="var-type"><a href="../../awl/vComponent/vComponent.html">vComponent</a></span>&nbsp;<span class="var-name">$new_component</span>)
 									</div>
 															
 				<div class="method-definition">
 					<img src="../../media/images/Method.png" alt=" "/>
 											<span class="method-result">void</span>
 										<a href="#AddProperty" title="details" class="method-name">AddProperty</a>
-											(<span class="var-type"><a href="../../awl/iCalendar/iCalProp.html">iCalProp</a></span>&nbsp;<span class="var-name">$new_property</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span> = <span class="var-default">null</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$parameters</span> = <span class="var-default">null</span>])
+											(<span class="var-type"><a href="../../awl/vComponent/vProperty.html">vProperty</a></span>&nbsp;<span class="var-name">$new_property</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span> = <span class="var-default">null</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$parameters</span> = <span class="var-default">null</span>])
 									</div>
 															
 				<div class="method-definition">
@@ -156,14 +195,7 @@
 					<img src="../../media/images/Method.png" alt=" "/>
 											<span class="method-result">void</span>
 										<a href="#ClearProperties" title="details" class="method-name">ClearProperties</a>
-											([<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>])
-									</div>
-															
-				<div class="method-definition">
-					<img src="../../media/images/Method.png" alt=" "/>
-											<span class="method-result">void</span>
-										<a href="#CloneConfidential" title="details" class="method-name">CloneConfidential</a>
-										()
+											([<span class="var-type">string|array</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>])
 									</div>
 															
 				<div class="method-definition">
@@ -176,22 +208,8 @@
 				<div class="method-definition">
 					<img src="../../media/images/Method.png" alt=" "/>
 											<span class="method-result">array</span>
-										<a href="#FirstNonTimezone" title="details" class="method-name">&amp;FirstNonTimezone</a>
-											([<span class="var-type"></span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>])
-									</div>
-															
-				<div class="method-definition">
-					<img src="../../media/images/Method.png" alt=" "/>
-											<span class="method-result">array</span>
 										<a href="#GetComponents" title="details" class="method-name">GetComponents</a>
-											([<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$normal_match</span> = <span class="var-default">true</span>])
-									</div>
-															
-				<div class="method-definition">
-					<img src="../../media/images/Method.png" alt=" "/>
-											<span class="method-result">string</span>
-										<a href="#GetPParamValue" title="details" class="method-name">GetPParamValue</a>
-											(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$parameter_name</span>)
+											([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$normal_match</span> = <span class="var-default">true</span>])
 									</div>
 															
 				<div class="method-definition">
@@ -210,9 +228,9 @@
 															
 				<div class="method-definition">
 					<img src="../../media/images/Method.png" alt=" "/>
-											<span class="method-result">string</span>
-										<a href="#GetPValue" title="details" class="method-name">GetPValue</a>
-											(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>)
+											<span class="method-result">void</span>
+										<a href="#GetProperty" title="details" class="method-name">GetProperty</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$type</span>)
 									</div>
 															
 				<div class="method-definition">
@@ -220,20 +238,6 @@
 											<span class="method-result">void</span>
 										<a href="#GetType" title="details" class="method-name">GetType</a>
 										()
-									</div>
-															
-				<div class="method-definition">
-					<img src="../../media/images/Method.png" alt=" "/>
-											<span class="method-result">boolean</span>
-										<a href="#IsAttendee" title="details" class="method-name">IsAttendee</a>
-											(<span class="var-type">string</span>&nbsp;<span class="var-name">$email</span>)
-									</div>
-															
-				<div class="method-definition">
-					<img src="../../media/images/Method.png" alt=" "/>
-											<span class="method-result">boolean</span>
-										<a href="#IsOrganizer" title="details" class="method-name">IsOrganizer</a>
-											(<span class="var-type">string</span>&nbsp;<span class="var-name">$email</span>)
 									</div>
 															
 				<div class="method-definition">
@@ -287,16 +291,16 @@
 															
 				<div class="method-definition">
 					<img src="../../media/images/Method.png" alt=" "/>
-											<span class="method-result">void</span>
-										<a href="#UnwrapComponent" title="details" class="method-name">UnwrapComponent</a>
-											(<span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+											<span class="method-result">boolean</span>
+										<a href="#TestFilter" title="details" class="method-name">TestFilter</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$filters</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$filter</span>)
 									</div>
 															
 				<div class="method-definition">
 					<img src="../../media/images/Method.png" alt=" "/>
 											<span class="method-result">void</span>
-										<a href="#VCalendar" title="details" class="method-name">VCalendar</a>
-											([<span class="var-type">array</span>&nbsp;<span class="var-name">$extra_properties</span> = <span class="var-default">null</span>])
+										<a href="#UnwrapComponent" title="details" class="method-name">UnwrapComponent</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
 									</div>
 															
 				<div class="method-definition">
@@ -309,32 +313,142 @@
 		</div>
 	</div>		
 
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			
+<a name="var$components" id="$components"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$components</span>
+						(line <span class="line-number">374</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of (sub-)components, which are vComponent objects</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$properties" id="$properties"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$properties</span>
+						(line <span class="line-number">367</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An array of properties, which are vProperty objects</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$rendered" id="$rendered"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$rendered</span>
+						(line <span class="line-number">381</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The rendered result (or what was originally parsed, if there have been no changes)</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$type" id="$type"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$type</span>
+						(line <span class="line-number">360</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The type of this component, such as 'VEVENT', 'VTODO', 'VTIMEZONE', 'VCARD', etc.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
 	
 	<a name="sec-methods"></a>
 	<div class="info-box">
 		<div class="info-box-title">Methods</div>
 		<div class="nav-bar">
 			<a href="#sec-description">Description</a> |
-																<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
 						
 		</div>
 		<div class="info-box-body">
 			<A NAME='method_detail'></A>
-<a name="methodiCalComponent" id="iCalComponent"><!-- --></a>
+<a name="method__construct" id="__construct"><!-- --></a>
 <div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Constructor.png" />
-		<span class="method-title">Constructor iCalComponent</span> (line <span class="line-number">334</span>)
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">388</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
 <p class="short-description">A basic constructor</p>
 	
 	<div class="method-signature">
-		<span class="method-result">iCalComponent</span>
+		<span class="method-result">vComponent</span>
 		<span class="method-name">
-			iCalComponent
+			__construct
 		</span>
 					([<span class="var-type"></span>&nbsp;<span class="var-name">$content</span> = <span class="var-default">null</span>])
 			</div>
@@ -352,7 +466,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AddComponent</span> (line <span class="line-number">727</span>)
+		<span class="method-title">AddComponent</span> (line <span class="line-number">715</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -363,12 +477,12 @@
 		<span class="method-name">
 			AddComponent
 		</span>
-					(<span class="var-type"><a href="../../awl/iCalendar/iCalComponent.html">iCalComponent</a></span>&nbsp;<span class="var-name">$new_component</span>)
+					(<span class="var-type"><a href="../../awl/vComponent/vComponent.html">vComponent</a></span>&nbsp;<span class="var-name">$new_component</span>)
 			</div>
 	
 			<ul class="parameters">
 					<li>
-				<span class="var-type"><a href="../../awl/iCalendar/iCalComponent.html">iCalComponent</a></span>
+				<span class="var-type"><a href="../../awl/vComponent/vComponent.html">vComponent</a></span>
 				<span class="var-name">$new_component</span><span class="var-description">: The new component to append to the set</span>			</li>
 				</ul>
 		
@@ -379,7 +493,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">AddProperty</span> (line <span class="line-number">596</span>)
+		<span class="method-title">AddProperty</span> (line <span class="line-number">621</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -390,19 +504,19 @@
 		<span class="method-name">
 			AddProperty
 		</span>
-					(<span class="var-type"><a href="../../awl/iCalendar/iCalProp.html">iCalProp</a></span>&nbsp;<span class="var-name">$new_property</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span> = <span class="var-default">null</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$parameters</span> = <span class="var-default">null</span>])
+					(<span class="var-type"><a href="../../awl/vComponent/vProperty.html">vProperty</a></span>&nbsp;<span class="var-name">$new_property</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span> = <span class="var-default">null</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$parameters</span> = <span class="var-default">null</span>])
 			</div>
 	
 			<ul class="parameters">
 					<li>
-				<span class="var-type"><a href="../../awl/iCalendar/iCalProp.html">iCalProp</a></span>
+				<span class="var-type"><a href="../../awl/vComponent/vProperty.html">vProperty</a></span>
 				<span class="var-name">$new_property</span><span class="var-description">: The new property to append to the set, or a string with the name</span>			</li>
 					<li>
 				<span class="var-type">string</span>
-				<span class="var-name">$value</span><span class="var-description">: The value of the new property (default: param 1 is an iCalProp with everything</span>			</li>
+				<span class="var-name">$value</span><span class="var-description">: The value of the new property (default: param 1 is an vProperty with everything</span>			</li>
 					<li>
 				<span class="var-type">array</span>
-				<span class="var-name">$parameters</span><span class="var-description">: The key/value parameter pairs (default: none, or param 1 is an iCalProp with everything)</span>			</li>
+				<span class="var-name">$parameters</span><span class="var-description">: The key/value parameter pairs (default: none, or param 1 is an vProperty with everything)</span>			</li>
 				</ul>
 		
 			
@@ -412,7 +526,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">ClearComponents</span> (line <span class="line-number">684</span>)
+		<span class="method-title">ClearComponents</span> (line <span class="line-number">671</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -439,7 +553,7 @@
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">ClearProperties</span> (line <span class="line-number">559</span>)
+		<span class="method-title">ClearProperties</span> (line <span class="line-number">583</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -450,45 +564,23 @@
 		<span class="method-name">
 			ClearProperties
 		</span>
-					([<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>])
+					([<span class="var-type">string|array</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>])
 			</div>
 	
 			<ul class="parameters">
 					<li>
-				<span class="var-type">string</span>
-				<span class="var-name">$type</span><span class="var-description">: The type of property - omit for all properties</span>			</li>
+				<span class="var-type">string|array</span>
+				<span class="var-name">$type</span><span class="var-description">: The type of property - omit for all properties - or an  array associating property names with true values: array( 'PROPERTY' =&gt; true, 'PROPERTY2' =&gt; true )</span>			</li>
 				</ul>
 		
 			
 	</div>
-<a name="methodCloneConfidential" id="CloneConfidential"><!-- --></a>
+<a name="methodCollectParameterValues" id="CollectParameterValues"><!-- --></a>
 <div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">CloneConfidential</span> (line <span class="line-number">784</span>)
-	</div> 
-	
-	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Clone this component (and subcomponents) into a confidential version of it.  A confidential  event will be scrubbed of any identifying characteristics other than time/date, repeat, uid  and a summary which is just a translated 'Busy'.</p>
-	
-	<div class="method-signature">
-		<span class="method-result">void</span>
-		<span class="method-name">
-			CloneConfidential
-		</span>
-				()
-			</div>
-	
-		
-			
-	</div>
-<a name="methodCollectParameterValues" id="CollectParameterValues"><!-- --></a>
-<div class="evenrow">
-	
-	<div class="method-header">
-		<img src="../../media/images/Method.png" />
-		<span class="method-title">CollectParameterValues</span> (line <span class="line-number">365</span>)
+		<span class="method-title">CollectParameterValues</span> (line <span class="line-number">403</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -511,46 +603,16 @@
 		
 			
 	</div>
-<a name="methodFirstNonTimezone" id="FirstNonTimezone"><!-- --></a>
-<div class="oddrow">
-	
-	<div class="method-header">
-		<img src="../../media/images/Method.png" />
-		<span class="method-title">FirstNonTimezone</span> (line <span class="line-number">616</span>)
-	</div> 
-	
-	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Get all sub-components, or at least get those matching a type</p>
-	<ul class="tags">
-				<li><span class="field">return:</span> an array of the sub-components</li>
-			</ul>
-	
-	<div class="method-signature">
-		<span class="method-result">array</span>
-		<span class="method-name">
-			&amp;FirstNonTimezone
-		</span>
-					([<span class="var-type"></span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>])
-			</div>
-	
-			<ul class="parameters">
-					<li>
-				<span class="var-type"></span>
-				<span class="var-name">$type</span>			</li>
-				</ul>
-		
-			
-	</div>
 <a name="methodGetComponents" id="GetComponents"><!-- --></a>
 <div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">GetComponents</span> (line <span class="line-number">666</span>)
+		<span class="method-title">GetComponents</span> (line <span class="line-number">646</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Get all sub-components, or at least get those matching a type, or failling to match,  should the second parameter be set to false.</p>
+<p class="short-description">Get all sub-components, or at least get those matching a type, or failling to match,  should the second parameter be set to false. Component types may be a string or an array  associating property names with true values: array( 'TYPE' =&gt; true, 'TYPE2' =&gt; true )</p>
 	<ul class="tags">
 				<li><span class="field">return:</span> an array of the sub-components</li>
 			</ul>
@@ -560,13 +622,13 @@
 		<span class="method-name">
 			GetComponents
 		</span>
-					([<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$normal_match</span> = <span class="var-default">true</span>])
+					([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$normal_match</span> = <span class="var-default">true</span>])
 			</div>
 	
 			<ul class="parameters">
 					<li>
-				<span class="var-type">string</span>
-				<span class="var-name">$type</span><span class="var-description">: The type to match (default: All)</span>			</li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$type</span><span class="var-description">: The type(s) to match (default: All)</span>			</li>
 					<li>
 				<span class="var-type">boolean</span>
 				<span class="var-name">$normal_match</span><span class="var-description">: Set to false to invert the match (default: true)</span>			</li>
@@ -574,49 +636,17 @@
 		
 			
 	</div>
-<a name="methodGetPParamValue" id="GetPParamValue"><!-- --></a>
+<a name="methodGetProperties" id="GetProperties"><!-- --></a>
 <div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">GetPParamValue</span> (line <span class="line-number">547</span>)
+		<span class="method-title">GetProperties</span> (line <span class="line-number">566</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Get the value of the specified parameter for the first property matching the  name. Obviously this isn't so useful for properties which may occur multiply, but most don't.</p>
-	<ul class="tags">
-				<li><span class="field">return:</span> The value of the parameter for the property, or null in the case that there was no such property, or no such parameter.</li>
-			</ul>
-	
-	<div class="method-signature">
-		<span class="method-result">string</span>
-		<span class="method-name">
-			GetPParamValue
-		</span>
-					(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$parameter_name</span>)
-			</div>
-	
-			<ul class="parameters">
-					<li>
-				<span class="var-type">string</span>
-				<span class="var-name">$type</span><span class="var-description">: The name of the parameter we are after.</span>			</li>
-					<li>
-				<span class="var-type"></span>
-				<span class="var-name">$parameter_name</span>			</li>
-				</ul>
-		
-			
-	</div>
-<a name="methodGetProperties" id="GetProperties"><!-- --></a>
-<div class="evenrow">
-	
-	<div class="method-header">
-		<img src="../../media/images/Method.png" />
-		<span class="method-title">GetProperties</span> (line <span class="line-number">513</span>)
-	</div> 
-	
-	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Get all properties, or the properties matching a particular type</p>
+<p class="short-description">Get all properties, or the properties matching a particular type, or matching an</p>
+<p class="description"><p>array associating property names with true values: array( 'PROPERTY' =&gt; true, 'PROPERTY2' =&gt; true )</p></p>
 	
 	<div class="method-signature">
 		<span class="method-result">void</span>
@@ -635,17 +665,17 @@
 			
 	</div>
 <a name="methodGetPropertiesByPath" id="GetPropertiesByPath"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">GetPropertiesByPath</span> (line <span class="line-number">837</span>)
+		<span class="method-title">GetPropertiesByPath</span> (line <span class="line-number">800</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
 <p class="short-description">Return an array of properties matching the specified path</p>
 	<ul class="tags">
-				<li><span class="field">return:</span> An array of iCalProp within the tree which match the path given, in the form   [/]COMPONENT[/...]/PROPERTY in a syntax kind of similar to our poor man's XML queries. We   also allow COMPONENT and PROPERTY to be !COMPONENT and !PROPERTY for ++fun.</li>
+				<li><span class="field">return:</span> An array of vProperty within the tree which match the path given, in the form   [/]COMPONENT[/...]/PROPERTY in a syntax kind of similar to our poor man's XML queries. We   also allow COMPONENT and PROPERTY to be !COMPONENT and !PROPERTY for ++fun.</li>
 			</ul>
 	
 	<div class="method-signature">
@@ -664,42 +694,39 @@
 		
 			
 	</div>
-<a name="methodGetPValue" id="GetPValue"><!-- --></a>
-<div class="evenrow">
+<a name="methodGetProperty" id="GetProperty"><!-- --></a>
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">GetPValue</span> (line <span class="line-number">531</span>)
+		<span class="method-title">GetProperty</span> (line <span class="line-number">551</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Get the value of the first property matching the name. Obviously this isn't  so useful for properties which may occur multiply, but most don't.</p>
-	<ul class="tags">
-				<li><span class="field">return:</span> The value of the property, or null if there was no such property.</li>
-			</ul>
+<p class="short-description">Return the first instance of a property of this name</p>
 	
 	<div class="method-signature">
-		<span class="method-result">string</span>
+		<span class="method-result">void</span>
 		<span class="method-name">
-			GetPValue
+			GetProperty
 		</span>
-					(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>)
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$type</span>)
 			</div>
 	
 			<ul class="parameters">
 					<li>
-				<span class="var-type">string</span>
-				<span class="var-name">$type</span><span class="var-description">: The type of property we are after.</span>			</li>
+				<span class="var-type"></span>
+				<span class="var-name">$type</span>			</li>
 				</ul>
 		
 			
 	</div>
 <a name="methodGetType" id="GetType"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">GetType</span> (line <span class="line-number">495</span>)
+		<span class="method-title">GetType</span> (line <span class="line-number">533</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -716,72 +743,12 @@
 		
 			
 	</div>
-<a name="methodIsAttendee" id="IsAttendee"><!-- --></a>
-<div class="evenrow">
-	
-	<div class="method-header">
-		<img src="../../media/images/Method.png" />
-		<span class="method-title">IsAttendee</span> (line <span class="line-number">647</span>)
-	</div> 
-	
-	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Return true if the person identified by the email address is down as an  attendee or organizer for this meeting.</p>
-	<ul class="tags">
-				<li><span class="field">return:</span> true if we found 'em, false if we didn't.</li>
-			</ul>
-	
-	<div class="method-signature">
-		<span class="method-result">boolean</span>
-		<span class="method-name">
-			IsAttendee
-		</span>
-					(<span class="var-type">string</span>&nbsp;<span class="var-name">$email</span>)
-			</div>
-	
-			<ul class="parameters">
-					<li>
-				<span class="var-type">string</span>
-				<span class="var-name">$email</span><span class="var-description">: The e-mail address of the person we're seeking.</span>			</li>
-				</ul>
-		
-			
-	</div>
-<a name="methodIsOrganizer" id="IsOrganizer"><!-- --></a>
+<a name="methodMaskComponents" id="MaskComponents"><!-- --></a>
 <div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">IsOrganizer</span> (line <span class="line-number">631</span>)
-	</div> 
-	
-	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Return true if the person identified by the email address is down as an  organizer for this meeting.</p>
-	<ul class="tags">
-				<li><span class="field">return:</span> true if we found 'em, false if we didn't.</li>
-			</ul>
-	
-	<div class="method-signature">
-		<span class="method-result">boolean</span>
-		<span class="method-name">
-			IsOrganizer
-		</span>
-					(<span class="var-type">string</span>&nbsp;<span class="var-name">$email</span>)
-			</div>
-	
-			<ul class="parameters">
-					<li>
-				<span class="var-type">string</span>
-				<span class="var-name">$email</span><span class="var-description">: The e-mail address of the person we're seeking.</span>			</li>
-				</ul>
-		
-			
-	</div>
-<a name="methodMaskComponents" id="MaskComponents"><!-- --></a>
-<div class="evenrow">
-	
-	<div class="method-header">
-		<img src="../../media/images/Method.png" />
-		<span class="method-title">MaskComponents</span> (line <span class="line-number">745</span>)
+		<span class="method-title">MaskComponents</span> (line <span class="line-number">733</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -804,11 +771,11 @@
 			
 	</div>
 <a name="methodMaskProperties" id="MaskProperties"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">MaskProperties</span> (line <span class="line-number">763</span>)
+		<span class="method-title">MaskProperties</span> (line <span class="line-number">751</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -834,15 +801,15 @@
 			
 	</div>
 <a name="methodParseFrom" id="ParseFrom"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">ParseFrom</span> (line <span class="line-number">386</span>)
+		<span class="method-title">ParseFrom</span> (line <span class="line-number">424</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Parse the text $content into sets of iCalProp &amp; iCalComponent within this iCalComponent</p>
+<p class="short-description">Parse the text $content into sets of vProperty &amp; vComponent within this vComponent</p>
 	
 	<div class="method-signature">
 		<span class="method-result">void</span>
@@ -855,17 +822,17 @@
 			<ul class="parameters">
 					<li>
 				<span class="var-type">string</span>
-				<span class="var-name">$content</span><span class="var-description">: The raw RFC2445-compliant iCalendar component, including BEGIN:TYPE &amp; END:TYPE</span>			</li>
+				<span class="var-name">$content</span><span class="var-description">: The raw RFC2445-compliant vComponent component, including BEGIN:TYPE &amp; END:TYPE</span>			</li>
 				</ul>
 		
 			
 	</div>
 <a name="methodRender" id="Render"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">Render</span> (line <span class="line-number">806</span>)
+		<span class="method-title">Render</span> (line <span class="line-number">769</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -888,11 +855,11 @@
 			
 	</div>
 <a name="methodSetComponents" id="SetComponents"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetComponents</span> (line <span class="line-number">713</span>)
+		<span class="method-title">SetComponents</span> (line <span class="line-number">701</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -912,17 +879,17 @@
 				<span class="var-name">$type</span><span class="var-description">: The type of components to be replaced.  Defaults to null, which means all components will be replaced.</span>			</li>
 					<li>
 				<span class="var-type">array</span>
-				<span class="var-name">$new_component</span><span class="var-description">: of iCalComponent $new_components The new components to replace the existing ones</span>			</li>
+				<span class="var-name">$new_component</span><span class="var-description">: of vComponent $new_components The new components to replace the existing ones</span>			</li>
 				</ul>
 		
 			
 	</div>
 <a name="methodSetProperties" id="SetProperties"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetProperties</span> (line <span class="line-number">580</span>)
+		<span class="method-title">SetProperties</span> (line <span class="line-number">605</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -948,11 +915,11 @@
 			
 	</div>
 <a name="methodSetType" id="SetType"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">SetType</span> (line <span class="line-number">503</span>)
+		<span class="method-title">SetType</span> (line <span class="line-number">541</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -974,12 +941,45 @@
 		
 			
 	</div>
+<a name="methodTestFilter" id="TestFilter"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<img src="../../media/images/Method.png" />
+		<span class="method-title">TestFilter</span> (line <span class="line-number">853</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Test a PROP-FILTER or COMP-FILTER and return a true/false  COMP-FILTER (is-defined | is-not-defined | (time-range?, prop-filter*, comp-filter*))  PROP-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Whether or not this vComponent passes the test</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			TestFilter
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$filters</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$filter</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$filter</span><span class="var-description">: An array of XMLElement defining the filter</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$filters</span>			</li>
+				</ul>
+		
+			
+	</div>
 <a name="methodUnwrapComponent" id="UnwrapComponent"><!-- --></a>
 <div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">UnwrapComponent</span> (line <span class="line-number">471</span>)
+		<span class="method-title">UnwrapComponent</span> (line <span class="line-number">509</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1001,39 +1001,12 @@
 		
 			
 	</div>
-<a name="methodVCalendar" id="VCalendar"><!-- --></a>
+<a name="methodWrapComponent" id="WrapComponent"><!-- --></a>
 <div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">VCalendar</span> (line <span class="line-number">349</span>)
-	</div> 
-	
-	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Apply standard properties for a VCalendar</p>
-	
-	<div class="method-signature">
-		<span class="method-result">void</span>
-		<span class="method-name">
-			VCalendar
-		</span>
-					([<span class="var-type">array</span>&nbsp;<span class="var-name">$extra_properties</span> = <span class="var-default">null</span>])
-			</div>
-	
-			<ul class="parameters">
-					<li>
-				<span class="var-type">array</span>
-				<span class="var-name">$extra_properties</span><span class="var-description">: Key/value pairs of additional properties</span>			</li>
-				</ul>
-		
-			
-	</div>
-<a name="methodWrapComponent" id="WrapComponent"><!-- --></a>
-<div class="oddrow">
-	
-	<div class="method-header">
-		<img src="../../media/images/Method.png" />
-		<span class="method-title">WrapComponent</span> (line <span class="line-number">483</span>)
+		<span class="method-title">WrapComponent</span> (line <span class="line-number">521</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1062,7 +1035,7 @@
 
 	
 	<p class="notes" id="credit">
-		Documentation generated on Mon, 13 Sep 2010 01:02:06 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Mon, 13 Sep 2010 01:02:08 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>

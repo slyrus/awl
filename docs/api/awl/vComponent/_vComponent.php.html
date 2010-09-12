@@ -3,7 +3,7 @@
   <html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
 			<!-- template designed by Marco Von Ballmoos  -->
-			<title>Docs for page iCalendar.php</title>
+			<title>Docs for page vComponent.php</title>
 			<link rel="stylesheet" href="../../media/stylesheet.css" />
 						<script src="../../media/lib/classTree.js"></script>
 												<script language="javascript" type="text/javascript">
@@ -85,7 +85,7 @@
 					</head>
 		<body>
 			<div class="page-body">			
-<h2 class="file-name"><img src="../../media/images/Page_logo.png" alt="File" style="vertical-align: middle">/iCalendar.php</h2>
+<h2 class="file-name"><img src="../../media/images/Page_logo.png" alt="File" style="vertical-align: middle">/vComponent.php</h2>
 
 <a name="sec-description"></a>
 <div class="info-box">
@@ -94,22 +94,15 @@
 					<span class="disabled">Description</span> |
 							<a href="#sec-classes">Classes</a>
 			|							<a href="#sec-includes">Includes</a>
-			|											<a href="#sec-functions">Functions</a>
-			</div>
+												</div>
 	<div class="info-box-body">	
 		<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">A Class for handling iCalendar data.</p>
-<p class="description"><p>When parsed the underlying structure is roughly as follows:</p><p>iCalendar( array(iCalComponent), array(iCalProp) )</p><p>each iCalComponent is similarly structured:</p><p>iCalComponent( array(iCalComponent), array(iCalProp) )</p><p>Once parsed, $ical-&gt;component will point to the wrapping VCALENDAR component of  the iCalendar.  This will be fine for simple iCalendar usage as sampled below,  but more complex iCalendar such as a VEVENT with RRULE which has repeat overrides  will need quite a bit more thought to process correctly.</p></p>
+<p class="short-description">A Class for handling vCalendar &amp; vCard data.</p>
+<p class="description"><p>When parsed the underlying structure is roughly as follows:</p><p>vComponent( array(vComponent), array(vProperty) )</p></p>
 	<ul class="tags">
 				<li><span class="field">author:</span> Andrew McMillan &lt;<a href="mailto:andrew@mcmillan.net.nz">andrew@mcmillan.net.nz</a>&gt;</li>
-				<li><span class="field">copyright:</span> Catalyst IT Ltd, Morphoss Ltd &lt;http://www.morphoss.com/&gt;</li>
+				<li><span class="field">copyright:</span> Morphoss Ltd &lt;http://www.morphoss.com/&gt;</li>
 				<li><span class="field">license:</span> <a href="http://gnu.org/copyleft/gpl.html">GNU GPL v2 or later</a></li>
-				<li><span class="field">example:</span> example not found</li>
-				<li><span class="field">example:</span> example not found</li>
-				<li><span class="field">example:</span> example not found</li>
-				<li><span class="field">example:</span> example not found</li>
-				<li><span class="field">example:</span> example not found</li>
-				<li><span class="field">example:</span> example not found</li>
 			</ul>
 		
 			</div>
@@ -122,8 +115,7 @@
 			<a href="#sec-description">Description</a> |
 			<span class="disabled">Classes</span>
 			|							<a href="#sec-includes">Includes</a>
-				|																<a href="#sec-functions">Functions</a>
-					</div>
+																		</div>
 		<div class="info-box-body">	
 			<table cellpadding="2" cellspacing="0" class="class-table">
 				<tr>
@@ -135,10 +127,10 @@
 						<img src="../../media/images/Class.png"
 								 alt=" class"
 								 title=" class"/>
-						<a href="../../awl/iCalendar/iCalProp.html">iCalProp</a>
+						<a href="../../awl/vComponent/vProperty.html">vProperty</a>
 					</td>
 					<td>
-											A Class for representing properties within an iCalendar
+											A Class for representing properties within a vComponent (VCALENDAR or VCARD)
 										</td>
 				</tr>
 								<tr>
@@ -146,21 +138,10 @@
 						<img src="../../media/images/Class.png"
 								 alt=" class"
 								 title=" class"/>
-						<a href="../../awl/iCalendar/iCalComponent.html">iCalComponent</a>
+						<a href="../../awl/vComponent/vComponent.html">vComponent</a>
 					</td>
 					<td>
-											A Class for representing components within an iCalendar
-										</td>
-				</tr>
-								<tr>
-					<td style="padding-right: 2em; vertical-align: top; white-space: nowrap">
-						<img src="../../media/images/Class.png"
-								 alt=" class"
-								 title=" class"/>
-						<a href="../../awl/iCalendar/iCalendar.html">iCalendar</a>
-					</td>
-					<td>
-											A Class for handling Events on a calendar (DEPRECATED)
+											A Class for representing components within an vComponent
 										</td>
 				</tr>
 							</table>
@@ -174,33 +155,17 @@
 			<a href="#sec-description">Description</a> |
 							<a href="#sec-classes">Classes</a>
 				|						<span class="disabled">Includes</span>
-			|													<a href="#sec-functions">Functions</a>
-					</div>
+														</div>
 		<div class="info-box-body">	
 			<a name="_XMLElement_php"><!-- --></a>
-<div class="evenrow">
-	
-	<div>
-		<img src="../../media/images/Page.png" alt=" " />
-		<span class="include-title">
-			<span class="include-type">require_once</span>
-			(<span class="include-name"><a href="../../awl/XMLElement/_XMLElement.php.html">'XMLElement.php'</a></span>)
-			(line <span class="line-number">49</span>)
-		</span>
-	</div>
-
-	<!-- ========== Info from phpDoc block ========= -->
-	
-</div>
-<a name="_PgQuery_php"><!-- --></a>
 <div class="oddrow">
 	
 	<div>
 		<img src="../../media/images/Page.png" alt=" " />
 		<span class="include-title">
 			<span class="include-type">require_once</span>
-			(<span class="include-name"><a href="../../awl/PgQuery/_PgQuery.php.html">'PgQuery.php'</a></span>)
-			(line <span class="line-number">50</span>)
+			(<span class="include-name"><a href="../../awl/XMLElement/_XMLElement.php.html">'XMLElement.php'</a></span>)
+			(line <span class="line-number">16</span>)
 		</span>
 	</div>
 
@@ -212,48 +177,9 @@
 	
 	
 	
-	<a name="sec-functions"></a>	
-	<div class="info-box">
-		<div class="info-box-title">Functions</div>
-		<div class="nav-bar">
-			<a href="#sec-description">Description</a> |
-							<a href="#sec-classes">Classes</a>
-				|										<a href="#sec-includes">Includes</a>
-				|												<span class="disabled">Functions</span>
-		</div>
-		<div class="info-box-body">	
-			<a name="functiondeprecated" id="functiondeprecated"><!-- --></a>
-<div class="evenrow">
-	
-	<div>
-		<img src="../../media/images/Function.png" />
-		<span class="method-title">deprecated</span> (line <span class="line-number">888</span>)
-	</div> 
-
-	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">***********************************************************************************  Everything below here is deprecated and should be avoided in favour  of using, improving and enhancing the more sensible structures above.</p>
-<p class="description"><p>***********************************************************************************</p></p>
-	<div class="method-signature">
-		<span class="method-result">void</span>
-		<span class="method-name">
-			deprecated
-		</span>
-					(<span class="var-type"></span>&nbsp;<span class="var-name">$method</span>)
-			</div>
-
-			<ul class="parameters">
-					<li>
-				<span class="var-type"></span>
-				<span class="var-name">$method</span>			</li>
-				</ul>
-		
-	
-</div>
-		</div>
-	</div>
 	
 	<p class="notes" id="credit">
-		Documentation generated on Mon, 13 Sep 2010 01:02:05 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Mon, 13 Sep 2010 01:02:08 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>

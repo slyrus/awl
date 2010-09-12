@@ -1,3 +1,155 @@
+2010-09-11  Andrew McMillan  <andrew@morphoss.com>
+	* [iCalendar/vComponent/vEvent] UTF8 mode for RFC5545 wrap regexes
+
+2010-09-10  Andrew McMillan  <andrew@morphoss.com>
+	* [AWLUtilities] Undeclared globals in force_utf8.
+	* [iCalendar,vEvent,vComponent] Fix the line wrapping in V* components.
+
+2010-08-30  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] Add a function to return a single property.
+	* Slightly better TZname to Olson matching.
+
+2010-08-28  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] Various changes in use with VCard.
+	  - Enforce upercase property names.
+	  - Invert array sense for MaskComponents / MaskProperties to match
+	    the way it is with the GetProperties, GetComponents.
+
+2010-08-26  Andrew McMillan  <andrew@morphoss.com>
+	* Add some basic filter processing for addressbook-query usage.
+	* Wrap password logging in logs behind $c->dbg['password'] = 1;
+
+2010-06-23  Andrew McMillan  <andrew@morphoss.com>
+	* [XMLDocument] Add helper for CardDAVElement.
+
+2010-06-17  Andrew McMillan  <andrew@morphoss.com>
+	* [Session] Try and clarify the lost password text a little better.
+	* Don't send multipart/form-data if the form is GET.
+
+2010-05-28  Andrew McMillan  <debian@mcmillan.net.nz>
+	* [AwlQuery] Fixing backward compatibility with PgQuery.
+	* [AwlQuery] Fix handling of queries with no parameters.
+
+2010-05-27  Andrew McMillan  <andrew@morphoss.com>
+	* [iCalendar] Apply correct wrapping for RFC5545.
+	* [iCalendar] Don't add a trailling space when wrapping for RFC5545.
+
+2010-05-19  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] Generic base class for handling VCALENDAR, VCARD, etc.
+	* Expose transaction state at query level.
+	* No need to return anything from the schema update.
+
+2010-05-09  Andrew McMillan  <andrew@morphoss.com>
+	* [Translation] If gettext is not installed, fall back to English.
+
+2010-05-08  Andrew McMillan  <andrew@morphoss.com>
+	* Add Australia to the list of possible TZ continents.
+
+2010-04-28  Andrew McMillan  <andrew@morphoss.com>
+	* [AwlQuery] Handle setting an alternative connection somewhat better.
+	* [Session] _CheckLogin needs to access $c for external authentication.
+	* Allow for multiple records to have somehow got into the DB.
+	* Better parameter escaping, including escaping ? for older PHP::PDO.
+
+2010-04-20  Andrew McMillan  <andrew@morphoss.com>
+	* Replace deprecated split() calls.
+
+2010-04-17  Andrew McMillan  <andrew@morphoss.com>
+	* Release 0.43
+
+2010-04-15  Andrew McMillan  <andrew@morphoss.com>
+	* [iCalendar] Add and use a new olson_from_tzstring() function.
+
+2010-04-14  Andrew McMillan  <andrew@morphoss.com>
+	* We can close this bug now, since it was fixed a wee while ago.
+	* [AwlQuery] Warn if named parameters are passed in incorrectly.
+	* Fix strange alternate reality definition of aparche_read_header.
+
+2010-04-12  Andrew McMillan  <andrew@morphoss.com>
+	* Preparing to release 0.43
+	* The new database libraries should be with the library code.
+	  Especially since they're being used for more than just DAViCal now.
+karora@dave:~/projects/awl$ gitlog-to-changelog --since=2010-04-13
+2010-09-11  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] Tweak wrapping one last time.
+	* [iCalendar/vComponent/vEvent] UTF8 mode for RFC5545 wrap regexes
+	  The regexes used for wrapping to 72 characters in line with
+	  RFC5545 wrapping rules need to be UTF8 aware, otherwise they
+	  will break lines in the middle of UTF8 sequences and we get
+	  to fail to put both broken parts into the database.
+
+2010-09-10  Andrew McMillan  <andrew@morphoss.com>
+	* [AWLUtilities] Undeclared globals in force_utf8.
+	* Ignore Eclipse droppings.
+	* [iCalendar,vEvent,vComponent] Fix the line wrapping in V* components.
+	  The wordwrap was not being done in a repeatably reversible manner
+	  due to a misguided effort to make it more readable.  This gives up
+	  on readability in favour of reversability.
+
+2010-09-02  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] Revert that last change.
+
+2010-08-30  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] Add a function to return a single property.
+	* Slightly better TZname to Olson matching.
+
+2010-08-28  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] Various changes in use with VCard.
+	  - Enforce upercase property names.
+	  - Invert array sense for MaskComponents / MaskProperties to match
+	    the way it is with the GetProperties, GetComponents.
+	  - Generally improve the consistency.
+
+2010-08-26  Andrew McMillan  <andrew@morphoss.com>
+	* Add some basic filter processing for addressbook-query usage.
+	* Wrap password logging in logs behind $c->dbg['password'] = 1;
+
+2010-06-23  Andrew McMillan  <andrew@morphoss.com>
+	* [XMLDocument] Add helper for CardDAVElement.
+
+2010-06-17  Andrew McMillan  <andrew@morphoss.com>
+	* [Session] Try and clarify the lost password text a little better.
+	* Don't send multipart/form-data if the form is GET.
+
+2010-05-28  Andrew McMillan  <debian@mcmillan.net.nz>
+	* [AwlQuery] Fixing backward compatibility with PgQuery.
+	* [AwlQuery] Fix handling of queries with no parameters.
+
+2010-05-27  Andrew McMillan  <andrew@morphoss.com>
+	* [iCalendar] Apply correct wrapping for RFC5545.
+	* [iCalendar] Don't add a trailling space when wrapping for RFC5545.
+
+2010-05-19  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] Generic base class for handling VCALENDAR, VCARD, etc.
+	* Expose transaction state at query level.
+	* No need to return anything from the schema update.
+
+2010-05-09  Andrew McMillan  <andrew@morphoss.com>
+	* [Translation] If gettext is not installed, fall back to English.
+
+2010-05-08  Andrew McMillan  <andrew@morphoss.com>
+	* Add Australia to the list of possible TZ continents.
+
+2010-04-28  Andrew McMillan  <andrew@morphoss.com>
+	* [AwlQuery] Handle setting an alternative connection somewhat better.
+	* [Session] _CheckLogin needs to access $c for external authentication.
+	* Allow for multiple records to have somehow got into the DB.
+	* Better parameter escaping, including escaping ? for older PHP::PDO.
+
+2010-04-20  Andrew McMillan  <andrew@morphoss.com>
+	* Replace deprecated split() calls.
+
+2010-04-17  Andrew McMillan  <andrew@morphoss.com>
+	* Release 0.43
+
+2010-04-15  Andrew McMillan  <andrew@morphoss.com>
+	* [iCalendar] Add and use a new olson_from_tzstring() function.
+
+2010-04-14  Andrew McMillan  <andrew@morphoss.com>
+	* We can close this bug now, since it was fixed a wee while ago.
+	* [AwlQuery] Warn if named parameters are passed in incorrectly.
+	* Fix strange alternate reality definition of aparche_read_header.
+
 2010-04-12  Andrew McMillan  <andrew@morphoss.com>
 	* [AwlQuery] Move new database libraries into AWL
 

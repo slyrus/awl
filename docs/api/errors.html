@@ -7,7 +7,7 @@
 			<link rel="stylesheet" href="media/stylesheet.css" />
 											</head>
 		<body>
-						<a href="#Post-parsing">Post-parsing</a><br>
+						<a href="#Post-parsing">Post-parsing</a><br>
 <a href="#AwlDatabase.php">AwlDatabase.php</a><br>
 <a href="#AwlDBDialect.php">AwlDBDialect.php</a><br>
 <a href="#AwlQuery.php">AwlQuery.php</a><br>
@@ -22,43 +22,45 @@
 <a href="#MenuSet.php">MenuSet.php</a><br>
 <a href="#PgQuery.php">PgQuery.php</a><br>
 <a href="#Session.php">Session.php</a><br>
+<a href="#Translation.php">Translation.php</a><br>
 <a href="#User.php">User.php</a><br>
 <a href="#Validation.php">Validation.php</a><br>
+<a href="#vComponent.php">vComponent.php</a><br>
 <a href="#XMLDocument.php">XMLDocument.php</a><br>
 <a href="#XMLElement.php">XMLElement.php</a><br>
 <a name="Post-parsing"></a>
 <h1>Post-parsing</h1>
 <h2>Warnings:</h2><br>
 <b>Warning</b> - 
-duplicate define element "E_USER_ERROR" in file /home/andrew/projects/awl/inc/AwlDatabase.php will be ignored.
+duplicate define element "E_USER_ERROR" in file /home/karora/projects/awl/inc/AwlDatabase.php will be ignored.
 Use an @ignore tag on the original if you want this case to be documented.<br>
 <a name="AuthPlugins.php"></a>
 <h1>AuthPlugins.php</h1>
 <h2>Warnings:</h2><br>
 <b>Warning on line 27</b> - Page-level DocBlock precedes "require_once 'AWLUtilities.php'", use another DocBlock to document the source element<br>
 <h2>Errors:</h2><br>
-<b>Error on line 86</b> - DocBlock has multiple @package tags, illegal. ignoring additional tag "@package awl"<br>
-<b>Error on line 106</b> - DocBlock has multiple @package tags, illegal. ignoring additional tag "@package awl"<br>
+<b>Error on line 87</b> - DocBlock has multiple @package tags, illegal. ignoring additional tag "@package awl"<br>
+<b>Error on line 107</b> - DocBlock has multiple @package tags, illegal. ignoring additional tag "@package awl"<br>
 <a name="AwlDatabase.php"></a>
 <h1>AwlDatabase.php</h1>
 <h2>Warnings:</h2><br>
-<b>Warning on line 36</b> - Unknown tag "@compatibility" used<br>
 <b>Warning on line 36</b> - Page-level DocBlock precedes "require 'AwlDBDialect.php'", use another DocBlock to document the source element<br>
+<b>Warning on line 36</b> - Unknown tag "@compatibility" used<br>
 <a name="AwlDBDialect.php"></a>
 <h1>AwlDBDialect.php</h1>
 <h2>Warnings:</h2><br>
-<b>Warning on line 17</b> - Page-level DocBlock precedes "define E_USER_ERROR", use another DocBlock to document the source element<br>
 <b>Warning on line 17</b> - Unknown tag "@compatibility" used<br>
+<b>Warning on line 17</b> - Page-level DocBlock precedes "define E_USER_ERROR", use another DocBlock to document the source element<br>
 <a name="AwlQuery.php"></a>
 <h1>AwlQuery.php</h1>
 <h2>Warnings:</h2><br>
-<b>Warning on line 10</b> - Unknown tag "@compatibility" used<br>
 <b>Warning on line 10</b> - Page-level DocBlock precedes "require_once 'AwlDatabase.php'", use another DocBlock to document the source element<br>
+<b>Warning on line 10</b> - Unknown tag "@compatibility" used<br>
 <a name="AwlUpgrader.php"></a>
 <h1>AwlUpgrader.php</h1>
 <h2>Warnings:</h2><br>
-<b>Warning on line 10</b> - Page-level DocBlock precedes "require_once 'AwlQuery.php'", use another DocBlock to document the source element<br>
 <b>Warning on line 10</b> - Unknown tag "@compatibility" used<br>
+<b>Warning on line 10</b> - Page-level DocBlock precedes "require_once 'AwlQuery.php'", use another DocBlock to document the source element<br>
 <a name="classBrowser.php"></a>
 <h1>classBrowser.php</h1>
 <h2>Warnings:</h2><br>
@@ -82,19 +84,19 @@ Use an @ignore tag on the original if you want this case to be documented.<br>
 <a name="iCalendar.php"></a>
 <h1>iCalendar.php</h1>
 <h2>Warnings:</h2><br>
-<b>Warning on line 48</b> - Page-level DocBlock precedes "require_once 'XMLElement.php'", use another DocBlock to document the source element<br>
-<b>Warning on line 48</b> - example file "To replace any 'RRULE' property in an iCalendar object
-   $ical->component->SetProperties( 'RRULE', $rrule_definition );" does not exist<br>
 <b>Warning on line 48</b> - example file "To render just the VEVENTs in the iCalendar with a restricted list of properties:
    echo $ical->Render( false, 'VEVENT', array( 'DTSTART', 'DURATION', 'DTEND', 'RRULE', 'SUMMARY') );" does not exist<br>
-<b>Warning on line 48</b> - example file "To render it as an iCalendar string:
-   echo $ical->Render();" does not exist<br>
-<b>Warning on line 48</b> - example file "To clear any 'VALARM' components in an iCalendar object
-   $ical->component->ClearComponents('VALARM');" does not exist<br>
-<b>Warning on line 48</b> - example file "To parse an existing iCalendar string for manipulation:
-   $ical = new iCalendar( array('icalendar' => $icalendar_text ) );" does not exist<br>
 <b>Warning on line 48</b> - example file "To create a new iCalendar from several data values:
    $ical = new iCalendar( array('DTSTART' => $dtstart, 'SUMMARY' => $summary, 'DURATION' => $duration ) );" does not exist<br>
+<b>Warning on line 48</b> - example file "To parse an existing iCalendar string for manipulation:
+   $ical = new iCalendar( array('icalendar' => $icalendar_text ) );" does not exist<br>
+<b>Warning on line 48</b> - Page-level DocBlock precedes "require_once 'XMLElement.php'", use another DocBlock to document the source element<br>
+<b>Warning on line 48</b> - example file "To render it as an iCalendar string:
+   echo $ical->Render();" does not exist<br>
+<b>Warning on line 48</b> - example file "To replace any 'RRULE' property in an iCalendar object
+   $ical->component->SetProperties( 'RRULE', $rrule_definition );" does not exist<br>
+<b>Warning on line 48</b> - example file "To clear any 'VALARM' components in an iCalendar object
+   $ical->component->ClearComponents('VALARM');" does not exist<br>
 <b>Warning on line 836</b> - Unknown tag "@note" used<br>
 <b>Warning on line 948</b> - Unknown tag "@DEPRECATED:" used<br>
 <b>Warning on line 1022</b> - Unknown tag "@DEPRECATED:" used<br>
@@ -122,8 +124,8 @@ Use an @ignore tag on the original if you want this case to be documented.<br>
 <b>Warning on line 1586</b> - Unknown tag "@DEPRECATED:" used<br>
 <b>Warning on line 1662</b> - Unknown tag "@DEPRECATED:" used<br>
 <b>Warning on line 1687</b> - Unknown tag "@DEPRECATED:" used<br>
-<b>Warning on line 1704</b> - Unknown tag "@DEPRECATED:" used<br>
-<b>Warning on line 1718</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1705</b> - Unknown tag "@DEPRECATED:" used<br>
+<b>Warning on line 1719</b> - Unknown tag "@DEPRECATED:" used<br>
 <h2>Errors:</h2><br>
 <b>Error on line 1101</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var integer The number of SOMETHINGS we want to get."<br>
 <a name="MenuSet.php"></a>
@@ -133,11 +135,17 @@ Use an @ignore tag on the original if you want this case to be documented.<br>
 <a name="PgQuery.php"></a>
 <h1>PgQuery.php</h1>
 <h2>Warnings:</h2><br>
-<b>Warning on line 54</b> - Page-level DocBlock precedes "require_once "AWLUtilities.php"", use another DocBlock to document the source element<br>
+<b>Warning on line 55</b> - Page-level DocBlock precedes "require_once "AWLUtilities.php"", use another DocBlock to document the source element<br>
 <a name="Session.php"></a>
 <h1>Session.php</h1>
 <h2>Warnings:</h2><br>
 <b>Warning on line 24</b> - Page-level DocBlock precedes "require_once 'AWLUtilities.php'", use another DocBlock to document the source element<br>
+<a name="Translation.php"></a>
+<h1>Translation.php</h1>
+<h2>Warnings:</h2><br>
+<b>Warning on line 74</b> - 
+duplicate function element "translate" in file /home/karora/projects/awl/inc/Translation.php will be ignored.
+Use an @ignore tag on the original if you want this case to be documented.<br>
 <a name="User.php"></a>
 <h1>User.php</h1>
 <h2>Warnings:</h2><br>
@@ -146,11 +154,16 @@ Use an @ignore tag on the original if you want this case to be documented.<br>
 <h1>Validation.php</h1>
 <h2>Warnings:</h2><br>
 <b>Warning on line 10</b> - Page-level DocBlock precedes "require_once "AWLUtilities.php"", use another DocBlock to document the source element<br>
+<a name="vComponent.php"></a>
+<h1>vComponent.php</h1>
+<h2>Warnings:</h2><br>
+<b>Warning on line 15</b> - Page-level DocBlock precedes "require_once 'XMLElement.php'", use another DocBlock to document the source element<br>
+<b>Warning on line 799</b> - Unknown tag "@note" used<br>
 <a name="XMLDocument.php"></a>
 <h1>XMLDocument.php</h1>
 <h2>Warnings:</h2><br>
 <b>Warning on line 12</b> - Page-level DocBlock precedes "require_once "XMLElement.php"", use another DocBlock to document the source element<br>
-<b>Warning on line 290</b> - docblock template never terminated with /**#@-*/<br>
+<b>Warning on line 304</b> - docblock template never terminated with /**#@-*/<br>
 <a name="XMLElement.php"></a>
 <h1>XMLElement.php</h1>
 <h2>Warnings:</h2><br>
@@ -161,10 +174,10 @@ Use an @ignore tag on the original if you want this case to be documented.<br>
 <b>Error on line 26</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var [string ...] Parameters for the format string."<br>
 <b>Error on line 26</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var string A format string for the log message"<br>
 <b>Error on line 86</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var boolean Should the dump recurse into arrays/objects in the array"<br>
-<b>Error on line 86</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var string What name should this array dump identify itself as"<br>
 <b>Error on line 86</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var array The array to be dumped."<br>
+<b>Error on line 86</b> - DocBlock has multiple @var tags, illegal. ignoring additional tag "@var string What name should this array dump identify itself as"<br>
 	<p class="notes" id="credit">
-		Documentation generated on Thu, 15 Apr 2010 20:23:08 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
+		Documentation generated on Mon, 13 Sep 2010 01:02:09 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</body>
-</html>
+</html>

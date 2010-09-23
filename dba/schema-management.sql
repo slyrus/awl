@@ -29,10 +29,10 @@ CREATE or REPLACE FUNCTION check_db_revision( INT, INT, INT ) RETURNS BOOLEAN AS
       SELECT COUNT(*) INTO matching FROM awl_db_revision
                       WHERE schema_major = major AND schema_minor = minor AND schema_patch = patch;
       IF matching >= 1 THEN
-        RAISE EXCEPTION ''Database has not been upgraded to %.%.%'', major, minor, patch;
-        RETURN FALSE;
+        RETURN TRUE;
       END IF;
-      RETURN TRUE;
+      RAISE EXCEPTION ''Database has not been upgraded to %.%.%'', major, minor, patch;
+      RETURN FALSE;
    END;
 ' LANGUAGE 'plpgsql';
 

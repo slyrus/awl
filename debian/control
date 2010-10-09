@@ -2,15 +2,15 @@ Source: awl
 Section: web
 Priority: extra
 Maintainer: Andrew McMillan <awm@debian.org>
-Standards-Version: 3.8.4
-Build-Depends: debhelper (>= 5)
+Standards-Version: 3.9.1
+Build-Depends: debhelper (>= 7)
 Vcs-git: git://repo.or.cz/awl.git
 Vcs-browser: http://repo.or.cz/w/awl.git
 Homepage: http://andrew.mcmillan.net.nz/projects/awl
 
 Package: libawl-php
 Architecture: all
-Depends: debconf (>= 1.0.32), perl
+Depends: ${misc:Depends}, debconf (>= 1.0.32), perl
 Recommends: php5 | php4 (>= 4:4.3)
 Description: Andrew's Web Libraries - PHP Utility Libraries
  This package contains Andrew's Web Libraries.  This is a set
@@ -28,7 +28,7 @@ Description: Andrew's Web Libraries - PHP Utility Libraries
 Package: awl-doc
 Section: doc
 Architecture: all
-Depends: debconf (>= 1.0.32)
+Depends: ${misc:Depends}, debconf (>= 1.0.32)
 Description: Andrew's Web Libraries - API documentation
  This package documents Andrew's Web Libraries.  This is a set
  of hopefully lightweight libraries for handling a variety of

@@ -395,7 +395,7 @@ class vComponent {
     }
   }
 
-
+  
   /**
   * Collect an array of all parameters of our properties which are the specified type
   * Mainly used for collecting the full variety of references TZIDs
@@ -550,8 +550,11 @@ class vComponent {
   */
   function GetProperty( $type ) {
     foreach( $this->properties AS $k => $v ) {
-      if ( $v->Name() == $type ) {
+      if ( is_object($v) && $v->Name() == $type ) {
         return $v;
+      }
+      else if ( !is_object($v) ) {
+        debug_error_log("ERROR", 'vComponent::GetProperty(): Trying to get %s on %s which is not an object!', $type, $v );
       }
     }
     /** So we can call methods on the result of this, make sure we always return a vProperty of some kind */
@@ -635,6 +638,14 @@ class vComponent {
 
 
   /**
+   * Return number of components
+   */
+  function ComponentCount() {
+    return count($this->components);
+  }
+
+
+  /**
   * Get all sub-components, or at least get those matching a type, or failling to match,
   * should the second parameter be set to false. Component types may be a string or an array
   * associating property names with true values: array( 'TYPE' => true, 'TYPE2' => true )
@@ -700,7 +711,7 @@ class vComponent {
   */
   function SetComponents( $new_component, $type = null ) {
     if ( isset($this->rendered) ) unset($this->rendered);
-    if ( count($new_component) > 0 ) $this->ClearComponents($type);
+    $this->ClearComponents($type);
     foreach( $new_component AS $k => $v ) {
       $this->components[] = $v;
     }

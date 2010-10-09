@@ -785,7 +785,7 @@ EOTEXT;
     exit(0);
   }
 
-  function _CheckLogout() {
+  static function _CheckLogout() {
     if ( isset($_GET['logout']) ) {
       dbg_error_log( "Login", ":_CheckLogout: Logging out");
       setcookie( 'sid', '', 0,'/');

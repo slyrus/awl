@@ -527,7 +527,10 @@ function olson_from_tzstring( $tzstring ) {
     return $matches[1];
   }
   switch( $tzstring ) {
-    case 'New Zealand Standard Time': return 'Pacific/Auckland'; break;
+    case 'New Zealand Standard Time': case 'New Zealand Daylight Time': return 'Pacific/Auckland'; break;
+    case 'Central Standard Time':     case 'Central Daylight Time':     return 'America/Chicago';  break;
+    case 'Eastern Standard Time':     case 'Eastern Daylight Time':     return 'America/New_York'; break;
+    case 'Pacific Standard Time':     case 'Pacific Daylight Time':     return 'America/Los_Angeles'; break;
   }
   return null;
 }

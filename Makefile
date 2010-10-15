@@ -11,6 +11,13 @@ built-docs: docs/api/phpdoc.ini inc/*.php
 	touch built-docs
 
 #
+# Insert the current version number into AWLUtilities.php
+#
+inc/AWLUtilities.php: scripts/build-AWLUtilities.sh VERSION inc/AWLUtilities.php.in
+	scripts/build-AWLUtilities.sh <inc/AWLUtilities.php.in >inc/AWLUtilities.php
+
+
+#
 # Build a release .tar.gz file in the directory above us
 #
 release: built-docs

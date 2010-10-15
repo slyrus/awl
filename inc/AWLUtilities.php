@@ -541,6 +541,6 @@ function olson_from_tzstring( $tzstring ) {
  */
 function awl_version() {
   global $c;
-  $c->awl_library_version = 0.46;
+$c->awl_library_version = 0.46;
   return $c->awl_library_version;
 }

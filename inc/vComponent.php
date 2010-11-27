@@ -249,7 +249,12 @@ class vProperty {
     return $this->rendered;
   }
 
+  
+  public function __toString() {
+    return $this->Render();
+  }
 
+  
   /**
    * Test a PROP-FILTER or PARAM-FILTER and return a true/false
    * PROP-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))
@@ -799,6 +804,12 @@ class vComponent {
   }
 
 
+    
+  public function __toString() {
+    return $this->Render();
+  }
+
+  
   /**
   * Return an array of properties matching the specified path
   *

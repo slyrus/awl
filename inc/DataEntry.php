@@ -217,7 +217,7 @@ class EntryField
         $r .= "input type=\"hidden\" name=\"$this->fname\" value=\"off\"><";
       case "radio":
         $checked = "";
-        if ( $this->current == 't' || intval($this->current) == 1 || $this->current == 'on'
+        if ( $this->current === true || $this->current == 't' || intval($this->current) == 1 || $this->current == 'on'
               || (isset($this->attributes['value']) && $this->current == $this->attributes['value'] ) )
           $checked = " checked";
         $id = "id_$this->fname" . ( $this->ftype == "radio" ? "_".$this->attributes['value'] : "");

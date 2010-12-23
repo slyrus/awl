@@ -84,7 +84,7 @@ class EditorField
     $attributes = "";
     if ( count($this->Attributes) == 0 ) return $attributes;
     foreach( $this->Attributes AS $k => $v ) {
-      $attributes .= " $k=\"" . str_replace('"', '\\"', $v) . '"';
+      $attributes .= " $k=\"" . str_replace('"', '&#39;', $v) . '"';
     }
     return $attributes;
   }
@@ -387,26 +387,31 @@ class Editor
           $option_list = $field->OptionList;
         }
         else {
-          @dbg_error_log( 'editor', "DBG: Current=%s, OptionQuery: %s", $currval, $field->LookupSql );
+          @dbg_error_log( 'editor', 'DBG: Current=%s, OptionQuery: %s', $currval, $field->LookupSql );
           $opt_qry = new AwlQuery( $field->LookupSql );
-          $option_list = EntryField::BuildOptionList($opt_qry, $currval, "FieldOptions: $field_name" );
+          $option_list = EntryField::BuildOptionList($opt_qry, $currval, 'FieldOptions: '.$field_name );
           $field->OptionList = $option_list;
         }
-        return "<select class=\"entry\" name=\"$field_name\"$attributes>$option_list</select>";
+        return '<select class="entry" name="'.$field_name.'"'.$attributes.'>'.$option_list.'</select>';
       case "checkbox":
-        switch ( $field_value ) {
-          case 'f':
-          case 'off':
-          case 'false':
-          case '':
-          case '0':
-            $checked = "";
-            break;
-
-          default:
-            $checked = " CHECKED";
+        if ( $field_value === true ) {
+          $checked = ' CHECKED';
         }
-        return "<input type=\"hidden\" value=\"off\" name=\"$field_name\"><input class=\"entry\" type=\"checkbox\" value=\"on\" name=\"$field_name\"$checked$attributes>";
+        else {
+          switch ( $field_value ) {
+            case 'f':
+            case 'off':
+            case 'false':
+            case '':
+            case '0':
+              $checked = "";
+              break;
+  
+            default:
+              $checked = ' CHECKED';
+          }
+        }
+        return '<input type="hidden" value="off" name="'.$field_name.'"><input class="entry" type="checkbox" value="on" name="'.$field_name.'"'.$checked.$attributes.'>';
       case "input":
         $size = (isset($part3) ? $part3 : 6);
         return "<input class=\"entry\" value=\"".htmlspecialchars($field_value)."\" name=\"$field_name\" size=\"$size\"$attributes>";

@@ -439,6 +439,14 @@ class AwlQuery
 
 
   /**
+  * Return the current rownum in the retrieved set
+  */
+  function rownum() {
+    return $this->rownum;
+  }
+
+
+  /**
   * Returns the current state of a transaction, indicating if we have begun a transaction, whether the transaction
   * has failed, or if we are not in a transaction.
   */

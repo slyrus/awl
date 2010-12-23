@@ -88,6 +88,9 @@ class EditorField
     }
     return $attributes;
   }
+
+  
+  
 }
 
 
@@ -372,7 +375,7 @@ class Editor
         else {
           @dbg_error_log( 'editor', "DBG: Current=%s, OptionQuery: %s", $currval, $field->LookupSql );
           $opt_qry = new AwlQuery( $field->LookupSql );
-          $option_list = $opt_qry->BuildOptionList($currval, "FieldOptions: $field_name" );
+          $option_list = EntryField::BuildOptionList($opt_qry, $currval, "FieldOptions: $field_name" );
           $field->OptionList = $option_list;
         }
         return $option_list;
@@ -386,7 +389,7 @@ class Editor
         else {
           @dbg_error_log( 'editor', "DBG: Current=%s, OptionQuery: %s", $currval, $field->LookupSql );
           $opt_qry = new AwlQuery( $field->LookupSql );
-          $option_list = $opt_qry->BuildOptionList($currval, "FieldOptions: $field_name" );
+          $option_list = EntryField::BuildOptionList($opt_qry, $currval, "FieldOptions: $field_name" );
           $field->OptionList = $option_list;
         }
         return "<select class=\"entry\" name=\"$field_name\"$attributes>$option_list</select>";

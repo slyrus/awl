@@ -469,10 +469,10 @@ class Browser
   *               which shouldn't interfere with the default primary order.
   */
   function AddOrder( $field, $direction, $browser_array_key=0, $secondary=0 ) {
-    $field = clean_string($field);
+    $field = clean_by_regex($field,'/[\'"!\\\\()\[\]|*\/{}&%@~;:?<>]/');
     if ( ! isset($this->FieldNames[$field]) ) return;
 
-    if ( $this->Order == "" )
+    if ( !isset($this->Order) || $this->Order == "" )
       $this->Order = "ORDER BY ";
     else
       $this->Order .= ", ";
@@ -734,7 +734,7 @@ class Browser
         else {
           switch( $fld ) {
             case '#even':
-              $rowanswers[$k] = ($this->Query->rownum % 2);
+              $rowanswers[$k] = ($this->Query->rownum() % 2);
               break;
             default:
               $rowanswers[$k] = $fld;
@@ -742,7 +742,7 @@ class Browser
         }
       }
       // Start the row
-      $row_html = vsprintf( preg_replace("/#@even@#/", ($this->Query->rownum % 2), $this->BeginRow), $rowanswers);
+      $row_html = vsprintf( preg_replace("/#@even@#/", ($this->Query->rownum() % 2), $this->BeginRow), $rowanswers);
 
       if ( isset($this->match_column) && isset($this->match_value) && $BrowserCurrentRow->{$this->match_column} == $this->match_value ) {
         $row_html .= call_user_func( $this->match_function, $BrowserCurrentRow );
@@ -765,7 +765,7 @@ class Browser
       }
 
       // Finish the row
-      $row_html .= preg_replace("/#@even@#/", ($this->Query->rownum % 2), $this->CloseRow);
+      $row_html .= preg_replace("/#@even@#/", ($this->Query->rownum() % 2), $this->CloseRow);
       $this->current_row = $BrowserCurrentRow;
       $html .= preg_replace_callback("/##([^#]+)##/", array( &$this, "ValueReplacement"), $row_html );
     }
@@ -798,7 +798,7 @@ class Browser
           else {
             switch( $fld ) {
               case '#even':
-                $rowanswers[$k] = ($this->Query->rownum % 2);
+                $rowanswers[$k] = ($this->Query->rownum() % 2);
                 break;
               default:
                 $rowanswers[$k] = $fld;
@@ -807,7 +807,7 @@ class Browser
         }
 
         // Start the row
-        $row_html = vsprintf( preg_replace("/#@even@#/", ($this->Query->rownum % 2), $this->BeginRow), $rowanswers);
+        $row_html = vsprintf( preg_replace("/#@even@#/", ($this->Query->rownum() % 2), $this->BeginRow), $rowanswers);
 
         if ( isset($this->match_column) && isset($this->match_value) && $BrowserCurrentRow->{$this->match_column} == $this->match_value ) {
           $row_html .= call_user_func( $this->match_function, $BrowserCurrentRow );
@@ -820,7 +820,7 @@ class Browser
         }
 
         // Finish the row
-        $row_html .= preg_replace("/#@even@#/", ($this->Query->rownum % 2), $this->CloseRow);
+        $row_html .= preg_replace("/#@even@#/", ($this->Query->rownum() % 2), $this->CloseRow);
         $this->current_row = $BrowserCurrentRow;
         $html .= preg_replace_callback("/##([^#]+)##/", array( &$this, "ValueReplacement"), $row_html );
       }

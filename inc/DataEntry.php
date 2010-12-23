@@ -200,7 +200,7 @@ class EntryField
         else {
           $qry = new PgQuery( "SELECT code_id, code_value FROM codes WHERE code_type = ? ORDER BY code_seq, code_id", $this->attributes['_type'] );
         }
-        $r .= $qry->BuildOptionList( $this->current, "rndr:$this->fname", array('translate'=>1) );
+        $r .= EntryField::BuildOptionList( $qry, $this->current, "rndr:$this->fname", array('translate'=>1) );
         $r .= "</select>";
         break;
 
@@ -284,6 +284,44 @@ class EntryField
     $this->attributes = $attributes;
   }
 
+  /**
+  * Build an option list from the query.
+  * @param string $current Default selection of drop down box (optional)
+  * @param string $location for debugging purposes
+  * @param array $parameters an array further parameters, including 'maxwidth' => 20 to set a maximum width
+  * @return string Select box HTML
+  */
+  static function BuildOptionList( $qry, $current = '', $location = 'options', $parameters = false ) {
+    global $debuggroups;
+    $result = '';
+    $translate = false;
+
+    if ( isset($maxwidth) ) unset($maxwidth);
+    if ( is_array($parameters) ) {
+      if ( isset($parameters['maxwidth']) ) $maxwidth = max(4,intval($parameters['maxwidth']));
+      if ( isset($parameters['translate']) ) $translate = true;
+    }
+
+    // The query may not have already been executed
+    if ( $qry->rows() > 0 || $qry->Exec($location) ) {
+      while( $row = $qry->Fetch(true) )
+      {
+        if (is_array($current)) {
+          $selected = ( ( in_array($row[0],$current,true) || in_array($row[1],$current,true)) ? ' selected="selected"' : '' );
+        }
+        else {
+          $selected = ( ( "$row[0]" == "$current" || "$row[1]" == "$current" ) ? ' selected="selected"' : '' );
+        }
+        $display_value = $row[1];
+        if ( isset($translate) ) $display_value = translate( $display_value );
+        if ( isset($maxwidth) ) $display_value = substr( $display_value, 0, $maxwidth);
+        $nextrow = "<option value=\"".htmlspecialchars($row[0])."\"$selected>".htmlspecialchars($display_value)."</option>";
+        $result .= $nextrow;
+      }
+    }
+    return $result;
+   }
+  
 }
 
 /**

@@ -47,7 +47,7 @@
 *
 */
 require_once('XMLElement.php');
-require_once('PgQuery.php');
+require_once('AwlQuery.php');
 
 /**
 * A Class for representing properties within an iCalendar
@@ -1042,7 +1042,7 @@ class iCalendar {  // DEPRECATED
       foreach( $timezones AS $k => $tz ) {
         $tzid = $tz->GetPValue('TZID');
 
-        $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
+        $qry = new AwlQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
         if ( $qry->Exec('iCalendar') && $qry->rows() == 1 ) {
           $row = $qry->Fetch();
           if ( !isset($first_tzid) ) $first_tzid = $row->tz_locn;
@@ -1054,7 +1054,7 @@ class iCalendar {  // DEPRECATED
           $tzname = $tz->GetPValue('X-LIC-LOCATION');
           if ( !isset($tzname) ) $tzname = olson_from_tzstring($tzid);
 
-          $qry2 = new PgQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
+          $qry2 = new AwlQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
                                       $tzid, $tzname, $tz->Render() );
           $qry2->Exec('iCalendar');
         }
@@ -1267,7 +1267,7 @@ class iCalendar {  // DEPRECATED
     deprecated('iCalendar::DealWithTimeZones' );
     $tzid = $this->Get('TZID');
     if ( isset($c->save_time_zone_defs) && $c->save_time_zone_defs ) {
-      $qry = new PgQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
+      $qry = new AwlQuery( "SELECT tz_locn FROM time_zone WHERE tz_id = ?;", $tzid );
       if ( $qry->Exec('iCalendar') && $qry->rows() == 1 ) {
         $row = $qry->Fetch();
         $this->tz_locn = $row->tz_locn;
@@ -1300,7 +1300,7 @@ class iCalendar {  // DEPRECATED
     }
 
     if ( $tzid != '' && isset($c->save_time_zone_defs) && $c->save_time_zone_defs && $qry->rows() != 1 && isset($this->vtimezone) && $this->vtimezone != "" ) {
-      $qry2 = new PgQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
+      $qry2 = new AwlQuery( "INSERT INTO time_zone (tz_id, tz_locn, tz_spec) VALUES( ?, ?, ? );",
                                    $tzid, $this->tz_locn, $this->vtimezone );
       $qry2->Exec('iCalendar');
     }

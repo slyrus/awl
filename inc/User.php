@@ -148,7 +148,7 @@ class User extends DBRecord {
   */
   function GetRoles () {
     $this->roles = array();
-    $qry = new PgQuery( 'SELECT role_name FROM role_member JOIN roles USING (role_no) WHERE user_no = ? ', $this->user_no );
+    $qry = new AwlQuery( 'SELECT role_name FROM role_member JOIN roles USING (role_no) WHERE user_no = ? ', $this->user_no );
     if ( $qry->Exec("User") && $qry->rows() > 0 ) {
       while( $role = $qry->Fetch() ) {
         $this->roles[$role->role_name] = 't';
@@ -284,7 +284,7 @@ class User extends DBRecord {
       $ef->record->roles = array();
 
       // Select the records
-      $q = new PgQuery($sql);
+      $q = new AwlQuery($sql);
       if ( $q && $q->Exec("User") && $q->rows() ) {
         $i=0;
         while( $row = $q->Fetch() ) {
@@ -351,7 +351,7 @@ class User extends DBRecord {
     if ( parent::Write() ) {
       $c->messages[] = i18n('User record written.');
       if ( $this->WriteType == 'insert' ) {
-        $qry = new PgQuery( "SELECT currval('usr_user_no_seq');" );
+        $qry = new AwlQuery( "SELECT currval('usr_user_no_seq');" );
         $qry->Exec("User::Write");
         $sequence_value = $qry->Fetch(true);  // Fetch as an array
         $this->user_no = $sequence_value[0];
@@ -361,7 +361,7 @@ class User extends DBRecord {
           // Ensure we match the date style setting
           $session->date_format_type = $this->Get("date_format_type");
           unset($_POST['email_ok']);
-          $qry = new PgQuery( "SET DATESTYLE TO ?;", ($this->Get("date_format_type") == 'E' ? 'European,ISO' : ($this->Get("date_format_type") == 'U' ? 'US,ISO' : 'ISO')) );
+          $qry = new AwlQuery( "SET DATESTYLE TO ?;", ($this->Get("date_format_type") == 'E' ? 'European,ISO' : ($this->Get("date_format_type") == 'U' ? 'US,ISO' : 'ISO')) );
           $qry->Exec();
         }
       }
@@ -379,30 +379,33 @@ class User extends DBRecord {
 
     if ( isset($_POST['roles']) && is_array($_POST['roles']) ) {
       $roles = "";
+      $params = array();
       foreach( $_POST['roles'] AS $k => $v ) {
         if ( $v && $v != "off" ) {
-          $roles .= ( "$roles" == "" ? "" : ", " );
-          $roles .= qpg($k);
+          $roles .= ( $roles == '' ? '' : ', ' );
+          $roles .= AwlQuery::quote($k);
         }
       }
-      if ( $roles == "" )
-        $sql = "DELETE FROM role_member WHERE user_no = '$this->user_no';";
+      $qry = new AwlQuery();
+      if ( $roles == '' )
+        $succeeded = $qry->QDo('DELETE FROM role_member WHERE user_no = '.$this->user_no);
       else {
-        $sql = "DELETE FROM role_member WHERE user_no = '$this->user_no' ";
-        $sql .= "AND role_no NOT IN ( SELECT role_no FROM roles WHERE role_name IN ($roles) );";
-        $sql .= "INSERT INTO role_member ( role_no, user_no) ";
-        $sql .=   "SELECT role_no, $this->user_no FROM roles WHERE role_name IN ( $roles ) ";
-        $sql .=     "EXCEPT SELECT role_no, user_no FROM role_member;";
+        $succeeded = $qry->Begin();
+        $sql = 'DELETE FROM role_member WHERE user_no = '.$this->user_no;
+        $sql .= ' AND role_no NOT IN (SELECT role_no FROM roles WHERE role_name IN ('.$roles.') )';
+        if ( $succeeded ) $succeeded = $qry->QDo($sql);
+        $sql = 'INSERT INTO role_member (role_no, user_no)';
+        $sql .= ' SELECT role_no, '.$this->user_no.' FROM roles WHERE role_name IN ('.$roles.')';
+        $sql .= ' EXCEPT SELECT role_no, user_no FROM role_member';
+        if ( $succeeded ) $succeeded = $qry->QDo($sql);
+        if ( $succeeded )
+          $qry->Commit();
+        else
+          $qry->Rollback();
       }
-      $qry = new PgQuery($sql);
-      if ( !$qry->Exec("Sys::Write") ) {
-        if ( $session->AllowedTo("Admin") ) {
-          $c->messages[] = sprintf( translate("ERROR: %s"), $qry->errorstring);
-        }
-        else {
-          $c->messages[] = i18n('ERROR: There was a database error writing the roles information!');
-          $c->messages[] = i18n('Please note the time and advise the administrator of your system.');
-        }
+      if ( ! $succeeded ) {
+        $c->messages[] = i18n('ERROR: There was a database error writing the roles information!');
+        $c->messages[] = i18n('Please note the time and advise the administrator of your system.');
         return false;
       }
     }

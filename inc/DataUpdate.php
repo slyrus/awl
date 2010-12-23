@@ -13,7 +13,7 @@
 */
 
 require_once('AWLUtilities.php');
-require_once('PgQuery.php');
+require_once('AwlQuery.php');
 
 
 /**
@@ -296,14 +296,14 @@ class DBRecord
       // At least assign the key fields...
       if ( $overwrite_values ) $this->Values->{$k} = $v;
       // And build the WHERE clause
-      $where .= ( $where == "" ? "WHERE " : " AND " );
-      $where .= "$k = " . qpg($v);
+      $where .= ( $where == '' ? 'WHERE ' : ' AND ' );
+      $where .= $k . '=' . AwlQuery::quote($v);
     }
 
     if ( isset($this->OtherWhere) && is_array($this->OtherWhere) ) {
       foreach( $this->OtherWhere AS $t => $and_where ) {
         if ( ! preg_match( '/^\s*$/', $and_where ) ) {
-          $where .= ( $where == "" ? "WHERE " : " AND " )  . $and_where;
+          $where .= ($where == '' ? 'WHERE ' : ' AND (' )  . $and_where . ')';
         }
       }
     }
@@ -353,7 +353,7 @@ class DBRecord
   function Write() {
     dbg_error_log( "DBRecord", ":Write: %s record as %s.", $this->Table, $this->WriteType );
     $sql = sql_from_object( $this->Values, $this->WriteType, $this->Table, $this->_BuildWhereClause(), $this->prefix );
-    $qry = new PgQuery($sql);
+    $qry = new AwlQuery($sql);
     return $qry->Exec( "DBRecord", __LINE__, __FILE__ );
   }
 
@@ -372,7 +372,7 @@ class DBRecord
       $fieldlist = "*";
   //    $join = $this->_BuildJoinClause(true);
       $sql = "SELECT $fieldlist FROM $this->Table $where";
-      $qry = new PgQuery($sql);
+      $qry = new AwlQuery($sql);
       if ( $qry->Exec( "DBRecord", __LINE__, __FILE__ ) && $qry->rows() > 0 ) {
         $i_read_the_record = true;
         $values = $qry->Fetch();

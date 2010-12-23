@@ -23,7 +23,7 @@
 * @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
 */
 require_once('AWLUtilities.php');
-require_once('PgQuery.php');
+require_once('AwlQuery.php');
 require_once('EMail.php');
 
 
@@ -35,14 +35,14 @@ require_once('EMail.php');
 */
 function check_temporary_passwords( $they_sent, $user_no ) {
   $sql = 'SELECT 1 AS ok FROM tmp_password WHERE user_no = ? AND password = ? AND valid_until > current_timestamp';
-  $qry = new PgQuery( $sql, $user_no, $they_sent );
+  $qry = new AwlQuery( $sql, $user_no, $they_sent );
   if ( $qry->Exec('Session::check_temporary_passwords') ) {
-    dbg_error_log( "Login", " check_temporary_passwords: Rows = $qry->rows()");
+    dbg_error_log( "Login", " check_temporary_passwords: Rows = ".$qry->rows());
     if ( $row = $qry->Fetch() ) {
       dbg_error_log( "Login", " check_temporary_passwords: OK = $row->ok");
       // Remove all the temporary passwords for that user...
       $sql = 'DELETE FROM tmp_password WHERE user_no = ? ';
-      $qry = new PgQuery( $sql, $user_no );
+      $qry = new AwlQuery( $sql, $user_no );
       $qry->Exec('Login',__LINE__,__FILE__);
       return true;
     }
@@ -175,10 +175,10 @@ class Session
     }
     $sql .= " WHERE session.session_id = ? AND (md5(session.session_start::text) = ? OR session.session_key = ?) ORDER BY session.session_start DESC LIMIT 2";
 
-    $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
+    $qry = new AwlQuery($sql, $session_id, $session_key, $session_key);
     if ( $qry->Exec('Session') && 1 == $qry->rows() ) {
       $this->AssignSessionDetails( $qry->Fetch() );
-      $qry = new PgQuery('UPDATE session SET session_end = current_timestamp WHERE session_id=?', $session_id);
+      $qry = new AwlQuery('UPDATE session SET session_end = current_timestamp WHERE session_id=?', $session_id);
       $qry->Exec('Session');
     }
     else {
@@ -267,7 +267,7 @@ class Session
 */
   function GetRoles () {
     $this->roles = array();
-    $qry = new PgQuery( 'SELECT role_name FROM role_member m join roles r ON r.role_no = m.role_no WHERE user_no = ? ', $this->user_no );
+    $qry = new AwlQuery( 'SELECT role_name FROM role_member m join roles r ON r.role_no = m.role_no WHERE user_no = ? ', $this->user_no );
     if ( $qry->Exec('Session::GetRoles') && $qry->rows() > 0 ) {
       while( $role = $qry->Fetch() ) {
         $this->roles[$role->role_name] = true;
@@ -286,7 +286,7 @@ class Session
       $this->{$k} = $v;
     }
 
-    $qry = new PgQuery( "SET DATESTYLE TO ?;", ($this->date_format_type == 'E' ? 'European,ISO' : ($this->date_format_type == 'U' ? 'US,ISO' : 'ISO')) );
+    $qry = new AwlQuery( "SET DATESTYLE TO ?;", ($this->date_format_type == 'E' ? 'European,ISO' : ($this->date_format_type == 'U' ? 'US,ISO' : 'ISO')) );
     $qry->Exec();
 
     $this->GetRoles();
@@ -336,11 +336,11 @@ class Session
     }
 
     $sql = "SELECT * FROM usr WHERE lower(username) = ? AND active";
-    $qry = new PgQuery( $sql, strtolower($username) );
+    $qry = new AwlQuery( $sql, strtolower($username) );
     if ( isset($usr) || ($qry->Exec('Login',__LINE__,__FILE__) && $qry->rows() == 1 && $usr = $qry->Fetch() ) ) {
       if ( $authenticated || session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {
         // Now get the next session ID to create one from...
-        $qry = new PgQuery( "SELECT nextval('session_session_id_seq')" );
+        $qry = new AwlQuery( "SELECT nextval('session_session_id_seq')" );
         if ( $qry->Exec('Login') && $qry->rows() == 1 ) {
           $seq = $qry->Fetch();
           $session_id = $seq->nextval;
@@ -348,12 +348,12 @@ class Session
           dbg_error_log( "Login", " Login: Valid username/password for $username ($usr->user_no)" );
 
           // Set the last_used timestamp to match the previous login.
-          $qry = new PgQuery('UPDATE usr SET last_used = (SELECT session_start FROM session WHERE session.user_no = ? ORDER BY session_id DESC LIMIT 1) WHERE user_no = ?;', $usr->user_no, $usr->user_no);
+          $qry = new AwlQuery('UPDATE usr SET last_used = (SELECT session_start FROM session WHERE session.user_no = ? ORDER BY session_id DESC LIMIT 1) WHERE user_no = ?;', $usr->user_no, $usr->user_no);
           $qry->Exec('Session');
 
           // And create a session
           $sql = "INSERT INTO session (session_id, user_no, session_key) VALUES( ?, ?, ? )";
-          $qry = new PgQuery( $sql, $session_id, $usr->user_no, $session_key );
+          $qry = new AwlQuery( $sql, $session_id, $usr->user_no, $session_key );
           if ( $qry->Exec('Login') ) {
             // Assign our session ID variable
             $sid = "$session_id;$session_key";
@@ -386,7 +386,7 @@ class Session
             }
             $sql .= " WHERE session.session_id = ? AND (md5(session.session_start::text) = ? OR session.session_key = ?) ORDER BY session.session_start DESC LIMIT 2";
 
-            $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
+            $qry = new AwlQuery($sql, $session_id, $session_key, $session_key);
             if ( $qry->Exec('Session') && 1 == $qry->rows() ) {
               $this->AssignSessionDetails( $qry->Fetch() );
             }
@@ -438,14 +438,14 @@ class Session
     dbg_error_log( "Login", " LSIDLogin: Attempting login for $lsid" );
 
     list($md5_user_no,$validation_string) = explode( ';', $lsid );
-    $qry = new PgQuery( "SELECT * FROM usr WHERE md5(user_no::text)=? AND active", $md5_user_no );
+    $qry = new AwlQuery( "SELECT * FROM usr WHERE md5(user_no::text)=? AND active", $md5_user_no );
     if ( $qry->Exec('Login') && $qry->rows() == 1 ) {
       $usr = $qry->Fetch();
       list( $x, $salt, $y) = explode('*', $validation_string);
       $my_validation = session_salted_md5($usr->user_no . $usr->username . $usr->password, $salt);
       if ( $validation_string == $my_validation ) {
         // Now get the next session ID to create one from...
-        $qry = new PgQuery( "SELECT nextval('session_session_id_seq')" );
+        $qry = new AwlQuery( "SELECT nextval('session_session_id_seq')" );
         if ( $qry->Exec('Login') && $qry->rows() == 1 ) {
           $seq = $qry->Fetch();
           $session_id = $seq->nextval;
@@ -454,7 +454,7 @@ class Session
 
           // And create a session
           $sql = "INSERT INTO session (session_id, user_no, session_key) VALUES( ?, ?, ? )";
-          $qry = new PgQuery( $sql, $session_id, $usr->user_no, $session_key );
+          $qry = new AwlQuery( $sql, $session_id, $usr->user_no, $session_key );
           if ( $qry->Exec('Login') ) {
             // Assign our session ID variable
             $sid = "$session_id;$session_key";
@@ -482,7 +482,7 @@ class Session
             }
             $sql .= " WHERE session.session_id = ? AND (md5(session.session_start::text) = ? OR session.session_key = ?) ORDER BY session.session_start DESC LIMIT 2";
 
-            $qry = new PgQuery($sql, $session_id, $session_key, $session_key);
+            $qry = new AwlQuery($sql, $session_id, $session_key, $session_key);
             if ( $qry->Exec('Session') && 1 == $qry->rows() ) {
               $this->AssignSessionDetails( $qry->Fetch() );
             }
@@ -633,52 +633,20 @@ EOTEXT;
 
     $password_sent = false;
     $where = "";
+    $params = array();
     if ( isset($username) && $username != "" ) {
-      $where = "WHERE active AND lower(usr.username) = ". qpg(strtolower($username));
+      $where = 'WHERE active AND lower(usr.username) = :lcusername';
+      $params[':lcusername'] = strtolower($username);
     }
     else if ( isset($email_address) && $email_address != "" ) {
-      $where = "WHERE active AND lower(usr.email) = ". qpg(strtolower($email_address));
+      $where = 'WHERE active AND lower(usr.email) = :lcemail';
+      $params[':lcemail'] = strtolower($email_address);
     }
 
-    if ( $where != "" ) {
-      $tmp_passwd = "";
-      for ( $i=0; $i < 8; $i++ ) {
-        $tmp_passwd .= substr( "ABCDEFGHIJKLMNOPQRSTUVWXYZ+#.-=*%@0123456789abcdefghijklmnopqrstuvwxyz", rand(0,69), 1);
-      }
-      $sql = "SELECT * FROM usr $where";
-      $qry = new PgQuery( $sql );
-      $qry->Exec("Session::EmailTemporaryPassword");
-      if ( $qry->rows() > 0 ) {
-        $sql = "BEGIN;";
+    if ( $where != '' ) {
+      if ( !isset($body_template) || $body_template == "" ) {
+        $body_template = <<<EOTEXT
 
-        $mail = new EMail( "Access to $c->system_name" );
-        $mail->SetFrom($c->admin_email );
-        $usernames = "";
-        $debug_to = "";
-        if ( isset($c->debug_email) ) {
-          $debug_to = "This e-mail would normally be sent to:\n ";
-          $mail->AddTo( "Tester <$c->debug_email>" );
-        }
-        while ( $row = $qry->Fetch() ) {
-          $sql .= "INSERT INTO tmp_password ( user_no, password) VALUES( $row->user_no, '$tmp_passwd');";
-          if ( isset($c->debug_email) ) {
-            $debug_to .= "$row->fullname <$row->email> ";
-          }
-          else {
-            $mail->AddTo( "$row->fullname <$row->email>" );
-          }
-          $usernames .= "        $row->username\n";
-        }
-        if ( $mail->To != "" ) {
-          if ( isset($c->debug_email) ) {
-            $debug_to .= "\n============================================================\n";
-          }
-          $sql .= "COMMIT;";
-          $qry = new PgQuery( $sql );
-          $qry->Exec("Session::SendTemporaryPassword");
-          if ( !isset($body_template) || $body_template == "" ) {
-            $body_template = <<<EOTEXT
-$debug_to
 @@debugging@@A temporary password has been requested for @@system_name@@.
 
 Temporary Password: @@password@@
@@ -691,14 +659,53 @@ and will be valid for 24 hours.
 If you have any problems, please contact the system administrator.
 
 EOTEXT;
+      }
+
+      $qry = new AwlQuery( 'SELECT * FROM usr '.$where, $params );
+      $qry->Exec('Session::EmailTemporaryPassword');
+      if ( $qry->rows() > 0 ) {
+        $q2 = new AwlQuery();
+        $q2->Begin();
+
+        while ( $row = $qry->Fetch() ) {
+          $mail = new EMail( "Access to $c->system_name" );
+          $mail->SetFrom($c->admin_email );
+          $usernames = "";
+          $debug_to = "";
+          if ( isset($c->debug_email) ) {
+            $debug_to = "This e-mail would normally be sent to:\n ";
+            $mail->AddTo( "Tester <$c->debug_email>" );
           }
-          $body = str_replace( '@@system_name@@', $c->system_name, $body_template);
-          $body = str_replace( '@@password@@', $tmp_passwd, $body);
-          $body = str_replace( '@@usernames@@', $usernames, $body);
-          $body = str_replace( '@@debugging@@', $debug_to, $body);
-          $mail->SetBody($body);
-          $mail->Send();
-          $password_sent = true;
+
+          $tmp_passwd = '';
+          for ( $i=0; $i < 8; $i++ ) {
+            $tmp_passwd .= substr( 'ABCDEFGHIJKLMNOPQRSTUVWXYZ+#.-=*%@0123456789abcdefghijklmnopqrstuvwxyz', rand(0,69), 1);
+          }
+
+          $q2->QDo('INSERT INTO tmp_password (user_no, password) VALUES(?,?)', array($row->user_no, $tmp_passwd));
+          if ( isset($c->debug_email) ) {
+            $debug_to .= "$row->fullname <$row->email> ";
+          }
+          else {
+            $mail->AddTo( "$row->fullname <$row->email>" );
+          }
+          $usernames .= "        $row->username\n";
+
+          if ( $mail->To != "" ) {
+            if ( isset($c->debug_email) ) {
+              $debug_to .= "\n============================================================\n";
+            }
+            $sql .= "COMMIT;";
+            $qry = new AwlQuery( $sql );
+            $qry->Exec("Session::SendTemporaryPassword");
+            $body = str_replace( '@@system_name@@', $c->system_name, $body_template);
+            $body = str_replace( '@@password@@', $tmp_passwd, $body);
+            $body = str_replace( '@@usernames@@', $usernames, $body);
+            $body = str_replace( '@@debugging@@', $debug_to, $body);
+            $mail->SetBody($body);
+            $mail->Send();
+            $password_sent = true;
+          }
         }
       }
     }

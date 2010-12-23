@@ -59,19 +59,19 @@ EOERRMSG;
   else
     $andwhere = "";
 
-  $qry = new PgQuery("SELECT $cols FROM usr WHERE lower(username) = ? $andwhere", strtolower($username) );
+  $qry = new AwlQuery("SELECT $cols FROM usr WHERE lower(username) = ? $andwhere", strtolower($username) );
   $qry->SetConnection($authconn);
   if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows() == 1 ) {
     $usr = $qry->Fetch();
     if ( session_validate_password( $password, $usr->password ) ) {
 
-      $qry = new PgQuery("SELECT * FROM usr WHERE user_no = $usr->user_no;" );
+      $qry = new AwlQuery("SELECT * FROM usr WHERE user_no = $usr->user_no;" );
       if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows() == 1 )
         $type = "UPDATE";
       else
         $type = "INSERT";
 
-      $qry = new PgQuery( sql_from_object( $usr, $type, 'usr', "WHERE user_no=$usr->user_no" ) );
+      $qry = new AwlQuery( sql_from_object( $usr, $type, 'usr', "WHERE user_no=$usr->user_no" ) );
       $qry->Exec('Login',__LINE,__FILE__);
 
       /**
@@ -97,7 +97,7 @@ EOERRMSG;
 function auth_external( $username, $password ) {
   global $c;
 
-  $qry = new PgQuery("SELECT * FROM usr WHERE active AND lower(username) = ? ", strtolower($username) );
+  $qry = new AwlQuery("SELECT * FROM usr WHERE active AND lower(username) = ? ", strtolower($username) );
   if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows() == 1 ) {
     $usr = $qry->Fetch();
     return $usr;

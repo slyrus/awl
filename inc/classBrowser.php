@@ -610,7 +610,7 @@ class Browser
   * You need not call this method, since Browser::Render() will call it for
   * you if you have not done so at that point.
   *
-  * @return boolean The success / fail status of the PgQuery::Exec()
+  * @return boolean The success / fail status of the AwlQuery::Exec()
   */
   function DoQuery() {
     $target_fields = "";
@@ -631,7 +631,7 @@ class Browser
       $sql .= "UNION $this->Union ";
     }
     $sql .= $this->Order . ' ' . $this->Limit . ' ' . $this->Offset;
-    $this->Query = new PgQuery( $sql );
+    $this->Query = new AwlQuery( $sql );
     return $this->Query->Exec("Browse:$this->Title:DoQuery");
   }
 

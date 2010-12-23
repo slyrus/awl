@@ -307,7 +307,7 @@ class Editor
     if ( $where == "" ) $where = $this->Where;
     $sql = sprintf( "SELECT %s FROM %s %s WHERE %s %s %s",
              $target_fields, $this->BaseTable, $this->Joins, $where, $this->Order, $this->Limit);
-    $this->Query = new PgQuery( $sql );
+    $this->Query = new AwlQuery( $sql );
     @dbg_error_log( 'editor', "DBG: EditorGetQry: %s", $sql );
     if ( $this->Query->Exec("Browse:$this->Title:DoQuery") ) {
       $this->Record = $this->Query->Fetch();
@@ -371,7 +371,7 @@ class Editor
         }
         else {
           @dbg_error_log( 'editor', "DBG: Current=%s, OptionQuery: %s", $currval, $field->LookupSql );
-          $opt_qry = new PgQuery( $field->LookupSql );
+          $opt_qry = new AwlQuery( $field->LookupSql );
           $option_list = $opt_qry->BuildOptionList($currval, "FieldOptions: $field_name" );
           $field->OptionList = $option_list;
         }
@@ -385,7 +385,7 @@ class Editor
         }
         else {
           @dbg_error_log( 'editor', "DBG: Current=%s, OptionQuery: %s", $currval, $field->LookupSql );
-          $opt_qry = new PgQuery( $field->LookupSql );
+          $opt_qry = new AwlQuery( $field->LookupSql );
           $option_list = $opt_qry->BuildOptionList($currval, "FieldOptions: $field_name" );
           $field->OptionList = $option_list;
         }
@@ -481,7 +481,7 @@ class Editor
       }
     }
     $this->Action = ( $is_update ? "update" : "create" );
-    $qry = new PgQuery( sql_from_post( $this->Action, $this->BaseTable, "WHERE ".$this->Where ) );
+    $qry = new AwlQuery( sql_from_post( $this->Action, $this->BaseTable, "WHERE ".$this->Where ) );
     if ( !$qry->Exec("Editor::Write") ) {
       $c->messages[] = "ERROR: $qry->errorstring";
       return 0;

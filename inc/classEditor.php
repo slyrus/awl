@@ -276,6 +276,7 @@ class Editor
   */
   function Initialise( $values ) {
     $this->RecordAvailable = false;
+    if ( !isset($this->Record) ) $this->Record = (object) array();
     foreach( $values AS $fname => $value ) {
       $this->Record->{$fname} = $value;
     }

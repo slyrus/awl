@@ -138,7 +138,7 @@ class AwlDBDialect {
 
     switch ( $this->dialect ) {
       case 'pgsql':
-        $tablename_string = $this->Quote($tablename_string, 'identifier');
+        $tablename_string = $this->Quote($tablename_string,PDO::PARAM_STR);
         $sql = "SELECT f.attname, t.typname FROM pg_attribute f ";
         $sql .= "JOIN pg_class c ON ( f.attrelid = c.oid ) ";
         $sql .= "JOIN pg_type t ON ( f.atttypid = t.oid ) ";

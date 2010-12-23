@@ -266,7 +266,14 @@ class AwlQuery
 
 
 
+ /**
+  * Get the current database connection for this query
+  */
+  function GetConnection() {
+    return $this->connection;
+  }
 
+  
   /**
   * Log query, optionally with file and line location of the caller.
   *

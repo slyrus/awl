@@ -34,7 +34,7 @@
 * @compatibility Requires PHP 5.1 or later
 */
 
-if ( !class_exists('AwlDBDialect') ) require('AwlDBDialect.php');
+require_once('AwlDBDialect.php');
 
 if ( !defined('E_USER_ERROR') ) define('E_USER_ERROR',256);
 

@@ -84,14 +84,16 @@ class vProperty {
    */
   function ParseFrom( $propstring ) {
     $this->rendered = (strlen($propstring) < 73 ? $propstring : null);  // Only pre-rendered if we didn't unescape it
-    $pos = strpos( $propstring, ':');
-    $start = substr( $propstring, 0, $pos);
 
-    $unescaped = str_replace( '\\n', "\n", substr( $propstring, $pos + 1));
-    $unescaped = str_replace( '\\N', "\n", $unescaped);
-    $this->content = preg_replace( "/\\\\([,;:\"\\\\])/", '$1', $unescaped);
+    $unescaped = preg_replace( '{\\\\[nN]}', "\n", $propstring);
 
-    $parameters = explode(';',$start);
+    // Split into two parts on : which is not preceded by a \
+    list( $start, $values) = preg_split( '{(?<!\\\\):}', $unescaped, 2);
+    $this->content = preg_replace( "/\\\\([,;:\"\\\\])/", '$1', $values);
+
+    // Split on ; which is not preceded by a \
+    $parameters = preg_split( '{(?<!\\\\);}', $start);
+
     $this->name = strtoupper(array_shift( $parameters ));
     $this->parameters = array();
     foreach( $parameters AS $k => $v ) {

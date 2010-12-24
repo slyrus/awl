@@ -163,15 +163,29 @@ class Editor
     }
   }
 
+  /**
+   * Gets the value of a field in the record currently assigned to this editor.
+   * @param string $value_field_name
+   */
   function Value( $value_field_name ) {
     if ( !isset($this->Record->{$value_field_name}) ) return null;
     return $this->Record->{$value_field_name};
   }
 
+  /**
+   * Assigns the value of a field in the record currently associated with this editor.
+   * @param string $value_field_name
+   * @param string $new_value
+   */
   function Assign( $value_field_name, $new_value ) {
+    if ( !isset($this->Record) ) $this->Record = (object) array();
     $this->Record->{$value_field_name} = $new_value;
   }
 
+  /**
+   * Sets or returns the form ID used for differentiating this form from others in the page.
+   * @param string $id
+   */
   function Id( $id = null ) {
     if ( isset($id) ) $this->Id = preg_replace( '#[^a-z0-9_+-]#', '', $id);
     return $this->Id;

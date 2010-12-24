@@ -421,7 +421,7 @@ if ( !function_exists("get_fields") ) {
       $qry->Exec("core");
       $fields = array();
       while( $row = $qry->Fetch() ) {
-        $fields["$row->attname"] = $row->typname . ($row->atttypmod != -1 ? sprintf('(%d)',$row->atttypmod) : '');
+        $fields[$row->fieldname] = $row->typename . ($row->precision >= 0 ? sprintf('(%d)',$row->precision) : '');
       }
       $_AWL_field_cache[$tablename] = $fields;
     }

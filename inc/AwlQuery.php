@@ -308,12 +308,12 @@ class AwlQuery
   * @param mixed $str Data to be converted to a string suitable for including as a value in SQL.
   * @return string NULL, TRUE, FALSE, a plain number, or the original string quoted and with ' and \ characters escaped
   */
-  function quote($str = null) {
-    if ( !isset($this->connection) ) {
+  public static function quote($str = null) {
+    global $_awl_dbconn;
+    if ( !isset($_awl_dbconn) ) {
       _awl_connect_configured_database();
-      $this->connection = $GLOBALS['_awl_dbconn'];
     }
-    return $this->connection->Quote($str);
+    return $_awl_dbconn->Quote($str);
   }
 
 
@@ -585,8 +585,10 @@ class AwlQuery
         printf( "\n=====================\n" );
         printf( "%s[%d] QF: %s\n", $file, $line, $this->errorstring);
         printf( "%s\n", $this->querystring );
-        foreach( $this->bound_parameters AS $k => $v ) {
-          printf( "    %-18s \t=> '%s'\n", "'$k'", $v );
+        if ( isset($this->bound_parameters) ) {
+          foreach( $this->bound_parameters AS $k => $v ) {
+            printf( "    %-18s \t=> '%s'\n", "'$k'", $v );
+          }          
         }
         printf( ".....................\n" );
       }

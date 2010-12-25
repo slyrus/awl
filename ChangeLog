@@ -1,3 +1,25 @@
+2010-12-25  Andrew McMillan  <andrew@morphoss.com>
+	* Release 0.46
+
+2010-12-24  Andrew McMillan  <andrew@morphoss.com>
+	* [AwlQuery] Make the quote() method public/static.
+
+2010-12-23  Andrew McMillan  <andrew@morphoss.com>
+	* Convert everything except PgQuery to use AwlQuery
+	* [AwlQuery] Add minor missing functionality so we can switch.
+	* [vComponent] Improve parameter splitting to allow for escapes.
+	* [classEditor] Avoid uninitialised variable warning.
+
+2010-11-27  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] Add __toString() methods.
+	* [Session] If someone is made inactive then their long-term login should cease.
+
+2010-10-15  Andrew McMillan  <andrew@morphoss.com>
+	* [AWLUtilities] Add an awl_version() function.
+
+2010-10-10  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] It is OK to SetComponents() to an empty set.
+
 2010-09-20  Andrew McMillan  <andrew@morphoss.com>
 	* [AWLDbDialect] Quote hex numbers as strings.
 

@@ -905,20 +905,24 @@ EOTEXT;
   function CheckConfirmationHash( $method, $varname ) {
     if ( $method == 'GET' && isset($_GET[$varname])) {
       $hashwegot = $_GET[$varname];
+      dbg_error_log('Session',':CheckConfirmationHash: We got "%s" from GET', $hashwegot );
     }
     else if ( isset($_POST[$varname]) ) {
       $hashwegot = $_POST[$varname];
+      dbg_error_log('Session',':CheckConfirmationHash: We got "%s" from POST', $hashwegot );
     }
     else {
       return false;
     }
 
-    if ( ereg('^\*(.+)\*.+$', $hashwegot, $regs ) ) {
+    if ( preg_match('{^\*(.+)\*.+$}i', $hashwegot, $regs ) ) {
       // A nicely salted md5sum like "*<salt>*<salted_md5>"
       $salt = $regs[1];
+      dbg_error_log('Session',':CheckConfirmationHash: Salt "%s"', $salt );
       $test_against = session_salted_md5( $this->session_start.$varname.$this->session_key, $salt ) ;
-
-      if ( $hashwegot == $test_against ) return true;
+      dbg_error_log('Session',':CheckConfirmationHash: Testing against "%s"', $test_against );
+      
+      return ($hashwegot == $test_against);
     }
     return false;
   }

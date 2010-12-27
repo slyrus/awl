@@ -45,7 +45,7 @@ class XMLDocument {
   *
   * @param array $namespaces An array of 'namespace' => 'prefix' pairs, where the prefix is used as a short form for the namespace.
   */
-  function XMLDocument( $namespaces = null ) {
+  function __construct( $namespaces = null ) {
     $this->namespaces = array();
     $this->prefixes = array();
     if ( $namespaces != null ) {

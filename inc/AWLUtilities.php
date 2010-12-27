@@ -324,20 +324,20 @@ if ( !function_exists("quoted_printable_encode") ) {
 }
 
 
-if ( !function_exists("clean_by_regex") ) {
+if ( !function_exists("check_by_regex") ) {
   /**
-  * Clean a value by applying a regex to it.  If it is an array apply it to
+  * Verify a value is OK by testing a regex against it.  If it is an array apply it to
   * each element in the array recursively.  If it is an object we don't mess
   * with it.
   */
-  function clean_by_regex( $val, $regex ) {
+  function check_by_regex( $val, $regex ) {
     if ( is_null($val) ) return null;
     switch( $regex ) {
       case 'int':     $regex = '#^\d+$#';     break;
     }
     if ( is_array($val) ) {
       foreach( $val AS $k => $v ) {
-        $val[$k] = clean_by_regex($v,$regex);
+        $val[$k] = check_by_regex($v,$regex);
       }
     }
     else if ( ! is_object($val) ) {
@@ -390,7 +390,7 @@ if ( !function_exists("param_to_global") ) {
     if ( !isset($result) ) return null;
 
     if ( isset($match_regex) ) {
-      $result = clean_by_regex( $result, $match_regex );
+      $result = check_by_regex( $result, $match_regex );
     }
 
     $GLOBALS[$varname] = $result;

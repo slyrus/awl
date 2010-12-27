@@ -469,7 +469,7 @@ class Browser
   *               which shouldn't interfere with the default primary order.
   */
   function AddOrder( $field, $direction, $browser_array_key=0, $secondary=0 ) {
-    $field = clean_by_regex($field,'/[\'"!\\\\()\[\]|*\/{}&%@~;:?<>]/');
+    $field = check_by_regex($field,'/^[^\'"!\\\\()\[\]|*\/{}&%@~;:?<>]+$/');
     if ( ! isset($this->FieldNames[$field]) ) return;
 
     if ( !isset($this->Order) || $this->Order == "" )

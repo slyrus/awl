@@ -150,10 +150,9 @@ EOHTML;
   function positive_dollars($field_string)
   {
    if(!$field_string) return true;
-   $pattern = "^\$?[0-9]*\.?[0-9]?[0-9]?$";
-   if( ereg($pattern, $field_string) ) {
-     $field_string = ereg_replace("\$", "", $field_string);
-     $field_string = ereg_replace("\.", "", $field_string);
+   if( preg_match('/^\$?[0-9]*\.?[0-9]?[0-9]?$/', $field_string) ) {
+     $field_string = preg_replace("/\$/", "", $field_string);
+     $field_string = preg_replace("/\./", "", $field_string);
      if( intval($field_string) > 0 ) return true;
    }
    return false;
@@ -168,8 +167,7 @@ EOHTML;
   function positive_integer($field_string)
   {
    if(!$field_string) return true;
-   $pattern = "^[0-9]*$";
-    return ( ereg($pattern, $field_string) );
+    return ( preg_match('/^[0-9]*$/', $field_string) );
   }
 
   /**
@@ -200,14 +198,14 @@ EOHTML;
 
    switch($session->date_format_type) {
       case 'J':
-        if (!ereg ("^([0-9]{4})[\/\-]([0-9]{1,2})[\/\-]([0-9]{1,2})$", $field_string, $regs)) return false;
+        if (!preg_match('/^([0-9]{4})[\/\-]([0-9]{1,2})[\/\-]([0-9]{1,2})$/', $field_string, $regs)) return false;
         $day = intval($regs[3]);
         $month = intval($regs[2]);
         $year = intval($regs[1]);
         break;
 
       case 'U':
-        if (!ereg ("^([0-9]{1,2})[\/\-]([0-9]{1,2})[\/\-]([0-9]{4})$", $field_string, $regs)) return false;
+        if (!preg_match('/^([0-9]{1,2})[\/\-]([0-9]{1,2})[\/\-]([0-9]{4})$/', $field_string, $regs)) return false;
         $day = intval($regs[2]);
         $month = intval($regs[1]);
         $year = intval($regs[3]);
@@ -215,7 +213,7 @@ EOHTML;
 
       case 'E':
       default:
-        if (!ereg ("^([0-9]{1,2})[\/\-]([0-9]{1,2})[\/\-]([0-9]{4})$", $field_string, $regs)) return false;
+        if (!preg_match('/^([0-9]{1,2})[\/\-]([0-9]{1,2})[\/\-]([0-9]{4})$/', $field_string, $regs)) return false;
         $day = intval($regs[1]);
         $month = intval($regs[2]);
         $year = intval($regs[3]);

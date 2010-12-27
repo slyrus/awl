@@ -1,5 +1,10 @@
-2010-12-25  Andrew McMillan  <andrew@morphoss.com>
+2010-12-28  Andrew McMillan  <andrew@morphoss.com>
 	* Release 0.46
+	* [classBrowser] Fix checking of ordering fieldname.
+	* [Validation] Remove references to outdated ereg() functions.
+	* [AWLUtlities] Rename regex checking function more appropriately.
+	* [Session] Don't use ereg() for parsing regex.
+	* [XMLDocument] Use __construct style for constructor.
 
 2010-12-24  Andrew McMillan  <andrew@morphoss.com>
 	* [AwlQuery] Make the quote() method public/static.

@@ -63,15 +63,33 @@ class AWLCache {
 //    if ( $value !== false ) dbg_error_log('Cache', 'Got value for cache key "'.$ourkey.'" - '.strlen(serialize($value)).' bytes');
     return $value;
   }
-  
+
+  /**
+   * Set a value for the specified namespace/key, perhaps with an expiry (default 10 days)
+   * @param $namespace
+   * @param $key
+   * @param $value
+   * @param $expiry
+   */
   function set( $namespace, $key, $value, $expiry=864000 ) {
     if ( !$this->working ) return false;
     $ourkey = self::nskey($namespace,$key);
     $nskey = self::nskey($namespace,null);
     $keylist = $this->m->get( $nskey, null, $cas_token );
     if ( isset($keylist) && is_array($keylist) ) {
-      $keylist[$ourkey] = 1;
-      $this->m->cas( $cas_token, $nskey, $keylist );
+      if ( !isset($keylist[$ourkey]) ) {
+        $keylist[$ourkey] = 1;
+        $success = $this->m->cas( $cas_token, $nskey, $keylist );
+        $i=0;
+        while( !$success && $i++ < 10 && $this->m->getResultCode() == Memcached::RES_DATA_EXISTS ) {
+          $keylist = $this->m->get( $nskey, null, $cas_token );
+          if ( $keylist === false ) return false;
+          if ( isset($keylist[$ourkey]) ) break;
+          $keylist[$ourkey] = 1;
+          $success = $this->m->cas( $cas_token, $nskey, $keylist );
+        }
+        if ( !$success ) return false;
+      }
     } 
     else {
       $keylist = array( $ourkey => 1 );      
@@ -79,9 +97,14 @@ class AWLCache {
     }
 //    var_dump($value);
 //    dbg_error_log('Cache', 'Setting value for cache key "'.$ourkey.'" - '.strlen(serialize($value)).' bytes');
-    $this->m->set( $ourkey, $value, $expiry );
+    return $this->m->set( $ourkey, $value, $expiry );
   }
-  
+
+  /**
+   * Delete a value from a namespace/key, or for everything in a namespace if a 'null' key is supplied.
+   * @param $namespace
+   * @param $key
+   */
   function delete( $namespace, $key ) {
     if ( !$this->working ) return false;
     $nskey = self::nskey($namespace,$key);
@@ -100,6 +123,9 @@ class AWLCache {
     }
   }
 
+  /**
+   * Flush the entire cache
+   */
   function flush( ) {
     if ( !$this->working ) return false;
     dbg_error_log('Cache', 'Flushing cache');

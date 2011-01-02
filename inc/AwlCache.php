@@ -7,7 +7,7 @@
  * @license LGPL v2 or later
  */
 
-class AWLCache {
+class AwlCache {
   private $m;
   private $servers;
   private $working;
@@ -40,6 +40,12 @@ class AWLCache {
     }
   }
 
+  /**
+   * So we can find out if we are actually using the cache.
+   */
+  function isActive() {
+    return $this->working;
+  }
 
   /**
    * Construct a string from the namespace & key

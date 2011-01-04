@@ -786,7 +786,7 @@ class iCalComponent {
   */
   function CloneConfidential() {
     $confidential = clone($this);
-    $keep_properties = array( 'DTSTAMP', 'DTSTART', 'RRULE', 'DURATION', 'DTEND', 'UID', 'CLASS', 'TRANSP' );
+    $keep_properties = array( 'DTSTAMP', 'DTSTART', 'RRULE', 'DURATION', 'DTEND', 'DUE', 'UID', 'CLASS', 'TRANSP', 'CREATED', 'LAST-MODIFIED' );
     $resource_components = array( 'VEVENT', 'VTODO', 'VJOURNAL' );
     $confidential->MaskComponents(array( 'VTIMEZONE', 'VEVENT', 'VTODO', 'VJOURNAL' ));
     $confidential->MaskProperties($keep_properties, $resource_components );

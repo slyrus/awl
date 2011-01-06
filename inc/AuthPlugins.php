@@ -72,7 +72,7 @@ EOERRMSG;
         $type = "INSERT";
 
       $qry = new AwlQuery( sql_from_object( $usr, $type, 'usr', "WHERE user_no=$usr->user_no" ) );
-      $qry->Exec('Login',__LINE,__FILE__);
+      $qry->Exec('Login',__LINE__,__FILE__);
 
       /**
       * We disallow login by inactive users _after_ we have updated the local copy
@@ -98,7 +98,7 @@ function auth_external( $username, $password ) {
   global $c;
 
   $qry = new AwlQuery("SELECT * FROM usr WHERE active AND lower(username) = ? ", strtolower($username) );
-  if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows() == 1 ) {
+  if ( $qry->Exec('Login',__LINE__,__FILE__) && $qry->rows() == 1 ) {
     $usr = $qry->Fetch();
     return $usr;
   }

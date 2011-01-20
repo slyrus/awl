@@ -3,6 +3,7 @@
 
 package=awl
 version=$(shell cat VERSION)
+snapshot : version = $(shell sed -n 's:\([0-9\.]*\)[-a-f0-9-]*:\1:p' VERSION)-git$(shell git rev-parse --short HEAD)
 
 all: built-docs 
 
@@ -27,7 +28,9 @@ release: built-docs
 	    $(shell git ls-files |grep -v '.git'|sed -e s:^:$(package)-$(version)/:) \
 	    $(shell find $(package)-$(version)/docs/api/ ! -name "phpdoc.ini" )
 	rm $(package)-$(version)
-	
+
+snapshot: release
+
 clean:
 	rm -f built-docs
 	-find . -name "*~" -delete

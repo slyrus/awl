@@ -139,6 +139,28 @@ class AwlCache {
     dbg_error_log('Cache', 'Flushing cache');
     self::$m->flush();
   }
+
+  
+  /**
+   * Acquire a lock on something
+   */
+  function acquireLock( $something, $wait_for = 5 ) {
+    if ( !self::$working ) return $something;
+    $wait_until = time() + $wait_for;
+    while( $m->add($something,1,5) === false && time() < $wait_until ) {
+      usleep(10000);
+    }
+    return $something;
+  }
+
+  
+  /**
+   * Release a lock
+   */
+  function releaseLock( $locker ) {
+    if ( !self::$working ) return;
+    $m->delete($something);        
+  }
 }
 
 

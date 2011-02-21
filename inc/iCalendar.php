@@ -233,7 +233,7 @@ class iCalProp {
   function RenderParameters() {
     $rendered = "";
     foreach( $this->parameters AS $k => $v ) {
-      $escaped = preg_replace( "/([;:\"])/", '\\\\$1', $v);
+      $escaped = preg_replace( "/([;:])/", '\\\\$1', $v);
       $rendered .= sprintf( ";%s=%s", $k, $escaped );
     }
     return $rendered;
@@ -273,7 +273,7 @@ class iCalProp {
       default:
         $escaped = str_replace( '\\', '\\\\', $escaped);
         $escaped = preg_replace( '/\r?\n/', '\\n', $escaped);
-        $escaped = preg_replace( "/([,;\"])/", '\\\\$1', $escaped);
+        $escaped = preg_replace( "/([,;])/", '\\\\$1', $escaped);
     }
     $property = sprintf( "%s%s:", $this->name, $this->RenderParameters() );
     if ( (strlen($property) + strlen($escaped)) <= 72 ) {

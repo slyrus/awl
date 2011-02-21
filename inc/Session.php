@@ -286,7 +286,7 @@ class Session
       $this->{$k} = $v;
     }
 
-    $qry = new AwlQuery( "SET DATESTYLE TO ?;", ($this->date_format_type == 'E' ? 'European,ISO' : ($this->date_format_type == 'U' ? 'US,ISO' : 'ISO')) );
+    $qry = new AwlQuery( "SET DATESTYLE TO ?", ($this->date_format_type == 'E' ? 'European,ISO' : ($this->date_format_type == 'U' ? 'US,ISO' : 'ISO')) );
     $qry->Exec();
 
     $this->GetRoles();

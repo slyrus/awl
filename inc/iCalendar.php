@@ -822,7 +822,7 @@ class iCalComponent {
     foreach( $this->components AS $v ) {   $rendered .= $v->Render();  }
     $rendered .= "END:$this->type\r\n";
 
-    $rendered = preg_replace('{(?<!\r)\n}', '\r\n', $rendered);
+    $rendered = preg_replace('{(?<!\r)\n}', "\r\n", $rendered);
     if ( $unrestricted ) $this->rendered = $rendered;
 
     return $rendered;

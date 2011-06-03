@@ -338,14 +338,15 @@ class Session
     $sql = "SELECT * FROM usr WHERE lower(username) = ? AND active";
     $qry = new AwlQuery( $sql, strtolower($username) );
     if ( isset($usr) || ($qry->Exec('Login',__LINE__,__FILE__) && $qry->rows() == 1 && $usr = $qry->Fetch() ) ) {
-      if ( $authenticated || session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $usr->user_no ) ) {
+      $user_no = ( method_exists( $usr, 'user_no' ) ? $usr->user_no() : $usr->user_no );
+      if ( $authenticated || session_validate_password( $password, $usr->password ) || check_temporary_passwords( $password, $user_no ) ) {
         // Now get the next session ID to create one from...
         $qry = new AwlQuery( "SELECT nextval('session_session_id_seq')" );
         if ( $qry->Exec('Login') && $qry->rows() == 1 ) {
           $seq = $qry->Fetch();
           $session_id = $seq->nextval;
           $session_key = md5( rand(1010101,1999999999) . microtime() );  // just some random shite
-          dbg_error_log( "Login", " Login: Valid username/password for $username ($usr->user_no)" );
+          dbg_error_log( "Login", " Login: Valid username/password for $username ($user_no)" );
 
           // Set the last_used timestamp to match the previous login.
           $qry = new AwlQuery('UPDATE usr SET last_used = (SELECT session_start FROM session WHERE session.user_no = ? ORDER BY session_id DESC LIMIT 1) WHERE user_no = ?;', $usr->user_no, $usr->user_no);
@@ -353,7 +354,7 @@ class Session
 
           // And create a session
           $sql = "INSERT INTO session (session_id, user_no, session_key) VALUES( ?, ?, ? )";
-          $qry = new AwlQuery( $sql, $session_id, $usr->user_no, $session_key );
+          $qry = new AwlQuery( $sql, $session_id, $user_no, $session_key );
           if ( $qry->Exec('Login') ) {
             // Assign our session ID variable
             $sid = "$session_id;$session_key";
@@ -362,10 +363,10 @@ class Session
             setcookie('sid',$sid, 0,'/');
             // Recognise that we have started a session now too...
             $this->Session($sid);
-            dbg_error_log( "Login", " Login: New session $session_id started for $username ($usr->user_no)" );
+            dbg_error_log( "Login", " Login: New session $session_id started for $username ($user_no)" );
             if ( isset($_POST['remember']) && intval($_POST['remember']) > 0 ) {
-              $cookie = md5( $usr->user_no ) . ";";
-              $cookie .= session_salted_md5($usr->user_no . $usr->username . $usr->password);
+              $cookie = md5( $user_no ) . ";";
+              $cookie .= session_salted_md5($user_no . $usr->username . $usr->password);
               $GLOBALS['lsid'] = $cookie;
               setcookie( "lsid", $cookie, time() + (86400 * 3600), "/" );   // will expire in ten or so years
             }

@@ -147,7 +147,7 @@ class AwlCache {
   function acquireLock( $something, $wait_for = 5 ) {
     if ( !self::$working ) return $something;
     $wait_until = time() + $wait_for;
-    while( $m->add($something,1,5) === false && time() < $wait_until ) {
+    while( self::$m->add('_lock_'+$something,1,5) === false && time() < $wait_until ) {
       usleep(10000);
     }
     return $something;
@@ -159,7 +159,7 @@ class AwlCache {
    */
   function releaseLock( $locker ) {
     if ( !self::$working ) return;
-    $m->delete($something);        
+    self::$m->delete('_lock_'+$something);        
   }
 }
 

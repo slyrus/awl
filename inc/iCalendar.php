@@ -198,7 +198,9 @@ class iCalProp {
    * @return string The name for the property.
    */
   function TextMatch( $search ) {
-    if ( isset($this->content) ) return strstr( $this->content, $search );
+    if ( isset($this->content) ) {
+      return (stristr( $this->content, $search ) !== false);      
+    }
     return false;
   }
 
@@ -1603,6 +1605,7 @@ class iCalendar {  // DEPRECATED
         return false;
       }
       else {
+        dbg_error_log( 'iCalendar', ":ApplyFilter: Have values for '%s' filter", $tag );
         switch( $tag ) {
           case 'urn:ietf:params:xml:ns:caldav:time-range':
             /** todo:: While this is unimplemented here at present, most time-range tests should occur at the SQL level. */
@@ -1611,11 +1614,11 @@ class iCalendar {  // DEPRECATED
             $search = $v->GetContent();
             // In this case $value will either be a string, or an array of iCalProp objects
             // since TEXT-MATCH does not apply to COMPONENT level - only property/parameter
-            if ( gettype($value) != 'string' ) {
-              if ( gettype($value) == 'array' ) {
+            if ( !is_string($value) ) {
+              if ( is_array($value) ) {
                 $match = false;
                 foreach( $value AS $k1 => $v1 ) {
-                  // $v1 could be an iCalProp object
+                  // $v1 MUST be an iCalProp object
                   if ( $match = $v1->TextMatch($search)) break;
                 }
               }
@@ -1625,13 +1628,12 @@ class iCalendar {  // DEPRECATED
               }
             }
             else {
-              $match = strstr( $value, $search[0] );
+              $match = (stristr( $value, $search ) !== false);      
             }
             $negate = $v->GetAttribute("negate-condition");
-            if ( isset($negate) && strtolower($negate) == "yes" && $match ) {
-              dbg_error_log( 'iCalendar', ":ApplyFilter: TEXT-MATCH of %s'%s' against '%s'", (isset($negate) && strtolower($negate) == "yes"?'!':''), $search, $value );
-              return false;
-            }
+            if ( isset($negate) && strtolower($negate) == "yes" ) $match = !$match;
+//            dbg_error_log( 'iCalendar', ":ApplyFilter: TEXT-MATCH returning %s", ($match?"yes":"no") );
+            return $match;
             break;
           case 'urn:ietf:params:xml:ns:caldav:comp-filter':
             $subfilter = $v->GetContent();
@@ -1667,8 +1669,10 @@ class iCalendar {  // DEPRECATED
   function TestFilter( $filters ) {
     deprecated('iCalendar::TestFilter' );
 
+//    dbg_error_log('iCalendar', ':TestFilter we have %d filters to test', count($filters) );
     foreach( $filters AS $k => $v ) {
       $tag = $v->GetTag();
+//      dbg_error_log('iCalendar', ':TestFilter working on tag "%s" %s"', $k, $tag );
       $name = $v->GetAttribute("name");
       $filter = $v->GetContent();
       if ( $tag == "urn:ietf:params:xml:ns:caldav:prop-filter" ) {

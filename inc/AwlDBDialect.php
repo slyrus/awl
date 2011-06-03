@@ -70,12 +70,16 @@ class AwlDBDialect {
       $this->dialect = $matches[1];
     }
     else {
+      error_log("Unable to connect to database: ". $e->getMessage() );
       trigger_error("Unsupported database connection '".$connection_string."'",E_USER_ERROR);
     }
     try {
       $this->db = new PDO( $connection_string, $dbuser, $dbpass, $options );
     } catch (PDOException $e) {
-      trigger_error("PDO connection error '".$connection_string."': ".$e->getMessage(),E_USER_ERROR);
+      error_log("Unable to connect to database: ". $e->getMessage() );
+      if ( function_exists('trigger_error') )
+        trigger_error("PDO connection error '".$connection_string."': ".$e->getMessage(),E_USER_ERROR);
+      throw $e;
     }
   }
 

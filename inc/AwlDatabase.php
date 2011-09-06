@@ -104,7 +104,7 @@ class AwlDatabase extends AwlDBDialect {
       $this->txnstate = 1;
     }
     else {
-      trigger_error("Cannot begin a transaction while a transaction is already active.",E_USER_ERROR);
+      fatal("Cannot begin a transaction while a transaction is already active.");
     }
     return true;
   }
@@ -140,6 +140,7 @@ class AwlDatabase extends AwlDBDialect {
   /**
   * Returns the current state of a transaction, indicating if we have begun a transaction, whether the transaction
   * has failed, or if we are not in a transaction.
+  * @return int 0 = not started, 1 = in progress, -1 = error pending rollback/commit
   */
   function TransactionState() {
     return $this->txnstate;

@@ -570,6 +570,16 @@ class vComponent {
 
 
   /**
+  * Return the value of the first instance of a property of this name, or null
+  */
+  function GetPValue( $type ) {
+    $p = $this->GetProperty($type);
+    if ( isset($p) ) return $p->Value();
+    return null;
+  }
+
+  
+  /**
   * Get all properties, or the properties matching a particular type, or matching an
   * array associating property names with true values: array( 'PROPERTY' => true, 'PROPERTY2' => true )
   */
@@ -927,3 +937,21 @@ class vComponent {
 
 }
 
+class VCalendar extends vComponent {
+
+  /**
+  * Apply standard properties for a VCalendar
+  * @param array $extra_properties Key/value pairs of additional properties
+  */
+  function Initialise( $extra_properties = null ) {
+    $this->SetType('VCALENDAR');
+    $this->AddProperty('PRODID', '-//davical.org//NONSGML AWL Calendar//EN');
+    $this->AddProperty('VERSION', '2.0');
+    $this->AddProperty('CALSCALE', 'GREGORIAN');
+    if ( is_array($extra_properties) ) {
+      foreach( $extra_properties AS $k => $v ) {
+        $this->AddProperty($k,$v);
+      }
+    }
+  }
+}

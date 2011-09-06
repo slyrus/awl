@@ -891,19 +891,6 @@ class iCalComponent {
 ************************************************************************************
 */
 
-function deprecated( $method ) {
-  global $c;
-  if ( isset($c->dbg['ALL']) || isset($c->dbg['deprecated'])  || isset($c->dbg['icalendar']) ) {
-    $stack = debug_backtrace();
-    array_shift($stack);
-    if ( preg_match( '{/inc/iCalendar.php$}', $stack[0]['file'] ) && $stack[0]['line'] > __LINE__ ) return;
-    dbg_error_log("LOG", " iCalendar: Call to deprecated method '%s'", $method );
-    foreach( $stack AS $k => $v ) {
-      dbg_error_log( 'LOG', ' iCalendar: Deprecated call from line %4d of %s', $v['line'], $v['file']);
-    }
-  }
-}
-
 /**
 * A Class for handling Events on a calendar (DEPRECATED)
 *

@@ -54,6 +54,42 @@ if ( !function_exists('dbg_error_log') ) {
 }
 
 
+if ( !function_exists('fatal') ) {
+  function fatal() {
+    global $c;
+    $args = func_get_args();
+    $argc = func_num_args();
+    if ( 2 <= $argc ) {
+      $format = array_shift($args);
+    }
+    else {
+      $format = "%s";
+    }
+    @error_log( $c->sysabbr.": FATAL: $component:". vsprintf( $format, $args ) );
+    
+    try {
+      throw new Exception('fatal');
+    }
+    catch( Exception $e ) {
+	    @error_log( "================= Stack Trace ===================" );
+	
+  	  $trace = array_reverse($e->getTrace());
+	    array_pop($trace);
+	    foreach( $trace AS $k => $v ) {
+  	    @error_log( sprintf(" ===>  %s[%d] calls %s%s%s()",
+	               $v['file'],
+	               $v['line'],
+	               (isset($v['class'])?$v['class']:''),
+	               (isset($v['type'])?$v['type']:''),
+	               (isset($v['function'])?$v['function']:'')
+	      ));
+  	  }
+    }
+    echo "Fatal Error";
+    exit();
+  }
+}
+
 
 if ( !function_exists('apache_request_headers') ) {
   /**
@@ -519,7 +555,7 @@ if ( !function_exists("force_utf8") ) {
 */
 function olson_from_tzstring( $tzstring ) {
   if ( in_array($tzstring,timezone_identifiers_list()) ) return $tzstring;
-  if ( preg_match( '{((Antarctica|America|Africa|Atlantic|Asia|Australia|Indian|Europe|Pacific|US)/(([^/]+)/)?[^/]+)$}', $tzstring, $matches ) ) {
+  if ( preg_match( '{((Antarctica|America|Africa|Atlantic|Asia|Australia|Indian|Europe|Pacific)/(([^/]+)/)?[^/]+)$}', $tzstring, $matches ) ) {
 //    dbg_error_log( 'INFO', 'Found timezone "%s" from string "%s"', $matches[1], $tzstring );
     return $matches[1];
   }
@@ -532,12 +568,27 @@ function olson_from_tzstring( $tzstring ) {
   return null;
 }
 
+if ( !function_exists("deprecated") ) {
+  function deprecated( $method ) {
+    global $c;
+    if ( isset($c->dbg['ALL']) || isset($c->dbg['deprecated'])  || isset($c->dbg['icalendar']) ) {
+      $stack = debug_backtrace();
+      array_shift($stack);
+      if ( preg_match( '{/inc/iCalendar.php$}', $stack[0]['file'] ) && $stack[0]['line'] > __LINE__ ) return;
+      dbg_error_log("LOG", " iCalendar: Call to deprecated method '%s'", $method );
+      foreach( $stack AS $k => $v ) {
+        dbg_error_log( 'LOG', ' iCalendar: Deprecated call from line %4d of %s', $v['line'], $v['file']);
+      }
+    }
+  }
+}
+
 
 /**
  * Return the AWL version
  */
 function awl_version() {
   global $c;
-$c->awl_library_version = 0.46;
+$c->awl_library_version = 0.47;
   return $c->awl_library_version;
 }

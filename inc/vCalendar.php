@@ -25,12 +25,30 @@ class VCalendar extends vComponent {
   var $contained_type;
   var $timezones;
 
+  /**
+   * Constructor.  If a string is passed it will be parsed as if it was an iCalendar object,
+   * otherwise a new vCalendar will be initialised with basic content. If an array of key value
+   * pairs is provided they will also be used as top-level properties.
+   * 
+   * Typically this will be used to set a METHOD property on the VCALENDAR as something like:
+   *   $shinyCalendar = new vCalendar( array('METHOD' => 'REQUEST' ) );
+   *  
+   * @param mixed $content Can be a string to be parsed, or an array of key value pairs.
+   */
   function __construct($content=null) {
     $this->contained_type = null;
     $this->timezones = array();
-    if ( is_array($content) ) {
+    if ( empty($content) || is_array($content) ) {
       parent::__construct();
-      $this->Initialise($content);
+      $this->SetType('VCALENDAR');
+      $this->AddProperty('PRODID', '-//davical.org//NONSGML AWL Calendar//EN');
+      $this->AddProperty('VERSION', '2.0');
+      $this->AddProperty('CALSCALE', 'GREGORIAN');
+      if ( !empty($content) ) {
+        foreach( $content AS $k => $v ) {
+          $this->AddProperty($k,$v);
+        }
+      }
     }
     else {
       parent::__construct($content);
@@ -47,7 +65,7 @@ class VCalendar extends vComponent {
 
   
   /**
-   * 
+   * Add a timezone component to this vCalendar.
    */
   function AddTimeZone(vComponent $vtz, $in_components=false) {
     $tzid = $vtz->GetPValue('TZID');
@@ -56,22 +74,16 @@ class VCalendar extends vComponent {
       return;
     }
     $this->timezones[$tzid] = $vtz;
+    if ( !$in_components ) $this->AddComponent($vtz);
   }
 
   
   /**
-   * Apply standard properties for a VCalendar
-   * @param array $extra_properties Key/value pairs of additional properties
+   * Get a timezone component for a specific TZID in this calendar.
    */
-  function Initialise( $extra_properties = null ) {
-    $this->SetType('VCALENDAR');
-    $this->AddProperty('PRODID', '-//davical.org//NONSGML AWL Calendar//EN');
-    $this->AddProperty('VERSION', '2.0');
-    $this->AddProperty('CALSCALE', 'GREGORIAN');
-    if ( is_array($extra_properties) ) {
-      foreach( $extra_properties AS $k => $v ) {
-        $this->AddProperty($k,$v);
-      }
-    }
+  function GetTimeZone( $tzid ) {
+    if ( empty($this->timezones[$tzid]) ) return null;
+    return $this->timezones[$tzid];
   }
+
 }

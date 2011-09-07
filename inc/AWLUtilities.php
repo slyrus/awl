@@ -67,23 +67,18 @@ if ( !function_exists('fatal') ) {
     }
     @error_log( $c->sysabbr.": FATAL: $component:". vsprintf( $format, $args ) );
     
-    try {
-      throw new Exception('fatal');
-    }
-    catch( Exception $e ) {
-	    @error_log( "================= Stack Trace ===================" );
+    @error_log( "================= Stack Trace ===================" );
 	
-  	  $trace = array_reverse($e->getTrace());
-	    array_pop($trace);
-	    foreach( $trace AS $k => $v ) {
-  	    @error_log( sprintf(" ===>  %s[%d] calls %s%s%s()",
+  	$trace = array_reverse(debug_backtrace());
+    array_pop($trace);
+    foreach( $trace AS $k => $v ) {
+ 	  @error_log( sprintf(" ===>  %s[%d] calls %s%s%s()",
 	               $v['file'],
 	               $v['line'],
 	               (isset($v['class'])?$v['class']:''),
 	               (isset($v['type'])?$v['type']:''),
 	               (isset($v['function'])?$v['function']:'')
 	      ));
-  	  }
     }
     echo "Fatal Error";
     exit();
@@ -571,13 +566,13 @@ function olson_from_tzstring( $tzstring ) {
 if ( !function_exists("deprecated") ) {
   function deprecated( $method ) {
     global $c;
-    if ( isset($c->dbg['ALL']) || isset($c->dbg['deprecated'])  || isset($c->dbg['icalendar']) ) {
+    if ( isset($c->dbg['ALL']) || isset($c->dbg['deprecated']) ) {
       $stack = debug_backtrace();
       array_shift($stack);
       if ( preg_match( '{/inc/iCalendar.php$}', $stack[0]['file'] ) && $stack[0]['line'] > __LINE__ ) return;
-      dbg_error_log("LOG", " iCalendar: Call to deprecated method '%s'", $method );
+      @error_log( sprintf( $c->sysabbr.':DEPRECATED: Call to deprecated method "%s"', $method));
       foreach( $stack AS $k => $v ) {
-        dbg_error_log( 'LOG', ' iCalendar: Deprecated call from line %4d of %s', $v['line'], $v['file']);
+        @error_log( sprintf( $c->sysabbr.':  ==>  called from line %4d of %s', $v['line'], $v['file']));
       }
     }
   }

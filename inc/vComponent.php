@@ -10,7 +10,7 @@
 * @subpackage vComponent
 * @author Andrew McMillan <andrew@mcmillan.net.nz>
 * @copyright Morphoss Ltd <http://www.morphoss.com/>
-* @license   http://gnu.org/copyleft/gpl.html GNU GPL v2 or later
+* @license   http://gnu.org/copyleft/lgpl.html GNU LGPL v2 or later
 *
 */
 require_once('XMLElement.php');
@@ -937,21 +937,3 @@ class vComponent {
 
 }
 
-class VCalendar extends vComponent {
-
-  /**
-  * Apply standard properties for a VCalendar
-  * @param array $extra_properties Key/value pairs of additional properties
-  */
-  function Initialise( $extra_properties = null ) {
-    $this->SetType('VCALENDAR');
-    $this->AddProperty('PRODID', '-//davical.org//NONSGML AWL Calendar//EN');
-    $this->AddProperty('VERSION', '2.0');
-    $this->AddProperty('CALSCALE', 'GREGORIAN');
-    if ( is_array($extra_properties) ) {
-      foreach( $extra_properties AS $k => $v ) {
-        $this->AddProperty($k,$v);
-      }
-    }
-  }
-}

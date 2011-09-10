@@ -3,7 +3,7 @@
   <html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
 			<!-- template designed by Marco Von Ballmoos  -->
-			<title>Docs for page classEditor.php</title>
+			<title>Docs for page vCalendar.php</title>
 			<link rel="stylesheet" href="../../media/stylesheet.css" />
 						<script src="../../media/lib/classTree.js"></script>
 												<script language="javascript" type="text/javascript">
@@ -85,7 +85,7 @@
 					</head>
 		<body>
 			<div class="page-body">			
-<h2 class="file-name"><img src="../../media/images/Page_logo.png" alt="File" style="vertical-align: middle">/classEditor.php</h2>
+<h2 class="file-name"><img src="../../media/images/Page_logo.png" alt="File" style="vertical-align: middle">/vCalendar.php</h2>
 
 <a name="sec-description"></a>
 <div class="info-box">
@@ -97,11 +97,12 @@
 												</div>
 	<div class="info-box-body">	
 		<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Class for editing a record using a templated form.</p>
+<p class="short-description">A Class for handling vCalendar data.</p>
+<p class="description"><p>When parsed the underlying structure is roughly as follows:</p><p>vCalendar( array(vComponent), array(vProperty), array(vTimezone) )</p><p>with the TIMEZONE data still currently included in the component array (likely  to change in the future) and the timezone array only containing vComponent objects  (which is also likely to change).</p></p>
 	<ul class="tags">
 				<li><span class="field">author:</span> Andrew McMillan &lt;<a href="mailto:andrew@mcmillan.net.nz">andrew@mcmillan.net.nz</a>&gt;</li>
-				<li><span class="field">copyright:</span> Catalyst IT Ltd, Morphoss Ltd &lt;http://www.morphoss.com/&gt;</li>
-				<li><span class="field">license:</span> <a href="http://gnu.org/copyleft/gpl.html">GNU GPL v2</a></li>
+				<li><span class="field">copyright:</span> Morphoss Ltd &lt;http://www.morphoss.com/&gt;</li>
+				<li><span class="field">license:</span> <a href="http://gnu.org/copyleft/lgpl.html">GNU LGPL v3 or later</a></li>
 			</ul>
 		
 			</div>
@@ -126,21 +127,10 @@
 						<img src="../../media/images/Class.png"
 								 alt=" class"
 								 title=" class"/>
-						<a href="../../awl/classEditor/EditorField.html">EditorField</a>
+						<a href="../../awl/vCalendar/VCalendar.html">VCalendar</a>
 					</td>
 					<td>
-											A class for the fields in the editor
-										</td>
-				</tr>
-								<tr>
-					<td style="padding-right: 2em; vertical-align: top; white-space: nowrap">
-						<img src="../../media/images/Class.png"
-								 alt=" class"
-								 title=" class"/>
-						<a href="../../awl/classEditor/Editor.html">Editor</a>
-					</td>
-					<td>
-											The class for the Editor form in full
+											A Class for representing components within an vComponent
 										</td>
 				</tr>
 							</table>
@@ -156,30 +146,15 @@
 				|						<span class="disabled">Includes</span>
 														</div>
 		<div class="info-box-body">	
-			<a name="_DataUpdate_php"><!-- --></a>
-<div class="evenrow">
-	
-	<div>
-		<img src="../../media/images/Page.png" alt=" " />
-		<span class="include-title">
-			<span class="include-type">require_once</span>
-			(<span class="include-name"><a href="../../awl/DataUpdate/_DataUpdate.php.html">"DataUpdate.php"</a></span>)
-			(line <span class="line-number">12</span>)
-		</span>
-	</div>
-
-	<!-- ========== Info from phpDoc block ========= -->
-	
-</div>
-<a name="_DataEntry_php"><!-- --></a>
+			<a name="_vComponent_php"><!-- --></a>
 <div class="oddrow">
 	
 	<div>
 		<img src="../../media/images/Page.png" alt=" " />
 		<span class="include-title">
 			<span class="include-type">require_once</span>
-			(<span class="include-name"><a href="../../awl/DataEntry/_DataEntry.php.html">"DataEntry.php"</a></span>)
-			(line <span class="line-number">13</span>)
+			(<span class="include-name"><a href="../../awl/vComponent/_vComponent.php.html">'vComponent.php'</a></span>)
+			(line <span class="line-number">21</span>)
 		</span>
 	</div>
 
@@ -193,7 +168,7 @@
 	
 	
 	<p class="notes" id="credit">
-		Documentation generated on Sun, 11 Sep 2011 00:31:46 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Sun, 11 Sep 2011 00:31:50 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>

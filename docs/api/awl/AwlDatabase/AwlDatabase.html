@@ -206,7 +206,7 @@
 															
 				<div class="method-definition">
 					<img src="../../media/images/Method.png" alt=" "/>
-											<span class="method-result">void</span>
+											<span class="method-result">int</span>
 										<a href="#TransactionState" title="details" class="method-name">TransactionState</a>
 										()
 									</div>
@@ -236,7 +236,7 @@
 		<div class="info-box-body">
 			
 <a name="var$translate_all" id="$translate_all"><!-- --></A>
-<div class="evenrow">
+<div class="oddrow">
 
 	<div class="var-header">
 		<img src="../../media/images/Variable.png" />
@@ -259,7 +259,7 @@
 
 </div>
 <a name="var$txnstate" id="$txnstate"><!-- --></A>
-<div class="oddrow">
+<div class="evenrow">
 
 	<div class="var-header">
 		<img src="../../media/images/Variable.png" />
@@ -310,7 +310,7 @@
 		<div class="info-box-body">
 			<A NAME='method_detail'></A>
 <a name="methodBegin" id="Begin"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
@@ -332,7 +332,7 @@
 			
 	</div>
 <a name="methodCommit" id="Commit"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
@@ -354,11 +354,11 @@
 			
 	</div>
 <a name="methodErrorInfo" id="ErrorInfo"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">ErrorInfo</span> (line <span class="line-number">172</span>)
+		<span class="method-title">ErrorInfo</span> (line <span class="line-number">173</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -375,7 +375,7 @@
 			
 	</div>
 <a name="methodprepare" id="prepare"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
@@ -408,11 +408,11 @@
 			
 	</div>
 <a name="methodPrepareTranslated" id="PrepareTranslated"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">PrepareTranslated</span> (line <span class="line-number">153</span>)
+		<span class="method-title">PrepareTranslated</span> (line <span class="line-number">154</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -438,7 +438,7 @@
 			
 	</div>
 <a name="methodquery" id="query"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
@@ -471,7 +471,7 @@
 			
 	</div>
 <a name="methodRollback" id="Rollback"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
@@ -493,18 +493,21 @@
 			
 	</div>
 <a name="methodTransactionState" id="TransactionState"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">TransactionState</span> (line <span class="line-number">144</span>)
+		<span class="method-title">TransactionState</span> (line <span class="line-number">145</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
 <p class="short-description">Returns the current state of a transaction, indicating if we have begun a transaction, whether the transaction  has failed, or if we are not in a transaction.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> 0 = not started, 1 = in progress, -1 = error pending rollback/commit</li>
+			</ul>
 	
 	<div class="method-signature">
-		<span class="method-result">void</span>
+		<span class="method-result">int</span>
 		<span class="method-name">
 			TransactionState
 		</span>
@@ -515,11 +518,11 @@
 			
 	</div>
 <a name="methodTranslateAll" id="TranslateAll"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../../media/images/Method.png" />
-		<span class="method-title">TranslateAll</span> (line <span class="line-number">163</span>)
+		<span class="method-title">TranslateAll</span> (line <span class="line-number">164</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -569,7 +572,7 @@
 
 	
 	<p class="notes" id="credit">
-		Documentation generated on Tue, 28 Dec 2010 02:01:35 +1300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Sun, 11 Sep 2011 00:31:44 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>

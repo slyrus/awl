@@ -113,8 +113,38 @@ if (document.getElementById) {
 
 		
 		
-		
+					var tree_classe = new WebFXTreeItem('Class(es)', '');
+			tree_classe.openIcon = 'media/images/class_folder.png';
+			tree_classe.icon = 'media/images/class_folder.png';
 			
+						    				var classe = new WebFXTreeItem('AwlCache', 'awl/AwlCache.html');
+				classe.openIcon = 'media/images/Class.png';
+				classe.icon = 'media/images/Class.png';
+				tree_classe.add(classe);
+								
+			tree.add(tree_classe);
+		
+					var tree_function = new WebFXTreeItem('Function(s)', '');
+			tree_function.openIcon = 'media/images/function_folder.png';
+			tree_function.icon = 'media/images/function_folder.png';
+			
+							var fic = new WebFXTreeItem('getCacheInstance', 'awl/_AwlCache.php.html#functiongetCacheInstance');
+				fic.openIcon = 'media/images/Function.png';
+				fic.icon = 'media/images/Function.png';
+				tree_function.add(fic);
+					
+			tree.add(tree_function);
+			
+					var tree_file = new WebFXTreeItem('File(s)', '');
+			tree_file.openIcon = 'media/images/folder.png';
+			tree_file.icon = 'media/images/folder.png';
+	
+							var file = new WebFXTreeItem('AwlCache.php', 'awl/_AwlCache.php.html');
+				file.openIcon = 'media/images/Page.png';
+				file.icon = 'media/images/Page.png';
+				tree_file.add(file);
+				
+			tree.add(tree_file);
 		
 							var subpackagetree = new WebFXTreeItem('<span class="sub-package">AuthPlugin</span>', '');
 		
@@ -426,33 +456,15 @@ if (document.getElementById) {
 				classe.openIcon = 'media/images/Class.png';
 				classe.icon = 'media/images/Class.png';
 				subpackagetree_classe.add(classe);
-							var classe = new WebFXTreeItem('vEvent', 'awl/iCalendar/vEvent.html');
-				classe.openIcon = 'media/images/Class.png';
-				classe.icon = 'media/images/Class.png';
-				subpackagetree_classe.add(classe);
 						
 			subpackagetree.add(subpackagetree_classe);
 		
-					var subpackagetree_function = new WebFXTreeItem('Function(s)', '');
-			subpackagetree_function.openIcon = 'media/images/function_folder.png';
-			subpackagetree_function.icon = 'media/images/function_folder.png';
-			
-							var fic = new WebFXTreeItem('deprecated', 'awl/iCalendar/_iCalendar.php.html#functiondeprecated');
-				fic.openIcon = 'media/images/Function.png';
-				fic.icon = 'media/images/Function.png';
-				subpackagetree_function.add(fic);
-						
-			subpackagetree.add(subpackagetree_function);
 				
 					var subpackagetree_file = new WebFXTreeItem('File(s)', '');
 			subpackagetree_file.openIcon = 'media/images/folder.png';
 			subpackagetree_file.icon = 'media/images/folder.png';
 			
 							var file = new WebFXTreeItem('iCalendar.php', 'awl/iCalendar/_iCalendar.php.html');
-				file.openIcon = 'media/images/Page.png';
-				file.icon = 'media/images/Page.png';
-				subpackagetree_file.add(file);
-							var file = new WebFXTreeItem('vEvent.php', 'awl/iCalendar/_vEvent.php.html');
 				file.openIcon = 'media/images/Page.png';
 				file.icon = 'media/images/Page.png';
 				subpackagetree_file.add(file);
@@ -703,6 +715,14 @@ if (document.getElementById) {
 				fic.openIcon = 'media/images/Function.png';
 				fic.icon = 'media/images/Function.png';
 				subpackagetree_function.add(fic);
+							var fic = new WebFXTreeItem('deprecated', 'awl/Utilities/_AWLUtilities.php.html#functiondeprecated');
+				fic.openIcon = 'media/images/Function.png';
+				fic.icon = 'media/images/Function.png';
+				subpackagetree_function.add(fic);
+							var fic = new WebFXTreeItem('fatal', 'awl/Utilities/_AWLUtilities.php.html#functionfatal');
+				fic.openIcon = 'media/images/Function.png';
+				fic.icon = 'media/images/Function.png';
+				subpackagetree_function.add(fic);
 							var fic = new WebFXTreeItem('force_utf8', 'awl/Utilities/_AWLUtilities.php.html#functionforce_utf8');
 				fic.openIcon = 'media/images/Function.png';
 				fic.icon = 'media/images/Function.png';
@@ -785,6 +805,36 @@ if (document.getElementById) {
 			subpackagetree_file.icon = 'media/images/folder.png';
 			
 							var file = new WebFXTreeItem('Validation.php', 'awl/Validation/_Validation.php.html');
+				file.openIcon = 'media/images/Page.png';
+				file.icon = 'media/images/Page.png';
+				subpackagetree_file.add(file);
+					
+			subpackagetree.add(subpackagetree_file);
+			
+	  tree.add(subpackagetree);
+							var subpackagetree = new WebFXTreeItem('<span class="sub-package">vCalendar</span>', '');
+		
+		subpackagetree.openIcon = 'media/images/package.png';
+		subpackagetree.icon = 'media/images/package.png';
+
+			
+					var subpackagetree_classe = new WebFXTreeItem('Class(es)', '');
+			subpackagetree_classe.openIcon = 'media/images/class_folder.png';
+			subpackagetree_classe.icon = 'media/images/class_folder.png';
+			
+							var classe = new WebFXTreeItem('VCalendar', 'awl/vCalendar/VCalendar.html');
+				classe.openIcon = 'media/images/Class.png';
+				classe.icon = 'media/images/Class.png';
+				subpackagetree_classe.add(classe);
+						
+			subpackagetree.add(subpackagetree_classe);
+		
+				
+					var subpackagetree_file = new WebFXTreeItem('File(s)', '');
+			subpackagetree_file.openIcon = 'media/images/folder.png';
+			subpackagetree_file.icon = 'media/images/folder.png';
+			
+							var file = new WebFXTreeItem('vCalendar.php', 'awl/vCalendar/_vCalendar.php.html');
 				file.openIcon = 'media/images/Page.png';
 				file.icon = 'media/images/Page.png';
 				subpackagetree_file.add(file);

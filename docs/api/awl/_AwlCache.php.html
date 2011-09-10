@@ -3,14 +3,14 @@
   <html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
 			<!-- template designed by Marco Von Ballmoos  -->
-			<title>Docs for page classEditor.php</title>
-			<link rel="stylesheet" href="../../media/stylesheet.css" />
-						<script src="../../media/lib/classTree.js"></script>
+			<title>Docs for page AwlCache.php</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+						<script src="../media/lib/classTree.js"></script>
 												<script language="javascript" type="text/javascript">
 				var imgPlus = new Image();
 				var imgMinus = new Image();
-				imgPlus.src = "../../media/images/plus.png";
-				imgMinus.src = "../../media/images/minus.png";
+				imgPlus.src = "../media/images/plus.png";
+				imgMinus.src = "../media/images/minus.png";
 				
 				function showNode(Node){
 							switch(navigator.family){
@@ -85,7 +85,7 @@
 					</head>
 		<body>
 			<div class="page-body">			
-<h2 class="file-name"><img src="../../media/images/Page_logo.png" alt="File" style="vertical-align: middle">/classEditor.php</h2>
+<h2 class="file-name"><img src="../media/images/Page_logo.png" alt="File" style="vertical-align: middle">/AwlCache.php</h2>
 
 <a name="sec-description"></a>
 <div class="info-box">
@@ -93,16 +93,10 @@
 	<div class="nav-bar">
 					<span class="disabled">Description</span> |
 							<a href="#sec-classes">Classes</a>
-			|							<a href="#sec-includes">Includes</a>
-												</div>
+			|													<a href="#sec-functions">Functions</a>
+			</div>
 	<div class="info-box-body">	
 		<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">Class for editing a record using a templated form.</p>
-	<ul class="tags">
-				<li><span class="field">author:</span> Andrew McMillan &lt;<a href="mailto:andrew@mcmillan.net.nz">andrew@mcmillan.net.nz</a>&gt;</li>
-				<li><span class="field">copyright:</span> Catalyst IT Ltd, Morphoss Ltd &lt;http://www.morphoss.com/&gt;</li>
-				<li><span class="field">license:</span> <a href="http://gnu.org/copyleft/gpl.html">GNU GPL v2</a></li>
-			</ul>
 		
 			</div>
 </div>
@@ -113,8 +107,8 @@
 		<div class="nav-bar">
 			<a href="#sec-description">Description</a> |
 			<span class="disabled">Classes</span>
-			|							<a href="#sec-includes">Includes</a>
-																		</div>
+			|																<a href="#sec-functions">Functions</a>
+					</div>
 		<div class="info-box-body">	
 			<table cellpadding="2" cellspacing="0" class="class-table">
 				<tr>
@@ -123,77 +117,56 @@
 				</tr>
 								<tr>
 					<td style="padding-right: 2em; vertical-align: top; white-space: nowrap">
-						<img src="../../media/images/Class.png"
+						<img src="../media/images/Class.png"
 								 alt=" class"
 								 title=" class"/>
-						<a href="../../awl/classEditor/EditorField.html">EditorField</a>
+						<a href="../awl/AwlCache.html">AwlCache</a>
 					</td>
 					<td>
-											A class for the fields in the editor
-										</td>
-				</tr>
-								<tr>
-					<td style="padding-right: 2em; vertical-align: top; white-space: nowrap">
-						<img src="../../media/images/Class.png"
-								 alt=" class"
-								 title=" class"/>
-						<a href="../../awl/classEditor/Editor.html">Editor</a>
-					</td>
-					<td>
-											The class for the Editor form in full
+											A simple Memcached wrapper supporting namespacing of stored values.
 										</td>
 				</tr>
 							</table>
 		</div>
 	</div>
 
-	<a name="sec-includes"></a>	
+	
+	
+	
+	<a name="sec-functions"></a>	
 	<div class="info-box">
-		<div class="info-box-title">Includes</div>
+		<div class="info-box-title">Functions</div>
 		<div class="nav-bar">
 			<a href="#sec-description">Description</a> |
 							<a href="#sec-classes">Classes</a>
-				|						<span class="disabled">Includes</span>
-														</div>
+				|															<span class="disabled">Functions</span>
+		</div>
 		<div class="info-box-body">	
-			<a name="_DataUpdate_php"><!-- --></a>
+			<a name="functiongetCacheInstance" id="functiongetCacheInstance"><!-- --></a>
 <div class="evenrow">
 	
 	<div>
-		<img src="../../media/images/Page.png" alt=" " />
-		<span class="include-title">
-			<span class="include-type">require_once</span>
-			(<span class="include-name"><a href="../../awl/DataUpdate/_DataUpdate.php.html">"DataUpdate.php"</a></span>)
-			(line <span class="line-number">12</span>)
-		</span>
-	</div>
+		<img src="../media/images/Function.png" />
+		<span class="method-title">getCacheInstance</span> (line <span class="line-number">167</span>)
+	</div> 
 
 	<!-- ========== Info from phpDoc block ========= -->
-	
-</div>
-<a name="_DataEntry_php"><!-- --></a>
-<div class="oddrow">
-	
-	<div>
-		<img src="../../media/images/Page.png" alt=" " />
-		<span class="include-title">
-			<span class="include-type">require_once</span>
-			(<span class="include-name"><a href="../../awl/DataEntry/_DataEntry.php.html">"DataEntry.php"</a></span>)
-			(line <span class="line-number">13</span>)
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getCacheInstance
 		</span>
-	</div>
+				()
+			</div>
 
-	<!-- ========== Info from phpDoc block ========= -->
+		
 	
 </div>
 		</div>
 	</div>
 	
-	
-	
-	
 	<p class="notes" id="credit">
-		Documentation generated on Sun, 11 Sep 2011 00:31:46 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Sun, 11 Sep 2011 00:31:44 +1200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>

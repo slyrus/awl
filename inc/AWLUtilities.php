@@ -556,9 +556,20 @@ function olson_from_tzstring( $tzstring ) {
   }
   switch( $tzstring ) {
     case 'New Zealand Standard Time': case 'New Zealand Daylight Time': return 'Pacific/Auckland'; break;
-    case 'Central Standard Time':     case 'Central Daylight Time':     return 'America/Chicago';  break;
-    case 'Eastern Standard Time':     case 'Eastern Daylight Time':     return 'America/New_York'; break;
-    case 'Pacific Standard Time':     case 'Pacific Daylight Time':     return 'America/Los_Angeles'; break;
+    case 'Central Standard Time':     case 'Central Daylight Time':     case 'US/Central':
+         return 'America/Chicago';
+         break;
+    case 'Eastern Standard Time':     case 'Eastern Daylight Time':     case 'US/Eastern':
+         return 'America/New_York';
+         break;
+    case 'Pacific Standard Time':     case 'Pacific Daylight Time':     case 'US/Pacific':
+         return 'America/Los_Angeles';
+         break;
+    case 'Mountain Standard Time':    case 'Mountain Daylight Time':    case 'US/Mountain':    caee 'Mountain Time':
+         return 'America/Denver';
+         // The US 'Mountain Time' can in fact be America/(Denver|Boise|Phoenix|Shiprock) which
+         // all vary to some extent due to differing DST rules.
+         break;
   }
   return null;
 }

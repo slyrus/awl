@@ -1,3 +1,51 @@
+2011-09-11  Andrew McMillan  <andrew@morphoss.com>
+	* Release 0.47
+
+2011-09-08  Andrew McMillan  <andrew@morphoss.com>
+	* [vCalendar] Developing this to be useful for scheduling.
+
+2011-09-06  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] add GetPValue() method and VCalendar class.
+	* [iCalendar] Remove deprecated() function moved to AwlUtilities.
+	* [AwlQuery] Change phpdoc to include possible values for TransactionState()
+	* [AwlDatabase] Make attempt to nest transactions a fatal error.
+	* [AWLUtlities] Add fatal() and deprecated() functions.
+
+2011-06-04  Andrew McMillan  <andrew@morphoss.com>
+	* Fix some errors in filtering on arbitrary iCalendar properties.
+	* Better fallback between pluggable authentication things.
+	* Provide better logging when DB connection fails.
+
+2011-02-23  Felix Möller  <mail@felixmoeller.de>
+	* Add support for RPM packages.
+
+2011-02-22  Andrew McMillan  <andrew@morphoss.com>
+	* The " character should not be escaped per RFC5545 3.3.11
+	* [AwlCache] Add facility to lock / release something arbitrary.
+
+2011-01-21  Andrew McMillan  <andrew@morphoss.com>
+	* Ensure all lines of the output VComponent are \r\n terminated.
+
+2011-01-06  Andrew McMillan  <andrew@morphoss.com>
+	* [AuthPlugins] Fix misspelled __LINE__ constant.
+	* Add US/* as allowable timezone names.
+
+2011-01-04  Andrew McMillan  <andrew@morphoss.com>
+	* [iCalendar] Add to the list of passed-through values on obfuscation.
+	* [DataUpdate] Move strange character check until after password hashing.
+	  Well, well well.  For some years it has been impossible to have '
+	  or \ in a password...
+
+2011-01-01  Andrew McMillan  <andrew@morphoss.com>
+	* [AwlCache] Added: A Simple Memcached wrapper supporting namespaces.
+
+2010-12-28  Andrew McMillan  <andrew@morphoss.com>
+	* The real release 0.46 :-)
+	* Really going to release 0.46 this time...
+	* [classBrowser] Fix checking of ordering fieldname.
+	* [Validation] Remove references to outdated ereg() functions.
+	* [AWLUtlities] Rename regex checking function more appropriately.
+
 2010-12-28  Andrew McMillan  <andrew@morphoss.com>
 	* Release 0.46
 	* [classBrowser] Fix checking of ordering fieldname.

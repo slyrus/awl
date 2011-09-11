@@ -565,7 +565,7 @@ function olson_from_tzstring( $tzstring ) {
     case 'Pacific Standard Time':     case 'Pacific Daylight Time':     case 'US/Pacific':
          return 'America/Los_Angeles';
          break;
-    case 'Mountain Standard Time':    case 'Mountain Daylight Time':    case 'US/Mountain':    caee 'Mountain Time':
+    case 'Mountain Standard Time':    case 'Mountain Daylight Time':    case 'US/Mountain':    case 'Mountain Time':
          return 'America/Denver';
          // The US 'Mountain Time' can in fact be America/(Denver|Boise|Phoenix|Shiprock) which
          // all vary to some extent due to differing DST rules.

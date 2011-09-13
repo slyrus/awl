@@ -559,7 +559,8 @@ function olson_from_tzstring( $tzstring ) {
     case 'Central Standard Time':     case 'Central Daylight Time':     case 'US/Central':
          return 'America/Chicago';
          break;
-    case 'Eastern Standard Time':     case 'Eastern Daylight Time':     case 'US/Eastern':    case 'Eastern Time (US & Canada)':
+    case 'Eastern Standard Time':     case 'Eastern Daylight Time':     case 'US/Eastern':
+    case '(UTC-05:00) Eastern Time (US & Canada)':
          return 'America/New_York';
          break;
     case 'Pacific Standard Time':     case 'Pacific Daylight Time':     case 'US/Pacific':

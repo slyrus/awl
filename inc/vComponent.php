@@ -87,8 +87,24 @@ class vProperty {
 
     $unescaped = preg_replace( '{\\\\[nN]}', "\n", $propstring);
 
-    // Split into two parts on : which is not preceded by a \
-    list( $start, $values) = preg_split( '{(?<!\\\\):}', $unescaped, 2);
+    // Split into two parts on : which is not preceded by a \, or within quotes like "str:ing".
+    $offset = 0;
+    do {
+      $splitpos = strpos($unescaped,':',$offset);
+      $start = substr($unescaped,0,$splitpos);
+      if ( substr($start,-1) == '\\' ) {
+        $offset = $splitpos + 1;
+        continue;
+      }
+      $quotecount = strlen(preg_replace('{[^"]}', '', $start ));
+      if ( ($quotecount % 2) != 0 ) {
+        $offset = $splitpos + 1;
+        continue;
+      }
+      break;
+    }
+    while( true );
+    $values = substr($unescaped,$splitpos+1);
     $this->content = preg_replace( "/\\\\([,;:\"\\\\])/", '$1', $values);
 
     // Split on ; which is not preceded by a \
@@ -100,6 +116,9 @@ class vProperty {
       $pos = strpos($v,'=');
       $name = strtoupper(substr( $v, 0, $pos));
       $value = substr( $v, $pos + 1);
+      if ( preg_match( '{^"(.*)"$}', $value, $matches) ) {
+        $value = $matches[1];
+      }
       $this->parameters[$name] = $value;
     }
 //    dbg_error_log('vComponent', " vProperty::ParseFrom found '%s' = '%s' with %d parameters", $this->name, substr($this->content,0,200), count($this->parameters) );

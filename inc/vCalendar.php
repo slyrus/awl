@@ -90,6 +90,8 @@ class VCalendar extends vComponent {
   
   /**
    * Get a timezone component for a specific TZID in this calendar.
+   * @param string $tzid The TZID for the timezone to be retrieved.
+   * @return vComponent The timezone as a vComponent.
    */
   function GetTimeZone( $tzid ) {
     if ( empty($this->timezones[$tzid]) ) return null;

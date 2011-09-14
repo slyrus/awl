@@ -924,14 +924,35 @@ class vComponent {
           break;
 
         case 'urn:ietf:params:xml:ns:caldav:comp-filter':
+        case 'urn:ietf:params:xml:ns:carddav:comp-filter':
           $subcomponents = $this->GetComponents($v->GetAttribute('name'));
           $subfilter = $v->GetContent();
 //          dbg_error_log( 'vCalendar', ":TestFilter: Found '%d' (of %d) subs of type '%s'",
 //                       count($subcomponents), count($this->components), $v->GetAttribute('name') );
-          if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-defined' && count($subcomponents) == 0 ) return false;
-          if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-not-defined' && count($subcomponents) > 0 ) return false;
-          foreach( $subcomponents AS $kk => $subcomponent ) {
-            if ( ! $subcomponent->TestFilter($subfilter) ) return false;
+          $subtag = $subfilter[0]->GetTag(); 
+          if ( $subtag == 'urn:ietf:params:xml:ns:caldav:is-not-defined'
+          			 || $subtag == 'urn:ietf:params:xml:ns:carddav:is-not-defined' ) {
+            if ( count($properties) > 0 ) {
+//              dbg_error_log( 'vComponent', ":TestFilter: Wanted none => false" );
+              return false;
+            }
+          }
+          else if ( count($subcomponents) == 0 ) {
+            if ( $subtag == 'urn:ietf:params:xml:ns:caldav:is-defined'
+          			 || $subtag == 'urn:ietf:params:xml:ns:carddav:is-defined' ) {
+//              dbg_error_log( 'vComponent', ":TestFilter: Wanted some => false" );
+              return false;
+            }
+            else {
+//              dbg_error_log( 'vCalendar', ":TestFilter: Wanted something from missing sub-components => false" );
+              $negate = $subfilter[0]->GetAttribute("negate-condition");
+              if ( !empty($negate) && strtolower($negate) != 'yes' ) return false;
+            }
+          }
+          else {
+            foreach( $subcomponents AS $kk => $subcomponent ) {
+              if ( ! $subcomponent->TestFilter($subfilter) ) return false;
+            }
           }
           break;
 
@@ -939,11 +960,26 @@ class vComponent {
         case 'urn:ietf:params:xml:ns:caldav:prop-filter':
           $subfilter = $v->GetContent();
           $properties = $this->GetProperties($v->GetAttribute("name"));
-//          dbg_error_log( 'vCalendar', ":TestFilter: Found '%d' props of type '%s'", count($properties), $v->GetAttribute('name') );
-          if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-defined' && count($properties) == 0 ) return false;
-          if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-not-defined' && count($properties) > 0 ) return false;
-          if ( count($properties) == 0 ) {
-            if ( $subfilter[0]->GetAttribute("negate-condition") != 'negate' ) return false;
+          dbg_error_log( 'vCalendar', ":TestFilter: Found '%d' props of type '%s'", count($properties), $v->GetAttribute('name') );
+          $subtag = $subfilter[0]->GetTag();
+          if ( $subtag == 'urn:ietf:params:xml:ns:caldav:is-not-defined'
+          			 || $subtag == 'urn:ietf:params:xml:ns:carddav:is-not-defined' ) {
+            if ( count($properties) > 0 ) {
+//              dbg_error_log( 'vCalendar', ":TestFilter: Wanted none => false" );
+              return false;
+            }
+          }
+          else if ( count($properties) == 0 ) {
+            if ( $subtag == 'urn:ietf:params:xml:ns:caldav:is-defined'
+            			 || $subtag == 'urn:ietf:params:xml:ns:carddav:is-defined' ) {
+//              dbg_error_log( 'vCalendar', ":TestFilter: Wanted some => false" );
+              return false;
+            }
+            else {
+//              dbg_error_log( 'vCalendar', ":TestFilter: Wanted '%s' from missing sub-properties => false", $subtag );
+              $negate = $subfilter[0]->GetAttribute("negate-condition");
+              if ( !empty($negate) && strtolower($negate) != 'yes' ) return false;
+            }
           }
           else {
             foreach( $properties AS $kk => $property ) {

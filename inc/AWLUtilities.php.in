@@ -549,13 +549,17 @@ if ( !function_exists("force_utf8") ) {
 * Try and extract something like "Pacific/Auckland" or "America/Indiana/Indianapolis" if possible.
 */
 function olson_from_tzstring( $tzstring ) {
+  global $c;
+  
   if ( in_array($tzstring,timezone_identifiers_list()) ) return $tzstring;
   if ( preg_match( '{((Antarctica|America|Africa|Atlantic|Asia|Australia|Indian|Europe|Pacific)/(([^/]+)/)?[^/]+)$}', $tzstring, $matches ) ) {
 //    dbg_error_log( 'INFO', 'Found timezone "%s" from string "%s"', $matches[1], $tzstring );
     return $matches[1];
   }
   switch( $tzstring ) {
-    case 'New Zealand Standard Time': case 'New Zealand Daylight Time': return 'Pacific/Auckland'; break;
+    case 'New Zealand Standard Time': case 'New Zealand Daylight Time':
+         return 'Pacific/Auckland';
+         break;
     case 'Central Standard Time':     case 'Central Daylight Time':     case 'US/Central':
          return 'America/Chicago';
          break;
@@ -571,6 +575,13 @@ function olson_from_tzstring( $tzstring ) {
          // The US 'Mountain Time' can in fact be America/(Denver|Boise|Phoenix|Shiprock) which
          // all vary to some extent due to differing DST rules.
          break;
+    case '(GMT-07.00) Arizona':
+         return 'America/Phoenix';
+         break;
+    default:
+         if ( isset($c->timezone_translations) && is_array($c->timezone_translations) 
+                      && !empty($c->timezone_translations[$tzstring]) )
+           return $c->timezone_translations[$tzstring];      
   }
   return null;
 }

@@ -20,7 +20,7 @@
 
 require_once('vComponent.php');
 
-class VCalendar extends vComponent {
+class vCalendar extends vComponent {
 
   /**
    * These variables are mostly used to improve efficiency by caching values as they are
@@ -130,4 +130,27 @@ class VCalendar extends vComponent {
     return $this->attendees;
   }
 
+  
+ 
+  /**
+  * Test a PROP-FILTER or COMP-FILTER and return a true/false
+  * COMP-FILTER (is-defined | is-not-defined | (time-range?, prop-filter*, comp-filter*))
+  * PROP-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))
+  *
+  * @param array $filter An array of XMLElement defining the filter
+  *
+  * @return boolean Whether or not this vCalendar passes the test
+  */
+  function StartFilter( $filters ) {
+    dbg_error_log('vCalendar', ':StartFilter we have %d filters to test', count($filters) );
+
+    if ( count($filters) != 1 ) return false;
+    
+    $tag = $filters[0]->GetTag();
+    $name = $filters[0]->GetAttribute("name");
+    if ( $tag != "urn:ietf:params:xml:ns:caldav:comp-filter" || $name != 'VCALENDAR' ) return false;
+    return $this->TestFilter($filters[0]->GetContent());
+  }
+
+    
 }

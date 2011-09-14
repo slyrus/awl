@@ -288,14 +288,16 @@ class vProperty {
   function TestFilter( $filters ) {
     foreach( $filters AS $k => $v ) {
       $tag = $v->GetTag();
+//      dbg_error_log( 'vCalendar', "vProperty:TestFilter: '%s'='%s' => '%s'", $this->name, $tag, $this->content );
       switch( $tag ) {
         case 'urn:ietf:params:xml:ns:caldav:is-defined':
         case 'urn:ietf:params:xml:ns:carddav:is-defined':
+          if ( empty($this->content) ) return false;
           break;
-
+        
         case 'urn:ietf:params:xml:ns:caldav:is-not-defined':
         case 'urn:ietf:params:xml:ns:carddav:is-not-defined':
-          return false;
+          if ( ! empty($this->content) ) return false;
           break;
 
         case 'urn:ietf:params:xml:ns:caldav:time-range':
@@ -307,8 +309,8 @@ class vProperty {
           $search = $v->GetContent();
           $match = $this->TextMatch($search);
           $negate = $v->GetAttribute("negate-condition");
-          if ( isset($negate) && strtolower($negate) == "yes" && $match ) {
-            return false;
+          if ( isset($negate) && strtolower($negate) == "yes" ) {
+            $match = !$match;
           }
           if ( ! $match ) return false;
           break;
@@ -332,14 +334,16 @@ class vProperty {
   function TestParamFilter( $filters, $parameter_value ) {
     foreach( $filters AS $k => $v ) {
       $subtag = $v->GetTag();
+//      dbg_error_log( 'vCalendar', "vProperty:TestParamFilter: '%s'='%s' => '%s'", $this->name, $subtag, $parameter_value );
       switch( $subtag ) {
         case 'urn:ietf:params:xml:ns:caldav:is-defined':
         case 'urn:ietf:params:xml:ns:carddav:is-defined':
+          if ( empty($parameter_value) ) return false;
           break;
 
         case 'urn:ietf:params:xml:ns:caldav:is-not-defined':
         case 'urn:ietf:params:xml:ns:carddav:is-not-defined':
-          return false;
+          if ( ! empty($parameter_value) ) return false;
           break;
 
         case 'urn:ietf:params:xml:ns:caldav:time-range':
@@ -350,10 +354,10 @@ class vProperty {
         case 'urn:ietf:params:xml:ns:caldav:text-match':
           $search = $v->GetContent();
           $match = false;
-          if ( isset($parameter_value) ) $match = strstr( $this->content, $search );
+          if ( !empty($parameter_value) ) $match = strstr( $this->content, $search );
           $negate = $v->GetAttribute("negate-condition");
-          if ( isset($negate) && strtolower($negate) == "yes" && $match ) {
-            return false;
+          if ( isset($negate) && strtolower($negate) == "yes" ) {
+            $match = !$match;
           }
           if ( ! $match ) return false;
           break;
@@ -907,29 +911,27 @@ class vComponent {
   function TestFilter( $filters ) {
     foreach( $filters AS $k => $v ) {
       $tag = $v->GetTag();
+//      dbg_error_log( 'vCalendar', ":TestFilter: '%s' ", $tag );
       switch( $tag ) {
         case 'urn:ietf:params:xml:ns:caldav:is-defined':
         case 'urn:ietf:params:xml:ns:carddav:is-defined':
+          if ( count($this->properties) == 0 && count($this->components) == 0 ) return false;
           break;
-
+        
         case 'urn:ietf:params:xml:ns:caldav:is-not-defined':
         case 'urn:ietf:params:xml:ns:carddav:is-not-defined':
-          return false;
+          if ( count($this->properties) > 0 || count($this->components) > 0 ) return false;
           break;
 
         case 'urn:ietf:params:xml:ns:caldav:comp-filter':
+          $subcomponents = $this->GetComponents($v->GetAttribute('name'));
           $subfilter = $v->GetContent();
-          $subcomponents = $this->GetComponents($v->GetAttribute("name"));
-          if ( count($subcomponents) > 0 ) {
-            foreach( $subcomponents AS $kk => $subcomponent ) {
-              if ( ! $subcomponent->TestFilter($subfilter) ) return false;
-            }
-          }
-          else {
-            if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-defined'
-                 || $subfilter[0] == 'urn:ietf:params:xml:ns:carddav:is-defined' ) {
-              return false;
-            }
+//          dbg_error_log( 'vCalendar', ":TestFilter: Found '%d' (of %d) subs of type '%s'",
+//                       count($subcomponents), count($this->components), $v->GetAttribute('name') );
+          if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-defined' && count($subcomponents) == 0 ) return false;
+          if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-not-defined' && count($subcomponents) > 0 ) return false;
+          foreach( $subcomponents AS $kk => $subcomponent ) {
+            if ( ! $subcomponent->TestFilter($subfilter) ) return false;
           }
           break;
 
@@ -937,15 +939,15 @@ class vComponent {
         case 'urn:ietf:params:xml:ns:caldav:prop-filter':
           $subfilter = $v->GetContent();
           $properties = $this->GetProperties($v->GetAttribute("name"));
-          if ( count($properties) > 0 ) {
-            foreach( $properties AS $kk => $property ) {
-              if ( !$property->TestFilter($subfilter) ) return false;
-            }
+//          dbg_error_log( 'vCalendar', ":TestFilter: Found '%d' props of type '%s'", count($properties), $v->GetAttribute('name') );
+          if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-defined' && count($properties) == 0 ) return false;
+          if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-not-defined' && count($properties) > 0 ) return false;
+          if ( count($properties) == 0 ) {
+            if ( $subfilter[0]->GetAttribute("negate-condition") != 'negate' ) return false;
           }
           else {
-            if ( $subfilter[0] == 'urn:ietf:params:xml:ns:caldav:is-defined'
-                 || $subfilter[0] == 'urn:ietf:params:xml:ns:carddav:is-defined' ) {
-              return false;
+            foreach( $properties AS $kk => $property ) {
+              if ( !$property->TestFilter($subfilter) ) return false;
             }
           }
           break;

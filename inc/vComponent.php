@@ -485,7 +485,7 @@ class vComponent {
           $type = strtoupper($matches[1]);
           $finish = 'END:'.$type;
           $this->type = $type;
-          dbg_error_log( 'vComponent', "::ParseFrom: Start component of type '%s'", $type);
+//          dbg_error_log( 'vComponent', "::ParseFrom: Start component of type '%s'", $type);
         }
         else {
           dbg_error_log( 'vComponent', "::ParseFrom: Ignoring crap before start of component: $line");
@@ -498,7 +498,7 @@ class vComponent {
         if ( $line != "" ) $this->rendered = null;
       }
       else if ( strtoupper($line) == $finish ) {
-        dbg_error_log( 'vComponent', "::ParseFrom: End of component");
+//        dbg_error_log( 'vComponent', "::ParseFrom: End of component");
         $type = null;  // We have reached the end of our component
       }
       else {
@@ -507,13 +507,13 @@ class vComponent {
           $subtype = strtoupper($matches[1]);
           $subfinish = "END:$subtype";
           $subcomponent = $line . "\r\n";
-          dbg_error_log( 'vComponent', "::ParseFrom: Found a subcomponent '%s'", $subtype);
+//          dbg_error_log( 'vComponent', "::ParseFrom: Found a subcomponent '%s'", $subtype);
         }
         else if ( $subtype ) {
           // We are inside a sub-component
           $subcomponent .= $this->WrapComponent($line);
           if ( strtoupper($line) == $subfinish ) {
-            dbg_error_log( 'vComponent', "::ParseFrom: End of subcomponent '%s'", $subtype);
+//            dbg_error_log( 'vComponent', "::ParseFrom: End of subcomponent '%s'", $subtype);
             // We have found the end of a sub-component
             $this->components[] = new vComponent($subcomponent);
             $subtype = false;
@@ -668,7 +668,7 @@ class vComponent {
       $new_prop->Name($new_property);
       $new_prop->Value($value);
       if ( $parameters != null ) $new_prop->Parameters($parameters);
-      dbg_error_log('vComponent'," Adding new property '%s'", $new_prop->Render() );
+//      dbg_error_log('vComponent'," Adding new property '%s'", $new_prop->Render() );
       $this->properties[] = $new_prop;
     }
     else if ( gettype($new_property) ) {
@@ -946,7 +946,7 @@ class vComponent {
             else {
 //              dbg_error_log( 'vCalendar', ":TestFilter: Wanted something from missing sub-components => false" );
               $negate = $subfilter[0]->GetAttribute("negate-condition");
-              if ( !empty($negate) && strtolower($negate) != 'yes' ) return false;
+              if ( empty($negate) || strtolower($negate) != 'yes' ) return false;
             }
           }
           else {
@@ -978,7 +978,7 @@ class vComponent {
             else {
 //              dbg_error_log( 'vCalendar', ":TestFilter: Wanted '%s' from missing sub-properties => false", $subtag );
               $negate = $subfilter[0]->GetAttribute("negate-condition");
-              if ( !empty($negate) && strtolower($negate) != 'yes' ) return false;
+              if ( empty($negate) || strtolower($negate) != 'yes' ) return false;
             }
           }
           else {

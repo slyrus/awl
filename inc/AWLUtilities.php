@@ -607,6 +607,6 @@ if ( !function_exists("deprecated") ) {
  */
 function awl_version() {
   global $c;
-$c->awl_library_version = 0.47;
+$c->awl_library_version = 0.48;
   return $c->awl_library_version;
 }

@@ -602,6 +602,40 @@ if ( !function_exists("deprecated") ) {
 }
 
 
+if ( !function_exists("gzdecode") ) {
+  function gzdecode( $instring ) {
+    global $c;
+    if ( !isset($c->use_pipe_gunzip) || $c->use_pipe_gunzip ) {
+      $descriptorspec = array(
+         0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
+         1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
+         2 => array("file", "/dev/null", "a") // stderr is discarded
+      );
+      $process = proc_open('gunzip',$descriptorspec, $pipes);
+      if ( is_resource($process) ) {
+        fwrite($pipes[0],$instring);
+        fclose($pipes[0]);
+        
+        $outstring = stream_get_contents($pipes[1]);
+        fclose($pipes[1]);
+        
+        proc_close($process);
+        return $outstring;
+      }
+      return '';
+    }
+    else {
+      $g=tempnam('./','gz');
+      file_put_contents($g,$instring);
+      ob_start();
+      readgzfile($g);
+      $d=ob_get_clean();
+      unlink($g);
+      return $d;
+    }
+  }
+}
+
 /**
  * Return the AWL version
  */

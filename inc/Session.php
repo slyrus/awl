@@ -335,7 +335,7 @@ class Session
       if ( $usr === false ) unset($usr); else $authenticated = true;
     }
 
-    $sql = "SELECT * FROM usr WHERE lower(username) = ? AND active";
+    $sql = "SELECT * FROM usr WHERE lower(username) = text(?) AND active";
     $qry = new AwlQuery( $sql, strtolower($username) );
     if ( isset($usr) || ($qry->Exec('Login',__LINE__,__FILE__) && $qry->rows() == 1 && $usr = $qry->Fetch() ) ) {
       $user_no = ( method_exists( $usr, 'user_no' ) ? $usr->user_no() : $usr->user_no );

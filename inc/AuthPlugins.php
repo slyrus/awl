@@ -59,7 +59,7 @@ EOERRMSG;
   else
     $andwhere = "";
 
-  $qry = new AwlQuery("SELECT $cols FROM usr WHERE lower(username) = ? $andwhere", strtolower($username) );
+  $qry = new AwlQuery("SELECT $cols FROM usr WHERE lower(username) = text(?) $andwhere", strtolower($username) );
   $qry->SetConnection($authconn);
   if ( $qry->Exec('Login',__LINE,__FILE__) && $qry->rows() == 1 ) {
     $usr = $qry->Fetch();
@@ -97,7 +97,7 @@ EOERRMSG;
 function auth_external( $username, $password ) {
   global $c;
 
-  $qry = new AwlQuery("SELECT * FROM usr WHERE active AND lower(username) = ? ", strtolower($username) );
+  $qry = new AwlQuery("SELECT * FROM usr WHERE active AND lower(username) = text(?) ", strtolower($username) );
   if ( $qry->Exec('Login',__LINE__,__FILE__) && $qry->rows() == 1 ) {
     $usr = $qry->Fetch();
     return $usr;

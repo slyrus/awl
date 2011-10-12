@@ -30,7 +30,7 @@ class XMLElement {
   * @param string $tagname The tag name of the new element
   * @param mixed $content Either a string of content, or an array of sub-elements
   * @param array $attributes An array of attribute name/value pairs
-  * @param array $xmlns An XML namespace specifier
+  * @param string $xmlns An XML namespace specifier
   */
   function __construct( $tagname, $content=false, $attributes=false, $xmlns=null ) {
     $this->tagname=$tagname;

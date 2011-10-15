@@ -822,14 +822,23 @@ EOTEXT;
       $this->LSIDLogin( $_COOKIE['lsid'] );
       dbg_error_log( "Login", ":_CheckLogin: User $this->username - $this->fullname ($this->user_no) login status is $this->logged_in" );
     }
-    else if ( !isset($_COOKIE['sid']) && isset($c->authenticate_hook['server_auth_type']) && $c->authenticate_hook['server_auth_type'] == $_SERVER['AUTH_TYPE']) {
+    else if ( !isset($_COOKIE['sid']) && isset($c->authenticate_hook['server_auth_type']) ) {
       /**
-      * The authentication has happened in the server, and we should accept it.
-      * Perhaps this 'split' is not a good idea though.  People may want to use the
-      * full ID as the username.  A further option may be desirable.
+      * The authentication should have happened in the server, and we should accept it if so.
       */
-      list($username) = explode('@', $_SERVER['REMOTE_USER']);
-      $this->Login($username, "", true);  // Password will not be checked.
+      if ( is_array($c->authenticate_hook['server_auth_type']) ) {
+        if ( in_array($_SERVER['AUTH_TYPE'], $c->authenticate_hook['server_auth_type'])) {
+          $this->Login($_SERVER['REMOTE_USER'], "", true);  // Password will not be checked.
+        }
+      }
+      else if ( $c->authenticate_hook['server_auth_type'] == $_SERVER['AUTH_TYPE'] ) {
+        /**
+        * Perhaps this 'split' is not a good idea though.  People may want to use the
+        * full ID as the username.  A further option may be desirable.
+        */
+        list($username) = explode('@', $_SERVER['REMOTE_USER']);
+        $this->Login($username, "", true);  // Password will not be checked.
+      }
     }
   }
 

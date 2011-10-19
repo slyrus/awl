@@ -86,6 +86,39 @@ if ( !function_exists('fatal') ) {
 }
 
 
+if ( !function_exists('trace_bug') ) {
+/**
+* Not as sever as a fatal() call, but we want to log and trace it
+*/
+  function trace_bug() {
+    global $c;
+    $args = func_get_args();
+    $argc = func_num_args();
+    if ( 2 <= $argc ) {
+      $format = array_shift($args);
+    }
+    else {
+      $format = "%s";
+    }
+    @error_log( $c->sysabbr.": BUG: $component:". vsprintf( $format, $args ) );
+    
+    @error_log( "================= Stack Trace ===================" );
+	
+  	$trace = array_reverse(debug_backtrace());
+    array_pop($trace);
+    foreach( $trace AS $k => $v ) {
+ 	  @error_log( sprintf(" ===>  %s[%d] calls %s%s%s()",
+	               $v['file'],
+	               $v['line'],
+	               (isset($v['class'])?$v['class']:''),
+	               (isset($v['type'])?$v['type']:''),
+	               (isset($v['function'])?$v['function']:'')
+	      ));
+    }
+  }
+}
+
+
 if ( !function_exists('apache_request_headers') ) {
   /**
   * Compatibility so we can use the apache function name and still work with CGI
@@ -551,7 +584,7 @@ if ( !function_exists("force_utf8") ) {
 function olson_from_tzstring( $tzstring ) {
   global $c;
   
-  if ( in_array($tzstring,timezone_identifiers_list()) ) return $tzstring;
+  if ( function_exists('timezone_identifiers_list') && in_array($tzstring,timezone_identifiers_list()) ) return $tzstring;
   if ( preg_match( '{((Antarctica|America|Africa|Atlantic|Asia|Australia|Indian|Europe|Pacific)/(([^/]+)/)?[^/]+)$}', $tzstring, $matches ) ) {
 //    dbg_error_log( 'INFO', 'Found timezone "%s" from string "%s"', $matches[1], $tzstring );
     return $matches[1];

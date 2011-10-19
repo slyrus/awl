@@ -213,6 +213,7 @@ class vProperty {
   function SetParameterValue( $name, $value ) {
     if ( isset($this->rendered) ) unset($this->rendered);
     $this->parameters[strtoupper($name)] = $value;
+//    dbg_error_log('PUT', $this->name.$this->RenderParameters().':'.$this->content );
   }
 
   /**
@@ -232,10 +233,10 @@ class vProperty {
   /**
   * Render a suitably escaped RFC2445 content string.
   */
-  function Render() {
+  function Render( $force = false ) {
     // If we still have the string it was parsed in from, it hasn't been screwed with
     // and we can just return that without modification.
-    if ( isset($this->rendered) ) return $this->rendered;
+    if ( $force === false && isset($this->rendered) ) return $this->rendered;
 
     $property = preg_replace( '/[;].*$/', '', $this->name );
     $escaped = $this->content;
@@ -267,6 +268,7 @@ class vProperty {
     else {
       $this->rendered = preg_replace( '/(.{72})/u', '$1'."\r\n ", $property.$escaped );
     }
+//    trace_bug( 'Re-rendered "%s" property.', $this->name );
     return $this->rendered;
   }
 
@@ -817,11 +819,11 @@ class vComponent {
   /**
   *  Renders the component, possibly restricted to only the listed properties
   */
-  function Render( $restricted_properties = null) {
+  function Render( $restricted_properties = null, $force_rendering = false ) {
 
     $unrestricted = (!isset($restricted_properties) || count($restricted_properties) == 0);
 
-    if ( isset($this->rendered) && $unrestricted )
+    if ( !$force_rendering && isset($this->rendered) && $unrestricted )
       return $this->rendered;
 
     $rendered = "BEGIN:$this->type\r\n";
@@ -830,7 +832,7 @@ class vComponent {
         if ( $unrestricted || isset($restricted_properties[$v]) ) $rendered .= $v->Render() . "\r\n";
       }
     }
-    foreach( $this->components AS $v ) {   $rendered .= $v->Render();  }
+    foreach( $this->components AS $v ) {   $rendered .= $v->Render( $restricted_properties, $force_rendering );  }
     $rendered .= "END:$this->type\r\n";
 
     $rendered = preg_replace('{(?<!\r)\n}', "\r\n", $rendered);

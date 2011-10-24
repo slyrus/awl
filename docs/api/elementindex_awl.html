@@ -214,7 +214,7 @@
 			<span class="method-title">__construct</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vCalendar/VCalendar.html#method__construct">VCalendar::__construct()</a> in vCalendar.php</div>
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html#method__construct">vCalendar::__construct()</a> in vCalendar.php</div>
 							<div class="index-item-description">Constructor.  If a string is passed it will be parsed as if it was an iCalendar object,  otherwise a new vCalendar will be initialised with basic content. If an array of key value  pairs is provided they will also be used as top-level properties.</div>
 					</dd>
 			<dt class="field">
@@ -726,7 +726,7 @@
 			<span class="method-title">AddTimeZone</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vCalendar/VCalendar.html#methodAddTimeZone">VCalendar::AddTimeZone()</a> in vCalendar.php</div>
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html#methodAddTimeZone">vCalendar::AddTimeZone()</a> in vCalendar.php</div>
 							<div class="index-item-description">Add a timezone component to this vCalendar.</div>
 					</dd>
 			<dt class="field">
@@ -1830,19 +1830,34 @@
 							<div class="index-item-description">Get the names of the fields for a particular table</div>
 					</dd>
 			<dt class="field">
+						<img src="media/images/Function.png" alt="Function" title="Function" />
+			<span class="method-title">gzdecode</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/Utilities/_AWLUtilities.php.html#functiongzdecode">gzdecode()</a> in AWLUtilities.php</div>
+					</dd>
+			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
 			<span class="method-title">GetAttendees</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vCalendar/VCalendar.html#methodGetAttendees">VCalendar::GetAttendees()</a> in vCalendar.php</div>
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html#methodGetAttendees">vCalendar::GetAttendees()</a> in vCalendar.php</div>
 							<div class="index-item-description">Get the attendees of this VEVENT/VTODO</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" />
+			<span class="method-title">GetOlsonName</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html#methodGetOlsonName">vCalendar::GetOlsonName()</a> in vCalendar.php</div>
+							<div class="index-item-description">Work out what Olson timezone this VTIMEZONE really is.  Perhaps we should put this  into a vTimezone class.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
 			<span class="method-title">GetOrganizer</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vCalendar/VCalendar.html#methodGetOrganizer">VCalendar::GetOrganizer()</a> in vCalendar.php</div>
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html#methodGetOrganizer">vCalendar::GetOrganizer()</a> in vCalendar.php</div>
 							<div class="index-item-description">Get the organizer of this VEVENT/VTODO</div>
 					</dd>
 			<dt class="field">
@@ -1850,7 +1865,7 @@
 			<span class="method-title">GetTimeZone</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vCalendar/VCalendar.html#methodGetTimeZone">VCalendar::GetTimeZone()</a> in vCalendar.php</div>
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html#methodGetTimeZone">vCalendar::GetTimeZone()</a> in vCalendar.php</div>
 							<div class="index-item-description">Get a timezone component for a specific TZID in this calendar.</div>
 					</dd>
 			<dt class="field">
@@ -3886,6 +3901,14 @@
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
+			<span class="method-title">StartFilter</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html#methodStartFilter">vCalendar::StartFilter()</a> in vCalendar.php</div>
+							<div class="index-item-description">Test a PROP-FILTER or COMP-FILTER and return a true/false  COMP-FILTER (is-defined | is-not-defined | (time-range?, prop-filter*, comp-filter*))  PROP-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" />
 			<span class="method-title">SetComponents</span>
 					</dt>
 		<dd class="index-item-body">
@@ -4092,6 +4115,14 @@
 			<div class="index-item-details"><a href="awl/Translation/_Translation.php.html">Translation.php</a> in Translation.php</div>
 					</dd>
 			<dt class="field">
+						<img src="media/images/Function.png" alt="Function" title="Function" />
+			<span class="method-title">trace_bug</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/Utilities/_AWLUtilities.php.html#functiontrace_bug">trace_bug()</a> in AWLUtilities.php</div>
+							<div class="index-item-description">Not as sever as a fatal() call, but we want to log and trace it</div>
+					</dd>
+			<dt class="field">
 						<img src="media/images/Variable.png" alt="Variable" title="Variable" />
 			<span class="var-title">$type</span>
 					</dt>
@@ -4225,6 +4256,22 @@
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
+			<span class="method-title">UpdateAttendeeStatus</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html#methodUpdateAttendeeStatus">vCalendar::UpdateAttendeeStatus()</a> in vCalendar.php</div>
+							<div class="index-item-description">Update the attendees of this VEVENT/VTODO</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" />
+			<span class="method-title">UpdateOrganizerStatus</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html#methodUpdateOrganizerStatus">vCalendar::UpdateOrganizerStatus()</a> in vCalendar.php</div>
+							<div class="index-item-description">Update the ORGANIZER of this VEVENT/VTODO</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" />
 			<span class="method-title">UnwrapComponent</span>
 					</dt>
 		<dd class="index-item-body">
@@ -4335,10 +4382,10 @@
 					</dd>
 			<dt class="field">
 						<img src="media/images/Class.png" alt="Class" title="Class" />
-			VCalendar
+			vCalendar
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vCalendar/VCalendar.html">VCalendar</a> in vCalendar.php</div>
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html">vCalendar</a> in vCalendar.php</div>
 							<div class="index-item-description">A Class for representing components within an vComponent</div>
 					</dd>
 			<dt class="field">

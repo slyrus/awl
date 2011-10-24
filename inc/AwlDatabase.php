@@ -131,7 +131,7 @@ class AwlDatabase extends AwlDBDialect {
       $this->txnstate = 0;
     }
     else {
-      trigger_error("Cannot rollback unless a transaction is already active.",E_USER_ERROR);
+      throw new Exception("Cannot rollback unless a transaction is already active.");
     }
     return true;
   }

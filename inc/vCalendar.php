@@ -101,11 +101,12 @@ class vCalendar extends vComponent {
 
   /**
    * Get the organizer of this VEVENT/VTODO
+   * @return vProperty The Organizer property.
    */
   function GetOrganizer() {
     if ( !isset($this->organizer) ) {
       $organizers = $this->GetPropertiesByPath('/VCALENDAR/*/ORGANIZER');
-      $organizer = (count($organizers) > 0 ? $organizers[0]->Value() : false);
+      $organizer = (count($organizers) > 0 ? $organizers[0] : false);
       $this->organizer = (empty($organizer) ? false : $organizer );
     }
     return $this->organizer;
@@ -131,6 +132,51 @@ class vCalendar extends vComponent {
   }
 
   
+ 
+  /**
+   * Update the attendees of this VEVENT/VTODO
+   * @param string $email The e-mail address of the attendee to be updated.
+   * @param vProperty $statusProperty A replacement property. 
+   */
+  function UpdateAttendeeStatus( $email, vProperty $statusProperty ) {
+    $this->rendered = null;
+    foreach($this->components AS $ck => $v ) {
+      if ($v->GetType() == 'VEVENT' || $v->GetType() == 'VTODO' ) {
+        foreach( $v->properties AS $pk => $p ) {
+          if ( $p->Name() == 'ATTENDEE' ) {
+            if ( $p->Value() == $email || $p->Value() == 'mailto:'.$email ) {
+              $v->properties[$pk] = $statusProperty;
+              $v->rendered = null;
+              unset($this->attendees);
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+ 
+  /**
+   * Update the ORGANIZER of this VEVENT/VTODO
+   * @param vProperty $statusProperty A replacement property. 
+   */
+  function UpdateOrganizerStatus( vProperty $statusProperty ) {
+    $this->rendered = null;
+    foreach($this->components AS $ck => $v ) {
+      if ($v->GetType() == 'VEVENT' || $v->GetType() == 'VTODO' ) {
+        foreach( $v->properties AS $pk => $p ) {
+          if ( $p->Name() == 'ORGANIZER' ) {
+            $v->properties[$pk] = $statusProperty;
+            $v->rendered = null;
+            unset($this->organizer);
+          }
+        }
+      }
+    }
+  }
+
+
  
   /**
   * Test a PROP-FILTER or COMP-FILTER and return a true/false

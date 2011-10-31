@@ -741,6 +741,7 @@ class vComponent {
     else {
       if ( isset($this->rendered) ) unset($this->rendered);
       $this->components = array();
+      return false;
     }
   }
 
@@ -782,14 +783,15 @@ class vComponent {
   /**
   * Mask components, removing any that are not of the types in the list
   * @param array $keep An array of component types to be kept
+  * @param boolean $recursive (default true) Whether to recursively MaskComponents on the ones we find
   */
-  function MaskComponents( $keep ) {
+  function MaskComponents( $keep, $recursive = true ) {
     foreach( $this->components AS $k => $v ) {
-      if ( !isset($keep[$v->GetType()]) || !$keep[$v->GetType()] ) {
+      if ( !isset($keep[$v->GetType()]) ) {
         unset($this->components[$k]);
         if ( isset($this->rendered) ) unset($this->rendered);
       }
-      else {
+      else if ( $recursive ) {
         $v->MaskComponents($keep);
       }
     }
@@ -802,7 +804,7 @@ class vComponent {
   * @param array $component_list An array of component types to check within
   */
   function MaskProperties( $keep, $component_list=null ) {
-    if ( !isset($component_list) || $component_list[$this->GetType()] ) {
+    if ( !isset($component_list) || isset($component_list[$this->type]) ) {
       foreach( $this->properties AS $k => $v ) {
         if ( !isset($keep[$v->Name()]) || !$keep[$v->Name()] ) {
           unset($this->properties[$k]);

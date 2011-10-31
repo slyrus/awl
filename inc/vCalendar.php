@@ -302,4 +302,28 @@ class vCalendar extends vComponent {
     }
     return null;
   }   
+
+  
+  /**
+  * Clone this component (and subcomponents) into a confidential version of it.  A confidential
+  * event will be scrubbed of any identifying characteristics other than time/date, repeat, uid
+  * and a summary which is just a translated 'Busy'.
+  */
+  function Confidential() {
+    static $keep_properties = array( 'DTSTAMP'=>1, 'DTSTART'=>1, 'RRULE'=>1, 'DURATION'=>1, 'DTEND'=>1, 'DUE'=>1, 'UID'=>1, 'CLASS'=>1, 'TRANSP'=>1, 'CREATED'=>1, 'LAST-MODIFIED'=>1 );
+    static $resource_components = array( 'VEVENT'=>1, 'VTODO'=>1, 'VJOURNAL'=>1 );
+    $this->MaskComponents(array( 'VTIMEZONE'=>1, 'VEVENT'=>1, 'VTODO'=>1, 'VJOURNAL'=>1 ), false);
+    $this->MaskProperties($keep_properties, $resource_components );
+    if ( isset($this->rendered) ) unset($this->rendered);
+    foreach( $this->components AS $comp ) {
+      if ( isset($resource_components[$comp->GetType()] ) ) {
+        if ( isset($comp->rendered) ) unset($comp->rendered);
+        $comp->AddProperty( 'SUMMARY', translate('Busy') );
+      }
+    }
+
+    return $this;
+  }
+
+
 }

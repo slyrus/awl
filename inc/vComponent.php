@@ -651,7 +651,7 @@ class vComponent {
     if ( isset($this->rendered) && count($new_properties) > 0 ) unset($this->rendered);
     $this->ClearProperties($type);
     foreach( $new_properties AS $k => $v ) {
-      $this->AddProperty($v);
+      $this->properties[] = $v;
     }
   }
 
@@ -673,7 +673,7 @@ class vComponent {
 //      dbg_error_log('vComponent'," Adding new property '%s'", $new_prop->Render() );
       $this->properties[] = $new_prop;
     }
-    else if ( gettype($new_property) ) {
+    else if ( $new_property instanceof vProperty ) {
       $this->properties[] = $new_property;
     }
   }

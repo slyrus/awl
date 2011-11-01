@@ -34,6 +34,7 @@ class vCalendar extends vComponent {
   private $timezones;
   private $organizer;
   private $attendees;
+  private $schedule_agent;
   
   /**
    * Constructor.  If a string is passed it will be parsed as if it was an iCalendar object,
@@ -108,8 +109,22 @@ class vCalendar extends vComponent {
       $organizers = $this->GetPropertiesByPath('/VCALENDAR/*/ORGANIZER');
       $organizer = (count($organizers) > 0 ? $organizers[0] : false);
       $this->organizer = (empty($organizer) ? false : $organizer );
+      if ( $this->organizer ) {
+        $this->schedule_agent = $organizer->GetParameterValue('SCHEDULE-AGENT');
+        if ( empty($schedule_agent) ) $this->schedule_agent = 'SERVER';
+      }
     }
     return $this->organizer;
+  }
+
+  
+  /**
+   * Get the schedule-agent from the organizer
+   * @return vProperty The schedule-agent parameter
+   */
+  function GetScheduleAgent() {
+    if ( !isset($this->schedule_agent) ) $this->GetOrganizer();
+    return $this->schedule_agent;
   }
 
   
@@ -139,18 +154,22 @@ class vCalendar extends vComponent {
    * @param vProperty $statusProperty A replacement property. 
    */
   function UpdateAttendeeStatus( $email, vProperty $statusProperty ) {
-    $this->rendered = null;
     foreach($this->components AS $ck => $v ) {
       if ($v->GetType() == 'VEVENT' || $v->GetType() == 'VTODO' ) {
-        foreach( $v->properties AS $pk => $p ) {
+        $new_attendees = array();
+        foreach( $v->properties AS $p ) {
           if ( $p->Name() == 'ATTENDEE' ) {
             if ( $p->Value() == $email || $p->Value() == 'mailto:'.$email ) {
-              $v->properties[$pk] = $statusProperty;
-              $v->rendered = null;
-              unset($this->attendees);
+              $new_attendees[] = $statusProperty;
+            }
+            else {
+              $new_attendees[] = clone($p);
             }
           }
         }
+        $v->SetProperties($new_attendees,'ATTENDEE');
+        $this->attendees = null;
+        $this->rendered = null;
       }
     }
   }
@@ -305,7 +324,7 @@ class vCalendar extends vComponent {
 
   
   /**
-  * Clone this component (and subcomponents) into a confidential version of it.  A confidential
+  * Morph this component (and subcomponents) into a confidential version of it.  A confidential
   * event will be scrubbed of any identifying characteristics other than time/date, repeat, uid
   * and a summary which is just a translated 'Busy'.
   */
@@ -323,6 +342,44 @@ class vCalendar extends vComponent {
     }
 
     return $this;
+  }
+
+
+  /**
+  * Clone this component (and subcomponents) into a minimal iTIP version of it.
+  */
+  function GetItip($method, $attendee_value ) {
+    $iTIP = clone($this);
+    static $keep_properties = array( 'DTSTART'=>1, 'DURATION'=>1, 'DTEND'=>1, 'DUE'=>1, 'UID'=>1,
+                                     'SEQUENCE'=>1, 'ORGANIZER'=>1, 'ATTENDEE'=>1 );
+    static $resource_components = array( 'VEVENT'=>1, 'VTODO'=>1, 'VJOURNAL'=>1 );
+    $iTIP->MaskComponents($resource_components, false);
+    $iTIP->MaskProperties($keep_properties, $resource_components );
+    $iTIP->AddProperty('METHOD',$method);
+    if ( isset($iTIP->rendered) ) unset($iTIP->rendered);
+    if ( !empty($attendee_value) ) {
+      $iTIP->attendees = array();
+      foreach( $iTIP->components AS $comp ) {
+        if ( isset($resource_components[$comp->type] ) ) {
+          foreach( $comp->properties AS $k=> $property ) {
+            switch( $property->Name() ) {
+              case 'ATTENDEE':
+                if ( $property->Value() == $attendee_value )
+                  $iTIP->attendees[] = $property;
+                else
+                  unset($comp->properties[$k]);
+                break;
+              case 'SEQUENCE':
+                $property->Value( $property->Value() + 1);
+                break;
+            }
+          }
+          $comp->AddProperty('DTSTAMP', date('Ymd\THis\Z'));
+        }
+      }
+    }
+    
+    return $iTIP;
   }
 
 

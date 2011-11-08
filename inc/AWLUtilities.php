@@ -81,6 +81,7 @@ if ( !function_exists('fatal') ) {
 	      ));
     }
     echo "Fatal Error";
+    ob_flush();
     exit();
   }
 }
@@ -261,6 +262,7 @@ if ( !function_exists("session_validate_password") ) {
 </body>
 </html>
 EOERRMSG;
+        ob_flush();
         exit;
       }
     }

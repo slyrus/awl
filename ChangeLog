@@ -1,3 +1,20 @@
+2012-01-04  Andrew McMillan  <andrew@morphoss.com>
+	* Release 0.50
+
+2011-11-09  Andrew McMillan  <andrew@morphoss.com>
+	* [AWLUtilities] Ensure we flush output buffers on abort.
+
+2011-11-02  Andrew McMillan  <andrew@morphoss.com>
+	* [vCalendar] More support for scheduling-related actions.
+	* [vComponent] Minor performance tweaks.
+
+2011-10-31  Andrew McMillan  <andrew@morphoss.com>
+	* [vCalendar] Add method to scrub a confidential event.
+
+2011-10-24  Andrew McMillan  <andrew@morphoss.com>
+	* [AwlDatabase] Throw an exception when we can't rollback a transaction.
+	* [vCalendar] New functions for updating organizer/attendee status.
+
 2011-10-20  Andrew McMillan  <andrew@morphoss.com>
 	* Release 0.49
 	* [vComponent] Allow re-rendering to be forced.

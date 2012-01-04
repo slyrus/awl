@@ -10,7 +10,9 @@
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
 
-build: build-stamp
+build: build-arch build-indep
+build-arch: build-stamp
+build-indep: build-stamp
 build-stamp:
 	dh_testdir
 	$(MAKE)

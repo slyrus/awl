@@ -81,7 +81,6 @@ if ( !function_exists('fatal') ) {
 	      ));
     }
     echo "Fatal Error";
-    ob_flush();
     exit();
   }
 }
@@ -262,7 +261,6 @@ if ( !function_exists("session_validate_password") ) {
 </body>
 </html>
 EOERRMSG;
-        ob_flush();
         exit;
       }
     }
@@ -676,6 +674,6 @@ if ( !function_exists("gzdecode") ) {
  */
 function awl_version() {
   global $c;
-$c->awl_library_version = 0.49;
+$c->awl_library_version = 0.50;
   return $c->awl_library_version;
 }

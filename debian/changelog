@@ -1,3 +1,10 @@
+awl (0.50-1) unstable; urgency=low
+
+  * New upstream release.
+  * Fix lintian warnings.
+
+ -- Andrew McMillan <awm@debian.org>  Wed, 04 Jan 2012 13:49:06 +1300
+
 awl (0.49-1) unstable; urgency=low
 
   * New upstream release.

@@ -262,7 +262,7 @@ class vProperty {
     if ( (strlen($property) + strlen($escaped)) <= 72 ) {
       $this->rendered = $property . $escaped;
     }
-    else if ( (strlen($property) + strlen($escaped)) > 72 && (strlen($property) <= 72) && (strlen($escaped) <= 72) ) {
+    else if ( (strlen($property) <= 72) && (strlen($escaped) <= 72) ) {
       $this->rendered = $property . "\r\n " . $escaped;
     }
     else {

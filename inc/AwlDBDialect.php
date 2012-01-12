@@ -202,6 +202,8 @@ class AwlDBDialect {
           $value_type = PDO::PARAM_STR; // Any hex numbers will need to be explicitly cast in SQL
         elseif ( preg_match('{^[0-9+-]+e[0-9+-]+$}i', $value) )
           $value_type = PDO::PARAM_STR; // 72e57650 could easily be a string and will need an explicit cast also
+        elseif ( preg_match('/^[01]{6,}$/i', $value) )
+          $value_type = PDO::PARAM_STR; // Binary numbers will need to be explicitly cast in SQL
         else
           $value_type = PDO::PARAM_INT;
       }

@@ -119,7 +119,14 @@ class vProperty {
       if ( preg_match( '{^"(.*)"$}', $value, $matches) ) {
         $value = $matches[1];
       }
-      $this->parameters[$name] = $value;
+      if ( isset($this->parameters[$name]) && is_array($this->parameters[$name]) ) {
+        $this->parameters[$name][] = $value;
+      }
+      elseif ( isset($this->parameters[$name]) ) {
+        $this->parameters[$name] = array( $this->parameters[$name], $value);
+      }
+      else
+        $this->parameters[$name] = $value;
     }
 //    dbg_error_log('vComponent', " vProperty::ParseFrom found '%s' = '%s' with %d parameters", $this->name, substr($this->content,0,200), count($this->parameters) );
   }
@@ -161,7 +168,7 @@ class vProperty {
   /**
    * Get/Set parameters in their entirety
    *
-   * @param array $newparams An array of new parameter key/value pairs
+   * @param array $newparams An array of new parameter key/value pairs.  The 'value' may be an array of values.
    *
    * @return array The current array of parameters for the property.
    */
@@ -216,6 +223,12 @@ class vProperty {
 //    dbg_error_log('PUT', $this->name.$this->RenderParameters().':'.$this->content );
   }
 
+  
+  private static function escapeParameter($p) {
+    if ( strpos($p, ';') === false && strpos($p, ':') === false ) return $p;
+    return '"'.str_replace('"','\\"',$p).'"';    
+  }
+
   /**
   * Render the set of parameters as key1=value1[;key2=value2[; ...]] with
   * any colons or semicolons escaped.
@@ -223,8 +236,14 @@ class vProperty {
   function RenderParameters() {
     $rendered = "";
     foreach( $this->parameters AS $k => $v ) {
-      $escaped = preg_replace( "/([;:])/", '\\\\$1', $v);
-      $rendered .= sprintf( ";%s=%s", $k, $escaped );
+      if ( is_array($v) ) {
+        foreach( $v AS $vv ) {
+          $rendered .= sprintf( ';%s=%s', $k, vProperty::escapeParameter($vv) );
+        }
+      }
+      else {
+          $rendered .= sprintf( ';%s=%s', $k, vProperty::escapeParameter($v) );
+      }
     }
     return $rendered;
   }
@@ -241,7 +260,7 @@ class vProperty {
     $property = preg_replace( '/[;].*$/', '', $this->name );
     $escaped = $this->content;
     switch( $property ) {
-        /** Content escaping does not apply to these properties culled from RFC2445 */
+      /** Content escaping does not apply to these properties culled from RFC2445 */
       case 'ATTACH':                case 'GEO':                       case 'PERCENT-COMPLETE':      case 'PRIORITY':
       case 'DURATION':              case 'FREEBUSY':                  case 'TZOFFSETFROM':          case 'TZOFFSETTO':
       case 'TZURL':                 case 'ATTENDEE':                  case 'ORGANIZER':             case 'RECURRENCE-ID':
@@ -251,7 +270,15 @@ class vProperty {
       case 'DTSTAMP':               case 'LAST-MODIFIED':             case 'CREATED':               case 'EXDATE':
         break;
 
-        /** Content escaping applies by default to other properties */
+      /** Content escaping does not apply to these properties culled from RFC6350 / RFC2426 */
+      case 'ADR':                case 'N':
+        // escaping for ';' for these fields also needs to happen to the components they are built from. 
+        $escaped = str_replace( '\\', '\\\\', $escaped);
+        $escaped = preg_replace( '/\r?\n/', '\\n', $escaped);
+        $escaped = str_replace( ',', '\\,', $escaped);
+        break;
+        
+      /** Content escaping applies by default to other properties */
       default:
         $escaped = str_replace( '\\', '\\\\', $escaped);
         $escaped = preg_replace( '/\r?\n/', '\\n', $escaped);

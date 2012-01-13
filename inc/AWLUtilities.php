@@ -674,6 +674,6 @@ if ( !function_exists("gzdecode") ) {
  */
 function awl_version() {
   global $c;
-$c->awl_library_version = 0.50;
+$c->awl_library_version = 0.51;
   return $c->awl_library_version;
 }

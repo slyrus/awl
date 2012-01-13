@@ -1,3 +1,9 @@
+awl (0.51-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Andrew McMillan <awm@debian.org>  Fri, 13 Jan 2012 23:36:34 +1300
+
 awl (0.50-1) unstable; urgency=low
 
   * New upstream release.

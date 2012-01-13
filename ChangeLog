@@ -1,3 +1,10 @@
+2012-01-13  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] Fix handling for vcard peculiarities.
+	* [vComponent] Don't escape all ; in N or ADR.
+	* [vComponent] Allow for property parameters to be multiply set.
+	* [AwlDbDialect] Don't treat binary strings longer than 6 characters as numbers.
+	* Release 0.51
+
 2012-01-04  Andrew McMillan  <andrew@morphoss.com>
 	* Release 0.50
 

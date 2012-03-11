@@ -700,7 +700,7 @@ class Browser
   * @return string The rendered HTML fragment to display to the user.
   */
   function Render( $title_tag = null, $subtitle_tag = null ) {
-    global $c;
+    global $c, $BrowserCurrentRow;
 
     if ( !isset($this->Query) ) $this->DoQuery();  // Ensure the query gets run before we render!
 

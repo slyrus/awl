@@ -26,11 +26,13 @@ class vCalendar extends vComponent {
    * These variables are mostly used to improve efficiency by caching values as they are
    * retrieved to speed any subsequent access.
    * @var string $contained_type
+   * @var vComponent $primary_component
    * @var array $timezones
    * @var string $organizer
    * @var array $attendees
    */
   private $contained_type;
+  private $primary_component;
   private $timezones;
   private $organizer;
   private $attendees;
@@ -48,6 +50,7 @@ class vCalendar extends vComponent {
    */
   function __construct($content=null) {
     $this->contained_type = null;
+    $this->primary_component = null;
     $this->timezones = array();
     if ( empty($content) || is_array($content) ) {
       parent::__construct();
@@ -69,8 +72,11 @@ class vCalendar extends vComponent {
         }
         else if ( empty($this->contained_type) ) {
           $this->contained_type = $comp->GetType();
+          $this->primary_component = $comp;
         }
       }
+      if ( !isset($this->contained_type) && !empty($this->timezones) )
+        $this->contained_type = 'VTIMEZONE';
     }
   }
 
@@ -383,4 +389,23 @@ class vCalendar extends vComponent {
   }
 
 
+  /**
+   * Get the UID from the primary component.
+   */
+  function GetUID() {
+    if ( empty($this->primary_component) ) return null;
+    return $this->primary_component->GetPValue('UID');
+    
+  }
+
+
+  /**
+   * Set the UID on the primary component.
+   * @param string newUid
+   */
+  function SetUID( $newUid ) {
+    if ( empty($this->primary_component) ) return;
+    $this->primary_component->SetProperties( array( new vProperty('UID', $newUid) ), 'UID');
+  }
+  
 }

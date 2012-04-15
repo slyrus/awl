@@ -88,6 +88,7 @@ class vCalendar extends vComponent {
     $tzid = $vtz->GetPValue('TZID');
     if ( empty($tzid) ) {
       dbg_error_log('ERROR','Ignoring invalid VTIMEZONE with no TZID parameter!');
+      dbg_log_array('LOG', 'vTimezone', $vtz, true);
       return;
     }
     $this->timezones[$tzid] = $vtz;

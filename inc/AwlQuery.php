@@ -378,7 +378,8 @@ class AwlQuery
       _awl_connect_configured_database();
       $this->connection = $GLOBALS['_awl_dbconn'];
     }
-
+    if ( !is_object($this->connection) ) throw new Exception('Database not connected.');
+    
     if ( isset($c->expand_pdo_parameters) && $c->expand_pdo_parameters ) {
       $this->bound_querystring = $this->querystring;
       if ( isset($this->bound_parameters) ) {

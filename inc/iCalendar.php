@@ -1580,7 +1580,7 @@ class iCalendar {  // DEPRECATED
   function ApplyFilter( $filter, $value ) {
     deprecated('iCalendar::ApplyFilter' );
     foreach( $filter AS $k => $v ) {
-      $tag = $v->GetTag();
+      $tag = $v->GetNSTag();
       $value_type = gettype($value);
       $value_defined = (isset($value) && $value_type == 'string') || ($value_type == 'array' && count($value) > 0 );
       if ( $tag == 'urn:ietf:params:xml:ns:caldav:is-not-defined' && $value_defined ) {
@@ -1658,7 +1658,7 @@ class iCalendar {  // DEPRECATED
 
 //    dbg_error_log('iCalendar', ':TestFilter we have %d filters to test', count($filters) );
     foreach( $filters AS $k => $v ) {
-      $tag = $v->GetTag();
+      $tag = $v->GetNSTag();
 //      dbg_error_log('iCalendar', ':TestFilter working on tag "%s" %s"', $k, $tag );
       $name = $v->GetAttribute("name");
       $filter = $v->GetContent();

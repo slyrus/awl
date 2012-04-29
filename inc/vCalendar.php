@@ -218,7 +218,7 @@ class vCalendar extends vComponent {
 
     if ( count($filters) != 1 ) return false;
     
-    $tag = $filters[0]->GetTag();
+    $tag = $filters[0]->GetNSTag();
     $name = $filters[0]->GetAttribute("name");
     if ( $tag != "urn:ietf:params:xml:ns:caldav:comp-filter" || $name != 'VCALENDAR' ) return false;
     return $this->TestFilter($filters[0]->GetContent());

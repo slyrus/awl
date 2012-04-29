@@ -316,7 +316,7 @@ class vProperty {
    */
   function TestFilter( $filters ) {
     foreach( $filters AS $k => $v ) {
-      $tag = $v->GetTag();
+      $tag = $v->GetNSTag();
 //      dbg_error_log( 'vCalendar', "vProperty:TestFilter: '%s'='%s' => '%s'", $this->name, $tag, $this->content );
       switch( $tag ) {
         case 'urn:ietf:params:xml:ns:caldav:is-defined':
@@ -362,7 +362,7 @@ class vProperty {
 
   function TestParamFilter( $filters, $parameter_value ) {
     foreach( $filters AS $k => $v ) {
-      $subtag = $v->GetTag();
+      $subtag = $v->GetNSTag();
 //      dbg_error_log( 'vCalendar', "vProperty:TestParamFilter: '%s'='%s' => '%s'", $this->name, $subtag, $parameter_value );
       switch( $subtag ) {
         case 'urn:ietf:params:xml:ns:caldav:is-defined':
@@ -941,7 +941,7 @@ class vComponent {
    */
   function TestFilter( $filters ) {
     foreach( $filters AS $k => $v ) {
-      $tag = $v->GetTag();
+      $tag = $v->GetNSTag();
 //      dbg_error_log( 'vCalendar', ":TestFilter: '%s' ", $tag );
       switch( $tag ) {
         case 'urn:ietf:params:xml:ns:caldav:is-defined':
@@ -960,7 +960,7 @@ class vComponent {
           $subfilter = $v->GetContent();
 //          dbg_error_log( 'vCalendar', ":TestFilter: Found '%d' (of %d) subs of type '%s'",
 //                       count($subcomponents), count($this->components), $v->GetAttribute('name') );
-          $subtag = $subfilter[0]->GetTag(); 
+          $subtag = $subfilter[0]->GetNSTag(); 
           if ( $subtag == 'urn:ietf:params:xml:ns:caldav:is-not-defined'
           			 || $subtag == 'urn:ietf:params:xml:ns:carddav:is-not-defined' ) {
             if ( count($properties) > 0 ) {
@@ -992,7 +992,7 @@ class vComponent {
           $subfilter = $v->GetContent();
           $properties = $this->GetProperties($v->GetAttribute("name"));
           dbg_error_log( 'vCalendar', ":TestFilter: Found '%d' props of type '%s'", count($properties), $v->GetAttribute('name') );
-          $subtag = $subfilter[0]->GetTag();
+          $subtag = $subfilter[0]->GetNSTag();
           if ( $subtag == 'urn:ietf:params:xml:ns:caldav:is-not-defined'
           			 || $subtag == 'urn:ietf:params:xml:ns:carddav:is-not-defined' ) {
             if ( count($properties) > 0 ) {

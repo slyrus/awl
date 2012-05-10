@@ -26,19 +26,19 @@ class XMLDocument {
   * holds the namespaces which this document has been configured for.
   * @var namespaces
   */
-  var $namespaces;
+  private $namespaces;
 
   /**
   * holds the prefixes which are shorthand for the namespaces.
   * @var prefixes
   */
-  var $prefixes;
+  private $prefixes;
 
   /**
   * Holds the root document for the tree
   * @var root
   */
-  var $root;
+  private $root;
 
   /**
   * Simple XMLDocument constructor
@@ -105,6 +105,17 @@ class XMLDocument {
     }
   }
 
+  /**
+   * Return the default namespace for this document
+   */
+  function DefaultNamespace() {
+    foreach( $this->namespaces AS $k => $v ) {
+      if ( $v == '' ) {
+        return $k;
+      }
+    }
+    return '';
+  }
 
   /**
   * Return a tag with namespace stripped and replaced with a short form, and the ns added to the document.
@@ -155,7 +166,11 @@ class XMLDocument {
     return $prefix . ($prefix == "" ? "" : ":") . $tag;
   }
 
-
+  static public $ns_dav = 'DAV:';
+  static public $ns_caldav = 'urn:ietf:params:xml:ns:caldav';
+  static public $ns_carddav = 'urn:ietf:params:xml:ns:carddav';
+  static public $ns_calendarserver = 'http://calendarserver.org/ns/';
+  
   /**
   * Special helper for namespaced tags.
   *
@@ -169,10 +184,16 @@ class XMLDocument {
   function NSElement( &$element, $in_tag, $content=false, $attributes=false, $namespace=null ) {
     if ( $namespace == null && preg_match('/^(.*):([^:]+)$/', $in_tag, $matches) ) {
       $namespace = $matches[1];
+      if ( preg_match('{^[A-Z][A-Z0-9]*$}', $namespace ) ) {
+        throw new Exception("Dodgy looking namespace from '".$in_tag."'!");
+      }
       $tag = $matches[2];
     }
     else {
       $tag = $in_tag;
+      if ( isset($namespace) ) {
+        $tag = str_replace($namespace.':', '', $tag);
+      }
     }
 
     if ( isset($namespace) && !isset($this->namespaces[$namespace]) ) $this->AddNamespace( $namespace );
@@ -189,9 +210,9 @@ class XMLDocument {
   * @param array  $attributes An array of key/value pairs of attributes.
   */
   function DAVElement( &$element, $tag, $content=false, $attributes=false ) {
-    return $this->NSElement( $element, $tag, $content, $attributes, 'DAV:' );
+    if ( !isset($this->namespaces[self::$ns_dav]) ) $this->AddNamespace( self::$ns_dav, '' );
+    return $this->NSElement( $element, $tag, $content, $attributes, self::$ns_dav );
   }
-
 
   /**
   * Special helper for tags in the urn:ietf:params:xml:ns:caldav namespace.
@@ -202,8 +223,8 @@ class XMLDocument {
   * @param array  $attributes An array of key/value pairs of attributes.
   */
   function CalDAVElement( &$element, $tag, $content=false, $attributes=false ) {
-    if ( !isset($this->namespaces['urn:ietf:params:xml:ns:caldav']) ) $this->AddNamespace( 'urn:ietf:params:xml:ns:caldav', 'C' );
-    return $this->NSElement( $element, $tag, $content, $attributes, 'urn:ietf:params:xml:ns:caldav' );
+    if ( !isset($this->namespaces[self::$ns_caldav]) ) $this->AddNamespace( self::$ns_caldav, 'C' );
+    return $this->NSElement( $element, $tag, $content, $attributes, self::$ns_caldav );
   }
 
 
@@ -216,8 +237,8 @@ class XMLDocument {
   * @param array  $attributes An array of key/value pairs of attributes.
   */
   function CardDAVElement( &$element, $tag, $content=false, $attributes=false ) {
-    if ( !isset($this->namespaces['urn:ietf:params:xml:ns:carddav']) ) $this->AddNamespace( 'urn:ietf:params:xml:ns:carddav', 'VC' );
-    return $this->NSElement( $element, $tag, $content, $attributes, 'urn:ietf:params:xml:ns:carddav' );
+    if ( !isset($this->namespaces[self::$ns_carddav]) ) $this->AddNamespace( self::$ns_carddav, 'VC' );
+    return $this->NSElement( $element, $tag, $content, $attributes, self::$ns_carddav );
   }
 
 
@@ -230,8 +251,8 @@ class XMLDocument {
   * @param array  $attributes An array of key/value pairs of attributes.
   */
   function CalendarserverElement( &$element, $tag, $content=false, $attributes=false ) {
-    if ( !isset($this->namespaces['http://calendarserver.org/ns/']) ) $this->AddNamespace( 'http://calendarserver.org/ns/', 'A' );
-    return $this->NSElement( $element, $tag, $content, $attributes, 'http://calendarserver.org/ns/' );
+    if ( !isset($this->namespaces[self::$ns_calendarserver]) ) $this->AddNamespace( self::$ns_calendarserver, 'A' );
+    return $this->NSElement( $element, $tag, $content, $attributes, self::$ns_calendarserver );
   }
 
 

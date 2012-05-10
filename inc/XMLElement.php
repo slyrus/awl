@@ -101,7 +101,7 @@ class XMLElement {
   * @return string The tag name of the element, prefixed by the namespace
   */
   function GetNSTag() {
-    return $this->xmlns . ':' . $this->tagname;
+    return (empty($this->xmlns) ? '' : $this->xmlns . ':') . $this->tagname;
   }
 
   /**
@@ -143,7 +143,7 @@ class XMLElement {
     $elements = array();
     if ( gettype($this->content) == "array" ) {
       foreach( $this->content AS $k => $v ) {
-        if ( !isset($tag) || (isset($v->tagname) && $v->tagname == $tag) ) {
+        if ( empty($tag) || (isset($v->tagname) && $v->tagname == $tag) ) {
           $elements[] = $v;
         }
         if ( $recursive ) {
@@ -151,7 +151,7 @@ class XMLElement {
         }
       }
     }
-    else if ( !isset($tag) || (isset($v->content->tagname) && $this->content->tagname == $tag) ) {
+    else if ( empty($tag) || (isset($v->content->tagname) && $this->content->tagname == $tag) ) {
       $elements[] = $this->content;
     }
     return $elements;
@@ -168,7 +168,7 @@ class XMLElement {
     // printf( "Querying within '%s' for path '%s'\n", $this->tagname, $path );
     if ( !preg_match( '#(/)?([^/]+)(/?.*)$#', $path, $matches ) ) return $elements;
     // printf( "Matches: %s -- %s -- %s\n", $matches[1], $matches[2], $matches[3] );
-    if ( $matches[2] == '*' || strtolower($matches[2]) == strtolower($this->tagname) ) {
+    if ( $matches[2] == '*' || $matches[2] == $this->tagname ) {
       if ( $matches[3] == '' ) {
         /**
         * That is the full path

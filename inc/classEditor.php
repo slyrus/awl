@@ -80,10 +80,19 @@ class EditorField
     $this->Attributes[$k] = $v;
   }
 
+  function RenderLabel( $wrapme ) {
+    if ( !isset($this->Attributes['_label']) || !isset($this->Attributes['id'])) return $wrapme;
+    $class = (isset($this->Attributes['class']) ? $this->Attributes['class'] : 'entry');
+    $title = (isset($this->Attributes['title']) ? ' title="'.str_replace('"', '&#39;', $this->Attributes['title']) . '"' : '');
+    return( sprintf( '<label for="%s" class="%s"%s>%s %s</label>',
+             $this->Attributes['id'], $class, $title, $wrapme, $this->Attributes['_label']) );
+  }
+
   function RenderAttributes() {
     $attributes = "";
     if ( count($this->Attributes) == 0 ) return $attributes;
     foreach( $this->Attributes AS $k => $v ) {
+      if ( $k == '_label' ) continue;
       $attributes .= " $k=\"" . str_replace('"', '&#39;', $v) . '"';
     }
     return $attributes;
@@ -425,7 +434,7 @@ class Editor
               $checked = ' CHECKED';
           }
         }
-        return '<input type="hidden" value="off" name="'.$field_name.'"><input class="entry" type="checkbox" value="on" name="'.$field_name.'"'.$checked.$attributes.'>';
+        return $field->RenderLabel('<input type="hidden" value="off" name="'.$field_name.'"><input class="entry" type="checkbox" value="on" name="'.$field_name.'"'.$checked.$attributes.'>' );
       case "input":
         $size = (isset($part3) ? $part3 : 6);
         return "<input class=\"entry\" value=\"".htmlspecialchars($field_value)."\" name=\"$field_name\" size=\"$size\"$attributes>";

@@ -43,11 +43,20 @@ class XMLElement {
       $this->content = $content;
     }
     $this->attributes = $attributes;
-    if ( isset($this->attributes['xmlns']) ) {  // Oversimplification to be removed
-      $this->xmlns = $this->attributes['xmlns'];
-    }
     if ( isset($xmlns) ) {
       $this->xmlns = $xmlns;
+    }
+    else {
+      if ( preg_match( '{^(.*):([^:]*)$}', $tagname, $matches) ) {
+        $prefix = $matches[1];
+        $tag = $matches[2];
+        if ( isset($this->attributes['xmlns:'.$prefix]) ) {
+          $this->xmlns = $this->attributes['xmlns:'.$prefix];
+        }
+      }
+      else if ( isset($this->attributes['xmlns']) ) {
+        $this->xmlns = $this->attributes['xmlns'];
+      }
     }
   }
 
@@ -143,7 +152,7 @@ class XMLElement {
     $elements = array();
     if ( gettype($this->content) == "array" ) {
       foreach( $this->content AS $k => $v ) {
-        if ( empty($tag) || (isset($v->tagname) && $v->tagname == $tag) ) {
+        if ( empty($tag) || $v->GetNSTag() == $tag ) {
           $elements[] = $v;
         }
         if ( $recursive ) {
@@ -151,7 +160,7 @@ class XMLElement {
         }
       }
     }
-    else if ( empty($tag) || (isset($v->content->tagname) && $this->content->tagname == $tag) ) {
+    else if ( empty($tag) || (isset($v->content->tagname) && $v->content->GetNSTag() == $tag) ) {
       $elements[] = $this->content;
     }
     return $elements;
@@ -168,7 +177,7 @@ class XMLElement {
     // printf( "Querying within '%s' for path '%s'\n", $this->tagname, $path );
     if ( !preg_match( '#(/)?([^/]+)(/?.*)$#', $path, $matches ) ) return $elements;
     // printf( "Matches: %s -- %s -- %s\n", $matches[1], $matches[2], $matches[3] );
-    if ( $matches[2] == '*' || $matches[2] == $this->tagname ) {
+    if ( $matches[2] == '*' || $matches[2] == $this->GetNSTag()) {
       if ( $matches[3] == '' ) {
         /**
         * That is the full path
@@ -231,7 +240,7 @@ class XMLElement {
   *
   * @return string The content of this element, as a string without this element wrapping it.
   */
-  function RenderContent($indent=0, $nslist=null ) {
+  function RenderContent($indent=0, $nslist=null, $force_xmlns=false ) {
     $r = "";
     if ( is_array($this->content) ) {
       /**
@@ -240,7 +249,7 @@ class XMLElement {
       $r .= "\n";
       foreach( $this->content AS $k => $v ) {
         if ( is_object($v) ) {
-          $r .= $v->Render($indent+1, "", $nslist);
+          $r .= $v->Render($indent+1, "", $nslist, $force_xmlns);
         }
       }
       $r .= substr("                        ",0,$indent);
@@ -261,35 +270,48 @@ class XMLElement {
   *
   * @param int The indenting level for the pretty formatting of the element
   */
-  function Render($indent=0, $xmldef="", $nslist=null) {
+  function Render($indent=0, $xmldef="", $nslist=null, $force_xmlns=false) {
     $r = ( $xmldef == "" ? "" : $xmldef."\n");
 
     $attr = "";
     $tagname = $this->tagname;
+    $xmlns_done = false;
     if ( gettype($this->attributes) == "array" ) {
       /**
       * Render the element attribute values
       */
       foreach( $this->attributes AS $k => $v ) {
         if ( preg_match('#^xmlns(:?(.+))?$#', $k, $matches ) ) {
+//          if ( $force_xmlns ) printf( "1: %s: %s\n", $this->tagname, $this->xmlns );
           if ( !isset($nslist) ) $nslist = array();
           $prefix = (isset($matches[2]) ? $matches[2] : '');
           if ( isset($nslist[$v]) && $nslist[$v] == $prefix ) continue; // No need to include in list as it's in a wrapping element
           $nslist[$v] = $prefix;
           if ( !isset($this->xmlns) ) $this->xmlns = $v;
+          $xmlns_done = true;
         }
         $attr .= sprintf( ' %s="%s"', $k, htmlspecialchars($v) );
       }
     }
     if ( isset($this->xmlns) && isset($nslist[$this->xmlns]) && $nslist[$this->xmlns] != '' ) {
+//      if ( $force_xmlns ) printf( "2: %s: %s\n", $this->tagname, $this->xmlns );
       $tagname = $nslist[$this->xmlns] . ':' . $tagname;
+      if ( $force_xmlns ) $attr .= sprintf( ' xmlns="%s"', $this->xmlns);
     }
-
+    else if ( isset($this->xmlns) && !isset($nslist[$this->xmlns]) && gettype($this->attributes) == 'array' && !isset($this->attributes[$this->xmlns]) ) {
+//      if ( $force_xmlns ) printf( "3: %s: %s\n", $this->tagname, $this->xmlns );
+      $attr .= sprintf( ' xmlns="%s"', $this->xmlns);
+    }
+    else if ( $force_xmlns && isset($this->xmlns) && ! $xmlns_done ) {
+//      printf( "4: %s: %s\n", $this->tagname, $this->xmlns );
+      $attr .= sprintf( ' xmlns="%s"', $this->xmlns);
+    }
+    
     $r .= substr("                        ",0,$indent) . '<' . $tagname . $attr;
 
     if ( (is_array($this->content) && count($this->content) > 0) || (!is_array($this->content) && strlen($this->content) > 0) ) {
       $r .= ">";
-      $r .= $this->RenderContent($indent,$nslist);
+      $r .= $this->RenderContent($indent,$nslist,$force_xmlns);
       $r .= '</' . $tagname.">\n";
     }
     else {
@@ -322,14 +344,20 @@ function BuildXMLTree( $xmltags, &$start_from ) {
     $tagdata = $xmltags[$start_from++];
     if ( !isset($tagdata) || !isset($tagdata['tag']) || !isset($tagdata['type']) ) break;
     if ( $tagdata['type'] == "close" ) break;
+    $xmlns = null;
+    $tag = $tagdata['tag'];
+    if ( preg_match( '{^(.*):([^:]*)$}', $tag, $matches) ) {
+      $xmlns = $matches[1];
+      $tag = $matches[2];
+    }
     $attributes = ( isset($tagdata['attributes']) ? $tagdata['attributes'] : false );
     if ( $tagdata['type'] == "open" ) {
       $subtree = BuildXMLTree( $xmltags, $start_from );
-      $content[] = new XMLElement($tagdata['tag'], $subtree, $attributes );
+      $content[] = new XMLElement($tag, $subtree, $attributes, $xmlns );
     }
     else if ( $tagdata['type'] == "complete" ) {
       $value = ( isset($tagdata['value']) ? $tagdata['value'] : false );
-      $content[] = new XMLElement($tagdata['tag'], $value, $attributes );
+      $content[] = new XMLElement($tag, $value, $attributes, $xmlns );
     }
   }
 

@@ -320,6 +320,10 @@ class XMLDocument {
       }
       return $set;
     }
+    if ( preg_match('[@+ ]',$url) ) {
+      trace_bug('URL "%s" was not encoded before call to XMLDocument::href()', $url );
+      $url = str_replace( '%2F', '/', rawurlencode($url));
+    }
     return $this->NewXMLElement('href', $url, false, 'DAV:');
   }
 

@@ -23,55 +23,55 @@ class EMail
   * A comma-separated list of addresses to send To
   * @var string
   */
-  var $To;         // To:
+  private $To;         // To:
 
   /**
   * The visible sender of the e-mail.
   * @var string
   */
-  var $From;       // etc...
+  private $From;       // etc...
 
   /**
   * A comma-separated list of addresses to carbon-copy to
   * @var string
   */
-  var $Cc;
+  private $Cc;
 
   /**
   * A comma-separated list of addresses to blind carbon-copy to
   * @var string
   */
-  var $Bcc;
+  private $Bcc;
 
   /**
   * A comma-separated list of addresses to set as the Errors-to: header
   * @var string
   */
-  var $ErrorsTo;
+  private $ErrorsTo;
 
   /**
   * A comma-separated list of addresses to set as the Reply-to: header
   * @var string
   */
-  var $ReplyTo;
+  private $ReplyTo;
 
   /**
   * The address to set as the sender of the e-mail.
   * @var string
   */
-  var $Sender;
+  private $Sender;
 
   /**
   * The subject line of the email.
   * @var string
   */
-  var $Subject;
+  private $Subject;
 
   /**
   * The body of the email.
   * @var string
   */
-  var $Body;
+  private $Body;
   /**#@-*/
 
   /**
@@ -79,7 +79,7 @@ class EMail
   * @param string $subject The subject line of the email.
   * @param string $to A comma-separated list of addresses for the primary recipient(s).
   */
-  function EMail( $subject = "", $to = "" ) {
+  function __construct( $subject = "", $to = "" ) {
     // Initialise with some defaults
     $this->From    = "";
     $this->Subject = $subject;
@@ -98,7 +98,7 @@ class EMail
   * @param string $extra What we will be appending
   * @return string The new string.
   */
-  function _AppendDelimited( &$onto, $extra ) {
+  private function _AppendDelimited( &$onto, $extra ) {
     if ( !isset($extra) || $extra == "" ) return false;
     if ( $onto != "" ) $onto .= ", ";
     $onto .= $extra;
@@ -197,18 +197,55 @@ class EMail
 
   /**
   * Actually send the email
-  * @param string $recipient The email address to append.
+  * @param string $additional_headers Any additional headers that are needed.
   */
-  function Send() {
-    $additional_headers = "";
-    if ( "$this->From" != "" )     $additional_headers .= "From: $this->From\r\n";
-    if ( "$this->Cc" != "" )       $additional_headers .= "Cc: $this->Cc\r\n";
-    if ( "$this->Bcc" != "" )      $additional_headers .= "Bcc: $this->Bcc\r\n";
-    if ( "$this->ReplyTo" != "" )  $additional_headers .= "Reply-To: $this->ReplyTo\r\n";
-    if ( "$this->ErrorsTo" != "" ) $additional_headers .= "Errors-To: $this->ErrorsTo\r\n";
+  function Send( $additional_headers = "" ) {
+    if ( !empty($this->From) )     $additional_headers .= "From: $this->From\r\n";
+    if ( !empty($this->Cc) )       $additional_headers .= "Cc: $this->Cc\r\n";
+    if ( !empty($this->Bcc) )      $additional_headers .= "Bcc: $this->Bcc\r\n";
+    if ( !empty($this->ReplyTo) )  $additional_headers .= "Reply-To: $this->ReplyTo\r\n";
+    if ( !empty($this->ErrorsTo) ) $additional_headers .= "Errors-To: $this->ErrorsTo\r\n";
 
     $additional_parameters = "";
-    if ( "$this->Sender" != "" ) $additional_parameters = "-f$this->Sender";
+    if ( !empty($this->Sender) ) $additional_parameters = "-f$this->Sender";
     mail( $this->To, $this->Subject, $this->Body, $additional_headers, $additional_parameters );
+  }
+
+
+  /**
+  * Don't actually send the email, just log it.
+  * @param string $additional_headers Any additional headers that are needed.
+  */
+  function PretendLog( $additional_headers = "" ) {
+    if ( !empty($this->From) )     dbg_error_log('LOG', "From: $this->From");
+    if ( !empty($this->Cc) )       dbg_error_log('LOG', "Cc: $this->Cc");
+    if ( !empty($this->Bcc) )      dbg_error_log('LOG', "Bcc: $this->Bcc");
+    if ( !empty($this->ReplyTo) )  dbg_error_log('LOG', "Reply-To: $this->ReplyTo");
+    if ( !empty($this->ErrorsTo) ) dbg_error_log('LOG', "Errors-To: $this->ErrorsTo");
+
+    $additional_parameters = "";
+    if ( !empty($this->Sender) ) dbg_error_log('LOG', "Envelope Sender set to: $this->Sender");
+    dbg_error_log('LOG', "To: $this->To");
+    dbg_error_log('LOG', "Subject: $this->Subject");
+    dbg_error_log('LOG', "Body: $this->Body");
+  }
+
+  /**
+  * Don't actually send the email, just output it directly in the stream(!).  We use this method
+  * when we're doing regression testing.
+  * @param string $additional_headers Any additional headers that are needed.
+  */
+  function Pretend( $additional_headers = "" ) {
+    if ( !empty($this->From) )     print("From: $this->From\r\n");
+    if ( !empty($this->Cc) )       print("Cc: $this->Cc\r\n");
+    if ( !empty($this->Bcc) )      print("Bcc: $this->Bcc\r\n");
+    if ( !empty($this->ReplyTo) )  print("Reply-To: $this->ReplyTo\r\n");
+    if ( !empty($this->ErrorsTo) ) print("Errors-To: $this->ErrorsTo\r\n");
+
+    $additional_parameters = "";
+    if ( !empty($this->Sender) ) print("Envelope Sender set to: $this->Sender\r\n");
+    print("To: $this->To\r\n");
+    print("Subject: $this->Subject\r\n");
+    print("Body: $this->Body\r\n");
   }
 }

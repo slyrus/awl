@@ -47,7 +47,7 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
     $value = $obj->{$fn};
     if ( $fn == "password" ) {
       if ( $value == "******" || $value == "" ) continue;
-      if ( !preg_match('/^\*[0-9a-z]+\*[0-9a-z{}]+$/i', $value ) )
+      if ( !preg_match('/^\*[0-9a-z+\/=]+\*({SSHA})?[0-9a-z+\/=]+$/i', $value ) ) {
         $value = (function_exists("session_salted_sha1")
                    ? session_salted_sha1($value)
                    : (function_exists('session_salted_md5')
@@ -55,6 +55,7 @@ function sql_from_object( $obj, $type, $tablename, $where, $fprefix = "" ) {
                        : md5($value)
                      )
                  );
+      }
     }
     $value = str_replace( "'", "''", str_replace("\\", "\\\\", $value));
     if ( preg_match('{^(time|date|interval)}i', $typ ) && $value == "" ) {

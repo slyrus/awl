@@ -1,3 +1,5 @@
+
+Warning: strftime(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone. in /usr/share/php/PhpDocumentor/phpDocumentor/Smarty-2.6.0/libs/Smarty_Compiler.class.php on line 370
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
   <html xmlns="http://www.w3.org/1999/xhtml">
@@ -14,6 +16,8 @@
 	<li><a href="elementindex_awl.html">awl</a></li>
 </ul>
 <br />
+
+Warning: strftime(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone. in /usr/share/php/PhpDocumentor/phpDocumentor/Smarty-2.6.0/libs/Smarty_Compiler.class.php on line 370
 <div class="index-letter-menu">
 	<a class="index-letter" href="elementindex.html#a">a</a>
 	<a class="index-letter" href="elementindex.html#b">b</a>
@@ -1496,8 +1500,7 @@
 			<span class="method-title">GetComponents</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodGetComponents">iCalComponent::GetComponents()</a> in iCalendar.php</div>
-							<div class="index-item-description">Get all sub-components, or at least get those matching a type, or failling to match,  should the second parameter be set to false.</div>
+			<div class="index-item-details"><a href="awl/iCalendar/iCalendar.html#methodGetComponents">iCalendar::GetComponents()</a> in iCalendar.php</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -1512,7 +1515,8 @@
 			<span class="method-title">GetComponents</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/iCalendar/iCalendar.html#methodGetComponents">iCalendar::GetComponents()</a> in iCalendar.php</div>
+			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodGetComponents">iCalComponent::GetComponents()</a> in iCalendar.php</div>
+							<div class="index-item-description">Get all sub-components, or at least get those matching a type, or failling to match,  should the second parameter be set to false.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -1751,6 +1755,14 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/vComponent/vComponent.html#methodGetType">vComponent::GetType()</a> in vComponent.php</div>
 							<div class="index-item-description">Return the type of component which this is</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" />
+			<span class="method-title">GetUID</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html#methodGetUID">vCalendar::GetUID()</a> in vCalendar.php</div>
+							<div class="index-item-description">Get the UID from the primary component.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -2335,6 +2347,34 @@
 			<div class="index-item-details"><a href="awl/classEditor/Editor.html#var$NewWhere">Editor::$NewWhere</a> in classEditor.php</div>
 					</dd>
 			<dt class="field">
+						<img src="media/images/Variable.png" alt="Variable" title="Variable" />
+			<span class="var-title">$ns_caldav</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/XMLDocument/XMLDocument.html#var$ns_caldav">XMLDocument::$ns_caldav</a> in XMLDocument.php</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Variable.png" alt="Variable" title="Variable" />
+			<span class="var-title">$ns_calendarserver</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/XMLDocument/XMLDocument.html#var$ns_calendarserver">XMLDocument::$ns_calendarserver</a> in XMLDocument.php</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Variable.png" alt="Variable" title="Variable" />
+			<span class="var-title">$ns_carddav</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/XMLDocument/XMLDocument.html#var$ns_carddav">XMLDocument::$ns_carddav</a> in XMLDocument.php</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Variable.png" alt="Variable" title="Variable" />
+			<span class="var-title">$ns_dav</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/XMLDocument/XMLDocument.html#var$ns_dav">XMLDocument::$ns_dav</a> in XMLDocument.php</div>
+					</dd>
+			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
 			<span class="method-title">Name</span>
 					</dt>
@@ -2805,16 +2845,16 @@
 			<span class="var-title">$rendered</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vComponent/vComponent.html#var$rendered">vComponent::$rendered</a> in vComponent.php</div>
-							<div class="index-item-description">The rendered result (or what was originally parsed, if there have been no changes)</div>
+			<div class="index-item-details"><a href="awl/DataEntry/EntryField.html#var$rendered">EntryField::$rendered</a> in DataEntry.php</div>
+							<div class="index-item-description">Once it actually is...</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Variable.png" alt="Variable" title="Variable" />
 			<span class="var-title">$rendered</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/DataEntry/EntryField.html#var$rendered">EntryField::$rendered</a> in DataEntry.php</div>
-							<div class="index-item-description">Once it actually is...</div>
+			<div class="index-item-details"><a href="awl/vComponent/vComponent.html#var$rendered">vComponent::$rendered</a> in vComponent.php</div>
+							<div class="index-item-description">The rendered result (or what was originally parsed, if there have been no changes)</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Variable.png" alt="Variable" title="Variable" />
@@ -2837,16 +2877,16 @@
 			<span class="var-title">$rows</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/AwlDatabase/AwlQuery.html#var$rows">AwlQuery::$rows</a> in AwlQuery.php</div>
-							<div class="index-item-description">number of rows from pg_numrows - use accessor to get value</div>
+			<div class="index-item-details"><a href="awl/PgQuery/PgQuery.html#var$rows">PgQuery::$rows</a> in PgQuery.php</div>
+							<div class="index-item-description">number of rows from pg_numrows - for fetching result</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Variable.png" alt="Variable" title="Variable" />
 			<span class="var-title">$rows</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/PgQuery/PgQuery.html#var$rows">PgQuery::$rows</a> in PgQuery.php</div>
-							<div class="index-item-description">number of rows from pg_numrows - for fetching result</div>
+			<div class="index-item-details"><a href="awl/AwlDatabase/AwlQuery.html#var$rows">AwlQuery::$rows</a> in AwlQuery.php</div>
+							<div class="index-item-description">number of rows from pg_numrows - use accessor to get value</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -2869,14 +2909,6 @@
 			<span class="method-title">Render</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/DataEntry/EntryField.html#methodRender">EntryField::Render()</a> in DataEntry.php</div>
-							<div class="index-item-description">Render an EntryField into HTML</div>
-					</dd>
-			<dt class="field">
-						<img src="media/images/Method.png" alt="Method" title="Method" />
-			<span class="method-title">Render</span>
-					</dt>
-		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/MenuSet/MenuSet.html#methodRender">MenuSet::Render()</a> in MenuSet.php</div>
 							<div class="index-item-description">Render the menu tree to an HTML fragment.</div>
 					</dd>
@@ -2885,8 +2917,8 @@
 			<span class="method-title">Render</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/User/User.html#methodRender">User::Render()</a> in User.php</div>
-							<div class="index-item-description">Render the form / viewer as HTML to show the user</div>
+			<div class="index-item-details"><a href="awl/DataEntry/EntryField.html#methodRender">EntryField::Render()</a> in DataEntry.php</div>
+							<div class="index-item-description">Render an EntryField into HTML</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -2901,7 +2933,8 @@
 			<span class="method-title">Render</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/iCalendar/iCalendar.html#methodRender">iCalendar::Render()</a> in iCalendar.php</div>
+			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodRender">iCalProp::Render()</a> in iCalendar.php</div>
+							<div class="index-item-description">Render a suitably escaped RFC2445 content string.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -2916,8 +2949,15 @@
 			<span class="method-title">Render</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodRender">iCalProp::Render()</a> in iCalendar.php</div>
-							<div class="index-item-description">Render a suitably escaped RFC2445 content string.</div>
+			<div class="index-item-details"><a href="awl/iCalendar/iCalendar.html#methodRender">iCalendar::Render()</a> in iCalendar.php</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" />
+			<span class="method-title">Render</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/User/User.html#methodRender">User::Render()</a> in User.php</div>
+							<div class="index-item-description">Render the form / viewer as HTML to show the user</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -2932,8 +2972,8 @@
 			<span class="method-title">Render</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vComponent/vProperty.html#methodRender">vProperty::Render()</a> in vComponent.php</div>
-							<div class="index-item-description">Render a suitably escaped RFC2445 content string.</div>
+			<div class="index-item-details"><a href="awl/vComponent/vComponent.html#methodRender">vComponent::Render()</a> in vComponent.php</div>
+							<div class="index-item-description">Renders the component, possibly restricted to only the listed properties</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -2956,8 +2996,8 @@
 			<span class="method-title">Render</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vComponent/vComponent.html#methodRender">vComponent::Render()</a> in vComponent.php</div>
-							<div class="index-item-description">Renders the component, possibly restricted to only the listed properties</div>
+			<div class="index-item-details"><a href="awl/vComponent/vProperty.html#methodRender">vProperty::Render()</a> in vComponent.php</div>
+							<div class="index-item-description">Render a suitably escaped RFC2445 content string.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -3008,6 +3048,13 @@
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
+			<span class="method-title">RenderLabel</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/classEditor/EditorField.html#methodRenderLabel">EditorField::RenderLabel()</a> in classEditor.php</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" />
 			<span class="method-title">RenderLoginPanel</span>
 					</dt>
 		<dd class="index-item-body">
@@ -3019,7 +3066,7 @@
 			<span class="method-title">RenderParameters</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vComponent/vProperty.html#methodRenderParameters">vProperty::RenderParameters()</a> in vComponent.php</div>
+			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodRenderParameters">iCalProp::RenderParameters()</a> in iCalendar.php</div>
 							<div class="index-item-description">Render the set of parameters as key1=value1[;key2=value2[; ...]] with  any colons or semicolons escaped.</div>
 					</dd>
 			<dt class="field">
@@ -3027,7 +3074,7 @@
 			<span class="method-title">RenderParameters</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodRenderParameters">iCalProp::RenderParameters()</a> in iCalendar.php</div>
+			<div class="index-item-details"><a href="awl/vComponent/vProperty.html#methodRenderParameters">vProperty::RenderParameters()</a> in vComponent.php</div>
 							<div class="index-item-description">Render the set of parameters as key1=value1[;key2=value2[; ...]] with  any colons or semicolons escaped.</div>
 					</dd>
 			<dt class="field">
@@ -3306,18 +3353,27 @@
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
-			<span class="method-title">set</span>
+			<span class="method-title">Set</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/AwlCache.html#methodset">AwlCache::set()</a> in AwlCache.php</div>
-							<div class="index-item-description">Set a value for the specified namespace/key, perhaps with an expiry (default 10 days)</div>
+			<div class="index-item-details"><a href="awl/DataUpdate/DBRecord.html#methodSet">DBRecord::Set()</a> in DataUpdate.php</div>
+							<div class="index-item-description">Sets a single field in the record</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
 			<span class="method-title">Set</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/classEditor/EditorField.html#methodSet">EditorField::Set()</a> in classEditor.php</div>
+			<div class="index-item-details"><a href="awl/MenuSet/MenuOption.html#methodSet">MenuOption::Set()</a> in MenuSet.php</div>
+							<div class="index-item-description">Set arbitrary attributes of the menu option</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" />
+			<span class="method-title">set</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/AwlCache.html#methodset">AwlCache::set()</a> in AwlCache.php</div>
+							<div class="index-item-description">Set a value for the specified namespace/key, perhaps with an expiry (default 10 days)</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -3332,16 +3388,7 @@
 			<span class="method-title">Set</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/DataUpdate/DBRecord.html#methodSet">DBRecord::Set()</a> in DataUpdate.php</div>
-							<div class="index-item-description">Sets a single field in the record</div>
-					</dd>
-			<dt class="field">
-						<img src="media/images/Method.png" alt="Method" title="Method" />
-			<span class="method-title">Set</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/MenuSet/MenuOption.html#methodSet">MenuOption::Set()</a> in MenuSet.php</div>
-							<div class="index-item-description">Set arbitrary attributes of the menu option</div>
+			<div class="index-item-details"><a href="awl/classEditor/EditorField.html#methodSet">EditorField::Set()</a> in classEditor.php</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -3378,7 +3425,7 @@
 			<span class="method-title">SetComponents</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodSetComponents">iCalComponent::SetComponents()</a> in iCalendar.php</div>
+			<div class="index-item-details"><a href="awl/vComponent/vComponent.html#methodSetComponents">vComponent::SetComponents()</a> in vComponent.php</div>
 							<div class="index-item-description">Sets some or all sub-components of the component to the supplied new components</div>
 					</dd>
 			<dt class="field">
@@ -3386,7 +3433,7 @@
 			<span class="method-title">SetComponents</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vComponent/vComponent.html#methodSetComponents">vComponent::SetComponents()</a> in vComponent.php</div>
+			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodSetComponents">iCalComponent::SetComponents()</a> in iCalendar.php</div>
 							<div class="index-item-description">Sets some or all sub-components of the component to the supplied new components</div>
 					</dd>
 			<dt class="field">
@@ -3442,15 +3489,15 @@
 			<span class="method-title">SetJoins</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/Browser/Browser.html#methodSetJoins">Browser::SetJoins()</a> in classBrowser.php</div>
-							<div class="index-item-description">Set the tables and joins for the SQL.</div>
+			<div class="index-item-details"><a href="awl/classEditor/Editor.html#methodSetJoins">Editor::SetJoins()</a> in classEditor.php</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
 			<span class="method-title">SetJoins</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/classEditor/Editor.html#methodSetJoins">Editor::SetJoins()</a> in classEditor.php</div>
+			<div class="index-item-details"><a href="awl/Browser/Browser.html#methodSetJoins">Browser::SetJoins()</a> in classBrowser.php</div>
+							<div class="index-item-description">Set the tables and joins for the SQL.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -3509,7 +3556,7 @@
 			<span class="method-title">SetParameterValue</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodSetParameterValue">iCalProp::SetParameterValue()</a> in iCalendar.php</div>
+			<div class="index-item-details"><a href="awl/vComponent/vProperty.html#methodSetParameterValue">vProperty::SetParameterValue()</a> in vComponent.php</div>
 							<div class="index-item-description">Set the value of a parameter</div>
 					</dd>
 			<dt class="field">
@@ -3517,7 +3564,7 @@
 			<span class="method-title">SetParameterValue</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vComponent/vProperty.html#methodSetParameterValue">vProperty::SetParameterValue()</a> in vComponent.php</div>
+			<div class="index-item-details"><a href="awl/iCalendar/iCalProp.html#methodSetParameterValue">iCalProp::SetParameterValue()</a> in iCalendar.php</div>
 							<div class="index-item-description">Set the value of a parameter</div>
 					</dd>
 			<dt class="field">
@@ -3564,6 +3611,13 @@
 			<span class="method-title">SetSql</span>
 					</dt>
 		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/classEditor/EditorField.html#methodSetSql">EditorField::SetSql()</a> in classEditor.php</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" />
+			<span class="method-title">SetSql</span>
+					</dt>
+		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/classEditor/Editor.html#methodSetSql">Editor::SetSql()</a> in classEditor.php</div>
 					</dd>
 			<dt class="field">
@@ -3573,13 +3627,6 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="awl/AwlDatabase/AwlQuery.html#methodSetSql">AwlQuery::SetSql()</a> in AwlQuery.php</div>
 							<div class="index-item-description">Simple SetSql() class which will reset the object with the querystring from the first argument.</div>
-					</dd>
-			<dt class="field">
-						<img src="media/images/Method.png" alt="Method" title="Method" />
-			<span class="method-title">SetSql</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/classEditor/EditorField.html#methodSetSql">EditorField::SetSql()</a> in classEditor.php</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -3639,7 +3686,7 @@
 			<span class="method-title">SetType</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodSetType">iCalComponent::SetType()</a> in iCalendar.php</div>
+			<div class="index-item-details"><a href="awl/vComponent/vComponent.html#methodSetType">vComponent::SetType()</a> in vComponent.php</div>
 							<div class="index-item-description">Set the type of component which this is</div>
 					</dd>
 			<dt class="field">
@@ -3647,8 +3694,16 @@
 			<span class="method-title">SetType</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="awl/vComponent/vComponent.html#methodSetType">vComponent::SetType()</a> in vComponent.php</div>
+			<div class="index-item-details"><a href="awl/iCalendar/iCalComponent.html#methodSetType">iCalComponent::SetType()</a> in iCalendar.php</div>
 							<div class="index-item-description">Set the type of component which this is</div>
+					</dd>
+			<dt class="field">
+						<img src="media/images/Method.png" alt="Method" title="Method" />
+			<span class="method-title">SetUID</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="awl/vCalendar/vCalendar.html#methodSetUID">vCalendar::SetUID()</a> in vCalendar.php</div>
+							<div class="index-item-description">Set the UID on the primary component.</div>
 					</dd>
 			<dt class="field">
 						<img src="media/images/Method.png" alt="Method" title="Method" />
@@ -4602,5 +4657,7 @@
 	<a class="index-letter" href="elementindex.html#w">w</a>
 	<a class="index-letter" href="elementindex.html#x">x</a>
 	<a class="index-letter" href="elementindex.html#_">_</a>
-</div>	</body>
+</div>
+Warning: strftime(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone. in /usr/share/php/PhpDocumentor/phpDocumentor/Smarty-2.6.0/libs/Smarty_Compiler.class.php on line 370
+	</body>
 </html>

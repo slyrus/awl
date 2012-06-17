@@ -1,3 +1,34 @@
+2012-06-14  Andrew McMillan  <andrew@morphoss.com>
+	* Release 0.52
+
+2012-06-14  Andrew McMillan  <andrew@morphoss.com>
+	* [DataUpdate] Fix regular expression matching whether value is already a salted hash.
+
+2012-05-20  Andrew McMillan  <andrew@morphoss.com>
+	* [XMLElement] Changes for more repeatable parsing.
+	* [XMLDocument] If an href includes a space or @ then bug about it, but urlencode it also.
+
+2012-05-15  Andrew McMillan  <andrew@morphoss.com>
+	* [Editor] Add support for labels on checkboxes.
+
+2012-05-11  Andrew McMillan  <andrew@morphoss.com>
+	* [XMLElement] XML parsing / creating improvements / fixes.
+
+2012-04-30  Andrew McMillan  <andrew@morphoss.com>
+	* [vComponent] We should use GetNSTag() rather than GetTag() in most cases.
+
+2012-04-22  Andrew McMillan  <andrew@morphoss.com>
+	* [AwlQuery] Throw exception if the database is not connected when we try to query it.
+
+2012-04-16  Andrew McMillan  <andrew@morphoss.com>
+	* [vCalendar] Log the actual VTIMEZONE which appears to be in error.
+
+2012-03-22  Andrew McMillan  <andrew@morphoss.com>
+	* [vCalendar] New SetUID/GetUID methods used by POST add-member.
+
+2012-03-12  Andrew McMillan  <andrew@morphoss.com>
+	* [Editor] The current row needs to be global so the hook might reference it.
+
 2012-01-13  Andrew McMillan  <andrew@morphoss.com>
 	* [vComponent] Fix handling for vcard peculiarities.
 	* [vComponent] Don't escape all ; in N or ADR.

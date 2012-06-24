@@ -240,7 +240,8 @@ class vCalendar extends vComponent {
     $tzid = olson_from_tzstring($tzstring);
     if ( !empty($tzid) ) return $tzid;
     
-    $tzcdo =  $vtz->GetProperty('TZID');
+    $tzcdo =  $vtz->GetProperty('X-MICROSOFT-CDO-TZID');
+    if ( empty($tzcdo) ) return null;
     switch( $tzcdo ) {
       /**
        * List of Microsoft CDO Timezone IDs from here:

@@ -157,7 +157,7 @@ class AwlCache {
   /**
    * Release a lock
    */
-  function releaseLock( $locker ) {
+  function releaseLock( $something ) {
     if ( !self::$working ) return;
     self::$m->delete('_lock_'+$something);        
   }

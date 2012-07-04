@@ -1,4 +1,18 @@
-2012-06-14  Andrew McMillan  <andrew@morphoss.com>
+2012-07-04  Andrew McMillan  <andrew@morphoss.com>
+	* Release 0.53
+
+2012-06-26  Andrew McMillan  <andrew@morphoss.com>
+	* Correct replacement when 'mailto:' is not passed in as first part of match.
+
+2012-06-25  Andrew McMillan  <andrew@morphoss.com>
+	* Fix name of CDO TZID property, avoid unassigned variable warning.
+	* Fix typo in unlocking code.
+
+2012-05-28  Andrew McMillan  <andrew@morphoss.com>
+	* For creating MIME messages.
+	* Updated and modernized.
+
+2012-06-17  Andrew McMillan  <andrew@morphoss.com>
 	* Release 0.52
 
 2012-06-14  Andrew McMillan  <andrew@morphoss.com>

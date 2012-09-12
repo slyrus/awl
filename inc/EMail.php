@@ -115,6 +115,14 @@ class EMail
   }
 
   /**
+  * Get the current recipient list.
+  * @return string The current recipient list.
+  */
+  function To() {
+    return $this->To;
+  }
+
+  /**
   * Add another Cc recipient to the email
   * @param string $recipient The email address to append.
   * @return string The new Cc recipient list.

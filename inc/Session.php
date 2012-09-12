@@ -580,11 +580,11 @@ EOTEXT;
 * @return boolean Whether or not the user is logged in and is a member of one of the required groups.
 */
   function LoginRequired( $groups = "" ) {
-    global $c, $session;
+    global $c, $session, $page_elements;
 
     if ( $this->logged_in && $groups == "" ) return;
     if ( ! $this->logged_in ) {
-      $c->messages[] = i18n("You must log in to use this system.");
+//      $c->messages[] = i18n("You must log in to use this system.");
       if ( function_exists("local_index_not_logged_in") ) {
         local_index_not_logged_in();
       }
@@ -692,7 +692,7 @@ EOTEXT;
           }
           $usernames .= "        $row->username\n";
 
-          if ( $mail->To != "" ) {
+          if ( $mail->To() != "" ) {
             if ( isset($c->debug_email) ) {
               $debug_to .= "\n============================================================\n";
             }

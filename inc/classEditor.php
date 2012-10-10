@@ -417,6 +417,10 @@ class Editor
         }
         return '<select class="entry" name="'.$field_name.'"'.$attributes.'>'.$option_list.'</select>';
       case "checkbox":
+        if ( !isset($field) ) {
+          @dbg_error_log("ERROR","Field '$field_name' is not defined.");
+          return "<p>Error: '$field_name' is not defined.</p>";
+        }
         if ( $field_value === true ) {
           $checked = ' CHECKED';
         }
@@ -460,7 +464,7 @@ class Editor
       case "submit":
         $action =  ( $this->RecordAvailable ? 'update' : 'insert' );
         return sprintf('<input type="hidden" name="_editor_action[%s]" value="%s"><input type="submit" class="submit" name="%s" value="%s">',
-                                                              $this->Id, $action,                           $this->SubmitName, $value_field_name );
+                                                              $this->Id, $action, $this->SubmitName, $value_field_name );
       default:
         return str_replace( "\n", "<br />", $field_value );
     }

@@ -1,3 +1,15 @@
+2013-03-07  Andrew McMillan <andrew@morphoss.com>
+	* Release 0.54
+
+2012-10-10  Andrew McMillan  <andrew@morphoss.com>
+	* Editor: provide error message if an undefined field is used in a form.
+	* Session: clarify code for setting date format.
+
+2012-09-12  Andrew McMillan  <andrew@morphoss.com>
+	* Use accessor for EMail->To(), remove silly 'must log in' message.
+	  Also declare $page_elements global, as it must be.
+	* Provide an accessor for the To() list.
+
 2012-07-04  Andrew McMillan  <andrew@morphoss.com>
 	* Release 0.53
 

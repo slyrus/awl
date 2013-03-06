@@ -8,7 +8,7 @@
 %define realname awl
 Name: php-%{realname}
 Summary: Andrew's Web Libraries - PHP Utility Libraries
-Version: 0.53
+Version: 0.54
 Release: 9%{?snapshotversionstring}%{?dist}
 Group: Development/Libraries
 License: GPL

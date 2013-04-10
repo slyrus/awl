@@ -232,15 +232,15 @@ class vCalendar extends vComponent {
    * @return string The Olson name for the timezone.
    */
   function GetOlsonName( vComponent $vtz ) {
-    $tzstring = $vtz->GetProperty('TZID');
+    $tzstring = $vtz->GetPValue('TZID');
     $tzid = olson_from_tzstring($tzstring);
     if ( !empty($tzid) ) return $tzid;
     
-    $tzstring = $vtz->GetProperty('X-LIC-LOCATION');
+    $tzstring = $vtz->GetPValue('X-LIC-LOCATION');
     $tzid = olson_from_tzstring($tzstring);
     if ( !empty($tzid) ) return $tzid;
     
-    $tzcdo =  $vtz->GetProperty('X-MICROSOFT-CDO-TZID');
+    $tzcdo =  $vtz->GetPValue('X-MICROSOFT-CDO-TZID');
     if ( empty($tzcdo) ) return null;
     switch( $tzcdo ) {
       /**

@@ -259,7 +259,10 @@ class XMLElement {
       * Render the content, with special characters escaped
       *
       */
-      $r .= htmlspecialchars($this->content, ENT_NOQUOTES );
+      if(strpos($this->content, '<![CDATA[')===0 && strrpos($this->content, ']]>')===strlen($this->content)-3)
+        $r .= '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', substr($this->content, 9, -3)) . ']]>';
+      else
+        $r .= htmlspecialchars($this->content, ENT_NOQUOTES );
     }
     return $r;
   }

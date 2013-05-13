@@ -273,7 +273,7 @@ class AwlQuery
     return $this->connection;
   }
 
-  
+
   /**
   * Log query, optionally with file and line location of the caller.
   *
@@ -367,7 +367,6 @@ class AwlQuery
     else $this->error_info = null;
   }
 
-
   /**
   * Tell the database to execute the query
   */
@@ -379,7 +378,7 @@ class AwlQuery
       $this->connection = $GLOBALS['_awl_dbconn'];
     }
     if ( !is_object($this->connection) ) throw new Exception('Database not connected.');
-    
+
     if ( isset($c->expand_pdo_parameters) && $c->expand_pdo_parameters ) {
       $this->bound_querystring = $this->querystring;
       if ( isset($this->bound_parameters) ) {
@@ -389,18 +388,18 @@ class AwlQuery
 //        print_r( $this->bound_parameters );
       }
       $t1 = microtime(true); // get start time
-      $this->sth = $this->connection->query($this->bound_querystring);
+      $execute_result = $this->sth = $this->connection->query($this->bound_querystring);
     }
     else {
       $t1 = microtime(true); // get start time
-      $this->sth = $this->connection->prepare($this->querystring);
-      if ( $this->sth ) $this->sth->execute($this->bound_parameters);
+      $execute_result = $this->sth = $this->connection->prepare($this->querystring);
+      if ( $this->sth ) $execute_result = $this->sth->execute($this->bound_parameters);
 //      printf( "\n=============================================================== OQ\n%s\n", $this->querystring);
 //      print_r( $this->bound_parameters );
     }
     $this->bound_querystring = null;
 
-    if ( ! $this->sth ) {
+    if ( $execute_result === false ) {
       $this->error_info = $this->connection->errorInfo();
       return false;
     }
@@ -590,7 +589,7 @@ class AwlQuery
         if ( isset($this->bound_parameters) ) {
           foreach( $this->bound_parameters AS $k => $v ) {
             printf( "    %-18s \t=> '%s'\n", "'$k'", $v );
-          }          
+          }
         }
         printf( ".....................\n" );
       }
@@ -633,5 +632,11 @@ class AwlQuery
   }
 
 
+  /**
+   * Get any error information from the last query
+   */
+  function getErrorInfo() {
+  	return $this->error_info;
+  }
 }
 

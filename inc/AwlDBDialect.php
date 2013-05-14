@@ -142,11 +142,20 @@ class AwlDBDialect {
 
     switch ( $this->dialect ) {
       case 'pgsql':
-        $tablename_string = $this->Quote($tablename_string,PDO::PARAM_STR);
+      	list( $schema, $table ) = explode('.', $tablename_string, 2);
+      	if ( empty($table) ) {
+      		$table = $tablename_string;
+      		$schema = null;
+      	}
+
         $sql = 'SELECT f.attname AS fieldname, t.typname AS typename, f.atttypmod AS precision FROM pg_attribute f';
         $sql .= ' JOIN pg_class c ON ( f.attrelid = c.oid )';
         $sql .= ' JOIN pg_type t ON ( f.atttypid = t.oid )';
-        $sql .= ' WHERE relname = '.$tablename_string.' AND attnum >= 0 order by f.attnum';
+        $sql .= ' JOIN pg_namespace ns ON ( c.relnamespace = ns.oid )';
+        $sql .= ' WHERE relname = '.$this->Quote($table,PDO::PARAM_STR).' AND attnum >= 0 ';
+        if ( isset($schema) ) $sql .= ' AND ns.nspname = '.$this->Quote($schema,PDO::PARAM_STR);
+        $sql .= ' ORDER BY f.attnum';
+        error_log($sql);
         return $sql;
     }
   }

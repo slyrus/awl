@@ -102,7 +102,7 @@ class EditorField
     }
   }
 
-  private function GetTarget() {
+  function GetTarget() {
     if ( $this->Sql == "" ) return $this->Field;
     return "$this->Sql AS $this->Field";
   }

@@ -140,6 +140,7 @@ class vCalendar extends vComponent {
    */
   function GetAttendees() {
     if ( !isset($this->attendees) ) {
+      $this->attendees = array();
       $attendees = $this->GetPropertiesByPath('/VCALENDAR/*/ATTENDEE');
       $wr_attendees = $this->GetPropertiesByPath('/VCALENDAR/*/X-WR-ATTENDEE');
       if ( count ( $wr_attendees ) > 0 ) {

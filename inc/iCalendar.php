@@ -122,7 +122,7 @@ class iCalProp {
     $unescaped = preg_replace( '{\\\\[nN]}', "\n", $propstring);
  
     // Split into two parts on : which is not preceded by a \
-    list( $start, $values) = preg_split( '{(?<!\\\\):}', $unescaped, 2);
+    list( $start, $values) = @preg_split( '{(?<!\\\\):}', $unescaped, 2);
     $this->content = preg_replace( "/\\\\([,;:\"\\\\])/", '$1', $values);
 
     // Split on ; which is not preceded by a \

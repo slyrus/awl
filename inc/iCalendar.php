@@ -353,8 +353,8 @@ class iCalComponent {
   */
   function VCalendar( $extra_properties = null ) {
     $this->SetType('VCALENDAR');
-    $this->AddProperty('PRODID', '-//davical.org//NONSGML AWL Calendar//EN');
     $this->AddProperty('VERSION', '2.0');
+    $this->AddProperty('PRODID', '-//davical.org//NONSGML AWL Calendar//EN');
     $this->AddProperty('CALSCALE', 'GREGORIAN');
     if ( is_array($extra_properties) ) {
       foreach( $extra_properties AS $k => $v ) {
@@ -976,8 +976,8 @@ class iCalendar {  // DEPRECATED
     $this->component->SetType('VCALENDAR');
     $this->component->SetProperties(
         array(
-          new iCalProp('PRODID:-//davical.org//NONSGML AWL Calendar//EN'),
           new iCalProp('VERSION:2.0'),
+          new iCalProp('PRODID:-//davical.org//NONSGML AWL Calendar//EN'),
           new iCalProp('CALSCALE:GREGORIAN')
         )
     );
@@ -1684,8 +1684,8 @@ class iCalendar {  // DEPRECATED
     deprecated('iCalendar::iCalHeader' );
     return <<<EOTXT
 BEGIN:VCALENDAR\r
-PRODID:-//davical.org//NONSGML AWL Calendar//EN\r
 VERSION:2.0\r
+PRODID:-//davical.org//NONSGML AWL Calendar//EN\r
 
 EOTXT;
   }

@@ -55,8 +55,8 @@ class vCalendar extends vComponent {
     if ( empty($content) || is_array($content) ) {
       parent::__construct();
       $this->SetType('VCALENDAR');
-      $this->AddProperty('PRODID', '-//davical.org//NONSGML AWL Calendar//EN');
       $this->AddProperty('VERSION', '2.0');
+      $this->AddProperty('PRODID', '-//davical.org//NONSGML AWL Calendar//EN');
       $this->AddProperty('CALSCALE', 'GREGORIAN');
       if ( !empty($content) ) {
         foreach( $content AS $k => $v ) {

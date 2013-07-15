@@ -225,6 +225,7 @@ if ( !function_exists("session_salted_sha1") ) {
 
 
 if ( !function_exists("session_validate_password") ) {
+
   /**
   * Checks what a user entered against the actual password on their account.
   * @param string $they_sent What the user entered.
@@ -232,9 +233,20 @@ if ( !function_exists("session_validate_password") ) {
   * @return boolean Whether or not the users attempt matches what is already on file.
   */
   function session_validate_password( $they_sent, $we_have ) {
+    global $c;
     if ( preg_match('/^\*\*.+$/', $we_have ) ) {
       //  The "forced" style of "**plaintext" to allow easier admin setting
       return ( "**$they_sent" == $we_have );
+    }
+
+    if ( isset($c->wp_includes) && substring($we_have,0,1) == '$' ) {
+      // Include Wordpress password handling, if it's in the path.
+      @require_once($c->wp_includes .'/class-phpass.php');
+
+      if ( class_exists('PasswordHash') ) {
+        $wp_hasher = new PasswordHash(8, true);
+        return $wp_hasher->CheckPassword($password, $hash);
+      }
     }
 
     if ( preg_match('/^\*(.+)\*{[A-Z]+}.+$/', $we_have, $regs ) ) {

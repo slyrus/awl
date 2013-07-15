@@ -1,0 +1,46 @@
+BEGIN:VCALENDAR
+PRODID:-//davical.org//NONSGML AWL Calendar//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Oregon Wine Events
+BEGIN:VEVENT
+DURATION:P0DT5H0M
+LOCATION:27012 Briggs Hill Rd.
+SEQUENCE:10
+URL;VALUE=URI:http://silvanridge.com/index.php/the-latest/Cupcake%20&%20
+ Wine%20Pairing!-41/
+DTSTART;TZID=US/Pacific:20120211T120000
+UID:dotCal-fd974f30-2ff8-012f-91eb-002421a2359e
+DTSTAMP:20120202T182742Z
+SUMMARY:Cupcake & Wine Pairing!
+DESCRIPTION:Join us on February 11th & 12th for an early Valentine's Day
+  celebration featuring a unique and delicious wine pairing...cupcakes! \
+ n\nThese delectable gourmet bites have been crafted locally by The Sassy
+  Cupcake to pair with 2 of our award-winning wines... in fact\, one of t
+ hem is topped with frosting made with our Early Muscat dessert wine.\nWh
+ ether it's an early Valentine's date or just a day out with friends and 
+ family\, come out to the winery from 12-5 pm and enjoy both pairings for
+  just $5. Of course we will also be offering our complimentary tasting a
+ nd special Valentine's sale prices on a few of our most popular wines.\n
+ More details to come\, but if you have questions in the meantime feel fr
+ ee to respond to this email or call Angela at 541.345.1945.\n\ncreated b
+ y dotCal
+LAST-MODIFIED:20120202T182742Z
+CREATED:20120202T182355Z
+BEGIN:VALARM
+TRIGGER:-PT0S
+ACTION:X-DOTCAL-EMAIL
+ATTENDEE:mailto:test@silvanridge.com
+DESCRIPTION:This is an event reminder
+SUMMARY:Alarm notification
+END:VALARM
+X-DOTCAL-ORIG-COLLECTION-UNIQUE:752f62b0
+X-DOTCAL-EVENT-CITY:Eugene, OR 97405
+X-DOTCAL-EVENT-EDITOR:html
+X-VENUE:Silvan Ridge Winery
+X-DOTCAL-VENUE:Silvan Ridge Winery
+X-EMAIL-RSVP-UPDATES:true
+X-DOTCAL-EMAIL-RSVP-UPDATES:true
+X-DOTCAL-LICENSE:PERSONAL_USE_ONLY
+X-DOTCAL-COPYRIGHT:http://dotcal.com/copyright
+END:VEVENT

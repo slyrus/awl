@@ -1,0 +1,220 @@
+BEGIN:VCALENDAR
+PRODID:-//davical.org//NONSGML AWL Calendar//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Oregon Wine Events
+BEGIN:VEVENT
+DURATION:P0DT5H0M
+LOCATION:27012 Briggs Hill Rd.
+SEQUENCE:10
+URL;VALUE=URI:http://silvanridge.com/index.php/the-latest/Cupcake%20&%20
+ Wine%20Pairing!-41/
+DTSTART;TZID=US/Pacific:20120211T120000
+UID:dotCal-fd974f30-2ff8-012f-91eb-002421a2359e
+DTSTAMP:20120202T182742Z
+SUMMARY:Cupcake & Wine Pairing!
+DESCRIPTION:Join us on February 11th & 12th for an early Valentine's Day
+  celebration featuring a unique and delicious wine pairing...cupcakes! \
+ n\nThese delectable gourmet bites have been crafted locally by The Sassy
+  Cupcake to pair with 2 of our award-winning wines... in fact\, one of t
+ hem is topped with frosting made with our Early Muscat dessert wine.\nWh
+ ether it's an early Valentine's date or just a day out with friends and 
+ family\, come out to the winery from 12-5 pm and enjoy both pairings for
+  just $5. Of course we will also be offering our complimentary tasting a
+ nd special Valentine's sale prices on a few of our most popular wines.\n
+ More details to come\, but if you have questions in the meantime feel fr
+ ee to respond to this email or call Angela at 541.345.1945.\n\ncreated b
+ y dotCal
+LAST-MODIFIED:20120202T182742Z
+CREATED:20120202T182355Z
+BEGIN:VALARM
+TRIGGER:-PT0S
+ACTION:X-DOTCAL-EMAIL
+ATTENDEE:mailto:test@silvanridge.com
+DESCRIPTION:This is an event reminder
+SUMMARY:Alarm notification
+END:VALARM
+X-DOTCAL-ORIG-COLLECTION-UNIQUE:752f62b0
+X-DOTCAL-EVENT-CITY:Eugene, OR 97405
+X-DOTCAL-EVENT-EDITOR:html
+X-VENUE:Silvan Ridge Winery
+X-DOTCAL-VENUE:Silvan Ridge Winery
+X-EMAIL-RSVP-UPDATES:true
+X-DOTCAL-EMAIL-RSVP-UPDATES:true
+X-DOTCAL-LICENSE:PERSONAL_USE_ONLY
+X-DOTCAL-COPYRIGHT:http://dotcal.com/copyright
+END:VEVENT
+BEGIN:VEVENT
+UID:0000333-00000398
+DTSTAMP:20101006T185130Z
+CREATED:20101006T185130Z
+LAST-MODIFIED:20101006T185130Z
+CLASS:PUBLIC
+TRANSP:OPAQUE
+SEQUENCE:1
+SUMMARY:test event
+DTSTART;TZID=America/Los_Angeles:20100301T020400
+DTEND;TZID=America/Los_Angeles:20100301T021000
+CATEGORIES:conference
+LOCATION:test\, 6710 SW Montgomery Way\, Wilsonville\, OR 97210
+DESCRIPTION:Admission fee: 0\nPlace address: 6710 SW Montgomery Way\nRec
+ urs every: none\nSubmitter's name: Jason Test\nSubmitter's phone: 503-34
+ 9-4711\nSubmitter's email: jason@dotcal.com
+END:VEVENT
+BEGIN:VEVENT
+UID:0000333-00000915
+DTSTAMP:20110113T204101Z
+CREATED:20110113T204101Z
+LAST-MODIFIED:20110113T204101Z
+CLASS:PUBLIC
+TRANSP:OPAQUE
+SEQUENCE:1
+SUMMARY:A Blooming Hill Vineyard Wine Tasting with Chocolate
+DTSTART;TZID=America/Los_Angeles:20110115T120000
+DTEND;TZID=America/Los_Angeles:20110115T170000
+CATEGORIES:wine
+URL:www.abloominghillvineyard.com
+LOCATION:A Blooming Hill Vineyard\, 5195 SW Hergert Rd.\, Cornelius\, OR
+  97113
+DESCRIPTION:Wine Tasting with chocolate treats coming up!  I bought a li
+ ttle chocolate fountain to use for our Valentine's Weekend in the Tastin
+ g Room and I think I better try it out this weekend!  You can help us de
+ cide what kind of goodies to dip into chocolate that go best with our wi
+ nes!  Oh\, and since it is a long weekend\, we'll be here on Monday\, to
+ o!\n\nAdmission fee: $5\nPlace address: 5195 SW Hergert Rd.\nPlace speci
+ fics: Tasting Room\nRecurs every: none\nSubmitter's name: Holly Witte\nS
+ ubmitter's phone: 503-992-1196\nSubmitter's email: bloominghillvineyards
+ @yahoo.com
+END:VEVENT
+BEGIN:VEVENT
+LAST-MODIFIED:20110222T221038Z
+SEQUENCE:2
+URL;VALUE=URI:www.abloominghillvineyard.com
+UID:0000333-00001147
+SUMMARY:A Blooming Hill Vineyard Celebrates President's Day
+DESCRIPTION:A Blooming Hill Vineyard President's Day Weekend .... someth
+ ing cherry for George Washington\, pennies for Abraham Lincoln.  And fiv
+ e great wines to taste for $5 tasting fee.  6-bottle and case discounts.
+   Our wine dogs will greet you.\n\nImage URL: http://www.facebook.com/pa
+ ges/A-Blooming-Hill-Vineyard-and-Winery/313972201183?tour=1&sk=wall#!/pa
+ ges/A-Blooming-Hill-Vineyard-a\nAdmission fee: $5\nPlace address: 5195 S
+ W Hergert Rd.\nPlace specifics: Tasting Room\nRecurs every: none\nOn the
+ re days: sunday\,monday\,saturday\nSubmitter's name: Holly Witte\nSubmit
+ ter's phone: 503-992-1196\nSubmitter's email: bloominghillvineyards@yaho
+ o.com
+DTSTART;TZID=US/Pacific:20110219T120000
+CREATED:20110217T224101Z
+DTSTAMP:20110222T221038Z
+DURATION:PT5H
+LOCATION:A Blooming Hill Vineyard\, 5195 SW Hergert Rd.\, Cornelius\, OR
+  97113
+X-DOTCAL-ORIG-COLLECTION-UNIQUE:11fd6d20
+X-DOTCAL-MASHUP-DOTCAL-COLLECTION-IDS:
+X-VENUE:
+X-EMAIL-RSVP-UPDATES:true
+CATEGORIES:wine
+END:VEVENT
+BEGIN:VEVENT
+UID:0000333-00000915
+DTSTAMP:20110113T204101Z
+CREATED:20110113T204101Z
+LAST-MODIFIED:20110113T204101Z
+CLASS:PUBLIC
+TRANSP:OPAQUE
+SEQUENCE:1
+SUMMARY:A Blooming Hill Vineyard Wine Tasting with Chocolate
+DTSTART;TZID=America/Los_Angeles:20110115T120000
+DTEND;TZID=America/Los_Angeles:20110115T170000
+CATEGORIES:wine
+URL:www.abloominghillvineyard.com
+LOCATION:A Blooming Hill Vineyard\, 5195 SW Hergert Rd.\, Cornelius\, OR
+  97113
+DESCRIPTION:Wine Tasting with chocolate treats coming up!  I bought a li
+ ttle chocolate fountain to use for our Valentine's Weekend in the Tastin
+ g Room and I think I better try it out this weekend!  You can help us de
+ cide what kind of goodies to dip into chocolate that go best with our wi
+ nes!  Oh\, and since it is a long weekend\, we'll be here on Monday\, to
+ o!\n\nAdmission fee: $5\nPlace address: 5195 SW Hergert Rd.\nPlace speci
+ fics: Tasting Room\nRecurs every: none\nSubmitter's name: Holly Witte\nS
+ ubmitter's phone: 503-992-1196\nSubmitter's email: bloominghillvineyards
+ @yahoo.com
+END:VEVENT
+BEGIN:VEVENT
+LAST-MODIFIED:20110222T221038Z
+SEQUENCE:2
+URL;VALUE=URI:www.abloominghillvineyard.com
+UID:0000333-00001147
+SUMMARY:A Blooming Hill Vineyard Celebrates President's Day
+DESCRIPTION:A Blooming Hill Vineyard President's Day Weekend .... someth
+ ing cherry for George Washington\, pennies for Abraham Lincoln.  And fiv
+ e great wines to taste for $5 tasting fee.  6-bottle and case discounts.
+   Our wine dogs will greet you.\n\nImage URL: http://www.facebook.com/pa
+ ges/A-Blooming-Hill-Vineyard-and-Winery/313972201183?tour=1&sk=wall#!/pa
+ ges/A-Blooming-Hill-Vineyard-a\nAdmission fee: $5\nPlace address: 5195 S
+ W Hergert Rd.\nPlace specifics: Tasting Room\nRecurs every: none\nOn the
+ re days: sunday\,monday\,saturday\nSubmitter's name: Holly Witte\nSubmit
+ ter's phone: 503-992-1196\nSubmitter's email: bloominghillvineyards@yaho
+ o.com
+DTSTART;TZID=US/Pacific:20110219T120000
+CREATED:20110217T224101Z
+DTSTAMP:20110222T221038Z
+DURATION:PT5H
+LOCATION:A Blooming Hill Vineyard\, 5195 SW Hergert Rd.\, Cornelius\, OR
+  97113
+X-DOTCAL-ORIG-COLLECTION-UNIQUE:11fd6d20
+X-DOTCAL-MASHUP-DOTCAL-COLLECTION-IDS:
+X-VENUE:
+X-EMAIL-RSVP-UPDATES:true
+CATEGORIES:wine
+END:VEVENT
+BEGIN:VEVENT
+LAST-MODIFIED:20110318T203223Z
+SEQUENCE:2
+URL;VALUE=URI:www.helvetiawinery.com
+UID:0000333-00001342
+SUMMARY:Irish Feast @ Helvetia Winery
+DESCRIPTION:What would the Feast of St. Patrick be without celestial mus
+ ic and a fine dinner?\nAll-Ireland Harp Champion AnnaLee Foster\, and Tu
+ alatin Valley Chef Champion Dave Clark will bring the senses to a new  l
+ evel of heavenly delight that borders on sinfulness. \nCheck out the men
+ u at our website! \nYou can make reservations by phone or email. Please 
+ let us know at your earliest if you would like to attend.\n\nImage URL: 
+ http://www.helvetiawinery.com/images/AnnaleeFoster.jpg\nAdmission fee: $
+ 40 per person\nPlace address: 23269 Yungen Road\nPlace specifics: The Re
+ d House\nRecurs every: none\nOn there days: saturday\nSubmitter's name: 
+ John Platt\nSubmitter's phone: 503-647-7596\nSubmitter's email: jplatt@h
+ elvetiawinery.com
+DTSTART;TZID=US/Pacific:20110319T150000
+CREATED:20110313T054101Z
+DTSTAMP:20110318T203223Z
+DURATION:PT3H
+LOCATION:Helvetia Winery\, 23269 Yungen Road\, Hillsboro\, OR 97124
+X-DOTCAL-ORIG-COLLECTION-UNIQUE:11fd6d20
+X-DOTCAL-MASHUP-DOTCAL-COLLECTION-IDS:
+X-VENUE:
+X-EMAIL-RSVP-UPDATES:true
+CATEGORIES:concerts
+END:VEVENT
+BEGIN:VEVENT
+LAST-MODIFIED:20110414T174446Z
+SEQUENCE:2
+UID:0000333-00001554
+SUMMARY:Eola Hills Wine Cellars Roth's Tasting
+DESCRIPTION:Eola Hills Wine Cellars will be pouring 6 great wines for yo
+ u to try at no charge. The wine steward Don will also be serving samples
+  of other great wine.\n\nAdmission fee: 0\nPlace address: 1130 Wallace R
+ d. NW\nRecurs every: none\nOn there days: none\nSubmitter's name: Judd W
+ right\nSubmitter's phone: 503-932-0704\nSubmitter's email: judd-wright@e
+ olahillswinery.com
+DTSTART;TZID=US/Pacific:20110422T150000
+CREATED:20110411T221901Z
+DTSTAMP:20110414T174446Z
+DURATION:PT3H
+LOCATION:West Salem Roth's\, 1130 Wallace Rd. NW\, Salem\, OR\, 97304
+X-DOTCAL-ORIG-COLLECTION-UNIQUE:11fd6d20
+X-DOTCAL-MASHUP-DOTCAL-COLLECTION-IDS:
+X-VENUE:West Salem Roth's
+X-EMAIL-RSVP-UPDATES:true
+CATEGORIES:wine,wine
+END:VEVENT
+END:VCALENDAR

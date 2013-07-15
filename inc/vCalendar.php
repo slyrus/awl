@@ -4,7 +4,7 @@
 *
 * When parsed the underlying structure is roughly as follows:
 *
-*   vCalendar( array(vComponent), array(vProperty), array(vTimezone) )
+*   vCalendar( array(vComponent), array(myProperty), array(vTimezone) )
 *
 * with the TIMEZONE data still currently included in the component array (likely
 * to change in the future) and the timezone array only containing vComponent objects
@@ -66,7 +66,7 @@ class vCalendar extends vComponent {
     }
     else {
       parent::__construct($content);
-      foreach( $this->components AS $k => $comp ) {
+      foreach( $this->GetComponents() AS $k => $comp ) {
         if ( $comp->GetType() == 'VTIMEZONE' ) {
           $this->AddTimeZone($comp, true);
         }
@@ -109,7 +109,7 @@ class vCalendar extends vComponent {
 
   /**
    * Get the organizer of this VEVENT/VTODO
-   * @return vProperty The Organizer property.
+   * @return myProperty The Organizer property.
    */
   function GetOrganizer() {
     if ( !isset($this->organizer) ) {
@@ -127,7 +127,7 @@ class vCalendar extends vComponent {
   
   /**
    * Get the schedule-agent from the organizer
-   * @return vProperty The schedule-agent parameter
+   * @return myProperty The schedule-agent parameter
    */
   function GetScheduleAgent() {
     if ( !isset($this->schedule_agent) ) $this->GetOrganizer();
@@ -159,10 +159,10 @@ class vCalendar extends vComponent {
   /**
    * Update the attendees of this VEVENT/VTODO
    * @param string $email The e-mail address of the attendee to be updated.
-   * @param vProperty $statusProperty A replacement property. 
+   * @param myProperty $statusProperty A replacement property. 
    */
-  function UpdateAttendeeStatus( $email, vProperty $statusProperty ) {
-    foreach($this->components AS $ck => $v ) {
+  function UpdateAttendeeStatus( $email, myProperty $statusProperty ) {
+    foreach($this->GetComponents() AS $ck => $v ) {
       if ($v->GetType() == 'VEVENT' || $v->GetType() == 'VTODO' ) {
         $new_attendees = array();
         foreach( $v->properties AS $p ) {
@@ -186,11 +186,11 @@ class vCalendar extends vComponent {
  
   /**
    * Update the ORGANIZER of this VEVENT/VTODO
-   * @param vProperty $statusProperty A replacement property. 
+   * @param myProperty $statusProperty A replacement property. 
    */
-  function UpdateOrganizerStatus( vProperty $statusProperty ) {
+  function UpdateOrganizerStatus( myProperty $statusProperty ) {
     $this->rendered = null;
-    foreach($this->components AS $ck => $v ) {
+    foreach($this->GetComponents() AS $ck => $v ) {
       if ($v->GetType() == 'VEVENT' || $v->GetType() == 'VTODO' ) {
         foreach( $v->properties AS $pk => $p ) {
           if ( $p->Name() == 'ORGANIZER' ) {
@@ -343,7 +343,7 @@ class vCalendar extends vComponent {
     $this->MaskComponents(array( 'VTIMEZONE'=>1, 'VEVENT'=>1, 'VTODO'=>1, 'VJOURNAL'=>1 ), false);
     $this->MaskProperties($keep_properties, $resource_components );
     if ( isset($this->rendered) ) unset($this->rendered);
-    foreach( $this->components AS $comp ) {
+    foreach( $this->GetComponents() AS $comp ) {
       if ( isset($resource_components[$comp->GetType()] ) ) {
         if ( isset($comp->rendered) ) unset($comp->rendered);
         $comp->AddProperty( 'SUMMARY', translate('Busy') );
@@ -368,7 +368,7 @@ class vCalendar extends vComponent {
     if ( isset($iTIP->rendered) ) unset($iTIP->rendered);
     if ( !empty($attendee_value) ) {
       $iTIP->attendees = array();
-      foreach( $iTIP->components AS $comp ) {
+      foreach( $iTIP->GetComponents() AS $comp ) {
         if ( isset($resource_components[$comp->type] ) ) {
           foreach( $comp->properties AS $k=> $property ) {
             switch( $property->Name() ) {
@@ -408,7 +408,7 @@ class vCalendar extends vComponent {
    */
   function SetUID( $newUid ) {
     if ( empty($this->primary_component) ) return;
-    $this->primary_component->SetProperties( array( new vProperty('UID', $newUid) ), 'UID');
+    $this->primary_component->SetProperties( array( new myProperty('UID', $newUid) ), 'UID');
   }
   
 }

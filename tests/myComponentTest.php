@@ -407,7 +407,7 @@ EOSIMPLEDATA1;
 
 
 
-    function testRenderCreated(){
+    function te2stRenderCreated(){
 
         $component = new vComponent("BEGIN:VCALENDAR");
         $component->AddProperty("SUMARY", "12234567890122345678901223456789012234567890122345678901223467890122345678901223456789012");

@@ -805,7 +805,7 @@ class iCalComponent {
   }
 
   function InternalRender($restricted_properties = null){
-      $this->Render($restricted_properties);
+      return $this->Render($restricted_properties);
   }
 
 
@@ -826,7 +826,7 @@ class iCalComponent {
       }
     }
     foreach( $this->components AS $v ) {   $rendered .= $v->Render();  }
-    $rendered .= "END:$this->type\r\n";
+    $rendered .= "END:$this->type";
 
     $rendered = preg_replace('{(?<!\r)\n}', "\r\n", $rendered);
     if ( $unrestricted ) $this->rendered = $rendered;

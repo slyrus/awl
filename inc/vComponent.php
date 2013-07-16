@@ -1,1 +1,1 @@
-/home/milan/projects/awl/inc/vComponent2.php
+vComponent2.php

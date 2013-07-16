@@ -4,7 +4,7 @@
 *
 * When parsed the underlying structure is roughly as follows:
 *
-*   vCalendar( array(vComponent), array(myProperty), array(vTimezone) )
+*   vCalendar( array(vComponent), array(vProperty), array(vTimezone) )
 *
 * with the TIMEZONE data still currently included in the component array (likely
 * to change in the future) and the timezone array only containing vComponent objects
@@ -109,7 +109,7 @@ class vCalendar extends vComponent {
 
   /**
    * Get the organizer of this VEVENT/VTODO
-   * @return myProperty The Organizer property.
+   * @return vProperty The Organizer property.
    */
   function GetOrganizer() {
     if ( !isset($this->organizer) ) {
@@ -127,7 +127,7 @@ class vCalendar extends vComponent {
   
   /**
    * Get the schedule-agent from the organizer
-   * @return myProperty The schedule-agent parameter
+   * @return vProperty The schedule-agent parameter
    */
   function GetScheduleAgent() {
     if ( !isset($this->schedule_agent) ) $this->GetOrganizer();
@@ -159,9 +159,9 @@ class vCalendar extends vComponent {
   /**
    * Update the attendees of this VEVENT/VTODO
    * @param string $email The e-mail address of the attendee to be updated.
-   * @param myProperty $statusProperty A replacement property. 
+   * @param vProperty $statusProperty A replacement property. 
    */
-  function UpdateAttendeeStatus( $email, myProperty $statusProperty ) {
+  function UpdateAttendeeStatus( $email, vProperty $statusProperty ) {
     foreach($this->GetComponents() AS $ck => $v ) {
       if ($v->GetType() == 'VEVENT' || $v->GetType() == 'VTODO' ) {
         $new_attendees = array();
@@ -186,9 +186,9 @@ class vCalendar extends vComponent {
  
   /**
    * Update the ORGANIZER of this VEVENT/VTODO
-   * @param myProperty $statusProperty A replacement property. 
+   * @param vProperty $statusProperty A replacement property. 
    */
-  function UpdateOrganizerStatus( myProperty $statusProperty ) {
+  function UpdateOrganizerStatus( vProperty $statusProperty ) {
     $this->rendered = null;
     foreach($this->GetComponents() AS $ck => $v ) {
       if ($v->GetType() == 'VEVENT' || $v->GetType() == 'VTODO' ) {
@@ -408,7 +408,7 @@ class vCalendar extends vComponent {
    */
   function SetUID( $newUid ) {
     if ( empty($this->primary_component) ) return;
-    $this->primary_component->SetProperties( array( new myProperty('UID', $newUid) ), 'UID');
+    $this->primary_component->SetProperties( array( new vProperty('UID', $newUid) ), 'UID');
   }
   
 }

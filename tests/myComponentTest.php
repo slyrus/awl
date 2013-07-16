@@ -93,7 +93,7 @@ EOSIMPLEDATA1;
 
         $property = $component->GetProperty("VERSION");
         $this->assertNotNull($property);
-        $this->assertInstanceOf('myProperty', $property);
+        $this->assertInstanceOf('vProperty', $property);
     }
 
     function testGetPropertyAndChange(){
@@ -104,7 +104,7 @@ EOSIMPLEDATA1;
         $property = $component->GetProperty("VERSION");
         $this->assertTrue($component->isValid());
         $this->assertNotNull($property);
-        $this->assertInstanceOf('myProperty', $property);
+        $this->assertInstanceOf('vProperty', $property);
         $this->assertTrue($component->isValid());
         $property->Name("ahoj");
         $this->assertFalse($component->isValid());
@@ -211,7 +211,7 @@ EOSIMPLEDATA1;
         $data = $this->getData('tests/data/inner_valarmdata.test');
         $component = new vComponent($data);
 
-        $property = new myProperty('HELLO');
+        $property = new vProperty('HELLO');
 
         $this->assertEquals(4, $component->propertiesCount());
         $component->AddProperty($property);
@@ -391,9 +391,9 @@ EOSIMPLEDATA1;
         //$lines = new HeapLines((new bigtestdata)->testdata2);
         $component = new vComponent("BEGIN:VCALENDAR\nEND:VCALENDAR");
 
-        $newcomponent = new myProperty("VEVENT");
-        $newcomponent2 = new myProperty("MASK");
-        $newcomponent3 = new myProperty("VEVENT");
+        $newcomponent = new vProperty("VEVENT");
+        $newcomponent2 = new vProperty("MASK");
+        $newcomponent3 = new vProperty("VEVENT");
 
         $component->AddProperty($newcomponent);
         $component->AddProperty($newcomponent2);

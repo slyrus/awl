@@ -9,7 +9,7 @@
 
 require_once 'inc/vComponent.php';
 
-class myPropertyTest extends PHPUnit_Framework_TestCase {
+class vPropertyTest extends PHPUnit_Framework_TestCase {
 
     function getData($filename){
         $file = fopen($filename, 'r');
@@ -78,14 +78,14 @@ class myPropertyTest extends PHPUnit_Framework_TestCase {
 
 
     public function testPropertyRenderFromString(){
-        $property = new myProperty('PRODID:-//davical.org//NONSGML AWL Calendar//EN');
+        $property = new vProperty('PRODID:-//davical.org//NONSGML AWL Calendar//EN');
 
         $rendered = $property->Render();
         $this->assertStringStartsWith('PRODID:-//davical.org//NONSGML AWL Calendar//EN', $rendered);
     }
 
     public function testPropertyRenderFromParams(){
-        $property = new myProperty();
+        $property = new vProperty();
         $property->Name('PRODID');
         $property->Value('-//davical.org//NONSGML AWL Calendar//EN');
         $rendered = $property->Render();
@@ -93,7 +93,7 @@ class myPropertyTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testPropertyRenderFromStringChangeName(){
-        $property = new myProperty('PRODID:-//davical.org//NONSGML AWL Calendar//EN');
+        $property = new vProperty('PRODID:-//davical.org//NONSGML AWL Calendar//EN');
 
         $property->Name('VERSION');
 
@@ -102,7 +102,7 @@ class myPropertyTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetParameterValue(){
-        $property = new myProperty();
+        $property = new vProperty();
         $property->SetParameterValue("hello", "world");
 
 
@@ -111,7 +111,7 @@ class myPropertyTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetParameterValueRender(){
-        $property = new myProperty();
+        $property = new vProperty();
         $property->Name("universe");
         $property->SetParameterValue("hello", "world");
 

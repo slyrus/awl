@@ -804,6 +804,10 @@ class iCalComponent {
     return $confidential;
   }
 
+  function InternalRender($restricted_properties = null){
+      $this->Render($restricted_properties);
+  }
+
 
   /**
   *  Renders the component, possibly restricted to only the listed properties

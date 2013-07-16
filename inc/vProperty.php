@@ -6,7 +6,7 @@ require_once('XMLElement.php');
  *
  * @package awl
  */
-class myProperty extends vObject {
+class vProperty extends vObject {
     /**#@+
      * @access private
      */
@@ -179,7 +179,7 @@ class myProperty extends vObject {
                     $this->parameters[$name] = $value;
             }
         }
-//    dbg_error_log('myComponent', " myProperty::ParseFrom found '%s' = '%s' with %d parameters", $this->name, substr($this->content,0,200), count($this->parameters) );
+//    dbg_error_log('myComponent', " vProperty::ParseFrom found '%s' = '%s' with %d parameters", $this->name, substr($this->content,0,200), count($this->parameters) );
     }
 
 
@@ -213,7 +213,7 @@ class myProperty extends vObject {
         if ( $newname != null ) {
             $this->name = strtoupper($newname);
             if ( $this->isValid() ) $this->invalidate();
-//      dbg_error_log('myComponent', " myProperty::Name(%s)", $this->name );
+//      dbg_error_log('myComponent', " vProperty::Name(%s)", $this->name );
         } else if(!isset($this->name)){
             $this->ParseFromIterator();
         }
@@ -329,11 +329,11 @@ class myProperty extends vObject {
             foreach( $this->parameters AS $k => $v ) {
                 if ( is_array($v) ) {
                     foreach( $v AS $vv ) {
-                        $rendered .= sprintf( ';%s=%s', $k, myProperty::escapeParameter($vv) );
+                        $rendered .= sprintf( ';%s=%s', $k, vProperty::escapeParameter($vv) );
                     }
                 }
                 else {
-                    $rendered .= sprintf( ';%s=%s', $k, myProperty::escapeParameter($v) );
+                    $rendered .= sprintf( ';%s=%s', $k, vProperty::escapeParameter($v) );
                 }
             }
         }
@@ -414,12 +414,12 @@ class myProperty extends vObject {
      *
      * @param array $filter An array of XMLElement defining the filter
      *
-     * @return boolean Whether or not this myProperty passes the test
+     * @return boolean Whether or not this vProperty passes the test
      */
     function TestFilter( $filters ) {
         foreach( $filters AS $k => $v ) {
             $tag = $v->GetNSTag();
-//      dbg_error_log( 'vCalendar', "myProperty:TestFilter: '%s'='%s' => '%s'", $this->name, $tag, $this->content );
+//      dbg_error_log( 'vCalendar', "vProperty:TestFilter: '%s'='%s' => '%s'", $this->name, $tag, $this->content );
             switch( $tag ) {
                 case 'urn:ietf:params:xml:ns:caldav:is-defined':
                 case 'urn:ietf:params:xml:ns:carddav:is-defined':
@@ -454,7 +454,7 @@ class myProperty extends vObject {
                     break;
 
                 default:
-                    dbg_error_log( 'myComponent', ' myProperty::TestFilter: unhandled tag "%s"', $tag );
+                    dbg_error_log( 'myComponent', ' vProperty::TestFilter: unhandled tag "%s"', $tag );
                     break;
             }
         }
@@ -468,7 +468,7 @@ class myProperty extends vObject {
     function TestParamFilter( $filters, $parameter_value ) {
         foreach( $filters AS $k => $v ) {
             $subtag = $v->GetNSTag();
-//      dbg_error_log( 'vCalendar', "myProperty:TestParamFilter: '%s'='%s' => '%s'", $this->name, $subtag, $parameter_value );
+//      dbg_error_log( 'vCalendar', "vProperty:TestParamFilter: '%s'='%s' => '%s'", $this->name, $subtag, $parameter_value );
             switch( $subtag ) {
                 case 'urn:ietf:params:xml:ns:caldav:is-defined':
                 case 'urn:ietf:params:xml:ns:carddav:is-defined':
@@ -497,7 +497,7 @@ class myProperty extends vObject {
                     break;
 
                 default:
-                    dbg_error_log( 'myComponent', ' myProperty::TestParamFilter: unhandled tag "%s"', $tag );
+                    dbg_error_log( 'myComponent', ' vProperty::TestParamFilter: unhandled tag "%s"', $tag );
                     break;
             }
         }

@@ -47,4 +47,32 @@ class myCalendarTest extends PHPUnit_Framework_TestCase {
         $mycalendar->Render();
     }
 
+
+    function test2(){
+
+        $data = explode("\n",$this->getData('tests/data/0244-MOZ-POST-FB.test'));
+
+        $data = implode($data, "\r\n");
+
+        $mycalendar = new vCalendar($data);
+//        foreach($mycalendar->GetComponents() as $comp){
+//            $next = $comp->GetComponents();
+//            if(isset($next)){
+//                foreach($next as $comp2){
+//                    $comp2->GetComponents();
+//                    $comp2->GetProperties();
+//                }
+//            }
+//
+//            $comp->GetProperties();
+//        }
+        //$test = $mycalendar->Render();
+        $property = $mycalendar->GetProperties()[0];
+        $value = $property->Value();
+        $name = $property->Name();
+
+
+        $this->assertStringEndsNotWith("\r", $value);
+    }
+
 }

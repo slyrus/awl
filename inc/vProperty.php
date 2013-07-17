@@ -118,6 +118,7 @@ class vProperty extends vObject {
         // temporady like string
         //$this->rendered = (strlen($propstring) < 73 ? $propstring : null);  // Only pre-rendered if we didn't unescape it
 
+        // TODO: add "\r" to preg_replace for contnent
         $unescaped = preg_replace( '{\\\\[nN]}', "\n", $unescaped);
 
         // Split into two parts on : which is not preceded by a \, or within quotes like "str:ing".
@@ -143,6 +144,12 @@ class vProperty extends vObject {
         // in case if the name was set manualy content by function Valued
         // -> don't reset it by $rendered data
         if(!isset($this->content)){
+            // TODO: add "\r" to preg_replace at begin
+            $len = strlen($possiblecontent);
+            if($len > 0 && "\r" == $possiblecontent[$len-1]){
+
+                $possiblecontent = substr($possiblecontent, 0, $len-1);
+            }
             $this->content = $possiblecontent;
         }
 

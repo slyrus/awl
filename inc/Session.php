@@ -828,16 +828,22 @@ EOTEXT;
       * The authentication should have happened in the server, and we should accept it if so.
       */
       if ( is_array($c->authenticate_hook['server_auth_type']) ) {
-        if ( in_array($_SERVER['AUTH_TYPE'], $c->authenticate_hook['server_auth_type'])) {
-          $this->Login($_SERVER['REMOTE_USER'], "", true);  // Password will not be checked.
+        if ( in_array( strtolower($_SERVER['AUTH_TYPE']), array_map('strtolower', $c->authenticate_hook['server_auth_type']) )) {
+          if (isset($_SERVER["REMOTE_USER"]))
+            $this->Login($_SERVER['REMOTE_USER'], "", true);  // Password will not be checked.
+          else
+            $this->Login($_SERVER['REDIRECT_REMOTE_USER'], "", true);  // Password will not be checked.
         }
       }
-      else if ( $c->authenticate_hook['server_auth_type'] == $_SERVER['AUTH_TYPE'] ) {
+      else if ( strtolower($c->authenticate_hook['server_auth_type']) == strtolower($_SERVER['AUTH_TYPE']) ) {
         /**
         * Perhaps this 'split' is not a good idea though.  People may want to use the
         * full ID as the username.  A further option may be desirable.
         */
-        list($username) = explode('@', $_SERVER['REMOTE_USER']);
+        if (isset($_SERVER["REMOTE_USER"]))
+          list($username) = explode('@', $_SERVER['REMOTE_USER']);
+        else
+          list($username) = explode('@', $_SERVER['REDIRECT_REMOTE_USER']);
         $this->Login($username, "", true);  // Password will not be checked.
       }
     }

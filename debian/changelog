@@ -1,3 +1,9 @@
+awl (0.55-1) unstable; urgency=low
+
+  * New upstream release (closes: #703381).
+
+ -- 
+
 awl (0.54-1) unstable; urgency=low
 
   * New upstream release.

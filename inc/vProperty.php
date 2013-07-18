@@ -356,7 +356,16 @@ class vProperty extends vObject {
     function Render( $force = false ) {
         // If we still have the string it was parsed in from, it hasn't been screwed with
         // and we can just return that without modification.
-        if ( $force === false && isset($this->rendered) ) return $this->rendered;
+        if ( $force === false && $this->isValid() && isset($this->rendered) && strlen($this->rendered) < 73 ) {
+            return $this->rendered;
+        }
+
+        // in case one of the memberts doesn't set -> try parse from rendered
+        if(!isset($this->name) || !isset($this->content) || !isset($this->parameters)) {
+
+            $this->ParseFromIterator();
+
+        }
 
         $property = preg_replace( '/[;].*$/', '', $this->name );
         $escaped = $this->content;

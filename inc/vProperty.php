@@ -259,7 +259,7 @@ class vProperty extends vObject {
             foreach( $newparams AS $k => $v ) {
                 $this->parameters[strtoupper($k)] = $v;
             }
-            if ( $this->isValidate() ) $this->invalidate();
+            if ( $this->isValid() ) $this->invalidate();
         } else if(!isset($this->parameters)){
             $this->ParseFromIterator();
         }
@@ -315,7 +315,8 @@ class vProperty extends vObject {
         if ( $this->isValid() ) {
             $this->invalidate();
         }
-
+            //tests/regression-suite/0831-Spec-RRULE-1.result
+        //./dav_test --dsn 'davical_milan;port=5432' --webhost 127.0.0.1 --althost altcaldav --suite 'regression-suite' --case 'tests/regression-suite/0831-Spec-RRULE-1'
         $this->parameters[strtoupper($name)] = $value;
 //    dbg_error_log('PUT', $this->name.$this->RenderParameters().':'.$this->content );
     }
@@ -355,16 +356,7 @@ class vProperty extends vObject {
     function Render( $force = false ) {
         // If we still have the string it was parsed in from, it hasn't been screwed with
         // and we can just return that without modification.
-        if ( $force === false && $this->isValid() && isset($this->rendered) && strlen($this->rendered) < 73 ) {
-            return $this->rendered;
-        }
-
-        // in case one of the memberts doesn't set -> try parse from rendered
-        if(!isset($this->name) || !isset($this->content) || !isset($this->parameters)) {
-
-            $this->ParseFromIterator();
-
-        }
+        if ( $force === false && isset($this->rendered) ) return $this->rendered;
 
         $property = preg_replace( '/[;].*$/', '', $this->name );
         $escaped = $this->content;

@@ -805,7 +805,9 @@ class iCalComponent {
   }
 
   function InternalRender($restricted_properties = null){
-      return $this->Render($restricted_properties);
+      // substr - remove new line of end, because new line
+      // are handled in vComponent::InternalRender
+      return substr($this->Render($restricted_properties), 0 , -2);
   }
 
 
@@ -826,7 +828,7 @@ class iCalComponent {
       }
     }
     foreach( $this->components AS $v ) {   $rendered .= $v->Render();  }
-    $rendered .= "END:$this->type";
+    $rendered .= "END:$this->type\r\n";
 
     $rendered = preg_replace('{(?<!\r)\n}', "\r\n", $rendered);
     if ( $unrestricted ) $this->rendered = $rendered;

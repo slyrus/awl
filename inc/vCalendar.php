@@ -66,15 +66,19 @@ class vCalendar extends vComponent {
     }
     else {
       parent::__construct($content);
-      foreach( $this->GetComponents() AS $k => $comp ) {
-        if ( $comp->GetType() == 'VTIMEZONE' ) {
-          $this->AddTimeZone($comp, true);
-        }
-        else if ( empty($this->contained_type) ) {
-          $this->contained_type = $comp->GetType();
-          $this->primary_component = $comp;
-        }
+      $componets = $this->GetComponents();
+      if(isset($components) && count($components) > 0){
+          foreach( $components AS $k => $comp ) {
+              if ( $comp->GetType() == 'VTIMEZONE' ) {
+                  $this->AddTimeZone($comp, true);
+              }
+              else if ( empty($this->contained_type) ) {
+                  $this->contained_type = $comp->GetType();
+                  $this->primary_component = $comp;
+              }
+          }
       }
+
       if ( !isset($this->contained_type) && !empty($this->timezones) )
         $this->contained_type = 'VTIMEZONE';
     }

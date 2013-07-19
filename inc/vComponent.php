@@ -133,8 +133,16 @@
         }
 
 
-
-
+        /**
+         * fill arrays with components and properties if they are empty.
+         *
+         * basicaly the object are just pointer to memory with input data
+         * (iterator with seek address on start and end)
+         * but when you want get information of any components
+         * or properties is necessary call this function first
+         *
+         * @see GetComponents(), ComponentsCount(), GetProperties(), PropertiesCount()
+         */
         function explode(){
             if((!isset($this->properties) || !isset($this->components)) && $this->isValid()){
                 unset($this->properties);
@@ -220,7 +228,9 @@
 //                    $prstart = $lines->getSwheretartLineOnHeap();
 //                    $prend =
 //$this->properties[] = new vProperty("AHOJ");
-                        $this->properties[] = new vProperty(null, $this->getMaster(), $line, $end);
+                        $parameters = preg_split( '(:|;)', $line);
+                        $possiblename = strtoupper(array_shift( $parameters ));
+                        $this->properties[] = new vProperty($possiblename, $this->getMaster(), $iterator, $end);
                         //echo $this->key . ' property line' . "[$prstart,$prend]<br>";
 
                     }
@@ -362,7 +372,13 @@
          * array associating property names with true values: array( 'PROPERTY' => true, 'PROPERTY2' => true )
          */
         function GetProperties( $type = null ) {
-            $this->explode();
+
+            // the properties in base are with name
+            // it was setted in parseFrom(&interator)
+            if(!isset($this->properties)){
+                $this->explode();
+            }
+
             $properties = array();
             $testtypes = (gettype($type) == 'string' ? array( $type => true ) : $type );
             foreach( $this->properties AS $k => $v ) {

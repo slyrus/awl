@@ -353,8 +353,8 @@ class iCalComponent {
   */
   function VCalendar( $extra_properties = null ) {
     $this->SetType('VCALENDAR');
-    $this->AddProperty('VERSION', '2.0');
     $this->AddProperty('PRODID', '-//davical.org//NONSGML AWL Calendar//EN');
+    $this->AddProperty('VERSION', '2.0');
     $this->AddProperty('CALSCALE', 'GREGORIAN');
     if ( is_array($extra_properties) ) {
       foreach( $extra_properties AS $k => $v ) {

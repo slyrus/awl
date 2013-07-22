@@ -804,9 +804,17 @@ class iCalComponent {
     return $confidential;
   }
 
-  function InternalRender($restricted_properties = null){
+    /**
+     * this function supstitute function from vCalendar::RenderWithoutWrap
+     * NOTE: vCalendar::RenderWithoutWrap - return string without \r\n on end
+     *          thats here removed the tail of iCalendar::Render
+     *          which return \r\n on end
+     * @param null $restricted_properties
+     * @return string - rendered string
+     */
+    function RenderWithoutWrap($restricted_properties = null){
       // substr - remove new line of end, because new line
-      // are handled in vComponent::InternalRender
+      // are handled in vComponent::RenderWithoutWrap
       return substr($this->Render($restricted_properties), 0 , -2);
   }
 

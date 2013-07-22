@@ -686,15 +686,21 @@
         }
 
 
-        function InternalRender($restricted_properties = null, $force_rendering = false){
+        /**
+         * Render vComponent without wrap lines
+         * @param null $restricted_properties
+         * @param bool $force_rendering
+         * @return string
+         */
+        protected function RenderWithoutWrap($restricted_properties = null, $force_rendering = false){
             $unroledComponents = isset($this->components);
             $rendered = vComponent::KEYBEGIN . $this->type . "\n";
 
 
             if($this->isValid()){
-                $rendered .= $this->InternalRenderUnchanged($unroledComponents);
+                $rendered .= $this->RenderWithoutWrapFromIterator($unroledComponents);
             } else {
-                $rendered .= $this->InternalRenderChanged();
+                $rendered .= $this->RenderWithoutWrapFromObjects();
             }
 
             if($unroledComponents){
@@ -702,7 +708,7 @@
                 foreach($this->components as $component){
                     //$component->explode();
                     //$count++;
-                    $component_render = $component->InternalRender();
+                    $component_render = $component->RenderWithoutWrap();
                     if(strlen($component_render) > 0){
                         $rendered .= $component_render . "\r\n";
                     }
@@ -715,7 +721,11 @@
             return $rendered . vComponent::KEYEND . $this->type;
         }
 
-        function InternalRenderChanged(){
+        /**
+         * Let render property by property
+         * @return string
+         */
+        protected function RenderWithoutWrapFromObjects(){
             $rendered = '';
             if(isset($this->properties)){
                 foreach( $this->properties AS $k => $v ) {
@@ -729,10 +739,16 @@
             return $rendered;
         }
 
-        function InternalRenderUnchanged($unroledComponents){
+        /**
+         * take source data in Iterator and recreate to string
+         * @param boolean $unroledComponents - have any components
+         * @return string - rendered object
+         */
+        protected function RenderWithoutWrapFromIterator($unroledComponents){
             $this->rewind();
             $rendered = '';
             $lentype = 0;
+
             if(isset($this->type)){
                 $lentype = strlen($this->type);
             }
@@ -751,6 +767,8 @@
                         $this->type = $type;
                         $lentype = strlen($this->type);
                     } else if(strncmp($type, $this->type, $lentype) != 0){
+                        // dont render line which is owned
+                        // by inner commponent -> inner component *BEGIN*
                         if($unroledComponents){
                             $inInnerObject++;
                         } else {
@@ -763,10 +781,13 @@
                     if($posEnd !== false && $posEnd == 0){
                         $thisEnd = substr($line, vComponent::KEYENDLENGTH);
                         if(strncmp($thisEnd, $this->type, $lentype) == 0){
+                            // Current object end
                             $this->seekEnd = $seek;
                             //$iterator->next();
                             break;
                         }else if($unroledComponents){
+                            // dont render line which is owned
+                            // by inner commponent -> inner component *END*
                             $inInnerObject--;
                         } else {
                             $rendered .= $line;
@@ -784,46 +805,16 @@
 
         }
 
-        function Render($restricted_properties = null, $force_rendering = false){
-            return $this->WrapComponent($this->InternalRender());
-            //return $this->InternalRender($restricted_properties, $force_rendering);
-        }
 
         /**
-         *  Renders the component, possibly restricted to only the listed properties
+         * render object to string with wraped lines
+         * @param null $restricted_properties
+         * @param bool $force_rendering
+         * @return string - rendered object
          */
-        function RenderOld( $restricted_properties = null, $force_rendering = false ) {
-            $this->explode();
-            $unrestricted = (!isset($restricted_properties) || count($restricted_properties) == 0);
-
-            if ( !$force_rendering && isset($this->heapLines) && $this->isValid() ){
-                $prerendered = $this->heapLines->render();
-                return $this->WrapComponent($prerendered);
-            }
-
-
-            $rendered = "BEGIN:$this->type\r\n";
-            if(isset($this->properties)){
-                foreach( $this->properties AS $k => $v ) {
-                    if ( method_exists($v, 'Render') ) {
-                        if ( $unrestricted || isset($restricted_properties[$v]) ) $rendered .= $v->Render() . "\r\n";
-                    }
-                }
-            }
-
-            if(isset($this->components)){
-                foreach( $this->components AS $v ) {
-                    $rendered .= $v->Render( $restricted_properties, $force_rendering );
-                }
-            }
-
-            $rendered .= "END:$this->type\r\n";
-
-
-            $rendered = preg_replace('{(?<!\r)\n}', "\r\n", $rendered);
-            if ( $unrestricted ) $this->rendered = $rendered;
-
-            return $rendered;
+        function Render($restricted_properties = null, $force_rendering = false){
+            return $this->WrapComponent($this->RenderWithoutWrap($restricted_properties, $force_rendering));
+            //return $this->InternalRender($restricted_properties, $force_rendering);
         }
 
         function isValid(){

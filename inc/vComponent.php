@@ -460,7 +460,7 @@
                 foreach( $this->properties AS $k => $v ) {
                     if ( isset($testtypes[$v->Name()]) && $testtypes[$v->Name()] ) {
                         unset($this->properties[$k]);
-                        if ( isset($this->rendered) ) unset($this->rendered);
+
                     }
                 }
                 $this->properties = array_values($this->properties);

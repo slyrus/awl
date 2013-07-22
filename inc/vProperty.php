@@ -101,7 +101,7 @@ class vProperty extends vObject {
             unset($this->seek);
 
         }
-        unset($this->rendered);
+
     }
 
 
@@ -356,15 +356,13 @@ class vProperty extends vObject {
     function Render( $force = false ) {
         // If we still have the string it was parsed in from, it hasn't been screwed with
         // and we can just return that without modification.
-        if ( $force === false && $this->isValid() && isset($this->rendered) && strlen($this->rendered) < 73 ) {
-            return $this->rendered;
-        }
+//        if ( $force === false && $this->isValid() && isset($this->rendered) && strlen($this->rendered) < 73 ) {
+//            return $this->rendered;
+//        }
 
         // in case one of the memberts doesn't set -> try parse from rendered
         if(!isset($this->name) || !isset($this->content) || !isset($this->parameters)) {
-
             $this->ParseFromIterator();
-
         }
 
         $property = preg_replace( '/[;].*$/', '', $this->name );
@@ -395,18 +393,20 @@ class vProperty extends vObject {
                 $escaped = preg_replace( "/([,;])/", '\\\\$1', $escaped);
         }
 
+        $rendered = '';
+
         $property = sprintf( "%s%s:", $this->name, $this->RenderParameters() );
         if ( (strlen($property) + strlen($escaped)) <= 72 ) {
-            $this->rendered = $property . $escaped;
+            $rendered = $property . $escaped;
         }
         else if ( (strlen($property) <= 72) && (strlen($escaped) <= 72) ) {
-            $this->rendered = $property . "\r\n " . $escaped;
+            $rendered = $property . "\r\n " . $escaped;
         }
         else {
-            $this->rendered = preg_replace( '/(.{72})/u', '$1'."\r\n ", $property.$escaped );
+            $rendered = preg_replace( '/(.{72})/u', '$1'."\r\n ", $property.$escaped );
         }
 //    trace_bug( 'Re-rendered "%s" property.', $this->name );
-        return $this->rendered;
+        return $rendered;
     }
 
 

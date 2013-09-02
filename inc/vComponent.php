@@ -116,7 +116,8 @@
 //            unset($arrayData);
 //            unset($lines);
 
-            $this->iterator = (new ArrayObject(explode(PHP_EOL, $plain2)))->getIterator();
+            $arrayObject = new ArrayObject(explode(PHP_EOL, $plain2));
+            $this->iterator = $arrayObject->getIterator();
             unset($plain2);
             //$this->initFromIterator($this->iterator);
             //$this->iterator = new HeapLines($plain);

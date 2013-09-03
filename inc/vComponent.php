@@ -710,17 +710,17 @@
          * @return string
          */
         protected function RenderWithoutWrap($restricted_properties = null, $force_rendering = false){
-            $unroledComponents = isset($this->components);
-            $rendered = vComponent::KEYBEGIN . $this->type . "\n";
+            $unrolledComponents = isset($this->components);
+            $rendered = vComponent::KEYBEGIN . $this->type . "\r\n";
 
 
             if($this->isValid()){
-                $rendered .= $this->RenderWithoutWrapFromIterator($unroledComponents);
+                $rendered .= $this->RenderWithoutWrapFromIterator($unrolledComponents);
             } else {
                 $rendered .= $this->RenderWithoutWrapFromObjects();
             }
 
-            if($unroledComponents){
+            if($unrolledComponents){
                 //$count = 0;
                 foreach($this->components as $component){
                     //$component->explode();
@@ -761,7 +761,7 @@
          * @param boolean $unroledComponents - have any components
          * @return string - rendered object
          */
-        protected function RenderWithoutWrapFromIterator($unroledComponents){
+        protected function RenderWithoutWrapFromIterator($unrolledComponents){
             $this->rewind();
             $rendered = '';
             $lentype = 0;
@@ -773,7 +773,7 @@
             $iterator = $this->iterator;
             $inInnerObject = 0;
             do {
-                $line = $iterator->current() . "\n";
+                $line = $iterator->current() . "\r\n";
                 $seek = $iterator->key();
 
                 $posStart = strpos($line, vComponent::KEYBEGIN);
@@ -786,7 +786,7 @@
                     } else if(strncmp($type, $this->type, $lentype) != 0){
                         // dont render line which is owned
                         // by inner commponent -> inner component *BEGIN*
-                        if($unroledComponents){
+                        if($unrolledComponents){
                             $inInnerObject++;
                         } else {
                             $rendered .= $line ;
@@ -802,7 +802,7 @@
                             $this->seekEnd = $seek;
                             //$iterator->next();
                             break;
-                        }else if($unroledComponents){
+                        }else if($unrolledComponents){
                             // dont render line which is owned
                             // by inner commponent -> inner component *END*
                             $inInnerObject--;
@@ -810,7 +810,7 @@
                             $rendered .= $line;
                         }
 
-                    } else if($inInnerObject === 0 || !$unroledComponents){
+                    } else if($inInnerObject === 0 || !$unrolledComponents){
                         $rendered .= $line;
                     }
                 }

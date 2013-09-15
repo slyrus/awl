@@ -116,7 +116,8 @@
 //            unset($arrayData);
 //            unset($lines);
 
-            $this->iterator = (new ArrayObject(explode(PHP_EOL, $plain2)))->getIterator();
+            $arrayObject = new ArrayObject(explode(PHP_EOL, $plain2));
+            $this->iterator = $arrayObject->getIterator();
             unset($plain2);
             //$this->initFromIterator($this->iterator);
             //$this->iterator = new HeapLines($plain);
@@ -711,17 +712,17 @@
          * @return string
          */
         protected function RenderWithoutWrap($restricted_properties = null, $force_rendering = false){
-            $unroledComponents = isset($this->components);
-            $rendered = vComponent::KEYBEGIN . $this->type . "\n";
+            $unrolledComponents = isset($this->components);
+            $rendered = vComponent::KEYBEGIN . $this->type . "\r\n";
 
 
             if($this->isValid()){
-                $rendered .= $this->RenderWithoutWrapFromIterator($unroledComponents);
+                $rendered .= $this->RenderWithoutWrapFromIterator($unrolledComponents);
             } else {
                 $rendered .= $this->RenderWithoutWrapFromObjects();
             }
 
-            if($unroledComponents){
+            if($unrolledComponents){
                 //$count = 0;
                 foreach($this->components as $component){
                     //$component->explode();
@@ -762,7 +763,7 @@
          * @param boolean $unroledComponents - have any components
          * @return string - rendered object
          */
-        protected function RenderWithoutWrapFromIterator($unroledComponents){
+        protected function RenderWithoutWrapFromIterator($unrolledComponents){
             $this->rewind();
             $rendered = '';
             $lentype = 0;
@@ -774,7 +775,7 @@
             $iterator = $this->iterator;
             $inInnerObject = 0;
             do {
-                $line = $iterator->current() . "\n";
+                $line = $iterator->current() . "\r\n";
                 $seek = $iterator->key();
 
                 $posStart = strpos($line, vComponent::KEYBEGIN);
@@ -787,7 +788,7 @@
                     } else if(strncmp($type, $this->type, $lentype) != 0){
                         // dont render line which is owned
                         // by inner commponent -> inner component *BEGIN*
-                        if($unroledComponents){
+                        if($unrolledComponents){
                             $inInnerObject++;
                         } else {
                             $rendered .= $line ;
@@ -803,7 +804,7 @@
                             $this->seekEnd = $seek;
                             //$iterator->next();
                             break;
-                        }else if($unroledComponents){
+                        }else if($unrolledComponents){
                             // dont render line which is owned
                             // by inner commponent -> inner component *END*
                             $inInnerObject--;
@@ -811,7 +812,7 @@
                             $rendered .= $line;
                         }
 
-                    } else if($inInnerObject === 0 || !$unroledComponents){
+                    } else if($inInnerObject === 0 || !$unrolledComponents){
                         $rendered .= $line;
                     }
                 }
@@ -849,6 +850,100 @@
             }
             return false;
         }
+
+ /**
+   * Test a PROP-FILTER or COMP-FILTER and return a true/false
+   * COMP-FILTER (is-defined | is-not-defined | (time-range?, prop-filter*, comp-filter*))
+   * PROP-FILTER (is-defined | is-not-defined | ((time-range | text-match)?, param-filter*))
+   *
+   * @param array $filter An array of XMLElement defining the filter
+   *
+   * @return boolean Whether or not this vComponent passes the test
+   */
+  function TestFilter( $filters ) {
+    foreach( $filters AS $k => $v ) {
+      $tag = $v->GetNSTag();
+//      dbg_error_log( 'vCalendar', ":TestFilter: '%s' ", $tag );
+      switch( $tag ) {
+        case 'urn:ietf:params:xml:ns:caldav:is-defined':
+        case 'urn:ietf:params:xml:ns:carddav:is-defined':
+          if ( count($this->properties) == 0 && count($this->components) == 0 ) return false;
+          break;
+        
+        case 'urn:ietf:params:xml:ns:caldav:is-not-defined':
+        case 'urn:ietf:params:xml:ns:carddav:is-not-defined':
+          if ( count($this->properties) > 0 || count($this->components) > 0 ) return false;
+          break;
+
+        case 'urn:ietf:params:xml:ns:caldav:comp-filter':
+        case 'urn:ietf:params:xml:ns:carddav:comp-filter':
+          $subcomponents = $this->GetComponents($v->GetAttribute('name'));
+          $subfilter = $v->GetContent();
+//          dbg_error_log( 'vCalendar', ":TestFilter: Found '%d' (of %d) subs of type '%s'",
+//                       count($subcomponents), count($this->components), $v->GetAttribute('name') );
+          $subtag = $subfilter[0]->GetNSTag(); 
+          if ( $subtag == 'urn:ietf:params:xml:ns:caldav:is-not-defined'
+          			 || $subtag == 'urn:ietf:params:xml:ns:carddav:is-not-defined' ) {
+            if ( count($properties) > 0 ) {
+//              dbg_error_log( 'vComponent', ":TestFilter: Wanted none => false" );
+              return false;
+            }
+          }
+          else if ( count($subcomponents) == 0 ) {
+            if ( $subtag == 'urn:ietf:params:xml:ns:caldav:is-defined'
+          			 || $subtag == 'urn:ietf:params:xml:ns:carddav:is-defined' ) {
+//              dbg_error_log( 'vComponent', ":TestFilter: Wanted some => false" );
+              return false;
+            }
+            else {
+//              dbg_error_log( 'vCalendar', ":TestFilter: Wanted something from missing sub-components => false" );
+              $negate = $subfilter[0]->GetAttribute("negate-condition");
+              if ( empty($negate) || strtolower($negate) != 'yes' ) return false;
+            }
+          }
+          else {
+            foreach( $subcomponents AS $kk => $subcomponent ) {
+              if ( ! $subcomponent->TestFilter($subfilter) ) return false;
+            }
+          }
+          break;
+
+        case 'urn:ietf:params:xml:ns:carddav:prop-filter':
+        case 'urn:ietf:params:xml:ns:caldav:prop-filter':
+          $subfilter = $v->GetContent();
+          $properties = $this->GetProperties($v->GetAttribute("name"));
+          dbg_error_log( 'vCalendar', ":TestFilter: Found '%d' props of type '%s'", count($properties), $v->GetAttribute('name') );
+          $subtag = $subfilter[0]->GetNSTag();
+          if ( $subtag == 'urn:ietf:params:xml:ns:caldav:is-not-defined'
+          			 || $subtag == 'urn:ietf:params:xml:ns:carddav:is-not-defined' ) {
+            if ( count($properties) > 0 ) {
+//              dbg_error_log( 'vCalendar', ":TestFilter: Wanted none => false" );
+              return false;
+            }
+          }
+          else if ( count($properties) == 0 ) {
+            if ( $subtag == 'urn:ietf:params:xml:ns:caldav:is-defined'
+            			 || $subtag == 'urn:ietf:params:xml:ns:carddav:is-defined' ) {
+//              dbg_error_log( 'vCalendar', ":TestFilter: Wanted some => false" );
+              return false;
+            }
+            else {
+//              dbg_error_log( 'vCalendar', ":TestFilter: Wanted '%s' from missing sub-properties => false", $subtag );
+              $negate = $subfilter[0]->GetAttribute("negate-condition");
+              if ( empty($negate) || strtolower($negate) != 'yes' ) return false;
+            }
+          }
+          else {
+            foreach( $properties AS $kk => $property ) {
+              if ( !$property->TestFilter($subfilter) ) return false;
+            }
+          }
+          break;
+      }
+    }
+    return true;
+  }
+
     }
 
-?>
+

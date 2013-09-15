@@ -512,4 +512,3 @@ class vProperty extends vObject {
         return true;
     }
 }
-?>

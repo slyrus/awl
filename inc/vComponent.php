@@ -414,8 +414,10 @@
                 if ( preg_match( '#^/(!?)([^/]+)$#', $therest, $matches ) ) {
                     $normmatch = ($matches[1] =='');
                     $proptest  = $matches[2];
-                    if(isset($this->properties)){
-                        foreach( $this->properties AS $k => $v ) {
+
+                    $thisproperties = $this->GetProperties();
+                    if(isset($thisproperties) && count($thisproperties) > 0){
+                        foreach( $thisproperties AS $k => $v ) {
                             if ( $proptest == '*' || (($v->Name() == $proptest) === $normmatch ) ) {
                                 $properties[] = $v;
                             }
@@ -427,7 +429,7 @@
                     /**
                      * There is more to the path, so we recurse into that sub-part
                      */
-                    foreach( $this->components AS $k => $v ) {
+                    foreach( $this->GetComponents() AS $k => $v ) {
                         $properties = array_merge( $properties, $v->GetPropertiesByPath($therest) );
                     }
                 }
@@ -437,7 +439,7 @@
                 /**
                  * Our input $path was not rooted, so we recurse further
                  */
-                foreach( $this->components AS $k => $v ) {
+                foreach( $this->GetComponents() AS $k => $v ) {
                     $properties = array_merge( $properties, $v->GetPropertiesByPath($path) );
                 }
             }

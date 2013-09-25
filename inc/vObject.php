@@ -15,10 +15,7 @@ abstract class vObject {
     protected $master;
 
     function __construct(&$master = null){
-        if(isset($master)){
-            $this->master = &$master;
-        }
-
+        $this->master = isset($master) ? $master : $this;
     }
 
 
@@ -40,7 +37,7 @@ abstract class vObject {
     }
 
     public function getMaster(){
-        return isset($this->master) ? $this->master : $this;
+        return $this->master;
     }
 
     /**

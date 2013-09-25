@@ -52,7 +52,29 @@ class AwlDBDialect {
 
   /**#@-*/
 
-
+  /**
+   * A PostgreSQL Date Format string suitable for returning HTTP (RFC2068) dates
+   * Preferred is "Sun, 06 Nov 1994 08:49:37 GMT" so we do that.
+   */
+  const HttpDateFormat = "'Dy, DD Mon IYYY HH24:MI:SS \"GMT\"'";
+  
+  /**
+   * A PostgreSQL Date Format string suitable for returning iCal dates
+  */
+  const SqlDateFormat = "'YYYYMMDD\"T\"HH24MISS'";
+  
+  /**
+   * A PostgreSQL Date Format string suitable for returning dates which
+   * have been cast to UTC
+  */
+  const SqlUTCFormat = "'YYYYMMDD\"T\"HH24MISS\"Z\"'";
+  
+  /**
+   * A PostgreSQL Date Format string suitable for returning iCal durations
+   *  - this doesn't work for negative intervals, but events should not have such!
+  */
+  const SqlDurationFormat = "'\"PT\"HH24\"H\"MI\"M\"'";
+  
   /**
   * Parses the connection string to ascertain the database dialect. Returns true if the dialect is supported
   * and fails if the dialect is not supported. All code to support any given database should be within in an

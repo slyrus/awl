@@ -262,7 +262,7 @@ class XMLElement {
       if(strpos($this->content, '<![CDATA[')===0 && strrpos($this->content, ']]>')===strlen($this->content)-3)
         $r .= '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', substr($this->content, 9, -3)) . ']]>';
       else
-        $r .= htmlspecialchars($this->content, ENT_NOQUOTES );
+        $r .= htmlspecialchars($this->content, ENT_NOQUOTES |  ENT_XML1 | ENT_DISALLOWED );
     }
     return $r;
   }

@@ -100,8 +100,8 @@
             return $this->iterator;
         }
 
-        function initFromText(&$plain2){
-            $plain2 = &$this->UnwrapComponent($plain2);
+        function initFromText(&$plainText){
+            $plain2 = $this->UnwrapComponent($plainText);
 
             //$file = fopen('data.out.tmp', 'w');
             //$plain3 = preg_replace('{\r?\n}', '\r\n', $plain2 );
@@ -116,8 +116,9 @@
 //            unset($arrayData);
 //            unset($lines);
 
-            $arrayObject = new ArrayObject(explode(PHP_EOL, $plain2));
-            $this->iterator = $arrayObject->getIterator();
+            // Note that we can't use PHP_EOL here, since the line splitting should handle *either* of CR, CRLF or LF line endings.
+            $arrayOfLines = new ArrayObject(preg_split('{\r?\n}', $plain2));
+            $this->iterator = $arrayOfLines->getIterator();
             unset($plain2);
             //$this->initFromIterator($this->iterator);
             //$this->iterator = new HeapLines($plain);
@@ -231,7 +232,7 @@
 //$this->properties[] = new vProperty("AHOJ");
                         $parameters = preg_split( '(:|;)', $line);
                         $possiblename = strtoupper(array_shift( $parameters ));
-                        $this->properties[] = new vProperty($possiblename, $this->getMaster(), $iterator, $end);
+                        $this->properties[] = new vProperty($possiblename, $this->master, $iterator, $end);
                         //echo $this->key . ' property line' . "[$prstart,$prend]<br>";
 
                     }
@@ -493,7 +494,7 @@
         function AddProperty( $new_property, $value = null, $parameters = null ) {
             $this->explode();
             if ( isset($value) && gettype($new_property) == 'string' ) {
-                $new_prop = new vProperty('', $this->getMaster());
+                $new_prop = new vProperty('', $this->master);
                 $new_prop->Name($new_property);
                 $new_prop->Value($value);
                 if ( $parameters != null ) {
@@ -504,7 +505,7 @@
             }
             else if ( $new_property instanceof vProperty ) {
                 $this->properties[] = $new_property;
-                $new_property->setMaster($this->getMaster());
+                $new_property->setMaster($this->master);
             }
 
             if($this->isValid()){
@@ -595,7 +596,6 @@
             $this->ClearComponents($type);
             foreach( $new_component AS $k => $v ) {
                 $this->components[] = $v;
-                //$v->setMaster($this->getMaster());
             }
         }
 
@@ -612,17 +612,22 @@
                 $this->invalidate();
             }
 
-            if ( is_array($new_component) ) {
-                foreach( $new_component AS $k => $v ) {
-                    $this->components[] = $v;
-                    $v->setMaster($this->getMaster());
-                }
+            try {
+	            if ( is_array($new_component) ) {
+	                foreach( $new_component AS $k => $v ) {
+	                    $this->components[] = $v;
+	                    if ( !method_exists($v,'setMaster') ) fatal('Component to be added must be a vComponent');
+	                    $v->setMaster($this->master);
+	                }
+	            }
+	            else {
+	                if ( !method_exists($new_component,'setMaster') ) fatal('Component to be added must be a vComponent');
+	            	$new_component->setMaster($this->master);
+	            	$this->components[] = $new_component;
+	            }
             }
-            else {
-                $this->components[] = $new_component;
-                foreach( $new_component AS $k => $v ) {
-                    //$v->setMaster($this->getMaster());
-                }
+            catch( Exception $e ) {
+            	fatal();
             }
         }
 

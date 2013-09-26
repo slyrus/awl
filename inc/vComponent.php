@@ -1,4 +1,18 @@
 <?php
+/**
+ * A Class for handling vCalendar & vCard data.
+ *
+ * When parsed the underlying structure is roughly as follows:
+ *
+ *   vComponent( array(vComponent), array(vProperty) )
+ *
+ * @package awl
+ * @subpackage vComponent
+ * @author Milan Medlik <milan@morphoss.com>
+ * @copyright Morphoss Ltd <http://www.morphoss.com/>
+ * @license   http://gnu.org/copyleft/lgpl.html GNU LGPL v2 or later
+ *
+ */
 
     include_once('vObject.php');
     //include_once('HeapLines.php');
@@ -18,6 +32,7 @@
         const KEYBEGINLENGTH = 6;
         const KEYEND = "END:";
         const KEYENDLENGTH = 4;
+        const VEOL = "\r\n";
 
         public static $PREPARSED = false;
 
@@ -558,7 +573,7 @@
             }
 
 
-            if ( $type != null && isset($this->components)) {
+            if ( $type != null && !empty($this->components)) {
                 $testtypes = (gettype($type) == 'string' ? array( $type => true ) : $type );
                 // First remove all the existing ones of that type
                 foreach( $this->components AS $k => $v ) {
@@ -573,11 +588,10 @@
                 }
             }
             else {
+                $this->components = array();
                 if ( $this->isValid()) {
                     $this->invalidate();
                 }
-                unset($this->components);
-
             }
 
             return $this->isValid();
@@ -593,6 +607,10 @@
             $this->explode();
             if ( $this->isValid()) {
                 $this->invalidate();
+            }
+            if ( empty($type) ) {
+                $this->components = $new_component;
+                return;
             }
 
             $this->ClearComponents($type);
@@ -695,7 +713,10 @@
             $strs = preg_split( "/\r?\n/", $content );
             $wrapped = "";
             foreach ($strs as $str) {
-                $wrapped .= preg_replace( '/(.{72})/u', '$1'."\r\n ", $str ) ."\r\n";
+//                print "Before: >>$str<<, len(".strlen($str).")\n";
+                $wrapped_bit = (strlen($str) == 72 ? $str : preg_replace( '/(.{72})/u', '$1'."\r\n ", $str )) .self::VEOL;
+//                print "After: >>$wrapped_bit<<\n";
+                $wrapped .= $wrapped_bit;
             }
             return $wrapped;
         }
@@ -718,7 +739,7 @@
          */
         protected function RenderWithoutWrap($restricted_properties = null, $force_rendering = false){
             $unrolledComponents = isset($this->components);
-            $rendered = vComponent::KEYBEGIN . $this->type . "\r\n";
+            $rendered = vComponent::KEYBEGIN . $this->type . self::VEOL;
 
 
             if($this->isValid()){
@@ -734,7 +755,7 @@
                     //$count++;
                     $component_render = $component->RenderWithoutWrap();
                     if(strlen($component_render) > 0){
-                        $rendered .= $component_render . "\r\n";
+                        $rendered .= $component_render . self::VEOL;
                     }
 
                     //$component->close();
@@ -754,7 +775,7 @@
             if(isset($this->properties)){
                 foreach( $this->properties AS $k => $v ) {
                     if ( method_exists($v, 'Render') ) {
-                        $forebug = $v->Render() . "\r\n";
+                        $forebug = $v->Render() . self::VEOL;
                         $rendered .= $forebug;
                     }
                 }
@@ -780,7 +801,7 @@
             $iterator = $this->iterator;
             $inInnerObject = 0;
             do {
-                $line = $iterator->current() . "\r\n";
+                $line = $iterator->current() . self::VEOL;
                 $seek = $iterator->key();
 
                 $posStart = strpos($line, vComponent::KEYBEGIN);

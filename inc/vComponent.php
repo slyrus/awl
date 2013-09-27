@@ -74,16 +74,16 @@
                 $line = $iterator->current();
                 $seek = $iterator->key();
 
-                $posStart = strpos($line, vComponent::KEYBEGIN);
+                $posStart = strpos(strtoupper($line), vComponent::KEYBEGIN);
                 if($posStart !== false && $posStart == 0){
                     if(!isset($this->type)){
                         $this->seekBegin = $seek;
 
-                        $this->type = substr($line, vComponent::KEYBEGINLENGTH);
+                        $this->type = strtoupper(substr($line, vComponent::KEYBEGINLENGTH));
                     }
                 } else {
 
-                    $posEnd = strpos($line, vComponent::KEYEND);
+                    $posEnd = strpos(strtoupper($line), vComponent::KEYEND);
                     if($posEnd !== false && $posEnd == 0){
                         $thisEnd = substr($line, vComponent::KEYENDLENGTH);
                         if($thisEnd == $this->type){
@@ -92,7 +92,7 @@
                             $len = strlen($this->type);
                             $last = $this->type[$len-1];
                             if($last == "\r"){
-                                $this->type = substr($this->type, 0, $len-1);
+                                $this->type = strtoupper(substr($this->type, 0, $len-1));
                             }
                             break;
                         }
@@ -199,16 +199,18 @@
                 //$line = substr($current, 0, strlen($current) -1);
                 $end = $iterator->key();
 
-                $pos = strpos($line, vComponent::KEYBEGIN);
+                $pos = strpos(strtoupper($line), vComponent::KEYBEGIN);
                 $callnext = true;
                 if($pos !== false && $pos == 0) {
-                    $type = substr($line, vComponent::KEYBEGINLENGTH);
+                    $type = strtoupper(substr($line, vComponent::KEYBEGINLENGTH));
 
                     if($typelen !== 0 && strncmp($this->type, $type, $typelen) !== 0){
                         $this->components[] = new vComponent(null, $iterator);
                         $callnext = false;
                     } else {
                         // in special cases when is "\r" on end remove it
+                        // We should probably throw an error if we get here, because the
+                        // thing that splits stuff should not be giving us this.
                         $typelen = strlen($type);
                         if($type[$typelen-1] == "\r"){
                             $typelen--;
@@ -224,7 +226,7 @@
                     }
 
                 } else {
-                    $pos = strpos($line, vComponent::KEYEND);
+                    $pos = strpos(strtoupper($line), vComponent::KEYEND);
 
                     if($pos !== false && $pos == 0) {
                         $this->seekBegin = $begin;

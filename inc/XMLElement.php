@@ -261,10 +261,12 @@ class XMLElement {
       */
       if(strpos($this->content, '<![CDATA[')===0 && strrpos($this->content, ']]>')===strlen($this->content)-3)
         $r .= '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', substr($this->content, 9, -3)) . ']]>';
-//      else if ( preg_match('{^[\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]+$}', $this->content) )
-//        $r .= '<![CDATA[' . $this->content . ']]>';
-      else
+      else if ( defined(ENT_XML1) && defined(ENT_DISALLOWED) )
         $r .= htmlspecialchars($this->content, ENT_NOQUOTES |  ENT_XML1 | ENT_DISALLOWED );
+      else if ( preg_match('{^[\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]+$}', $this->content) )
+        $r .= '<![CDATA[' . $this->content . ']]>';
+      else
+        $r .= $this->content;
     }
     return $r;
   }

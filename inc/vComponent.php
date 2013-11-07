@@ -1,4 +1,18 @@
 <?php
+/**
+ * A Class for handling vCalendar & vCard data.
+ *
+ * When parsed the underlying structure is roughly as follows:
+ *
+ *   vComponent( array(vComponent), array(vProperty) )
+ *
+ * @package awl
+ * @subpackage vComponent
+ * @author Milan Medlik <milan@morphoss.com>
+ * @copyright Morphoss Ltd <http://www.morphoss.com/>
+ * @license   http://gnu.org/copyleft/lgpl.html GNU LGPL v2 or later
+ *
+ */
 
     include_once('vObject.php');
     //include_once('HeapLines.php');
@@ -18,6 +32,7 @@
         const KEYBEGINLENGTH = 6;
         const KEYEND = "END:";
         const KEYENDLENGTH = 4;
+        const VEOL = "\r\n";
 
         public static $PREPARSED = false;
 
@@ -59,16 +74,16 @@
                 $line = $iterator->current();
                 $seek = $iterator->key();
 
-                $posStart = strpos($line, vComponent::KEYBEGIN);
+                $posStart = strpos(strtoupper($line), vComponent::KEYBEGIN);
                 if($posStart !== false && $posStart == 0){
                     if(!isset($this->type)){
                         $this->seekBegin = $seek;
 
-                        $this->type = substr($line, vComponent::KEYBEGINLENGTH);
+                        $this->type = strtoupper(substr($line, vComponent::KEYBEGINLENGTH));
                     }
                 } else {
 
-                    $posEnd = strpos($line, vComponent::KEYEND);
+                    $posEnd = strpos(strtoupper($line), vComponent::KEYEND);
                     if($posEnd !== false && $posEnd == 0){
                         $thisEnd = substr($line, vComponent::KEYENDLENGTH);
                         if($thisEnd == $this->type){
@@ -77,7 +92,7 @@
                             $len = strlen($this->type);
                             $last = $this->type[$len-1];
                             if($last == "\r"){
-                                $this->type = substr($this->type, 0, $len-1);
+                                $this->type = strtoupper(substr($this->type, 0, $len-1));
                             }
                             break;
                         }
@@ -100,8 +115,8 @@
             return $this->iterator;
         }
 
-        function initFromText(&$plain2){
-            $plain2 = &$this->UnwrapComponent($plain2);
+        function initFromText(&$plainText){
+            $plain2 = $this->UnwrapComponent($plainText);
 
             //$file = fopen('data.out.tmp', 'w');
             //$plain3 = preg_replace('{\r?\n}', '\r\n', $plain2 );
@@ -116,8 +131,9 @@
 //            unset($arrayData);
 //            unset($lines);
 
-            $arrayObject = new ArrayObject(explode(PHP_EOL, $plain2));
-            $this->iterator = $arrayObject->getIterator();
+            // Note that we can't use PHP_EOL here, since the line splitting should handle *either* of CR, CRLF or LF line endings.
+            $arrayOfLines = new ArrayObject(preg_split('{\r?\n}', $plain2));
+            $this->iterator = $arrayOfLines->getIterator();
             unset($plain2);
             //$this->initFromIterator($this->iterator);
             //$this->iterator = new HeapLines($plain);
@@ -183,16 +199,18 @@
                 //$line = substr($current, 0, strlen($current) -1);
                 $end = $iterator->key();
 
-                $pos = strpos($line, vComponent::KEYBEGIN);
+                $pos = strpos(strtoupper($line), vComponent::KEYBEGIN);
                 $callnext = true;
                 if($pos !== false && $pos == 0) {
-                    $type = substr($line, vComponent::KEYBEGINLENGTH);
+                    $type = strtoupper(substr($line, vComponent::KEYBEGINLENGTH));
 
                     if($typelen !== 0 && strncmp($this->type, $type, $typelen) !== 0){
                         $this->components[] = new vComponent(null, $iterator);
                         $callnext = false;
                     } else {
                         // in special cases when is "\r" on end remove it
+                        // We should probably throw an error if we get here, because the
+                        // thing that splits stuff should not be giving us this.
                         $typelen = strlen($type);
                         if($type[$typelen-1] == "\r"){
                             $typelen--;
@@ -208,7 +226,7 @@
                     }
 
                 } else {
-                    $pos = strpos($line, vComponent::KEYEND);
+                    $pos = strpos(strtoupper($line), vComponent::KEYEND);
 
                     if($pos !== false && $pos == 0) {
                         $this->seekBegin = $begin;
@@ -231,7 +249,7 @@
 //$this->properties[] = new vProperty("AHOJ");
                         $parameters = preg_split( '(:|;)', $line);
                         $possiblename = strtoupper(array_shift( $parameters ));
-                        $this->properties[] = new vProperty($possiblename, $this->getMaster(), $iterator, $end);
+                        $this->properties[] = new vProperty($possiblename, $this->master, $iterator, $end);
                         //echo $this->key . ' property line' . "[$prstart,$prend]<br>";
 
                     }
@@ -495,7 +513,7 @@
         function AddProperty( $new_property, $value = null, $parameters = null ) {
             $this->explode();
             if ( isset($value) && gettype($new_property) == 'string' ) {
-                $new_prop = new vProperty('', $this->getMaster());
+                $new_prop = new vProperty('', $this->master);
                 $new_prop->Name($new_property);
                 $new_prop->Value($value);
                 if ( $parameters != null ) {
@@ -506,7 +524,7 @@
             }
             else if ( $new_property instanceof vProperty ) {
                 $this->properties[] = $new_property;
-                $new_property->setMaster($this->getMaster());
+                $new_property->setMaster($this->master);
             }
 
             if($this->isValid()){
@@ -557,7 +575,7 @@
             }
 
 
-            if ( $type != null && isset($this->components)) {
+            if ( $type != null && !empty($this->components)) {
                 $testtypes = (gettype($type) == 'string' ? array( $type => true ) : $type );
                 // First remove all the existing ones of that type
                 foreach( $this->components AS $k => $v ) {
@@ -572,11 +590,10 @@
                 }
             }
             else {
+                $this->components = array();
                 if ( $this->isValid()) {
                     $this->invalidate();
                 }
-                unset($this->components);
-
             }
 
             return $this->isValid();
@@ -593,11 +610,14 @@
             if ( $this->isValid()) {
                 $this->invalidate();
             }
+            if ( empty($type) ) {
+                $this->components = $new_component;
+                return;
+            }
 
             $this->ClearComponents($type);
             foreach( $new_component AS $k => $v ) {
                 $this->components[] = $v;
-                //$v->setMaster($this->getMaster());
             }
         }
 
@@ -614,17 +634,22 @@
                 $this->invalidate();
             }
 
-            if ( is_array($new_component) ) {
-                foreach( $new_component AS $k => $v ) {
-                    $this->components[] = $v;
-                    $v->setMaster($this->getMaster());
-                }
+            try {
+	            if ( is_array($new_component) ) {
+	                foreach( $new_component AS $k => $v ) {
+	                    $this->components[] = $v;
+	                    if ( !method_exists($v,'setMaster') ) fatal('Component to be added must be a vComponent');
+	                    $v->setMaster($this->master);
+	                }
+	            }
+	            else {
+	                if ( !method_exists($new_component,'setMaster') ) fatal('Component to be added must be a vComponent');
+	            	$new_component->setMaster($this->master);
+	            	$this->components[] = $new_component;
+	            }
             }
-            else {
-                $this->components[] = $new_component;
-                foreach( $new_component AS $k => $v ) {
-                    //$v->setMaster($this->getMaster());
-                }
+            catch( Exception $e ) {
+            	fatal();
             }
         }
 
@@ -690,7 +715,10 @@
             $strs = preg_split( "/\r?\n/", $content );
             $wrapped = "";
             foreach ($strs as $str) {
-                $wrapped .= preg_replace( '/(.{72})/u', '$1'."\r\n ", $str ) ."\r\n";
+//                print "Before: >>$str<<, len(".strlen($str).")\n";
+                $wrapped_bit = (strlen($str) == 72 ? $str : preg_replace( '/(.{72})/u', '$1'."\r\n ", $str )) .self::VEOL;
+//                print "After: >>$wrapped_bit<<\n";
+                $wrapped .= $wrapped_bit;
             }
             return $wrapped;
         }
@@ -713,7 +741,7 @@
          */
         protected function RenderWithoutWrap($restricted_properties = null, $force_rendering = false){
             $unrolledComponents = isset($this->components);
-            $rendered = vComponent::KEYBEGIN . $this->type . "\r\n";
+            $rendered = vComponent::KEYBEGIN . $this->type . self::VEOL;
 
 
             if($this->isValid()){
@@ -729,7 +757,7 @@
                     //$count++;
                     $component_render = $component->RenderWithoutWrap();
                     if(strlen($component_render) > 0){
-                        $rendered .= $component_render . "\r\n";
+                        $rendered .= $component_render . self::VEOL;
                     }
 
                     //$component->close();
@@ -749,7 +777,7 @@
             if(isset($this->properties)){
                 foreach( $this->properties AS $k => $v ) {
                     if ( method_exists($v, 'Render') ) {
-                        $forebug = $v->Render() . "\r\n";
+                        $forebug = $v->Render() . self::VEOL;
                         $rendered .= $forebug;
                     }
                 }
@@ -775,7 +803,7 @@
             $iterator = $this->iterator;
             $inInnerObject = 0;
             do {
-                $line = $iterator->current() . "\r\n";
+                $line = $iterator->current() . self::VEOL;
                 $seek = $iterator->key();
 
                 $posStart = strpos($line, vComponent::KEYBEGIN);

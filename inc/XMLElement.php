@@ -261,7 +261,14 @@ class XMLElement {
       */
       if(strpos($this->content, '<![CDATA[')===0 && strrpos($this->content, ']]>')===strlen($this->content)-3)
         $r .= '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', substr($this->content, 9, -3)) . ']]>';
+      else if ( defined('ENT_XML1') && defined('ENT_DISALLOWED') )
+        // Newer PHP versions allow specifying ENT_XML1, but default to ENT_HTML401.  Go figure.  #PHPWTF
+        $r .= htmlspecialchars($this->content, ENT_NOQUOTES |  ENT_XML1 | ENT_DISALLOWED );
+      // Need to work out exactly how to do this in PHP.
+      // else if ( preg_match('{^[\t\n\r\x0020-\xD7FF\xE000-\xFFFD\x10000-\x10FFFF]+$}u', utf8ToUnicode($this->content)) )
+      //   $r .= '<![CDATA[' . $this->content . ']]>';
       else
+        // Older PHP versions default to ENT_XML1.
         $r .= htmlspecialchars($this->content, ENT_NOQUOTES );
     }
     return $r;

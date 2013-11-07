@@ -1446,6 +1446,7 @@ class iCalendar {  // DEPRECATED
   * Preferred is "Sun, 06 Nov 1994 08:49:37 GMT" so we do that.
   */
   static function HttpDateFormat() {
+    deprecated('iCalendar::HttpDateFormat() use AwlDatabase::HttpDateFormat instead.' );
     return "'Dy, DD Mon IYYY HH24:MI:SS \"GMT\"'";
   }
 
@@ -1455,6 +1456,7 @@ class iCalendar {  // DEPRECATED
   * Returns a PostgreSQL Date Format string suitable for returning iCal dates
   */
   static function SqlDateFormat() {
+    deprecated('iCalendar::SqlDateFormat() use AwlDatabase::SqlDateFormat instead.' );
     return "'YYYYMMDD\"T\"HH24MISS'";
   }
 
@@ -1465,6 +1467,7 @@ class iCalendar {  // DEPRECATED
   * have been cast to UTC
   */
   static function SqlUTCFormat() {
+    deprecated('iCalendar::SqlUTCFormat() use AwlDatabase::SqlUTCFormat instead.' );
     return "'YYYYMMDD\"T\"HH24MISS\"Z\"'";
   }
 
@@ -1475,6 +1478,7 @@ class iCalendar {  // DEPRECATED
   *  - this doesn't work for negative intervals, but events should not have such!
   */
   static function SqlDurationFormat() {
+    deprecated('iCalendar::SqlDurationFormat() use AwlDatabase::SqlDurationFormat instead.' );
     return "'\"PT\"HH24\"H\"MI\"M\"'";
   }
 

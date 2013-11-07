@@ -15,24 +15,17 @@ abstract class vObject {
     protected $master;
 
     function __construct(&$master = null){
-        if(isset($master)){
-            $this->master = &$master;
-        }
-
+        $this->master = isset($master) ? $master : $this;
     }
 
 
     function isValid(){
-        return isset($this->master) ? $this->master->valid : $this->valid;
+        return $this->valid;
     }
 
     protected function invalidate(){
-        if(isset($this->master)){
-            $this->master->valid = false;
-        } else {
-            $this->valid = false;
-        }
-
+        if ( isset($this->master) && $this->master != $this ) $this->master->invalidate();
+        $this->valid = false;
     }
 
     function setMaster($master){
@@ -40,7 +33,7 @@ abstract class vObject {
     }
 
     public function getMaster(){
-        return isset($this->master) ? $this->master : $this;
+        return $this->master;
     }
 
     /**

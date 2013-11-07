@@ -26,11 +26,11 @@ class SinglePart {
     }
 
     if ( $encoded )
-       return $result . self::$crlf . $content;
+       return $result . self::$crlf . $this->content;
 
     return $result . 'Content-Transfer-Encoding: base64' . self::$crlf
                     . self::$crlf
-                    . base64_encode($content);
+                    . base64_encode($this->content);
   }
 }
 

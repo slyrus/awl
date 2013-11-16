@@ -274,11 +274,16 @@ class vProperty extends vObject {
      *
      * @return string The name for the property.
      */
-    function TextMatch( $search ) {
-        if ( isset($this->content) ) return strstr( $this->content, $search );
-        return false;
+    function TextMatch( $search, $case_sensitive = true) {
+      if ( isset($this->content) ) {
+        if ($case_sensitive) {
+          return strstr( $this->content, $search );
+        } else {
+          return stristr( $this->content, $search );
+        }
+      }
+      return false;
     }
-
 
     /**
      * Get the value of a parameter
@@ -446,7 +451,20 @@ class vProperty extends vObject {
                 case 'urn:ietf:params:xml:ns:carddav:text-match':
                 case 'urn:ietf:params:xml:ns:caldav:text-match':
                     $search = $v->GetContent();
-                    $match = $this->TextMatch($search);
+                    $case_sensitive = true;
+                    $collation = $v->GetAttribute("collation");
+                    switch( strtolower($collation) ) {
+                    case 'i;ascii-casemap':
+                    case 'i;unicode-casemap':
+                      $case_sensitive = false;
+                      break;
+                    case 'i;octet':
+                    default:
+                      $case_sensitive = true;
+                      break;
+                    }
+
+                    $match = $this->TextMatch($search, $case_sensitive);
                     $negate = $v->GetAttribute("negate-condition");
                     if ( isset($negate) && strtolower($negate) == "yes" ) {
                         $match = !$match;

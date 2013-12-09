@@ -274,16 +274,11 @@ class vProperty extends vObject {
      *
      * @return string The name for the property.
      */
-    function TextMatch( $search, $case_sensitive = true) {
-      if ( isset($this->content) ) {
-        if ($case_sensitive) {
-          return strstr( $this->content, $search );
-        } else {
-          return stristr( $this->content, $search );
-        }
-      }
-      return false;
+    function TextMatch( $search ) {
+        if ( isset($this->content) ) return strstr( $this->content, $search );
+        return false;
     }
+
 
     /**
      * Get the value of a parameter
@@ -451,23 +446,50 @@ class vProperty extends vObject {
                 case 'urn:ietf:params:xml:ns:carddav:text-match':
                 case 'urn:ietf:params:xml:ns:caldav:text-match':
                     $search = $v->GetContent();
-                    $case_sensitive = true;
-                    $collation = $v->GetAttribute("collation");
-                    switch( strtolower($collation) ) {
-                    case 'i;ascii-casemap':
-                    case 'i;unicode-casemap':
-                      $case_sensitive = false;
-                      break;
-                    case 'i;octet':
-                    default:
-                      $case_sensitive = true;
-                      break;
+                    $haystack = $this->content;
+                    $match = isset($haystack);
+                    if ( $match ) {
+                             $collation = $v->GetAttribute("collation");
+                             switch( strtolower($collation) ) {
+                             case 'i;octet':
+                                 // don't change seach and haystack
+                                 break;
+                             case 'i;ascii-casemap':
+                             case 'i;unicode-casemap':
+                             default:
+                                 // for ignore case search we transform
+                                 // search and haystack to lowercase
+                                 $search   = strtolower( $search );
+                                 $haystack = strtolower( $haystack );
+                                 break;
+                             }
+
+                             $matchType = $v->GetAttribute("match-type");
+                             switch( strtolower($matchType) ) {
+                             case 'equals':
+                                 $match = ( $haystack === $search );
+                                 break;
+                             case 'starts-with':
+                                 $match = !strncmp($haystack, $search, strlen($search));
+                                 break;
+                             case 'ends-with':
+                                 $length = strlen($search);
+                                 if ($length == 0) {
+                                          $match = true;
+                                 } else {
+                                          $match = ( substr($haystack, -$length) === $search );
+                                 }
+                                 break;
+                             case 'contains':
+                             default:
+                                 $match = strstr( $haystack, $search );
+                                 break;
+                             }
                     }
 
-                    $match = $this->TextMatch($search, $case_sensitive);
                     $negate = $v->GetAttribute("negate-condition");
                     if ( isset($negate) && strtolower($negate) == "yes" ) {
-                        $match = !$match;
+                             $match = !$match;
                     }
                     if ( ! $match ) return false;
                     break;

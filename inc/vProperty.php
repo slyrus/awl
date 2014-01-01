@@ -452,7 +452,7 @@ class vProperty extends vObject {
                              $collation = $v->GetAttribute("collation");
                              switch( strtolower($collation) ) {
                              case 'i;octet':
-                                 // don't change seach and haystack
+                                 // don't change search and haystack
                                  break;
                              case 'i;ascii-casemap':
                              case 'i;unicode-casemap':
@@ -470,18 +470,22 @@ class vProperty extends vObject {
                                  $match = ( $haystack === $search );
                                  break;
                              case 'starts-with':
-                                 $match = !strncmp($haystack, $search, strlen($search));
-                                 break;
-                             case 'ends-with':
-                                 $length = strlen($search);
+                                $length = strlen($search);
                                  if ($length == 0) {
-                                          $match = true;
+                                     $match = true;
                                  } else {
-                                          $match = ( substr($haystack, -$length) === $search );
+                                     $match = !strncmp($haystack, $search, $length);
                                  }
                                  break;
-                             case 'contains':
-                             default:
+                             case 'ends-with':
+                                $length = strlen($search);
+                                 if ($length == 0) {
+                                     $match = true;
+                                 } else {
+                                     $match = ( substr($haystack, -$length) === $search );
+                                 }
+                                 break;
+                             default: // contains
                                  $match = strstr( $haystack, $search );
                                  break;
                              }

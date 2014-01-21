@@ -366,6 +366,9 @@ class vProperty extends vObject {
         }
 
         $property = preg_replace( '/[;].*$/', '', $this->name );
+        $property = preg_replace( '/^.*[.]/', '', $property );
+        // trace_bug( 'property "%s".', $property );
+	   
         $escaped = $this->content;
         switch( $property ) {
             /** Content escaping does not apply to these properties culled from RFC2445 */
